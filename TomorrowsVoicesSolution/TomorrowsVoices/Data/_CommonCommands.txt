@@ -1,0 +1,15 @@
+﻿
+
+
+Add-Migration -Context ApplicationDbContext -OutputDir Data\Migrations *Title*
+
+Update-Database -Context ApplicationDbContext 
+
+
+
+
+
+Add-Migration -c TomorrowsVoicesContext -OutputDir Data\TVMigrations *Title*
+
+Update-Database -Context TomorrowsVoicesContext
+
