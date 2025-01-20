@@ -11,7 +11,7 @@ namespace TomorrowsVoices.Data
 
         }
 
-        DbSet<Manager> Manager { get; set; }
+        DbSet<Director> Manager { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
