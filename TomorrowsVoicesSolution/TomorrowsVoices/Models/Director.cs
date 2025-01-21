@@ -21,8 +21,9 @@ namespace TomorrowsVoices.Models
         [DataType(DataType.EmailAddress)]
         public string? Email { get; set; }
 
-        [Required(ErrorMessage = "You must select the date")]
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt{ get; private set; }
+        //might not be needed
+        ////[Required(ErrorMessage = "You must select the date")]
+        ////public DateTime? CreatedAt { get; set; }
+        ////public DateTime? UpdatedAt{ get; private set; }
     }
 }

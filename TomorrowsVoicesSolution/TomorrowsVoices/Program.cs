@@ -8,11 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-
+//db contexts
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
-
-
 builder.Services.AddDbContext<TomorrowsVoicesContext>(options =>
     options.UseSqlite(connectionString));
 

@@ -16,10 +16,10 @@ namespace TomorrowsVoices.Models
         [StringLength(100, ErrorMessage = "Last name cannot be more than 100 characters long.")]
         public string LastName { get; set; } = "";
 
-
-        [Required(ErrorMessage = "You must select the date")]
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt{ get;set; }
+        //might not be needed
+        //[Required(ErrorMessage = "You must select the date")]
+        //public DateTime? CreatedAt { get; set; }
+        //public DateTime? UpdatedAt{ get;set; }
 
         public int LocationID { get; set; }
         public Location? Location { get; set; }
