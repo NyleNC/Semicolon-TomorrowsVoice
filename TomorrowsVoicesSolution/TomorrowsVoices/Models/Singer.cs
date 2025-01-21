@@ -23,5 +23,7 @@ namespace TomorrowsVoices.Models
 
         public int LocationID { get; set; }
         public Location? Location { get; set; }
+
+        public ICollection<Attendance> Attendances { get; set; } = new HashSet<Attendance>();
     }
 }

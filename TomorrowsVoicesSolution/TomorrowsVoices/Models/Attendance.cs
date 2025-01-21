@@ -8,11 +8,7 @@ namespace TomorrowsVoices.Models
 
         public bool Status{ get; set; }
 
-        public string? Note {  get; set; }
-
-       /// <summary>
-       /// created and update might not be needed
-       /// </summary>
+        
 
         //[Required(ErrorMessage = "You must select the date")]
         //public DateTime? CreatedAt { get; set; }
@@ -21,6 +17,12 @@ namespace TomorrowsVoices.Models
 
         public int SingerID { get; set; }
         public Singer? Singer { get; set; }
+
+        public int SessionID { get;set; }
+
+        public Session? Session { get; set; }
+
+        public ICollection<Note> Notes { get; set; } = new HashSet<Note>();
 
     }
 }

@@ -25,5 +25,7 @@ namespace TomorrowsVoices.Models
         ////[Required(ErrorMessage = "You must select the date")]
         ////public DateTime? CreatedAt { get; set; }
         ////public DateTime? UpdatedAt{ get; private set; }
+        
+
     }
 }
