@@ -12,9 +12,9 @@ namespace TomorrowsVoices.Models
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        public int attendanceID { get; set; }
+        public int AttendanceID { get; set; }
 
-        public Attendance
+        public Attendance? Attendance { get; set; }
 
     }
 }
