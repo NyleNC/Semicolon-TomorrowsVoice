@@ -6,7 +6,7 @@ namespace TomorrowsVoices.Models
     {
         public int ID{ get; set; }
 
-        public Status Status{ get; set; }
+        public bool Status{ get; set; }
 
         public string? Note {  get; set; }
 

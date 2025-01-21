@@ -3,24 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\onedrive\\documents\\github\\semicolon-tomorrowsvoice\\tomorrowsvoicessolution\\tomorrowsvoices\\models\\location.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\models\\location.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\onedrive\\documents\\github\\semicolon-tomorrowsvoice\\tomorrowsvoicessolution\\tomorrowsvoices\\data\\tomorrowsvoicescontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\data\\tomorrowsvoicescontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\onedrive\\documents\\github\\semicolon-tomorrowsvoice\\tomorrowsvoicessolution\\tomorrowsvoices\\models\\attendance.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\models\\attendance.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\onedrive\\documents\\github\\semicolon-tomorrowsvoice\\tomorrowsvoicessolution\\tomorrowsvoices\\models\\director.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\models\\director.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\onedrive\\documents\\github\\semicolon-tomorrowsvoice\\tomorrowsvoicessolution\\tomorrowsvoices\\models\\singer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\models\\singer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\onedrive\\documents\\github\\semicolon-tomorrowsvoice\\tomorrowsvoicessolution\\tomorrowsvoices\\models\\session.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\models\\session.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\onedrive\\documents\\github\\semicolon-tomorrowsvoice\\tomorrowsvoicessolution\\tomorrowsvoices\\models\\attendance.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\models\\attendance.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\onedrive\\documents\\github\\semicolon-tomorrowsvoice\\tomorrowsvoicessolution\\tomorrowsvoices\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,71 +26,58 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Location.cs",
-              "DocumentMoniker": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Models\\Location.cs",
-              "RelativeDocumentMoniker": "TomorrowsVoices\\Models\\Location.cs",
-              "ToolTip": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Models\\Location.cs",
-              "RelativeToolTip": "TomorrowsVoices\\Models\\Location.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-21T20:23:56.546Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Director.cs",
               "DocumentMoniker": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Models\\Director.cs",
               "RelativeDocumentMoniker": "TomorrowsVoices\\Models\\Director.cs",
               "ToolTip": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Models\\Director.cs",
               "RelativeToolTip": "TomorrowsVoices\\Models\\Director.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAA1wBoAAAA7AAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAzwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-21T20:23:54.273Z",
+              "WhenOpened": "2025-01-21T21:25:25.511Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Singer.cs",
-              "DocumentMoniker": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Models\\Singer.cs",
-              "RelativeDocumentMoniker": "TomorrowsVoices\\Models\\Singer.cs",
-              "ToolTip": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Models\\Singer.cs",
-              "RelativeToolTip": "TomorrowsVoices\\Models\\Singer.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAAwBIAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-21T20:23:58.662Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Session.cs",
-              "DocumentMoniker": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Models\\Session.cs",
-              "RelativeDocumentMoniker": "TomorrowsVoices\\Models\\Session.cs",
-              "ToolTip": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Models\\Session.cs",
-              "RelativeToolTip": "TomorrowsVoices\\Models\\Session.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-21T20:23:57.771Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "Attendance.cs",
               "DocumentMoniker": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Models\\Attendance.cs",
               "RelativeDocumentMoniker": "TomorrowsVoices\\Models\\Attendance.cs",
               "ToolTip": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Models\\Attendance.cs",
               "RelativeToolTip": "TomorrowsVoices\\Models\\Attendance.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABEAAAAyAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-21T20:23:53.456Z",
+              "WhenOpened": "2025-01-21T21:25:14.249Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "TomorrowsVoices\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "TomorrowsVoices\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-01-21T21:24:44.083Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TomorrowsVoicesContext.cs",
+              "DocumentMoniker": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Data\\TomorrowsVoicesContext.cs",
+              "RelativeDocumentMoniker": "TomorrowsVoices\\Data\\TomorrowsVoicesContext.cs",
+              "ToolTip": "C:\\Users\\nyleb\\OneDrive\\Documents\\GitHub\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Data\\TomorrowsVoicesContext.cs",
+              "RelativeToolTip": "TomorrowsVoices\\Data\\TomorrowsVoicesContext.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAzwBkAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-21T21:23:07.549Z",
               "EditorCaption": ""
             }
           ]
