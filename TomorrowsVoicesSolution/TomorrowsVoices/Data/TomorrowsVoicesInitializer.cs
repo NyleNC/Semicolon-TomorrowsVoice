@@ -24,6 +24,12 @@ namespace TomorrowsVoices.Data
                         LastName = "House",
                         Email = "sX@xvarier.com"
                     },
+                       new Director
+                       {
+                           FirstName = "Dave",
+                           LastName = "Kendell",
+                           Email = "dkendell@tv.com"
+                       },
                     new Director
                     {
                         FirstName = "Doogie",
@@ -52,7 +58,7 @@ namespace TomorrowsVoices.Data
                     new Location
                     {
                         City = City.Niagara,
-                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Doogie" && d.LastName == "Houser").ID
+                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Dave" && d.LastName == "Kendell").ID
 
                     },
                     new Location
@@ -82,6 +88,13 @@ namespace TomorrowsVoices.Data
                     },
                     new Singer
                     {
+                        FirstName = "Radin",
+
+                        LastName = "Shahravan",
+                        LocationID = context.Locations.FirstOrDefault(static d => d.City == City.Niagara).ID
+                    },
+                    new Singer
+                    {
                         FirstName = "Logan",
                         LastName = "Xavier",
                         LocationID = context.Locations.FirstOrDefault(static d => d.City == City.Saskatoon).ID
@@ -90,7 +103,33 @@ namespace TomorrowsVoices.Data
                     context.SaveChanges();
                 }
 
-              
+                if (!context.Sessions.Any())
+                {
+                    context.Sessions.AddRange(
+                    new Session
+                    {
+                        Date = DateTime.Parse("2024/12/29"),
+                        Status = true,
+                        LocationID = context.Locations.FirstOrDefault(static l => l.City == City.Niagara).ID
+                    });
+                    context.SaveChanges();
+                }
+
+
+                if (!context.Attendances.Any())
+                {
+                    context.Attendances.AddRange(
+                    new Attendance
+                    {
+                        Status = true,
+                        //SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Radin").ID,
+                        SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
+                    });
+                    context.SaveChanges();
+                }
+
+
+
             }
         }
     }

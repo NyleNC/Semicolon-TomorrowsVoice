@@ -37,7 +37,7 @@ namespace TomorrowsVoices.Models
         ////public DateTime? UpdatedAt{ get; private set; }
 
         public Location? Location { get; set; }
-        public ICollection<Singer> Singers { get; set; } = new HashSet<Singer>();
+        public ICollection<Singer> Singer { get; set; } = new HashSet<Singer>();
 
     }
 }

@@ -34,7 +34,7 @@ namespace TomorrowsVoices.Data
             // One-to-Many: Location -> Singers
             modelBuilder.Entity<Singer>()
                 .HasOne(s => s.Location)
-                .WithMany(l => l.Singers)
+                .WithMany(l => l.Singer)
                 .HasForeignKey(s => s.LocationID)
                 .OnDelete(DeleteBehavior.Restrict);
 

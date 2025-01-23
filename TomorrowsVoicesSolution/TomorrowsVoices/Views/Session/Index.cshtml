@@ -1,0 +1,69 @@
+﻿@model IEnumerable<TomorrowsVoices.Models.Session>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                #
+            </th>
+            <th>
+                Date
+            </th>
+            <th>
+                Attendance
+            </th>
+             <th>
+                City
+            </th>
+            <th>
+                Director
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int index = 1;
+        }
+@foreach (var item in Model) {
+        <tr>
+            <td>
+               @{@index}
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                    @{
+                        int presentSingers = item.Attendance.Count(a => a.Status);
+                        int registeredSingers = item.Attendance.Count();
+                    }
+                    @presentSingers / @registeredSingers
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location.Director.DirectorFullName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+            </td>
+            @index++
+        </tr>
+}
+    </tbody>
+</table>

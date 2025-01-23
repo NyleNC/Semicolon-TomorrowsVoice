@@ -19,24 +19,8 @@ namespace TomorrowsVoices.Models
             }
         }
 
-        [Display(Name = "Created On")]
-        public string CreatedOnSummary
-        {
-            get
-            {
-                return CreatedAt.ToString("yyyy-MM-dd") ?? "N/A";
-            }
-        }
 
-        [Display(Name = "Last Updated")]
-        public string UpdatedOnSummary
-        {
-            get
-            {
-                return UpdatedAt?.ToString("yyyy-MM-dd") ?? "Never Updated";
-            }
-        }
-
+     
         #endregion
 
         [Display(Name = "First Name")]
@@ -49,15 +33,10 @@ namespace TomorrowsVoices.Models
         [StringLength(100, ErrorMessage = "Last name cannot be more than 100 characters long.")]
         public string LastName { get; set; } = "";
 
-        [Required(ErrorMessage = "You must select the date")]
-        public DateTime CreatedAt { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
-
         [Display(Name = "City")]
         public int LocationID { get; set; }
         public Location? Location { get; set; }
 
-        public ICollection<Attendance> Attendances { get; set; } = new HashSet<Attendance>();
+        public ICollection<Attendance> Attendance { get; set; } = new HashSet<Attendance>();
     }
 }

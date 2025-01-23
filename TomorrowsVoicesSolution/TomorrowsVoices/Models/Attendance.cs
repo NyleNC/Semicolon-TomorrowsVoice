@@ -6,7 +6,7 @@ namespace TomorrowsVoices.Models
     {
         public int ID{ get; set; }
 
-        public bool Status{ get; set; }
+        public bool Status { get; set; } = true;
 
         
 
@@ -22,7 +22,7 @@ namespace TomorrowsVoices.Models
 
         public Session? Session { get; set; }
 
-        public ICollection<Note> Notes { get; set; } = new HashSet<Note>();
+        //public ICollection<Note> Note { get; set; } = new HashSet<Note>();
 
     }
 }

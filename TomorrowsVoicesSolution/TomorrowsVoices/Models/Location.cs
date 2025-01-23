@@ -14,9 +14,9 @@ namespace TomorrowsVoices.Models
 
         public Director? Director { get; set; }
 
-        public ICollection<Singer> Singers { get; set; } = new HashSet<Singer>();
+        public ICollection<Singer> Singer { get; set; } = new HashSet<Singer>();
 
-        public ICollection<Session> Sessions { get; set; } = new HashSet<Session>();
+        public ICollection<Session> Session { get; set; } = new HashSet<Session>();
 
     }
 }

@@ -18,12 +18,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Location)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -38,12 +32,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Location.City)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
