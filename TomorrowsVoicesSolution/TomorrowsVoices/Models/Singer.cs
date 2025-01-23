@@ -30,8 +30,8 @@ namespace TomorrowsVoices.Models
         [StringLength(100, ErrorMessage = "Last name cannot be more than 100 characters long.")]
         public string LastName { get; set; } = "";
 
-        [Display(Name = "")]
-        public bool IsAvailable { get; set; }
+        [Display(Name = "Is Available")]
+        public bool IsAvailable { get; set; } = true;
 
 
         [Display(Name = "Created On")]

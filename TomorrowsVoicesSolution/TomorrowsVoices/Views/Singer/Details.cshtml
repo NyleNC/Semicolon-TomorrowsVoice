@@ -28,6 +28,17 @@
         <dd class="col-sm-10">
             @(Model.Location != null ? Model.Location.City : "Not Set")
         </dd>
+
+        <!-- Add IsAvailable information -->
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IsAvailable)
+        </dt>
+        <dd class="col-sm-10">
+            <!-- Display the availability status -->
+            <span class="badge @(Model.IsAvailable ? "badge-success" : "badge-danger")">
+                @(Model.IsAvailable ? "Available" : "Not Available")
+            </span>
+        </dd>
     </dl>
 </div>
 <div>

@@ -15,6 +15,7 @@
         <tr>
             <th>@Html.DisplayNameFor(model => model.FullName)</th>
             <th>@Html.DisplayNameFor(model => model.Location)</th>
+            <th>@Html.DisplayNameFor(model => model.IsAvailable)</th>
             <th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
             <th>@Html.DisplayNameFor(model => model.UpdatedAt)</th>
             <th>Actions</th>
@@ -26,6 +27,12 @@
             <tr>
                 <td>@Html.DisplayFor(modelItem => item.FullName)</td>
                 <td>@(item.Location != null ? item.Location.City : "Not Set")</td>
+                <td>
+                    <span class="badge @(item.IsAvailable ? "badge-success" : "badge-danger")">
+                        @(item.IsAvailable ? "Available" : "Not Available")
+                    </span>
+                </td>
+
                 <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
                 <td>
                     @(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm") : "Never Updated")
@@ -34,6 +41,10 @@
                     <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">Edit</a>
                     <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">Details</a>
                     <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger">Delete</a>
+
+                    <a asp-action="ToggleAvailability" asp-route-id="@item.ID" class="btn btn-sm btn-secondary">
+                        @(item.IsAvailable ? "Mark as Unavailable" : "Mark as Available")
+                    </a>
                 </td>
             </tr>
         }

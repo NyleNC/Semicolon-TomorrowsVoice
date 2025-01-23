@@ -60,7 +60,7 @@ namespace TomorrowsVoices.Controllers
         // POST: Singer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,LocationID")] Singer singer)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,LocationID,IsAvailable")] Singer singer)
         {
             if (ModelState.IsValid)
             {
@@ -96,7 +96,7 @@ namespace TomorrowsVoices.Controllers
         // POST: Singer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,LocationID")] Singer singer)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,LocationID,IsAvailable")] Singer singer)
         {
             if (id != singer.ID) return NotFound();
 
@@ -110,7 +110,8 @@ namespace TomorrowsVoices.Controllers
                     existingSinger.FirstName = singer.FirstName;
                     existingSinger.LastName = singer.LastName;
                     existingSinger.LocationID = singer.LocationID;
-                    existingSinger.UpdatedAt = DateTime.Now; 
+                    existingSinger.IsAvailable = singer.IsAvailable;
+                    existingSinger.UpdatedAt = DateTime.Now;
 
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -124,6 +125,7 @@ namespace TomorrowsVoices.Controllers
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
             return View(singer);
         }
+
 
 
         // GET: Singer/Delete/5
