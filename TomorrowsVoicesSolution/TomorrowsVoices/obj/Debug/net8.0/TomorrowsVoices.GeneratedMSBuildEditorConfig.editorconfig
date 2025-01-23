@@ -17,107 +17,109 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = TomorrowsVoices
 build_property.RootNamespace = TomorrowsVoices
-build_property.ProjectDir = C:\Users\moham\Documents\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\
+build_property.ProjectDir = H:\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\moham\Documents\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices
+build_property.MSBuildProjectDirectory = H:\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices
 build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Areas/Identity/Pages/_ViewStart.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Areas/Identity/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Director/Create.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Director/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGlyZWN0b3JcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Director/Delete.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Director/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGlyZWN0b3JcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Director/Details.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Director/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGlyZWN0b3JcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Director/Edit.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Director/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGlyZWN0b3JcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Director/Index.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Director/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGlyZWN0b3JcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Home/Index.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Home/Privacy.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Session/Create.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Session/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2Vzc2lvblxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Session/Delete.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Session/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2Vzc2lvblxEZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Session/Details.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Session/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2Vzc2lvblxEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Session/Edit.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Session/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2Vzc2lvblxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Session/Index.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Session/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2Vzc2lvblxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Shared/Error.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Shared/_LoginPartial.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Shared/_LoginPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Shared/_ValidationScriptsPartial.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Singer/Create.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Singer/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2luZ2VyXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Singer/Delete.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Singer/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2luZ2VyXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Singer/Details.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Singer/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2luZ2VyXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Singer/Edit.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Singer/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2luZ2VyXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Singer/Index.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Singer/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2luZ2VyXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/_ViewImports.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/_ViewStart.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/moham/Documents/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Shared/_Layout.cshtml]
+[H:/Semicolon-TomorrowsVoice/TomorrowsVoicesSolution/TomorrowsVoices/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-iqkgl7gklx
