@@ -22,17 +22,18 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.LastName)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Location.City)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Location.City)
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Email)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Email)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Location.City)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Location.City)
+   
         </dd>
     </dl>
 </div>

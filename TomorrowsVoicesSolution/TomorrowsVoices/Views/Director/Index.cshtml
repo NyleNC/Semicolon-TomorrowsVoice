@@ -15,13 +15,13 @@
             <th >
                 @Html.DisplayNameFor(model => model.DirectorFullName)
             </th>
-         
-            <th >
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Location.City)
             </th>
+            <th >
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+          
             <th>Actions</th>
         </tr>
     </thead>
@@ -31,13 +31,13 @@
             <td>
                     @Html.DisplayFor(modelItem => item.DirectorFullName)
             </td>
-           
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Location.City)
                 </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID" class= "btn btn-sm btn-warning">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.ID" class= "btn btn-sm btn-info">Details</a> |
