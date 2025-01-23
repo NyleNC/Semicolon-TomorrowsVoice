@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TomorrowsVoices.Models
@@ -7,6 +8,36 @@ namespace TomorrowsVoices.Models
     {
         public int ID { get; set; }
 
+        #region Summary Properties
+
+        [Display(Name = "Singer")]
+        public string FullName
+        {
+            get
+            {
+                return $"{FirstName} {LastName}";
+            }
+        }
+
+        [Display(Name = "Created On")]
+        public string CreatedOnSummary
+        {
+            get
+            {
+                return CreatedAt.ToString("yyyy-MM-dd") ?? "N/A";
+            }
+        }
+
+        [Display(Name = "Last Updated")]
+        public string UpdatedOnSummary
+        {
+            get
+            {
+                return UpdatedAt?.ToString("yyyy-MM-dd") ?? "Never Updated";
+            }
+        }
+
+        #endregion
 
         [Display(Name = "First Name")]
         [Required(ErrorMessage = "You cannot leave the first name blank.")]
@@ -18,10 +49,10 @@ namespace TomorrowsVoices.Models
         [StringLength(100, ErrorMessage = "Last name cannot be more than 100 characters long.")]
         public string LastName { get; set; } = "";
 
-        //might not be needed
-        //[Required(ErrorMessage = "You must select the date")]
-        //public DateTime? CreatedAt { get; set; }
-        //public DateTime? UpdatedAt{ get;set; }
+        [Required(ErrorMessage = "You must select the date")]
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
 
         [Display(Name = "City")]
         public int LocationID { get; set; }

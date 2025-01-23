@@ -6,6 +6,5 @@ namespace TomorrowsVoices.Models
         Toronto,
         Saskatoon,
         Niagara
-        
     }
 }

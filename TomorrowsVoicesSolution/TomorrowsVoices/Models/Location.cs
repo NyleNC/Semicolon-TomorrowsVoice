@@ -6,7 +6,8 @@ namespace TomorrowsVoices.Models
     {
        public int ID { get; set; }
    
-       public City City{ get; set; }
+       public City City { get; set; }
+
 
         public int DirectorID { get; set; }
 

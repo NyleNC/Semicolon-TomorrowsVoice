@@ -40,8 +40,10 @@ namespace TomorrowsVoices.Data
 
          
       
-        // is unique for email
-        modelBuilder.Entity<Director>().HasIndex(d=>d.Email).IsUnique();
+            // is unique for email
+            modelBuilder.Entity<Director>()
+                .HasIndex(d=>d.Email)
+                .IsUnique();
 
 
 
