@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 using TomorrowsVoices.Models;
 
 namespace TomorrowsVoices.Data
@@ -11,20 +12,37 @@ namespace TomorrowsVoices.Data
 
         }
         //Db sets for all the classes
-        DbSet<Director> Directors { get; set; }
-        DbSet<Attendance>Attendances { get; set; }
-        DbSet<Location> Locations { get; set; }
-        DbSet<Note> Notes { get; set; }
-        DbSet<Session> Sessions { get; set; }
-        DbSet<Singer> Singers { get; set; }
+        public DbSet<Director> Directors { get; set; }
+        public DbSet<Attendance>Attendances { get; set; }
+         public DbSet<Location> Locations { get; set; }
+        public DbSet<Note> Notes { get; set; }
+        public DbSet<Session> Sessions { get; set; }
+        public DbSet<Singer> Singers { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // is unique for email
-            modelBuilder.Entity<Director>().HasIndex(d=>d.Email).IsUnique();
+
+            modelBuilder.Entity<Location>()
+               .HasOne(l => l.Director)
+               .WithOne(d => d.Location)
+               .HasForeignKey<Location>(l => l.DirectorID)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            // One-to-Many: Location -> Singers
+            modelBuilder.Entity<Singer>()
+                .HasOne(s => s.Location)
+                .WithMany(l => l.Singers)
+                .HasForeignKey(s => s.LocationID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+         
+      
+        // is unique for email
+        modelBuilder.Entity<Director>().HasIndex(d=>d.Email).IsUnique();
+
 
 
         }

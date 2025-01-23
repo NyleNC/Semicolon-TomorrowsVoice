@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace TomorrowsVoices.Models
 {
     public class Singer
     {
         public int ID { get; set; }
+
 
         [Display(Name = "First Name")]
         [Required(ErrorMessage = "You cannot leave the first name blank.")]
@@ -21,6 +23,7 @@ namespace TomorrowsVoices.Models
         //public DateTime? CreatedAt { get; set; }
         //public DateTime? UpdatedAt{ get;set; }
 
+        [Display(Name = "City")]
         public int LocationID { get; set; }
         public Location? Location { get; set; }
 

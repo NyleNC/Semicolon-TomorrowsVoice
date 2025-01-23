@@ -7,6 +7,15 @@ namespace TomorrowsVoices.Models
     {
         public int ID { get; set; }
 
+        [Display(Name ="Director")]
+        public string DirectorFullName
+        {
+            get
+            {
+                return FirstName +" "+LastName;
+               
+            }
+        }
         [Display(Name = "First Name")]
         [Required(ErrorMessage = "You cannot leave the first name blank.")]
         [StringLength(50, ErrorMessage = "First name cannot be more than 50 characters long.")]
@@ -25,7 +34,9 @@ namespace TomorrowsVoices.Models
         ////[Required(ErrorMessage = "You must select the date")]
         ////public DateTime? CreatedAt { get; set; }
         ////public DateTime? UpdatedAt{ get; private set; }
-        
+
+        public Location? Location { get; set; }
+        public ICollection<Singer> Singers { get; set; } = new HashSet<Singer>();
 
     }
 }

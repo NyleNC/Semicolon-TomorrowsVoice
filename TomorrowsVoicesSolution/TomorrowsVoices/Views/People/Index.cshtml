@@ -1,0 +1,65 @@
+﻿@model TomorrowsVoices.ViewModels.PeopleViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<h2>Directors</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Directors.First().FirstName)</th>
+            <th>@Html.DisplayNameFor(model => model.Directors.First().LastName)</th>
+            <th>@Html.DisplayNameFor(model => model.Directors.First().Location.City)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var director in Model.Directors)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => director.FirstName)</td>
+                <td>@Html.DisplayFor(modelItem => director.LastName)</td>
+                <td>@Html.DisplayFor(modelItem => director.Location.City)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@director.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@director.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@director.ID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Singers</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Singers.First().FirstName)</th>
+            <th>@Html.DisplayNameFor(model => model.Singers.First().LastName)</th>
+            <th>@Html.DisplayNameFor(model => model.Singers.First().Location.Director.DirectorFullName)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var singer in Model.Singers)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => singer.FirstName)</td>
+                <td>@Html.DisplayFor(modelItem => singer.LastName)</td>
+                <td>@Html.DisplayFor(modelItem => singer.Location.Director.DirectorFullName)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@singer.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@singer.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@singer.ID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
