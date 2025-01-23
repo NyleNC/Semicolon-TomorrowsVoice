@@ -47,21 +47,21 @@ namespace TomorrowsVoices.Data
                     context.Locations.AddRange(
                     new Location
                     {
-                        City=CityList.Toronto,
-                        Director = context.Directors.FirstOrDefault(l => l.ID == 0)
-
-                    },
-                    new Location
-                    {
-                        City = CityList.Niagara,
+                        City=City.Toronto,
                         Director = context.Directors.FirstOrDefault(l => l.ID == 1)
 
                     },
                     new Location
                     {
-                        City = CityList.Saskatoon,
-
+                        City = City.Niagara,
                         Director = context.Directors.FirstOrDefault(l => l.ID == 2)
+
+                    },
+                    new Location
+                    {
+                        City = City.Saskatoon,
+
+                        Director = context.Directors.FirstOrDefault(l => l.ID == 3)
                     }
                     );
                     context.SaveChanges();
@@ -74,20 +74,20 @@ namespace TomorrowsVoices.Data
                         FirstName = "Bruce",
 
                         LastName = "House",
-                        Location = context.Locations.FirstOrDefault(l => l.ID == 0)
+                        Location = context.Locations.FirstOrDefault(l => l.ID == 1)
                     },
                     new Singer
                     {
                         FirstName = "Hall",
 
                         LastName = "Houser",
-                        Location = context.Locations.FirstOrDefault(l => l.ID == 1)
+                        Location = context.Locations.FirstOrDefault(l => l.ID == 2)
                     },
                     new Singer
                     {
                         FirstName = "Logan",
                         LastName = "Xavier",
-                        Location = context.Locations.FirstOrDefault(l => l.ID == 2)
+                        Location = context.Locations.FirstOrDefault(l => l.ID == 3)
 
                     });
                     context.SaveChanges();

@@ -1,10 +1,9 @@
 ﻿namespace TomorrowsVoices.Models
 {
-    public enum CityList
+    public enum City
     {
         Toronto,
         Saskatoon,
         Niagara
-        
     }
 }
