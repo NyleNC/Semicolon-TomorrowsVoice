@@ -40,7 +40,7 @@ namespace TomorrowsVoices.Data
                     {
                         FirstName = "Charles",
                         LastName = "Xavier",
-                        Email="charlesX@xvarier.com"
+                        Email = "charlesX@xvarier.com"
 
                     });
                     context.SaveChanges();
@@ -51,7 +51,7 @@ namespace TomorrowsVoices.Data
                     context.Locations.AddRange(
                     new Location
                     {
-                        City=City.Toronto,
+                        City = City.Toronto,
                         DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Gregory" && d.LastName == "House").ID
 
                     },
@@ -77,7 +77,7 @@ namespace TomorrowsVoices.Data
                         FirstName = "Bruce",
 
                         LastName = "House",
-                        LocationID = context.Locations.FirstOrDefault(static d => d.City==City.Toronto).ID
+                        LocationID = context.Locations.FirstOrDefault(static d => d.City == City.Toronto).ID
                     },
                       new Singer
                       {
@@ -135,57 +135,57 @@ namespace TomorrowsVoices.Data
                     context.SaveChanges();
                 }
 
-
                 if (!context.Attendances.Any())
                 {
-                    context.Attendances.AddRange(
-                    new Attendance
+                    var radin = context.Singers.FirstOrDefault(s => s.FirstName == "Radin");
+                    var session = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2024/12/29"));
+
+                    if (radin != null && session != null)
                     {
-                        Status = true,
-                        SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Radin").ID,
-                        SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
-                    },
-                     new Attendance
-                     {
-                         Status = true,
-                         SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Hall").ID,
-                         SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
-                     },
-                      new Attendance
-                      {
-                          Status = false,
-                          SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Logan").ID,
-                          SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
-                      }
-                      ,
-                      new Attendance
-                      {
-                          Status = true,
-                          SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Tyler").ID,
-                          SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
-                      }
-                      ,
-                      new Attendance
-                      {
-                          Status = false,
-                          SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Theo").ID,
-                          SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
-                      }
-                      ,
-                      new Attendance
-                      {
-                          Status = true,
-                          SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "James").ID,
-                          SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
-                      }
-
-                    );
-                    context.SaveChanges();
+                        context.Attendances.AddRange(
+                            new Attendance
+                            {
+                                Status = true,
+                                SingerID = radin.ID,
+                                SessionID = session.ID
+                            },
+                            new Attendance
+                            {
+                                Status = true,
+                                SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Hall").ID,
+                                SessionID = session.ID
+                            },
+                            new Attendance
+                            {
+                                Status = false,
+                                SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Logan").ID,
+                                SessionID = session.ID
+                            },
+                            new Attendance
+                            {
+                                Status = true,
+                                SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Tyler").ID,
+                                SessionID = session.ID
+                            },
+                            new Attendance
+                            {
+                                Status = false,
+                                SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Theo").ID,
+                                SessionID = session.ID
+                            },
+                            new Attendance
+                            {
+                                Status = true,
+                                SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "James").ID,
+                                SessionID = session.ID
+                            }
+                        );
+                        context.SaveChanges();
+                    }
                 }
-
-
-
             }
         }
     }
-}
+        }
+    
+

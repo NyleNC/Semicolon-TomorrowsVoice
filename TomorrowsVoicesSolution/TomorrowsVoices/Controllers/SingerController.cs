@@ -157,6 +157,14 @@ namespace TomorrowsVoices.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        private void PopulateDropDownLists(Singer? singer = null)
+        {
+            var dQuery = from d in _context.Directors
+                         orderby d.LastName, d.FirstName
+                         select d;
+            ViewData["SingerID"] = new SelectList(dQuery, "ID", "Singer",singer?.ID);
+        }
+
         private bool SingerExists(int id)
         {
             return _context.Singers.Any(e => e.ID == id);

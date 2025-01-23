@@ -9,14 +9,14 @@
 <p>
     <a asp-action="Create" class="btn btn-primary">Add a new person </a>
 </p>
-<table class="table table-striped">
+<table class="table table-hover">
     <thead>
-        <tr>
-            <th>
+        <tr class="table-dark">
+            <th >
                 @Html.DisplayNameFor(model => model.DirectorFullName)
             </th>
          
-            <th>
+            <th >
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
@@ -27,7 +27,7 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
+        <tr >
             <td>
                     @Html.DisplayFor(modelItem => item.DirectorFullName)
             </td>
