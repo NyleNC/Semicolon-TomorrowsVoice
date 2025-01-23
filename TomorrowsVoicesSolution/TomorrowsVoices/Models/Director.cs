@@ -16,6 +16,7 @@ namespace TomorrowsVoices.Models
                
             }
         }
+
         [Display(Name = "First Name")]
         [Required(ErrorMessage = "You cannot leave the first name blank.")]
         [StringLength(50, ErrorMessage = "First name cannot be more than 50 characters long.")]

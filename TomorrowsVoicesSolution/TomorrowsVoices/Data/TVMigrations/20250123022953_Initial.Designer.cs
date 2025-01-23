@@ -11,8 +11,8 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    [Migration("20250122172230_new")]
-    partial class @new
+    [Migration("20250123022953_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,15 +78,16 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("City")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("City")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("DirectorID")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("DirectorID");
+                    b.HasIndex("DirectorID")
+                        .IsUnique();
 
                     b.ToTable("Locations");
                 });
@@ -197,8 +198,8 @@ namespace TomorrowsVoices.Data.TVMigrations
             modelBuilder.Entity("TomorrowsVoices.Models.Location", b =>
                 {
                     b.HasOne("TomorrowsVoices.Models.Director", "Director")
-                        .WithMany("Locations")
-                        .HasForeignKey("DirectorID")
+                        .WithOne("Location")
+                        .HasForeignKey("TomorrowsVoices.Models.Location", "DirectorID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -249,7 +250,7 @@ namespace TomorrowsVoices.Data.TVMigrations
 
             modelBuilder.Entity("TomorrowsVoices.Models.Director", b =>
                 {
-                    b.Navigation("Locations");
+                    b.Navigation("Location");
 
                     b.Navigation("Singers");
                 });

@@ -35,7 +35,7 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Location.City.ToString())
+                    @Html.DisplayFor(modelItem => item.Location.City)
                 </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

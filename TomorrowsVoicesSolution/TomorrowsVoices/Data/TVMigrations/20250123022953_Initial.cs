@@ -32,7 +32,7 @@ namespace TomorrowsVoices.Data.TVMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    City = table.Column<string>(type: "TEXT", nullable: true),
+                    City = table.Column<int>(type: "INTEGER", nullable: false),
                     DirectorID = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -163,7 +163,8 @@ namespace TomorrowsVoices.Data.TVMigrations
             migrationBuilder.CreateIndex(
                 name: "IX_Locations_DirectorID",
                 table: "Locations",
-                column: "DirectorID");
+                column: "DirectorID",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notes_AttendanceID",

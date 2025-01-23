@@ -23,11 +23,13 @@ namespace TomorrowsVoices.Controllers
         // GET: Director
         public async Task<IActionResult> Index()
         {
-            var clients = _context.Directors
-                .Include(c => c.Location)
-                
-            .AsNoTracking();
-            return View(await _context.Directors.ToListAsync());
+            var directors = await _context.Directors
+                .Include(d => d.Location) // Include Location for each Director
+           
+                .AsNoTracking()
+                .ToListAsync();
+
+            return View(directors);
         }
 
         // GET: Director/Details/5
@@ -40,6 +42,7 @@ namespace TomorrowsVoices.Controllers
 
             var director = await _context.Directors
                 .Include(d=>d.Location)
+           
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (director == null)
             {
@@ -156,14 +159,13 @@ namespace TomorrowsVoices.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        private SelectList DirectorList(int? selectedId)
-        {
-            return new SelectList(_context.Directors
-                .OrderBy(m => m.DirectorFullName), "ID", "Type", selectedId);
-        }
+  
         private void PopulateDropDownLists(Director? director = null)
         {
-            ViewData["DirectorID"] = DirectorList(director?.ID);
+            var dQuery = from d in _context.Directors
+                         orderby d.LastName, d.FirstName
+                         select d;
+            ViewData["DoctorID"] = new SelectList(dQuery, "ID", "DirectorFullName", director?.ID);
         }
 
         private bool DirectorExists(int id)
