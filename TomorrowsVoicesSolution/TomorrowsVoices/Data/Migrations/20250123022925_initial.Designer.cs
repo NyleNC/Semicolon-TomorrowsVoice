@@ -11,8 +11,8 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250122152545_Initial")]
-    partial class Initial
+    [Migration("20250123022925_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

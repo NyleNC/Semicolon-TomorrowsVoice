@@ -1,4 +1,5 @@
-﻿namespace TomorrowsVoices.Models
+﻿
+namespace TomorrowsVoices.Models
 {
     public enum City
     {

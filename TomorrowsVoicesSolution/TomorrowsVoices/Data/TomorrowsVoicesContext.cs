@@ -28,8 +28,8 @@ namespace TomorrowsVoices.Data
             modelBuilder.Entity<Location>()
                .HasOne(l => l.Director)
                .WithOne(d => d.Location)
-               .HasForeignKey<Location>(l => l.DirectorID)
-               .OnDelete(DeleteBehavior.Cascade);
+               .HasForeignKey<Location>(l => l.DirectorID);
+              
 
             // One-to-Many: Location -> Singers
             modelBuilder.Entity<Singer>()

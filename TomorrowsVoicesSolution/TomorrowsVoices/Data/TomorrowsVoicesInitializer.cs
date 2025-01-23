@@ -21,14 +21,12 @@ namespace TomorrowsVoices.Data
                     new Director
                     {
                         FirstName = "Gregory",
-                  
                         LastName = "House",
                         Email = "sX@xvarier.com"
                     },
                     new Director
                     {
                         FirstName = "Doogie",
-                   
                         LastName = "Houser",
                         Email = "esX@xvarier.com"
                     },
