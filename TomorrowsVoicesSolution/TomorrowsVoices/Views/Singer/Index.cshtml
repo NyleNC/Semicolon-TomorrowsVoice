@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    int index = 1;
 }
 
 <h1>Index</h1>
@@ -12,6 +13,9 @@
 <table class="table">
     <thead>
         <tr>
+            <th>
+                #
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.FullName)
             </th>
@@ -24,6 +28,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @{@index}
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FullName)
             </td>
@@ -39,6 +46,7 @@
                 <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
             </td>
         </tr>
+        index++;
 }
     </tbody>
 </table>
