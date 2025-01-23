@@ -47,29 +47,22 @@ namespace TomorrowsVoices.Data
                     context.Locations.AddRange(
                     new Location
                     {
-                        City = "St Catharines",
+                        City=CityList.Toronto,
                         Director = context.Directors.FirstOrDefault(l => l.ID == 0)
 
                     },
                     new Location
                     {
-                        City = "Toronto",
+                        City = CityList.Niagara,
                         Director = context.Directors.FirstOrDefault(l => l.ID == 1)
-
-
 
                     },
                     new Location
                     {
-                        City = "Saskatoon",
+                        City = CityList.Saskatoon,
 
                         Director = context.Directors.FirstOrDefault(l => l.ID == 2)
-
                     }
-
-
-            
-
                     );
                     context.SaveChanges();
                 }
