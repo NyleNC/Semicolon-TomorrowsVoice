@@ -6,12 +6,10 @@ namespace TomorrowsVoices.Models
     {
         public int ID { get; set; }
 
-        [Required(ErrorMessage = "You must select the session status")]
-        public bool? Status { get; set; }
-
-       
+ 
 
         [Required(ErrorMessage = "You must select the session date")]
+        [DataType(DataType.Date)]
         public DateTime? Date{ get; set; }
 
         [Display(Name = "City")]

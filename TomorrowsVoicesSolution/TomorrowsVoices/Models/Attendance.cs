@@ -6,7 +6,7 @@ namespace TomorrowsVoices.Models
     {
         public int ID{ get; set; }
 
-        public bool Status { get; set; } = true;
+        public bool Status { get; set; }
 
         
 

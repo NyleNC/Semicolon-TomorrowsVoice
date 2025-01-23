@@ -9,7 +9,7 @@ Update-Database -Context ApplicationDbContext
 
 
 
-Add-Migration -c TomorrowsVoicesContext -OutputDir Data\TVMigrations *Title*
+Add-Migration -c TomorrowsVoicesContext -OutputDir Data\TVMigrations
 
 Update-Database -Context TomorrowsVoicesContext
 

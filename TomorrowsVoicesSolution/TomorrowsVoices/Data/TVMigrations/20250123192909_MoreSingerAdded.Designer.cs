@@ -11,8 +11,8 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    [Migration("20250123015722_SingersAdded")]
-    partial class SingersAdded
+    [Migration("20250123192909_MoreSingerAdded")]
+    partial class MoreSingerAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,9 +128,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("LocationID")
                         .HasColumnType("INTEGER");
 
@@ -151,9 +148,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
                     b.Property<int?>("DirectorID")
                         .HasColumnType("INTEGER");
 
@@ -170,9 +164,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Property<int>("LocationID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("ID");
 
                     b.HasIndex("DirectorID");
@@ -185,13 +176,13 @@ namespace TomorrowsVoices.Data.TVMigrations
             modelBuilder.Entity("TomorrowsVoices.Models.Attendance", b =>
                 {
                     b.HasOne("TomorrowsVoices.Models.Session", "Session")
-                        .WithMany("Attendances")
+                        .WithMany("Attendance")
                         .HasForeignKey("SessionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TomorrowsVoices.Models.Singer", "Singer")
-                        .WithMany("Attendances")
+                        .WithMany("Attendance")
                         .HasForeignKey("SingerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -215,7 +206,7 @@ namespace TomorrowsVoices.Data.TVMigrations
             modelBuilder.Entity("TomorrowsVoices.Models.Note", b =>
                 {
                     b.HasOne("TomorrowsVoices.Models.Attendance", "Attendance")
-                        .WithMany("Notes")
+                        .WithMany()
                         .HasForeignKey("AttendanceID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -226,7 +217,7 @@ namespace TomorrowsVoices.Data.TVMigrations
             modelBuilder.Entity("TomorrowsVoices.Models.Session", b =>
                 {
                     b.HasOne("TomorrowsVoices.Models.Location", "Location")
-                        .WithMany("Sessions")
+                        .WithMany("Session")
                         .HasForeignKey("LocationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -237,11 +228,11 @@ namespace TomorrowsVoices.Data.TVMigrations
             modelBuilder.Entity("TomorrowsVoices.Models.Singer", b =>
                 {
                     b.HasOne("TomorrowsVoices.Models.Director", null)
-                        .WithMany("Singers")
+                        .WithMany("Singer")
                         .HasForeignKey("DirectorID");
 
                     b.HasOne("TomorrowsVoices.Models.Location", "Location")
-                        .WithMany("Singers")
+                        .WithMany("Singer")
                         .HasForeignKey("LocationID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -249,33 +240,28 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("TomorrowsVoices.Models.Attendance", b =>
-                {
-                    b.Navigation("Notes");
-                });
-
             modelBuilder.Entity("TomorrowsVoices.Models.Director", b =>
                 {
                     b.Navigation("Location");
 
-                    b.Navigation("Singers");
+                    b.Navigation("Singer");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Location", b =>
                 {
-                    b.Navigation("Sessions");
+                    b.Navigation("Session");
 
-                    b.Navigation("Singers");
+                    b.Navigation("Singer");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Session", b =>
                 {
-                    b.Navigation("Attendances");
+                    b.Navigation("Attendance");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Singer", b =>
                 {
-                    b.Navigation("Attendances");
+                    b.Navigation("Attendance");
                 });
 #pragma warning restore 612, 618
         }

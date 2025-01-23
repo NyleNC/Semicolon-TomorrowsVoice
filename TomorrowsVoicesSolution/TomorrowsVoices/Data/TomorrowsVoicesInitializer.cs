@@ -58,7 +58,7 @@ namespace TomorrowsVoices.Data
                     new Location
                     {
                         City = City.Niagara,
-                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Dave" && d.LastName == "Kendell").ID
+                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Doogie" && d.LastName == "Houser").ID
 
                     },
                     new Location
@@ -79,6 +79,27 @@ namespace TomorrowsVoices.Data
                         LastName = "House",
                         LocationID = context.Locations.FirstOrDefault(static d => d.City==City.Toronto).ID
                     },
+                      new Singer
+                      {
+                          FirstName = "Tyler",
+
+                          LastName = "Klassen",
+                          LocationID = context.Locations.FirstOrDefault(static d => d.City == City.Toronto).ID
+                      },
+                        new Singer
+                        {
+                            FirstName = "James",
+
+                            LastName = "Rodrigo",
+                            LocationID = context.Locations.FirstOrDefault(static d => d.City == City.Toronto).ID
+                        },
+                          new Singer
+                          {
+                              FirstName = "Theo",
+
+                              LastName = "Baker",
+                              LocationID = context.Locations.FirstOrDefault(static d => d.City == City.Toronto).ID
+                          },
                     new Singer
                     {
                         FirstName = "Hall",
@@ -109,7 +130,6 @@ namespace TomorrowsVoices.Data
                     new Session
                     {
                         Date = DateTime.Parse("2024/12/29"),
-                        Status = true,
                         LocationID = context.Locations.FirstOrDefault(static l => l.City == City.Niagara).ID
                     });
                     context.SaveChanges();
@@ -122,9 +142,44 @@ namespace TomorrowsVoices.Data
                     new Attendance
                     {
                         Status = true,
-                        //SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Radin").ID,
+                        SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Radin").ID,
                         SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
-                    });
+                    },
+                     new Attendance
+                     {
+                         Status = true,
+                         SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Hall").ID,
+                         SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
+                     },
+                      new Attendance
+                      {
+                          Status = false,
+                          SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Logan").ID,
+                          SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
+                      }
+                      ,
+                      new Attendance
+                      {
+                          Status = true,
+                          SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Tyler").ID,
+                          SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
+                      }
+                      ,
+                      new Attendance
+                      {
+                          Status = false,
+                          SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Theo").ID,
+                          SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
+                      }
+                      ,
+                      new Attendance
+                      {
+                          Status = true,
+                          SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "James").ID,
+                          SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
+                      }
+
+                    );
                     context.SaveChanges();
                 }
 

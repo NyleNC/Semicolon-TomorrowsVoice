@@ -11,8 +11,8 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    [Migration("20250123044908_RemovedCreatedUpdated")]
-    partial class RemovedCreatedUpdated
+    [Migration("20250123192341_SeedDataforAttendance")]
+    partial class SeedDataforAttendance
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -206,7 +206,7 @@ namespace TomorrowsVoices.Data.TVMigrations
             modelBuilder.Entity("TomorrowsVoices.Models.Note", b =>
                 {
                     b.HasOne("TomorrowsVoices.Models.Attendance", "Attendance")
-                        .WithMany("Note")
+                        .WithMany()
                         .HasForeignKey("AttendanceID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -238,11 +238,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .IsRequired();
 
                     b.Navigation("Location");
-                });
-
-            modelBuilder.Entity("TomorrowsVoices.Models.Attendance", b =>
-                {
-                    b.Navigation("Note");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Director", b =>

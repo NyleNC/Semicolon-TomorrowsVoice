@@ -35,7 +35,7 @@ namespace TomorrowsVoices.Models
         ////[Required(ErrorMessage = "You must select the date")]
         ////public DateTime? CreatedAt { get; set; }
         ////public DateTime? UpdatedAt{ get; private set; }
-
+ 
         public Location? Location { get; set; }
         public ICollection<Singer> Singer { get; set; } = new HashSet<Singer>();
 
