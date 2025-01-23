@@ -8,8 +8,41 @@ namespace TomorrowsVoices.Data
 {
     public static class TomorrowsVoicesInitializer
     {
-        public static void Initialize(IServiceProvider serviceProvider)
+        public static async void Initialize(IServiceProvider serviceProvider,
+            bool UseMigrations = true, bool SeedSampleData = true)
         {
+            #region Prepare the Database
+            if (UseMigrations)
+            {
+                using (var context = new ApplicationDbContext(
+                serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
+                {
+                    try
+                    {
+                        //Create the database if it does not exist and apply the Migration
+                        context.Database.Migrate();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.GetBaseException().Message);
+                    }
+                }
+            }
+            #endregion
+
+
+            //#region Seed Sample Data
+            
+
+
+
+
+
+
+
+
+
+
             using (var context = new TomorrowsVoicesContext(
                 serviceProvider.GetRequiredService<DbContextOptions<TomorrowsVoicesContext>>()))
             {
@@ -116,17 +149,17 @@ namespace TomorrowsVoices.Data
                 }
 
 
-                if (!context.Attendances.Any())
-                {
-                    context.Attendances.AddRange(
-                    new Attendance
-                    {
-                        Status = true,
-                        //SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Radin").ID,
-                        SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
-                    });
-                    context.SaveChanges();
-                }
+                //if (!context.Attendances.Any())
+                //{
+                //    context.Attendances.AddRange(
+                //    new Attendance
+                //    {
+                //        Status = true,
+                //        //SingerID = context.Singers.FirstOrDefault(static l => l.FirstName == "Radin").ID,
+                //        SessionID = context.Sessions.FirstOrDefault(static s => s.Date == DateTime.Parse("2024/12/29")).ID
+                //    });
+                //    context.SaveChanges();
+                //}
 
 
 

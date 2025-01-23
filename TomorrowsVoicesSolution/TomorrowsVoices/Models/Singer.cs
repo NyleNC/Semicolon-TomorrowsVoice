@@ -18,9 +18,6 @@ namespace TomorrowsVoices.Models
                 return $"{FirstName} {LastName}";
             }
         }
-
-
-     
         #endregion
 
         [Display(Name = "First Name")]
@@ -33,7 +30,19 @@ namespace TomorrowsVoices.Models
         [StringLength(100, ErrorMessage = "Last name cannot be more than 100 characters long.")]
         public string LastName { get; set; } = "";
 
+        [Display(Name = "")]
+        public bool IsAvailable { get; set; }
+
+
+        [Display(Name = "Created On")]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [Display(Name = "Last Updated")]
+        public DateTime? UpdatedAt { get; set; }
+
+
         [Display(Name = "City")]
+        [Required(ErrorMessage = "You must select a location.")]
         public int LocationID { get; set; }
         public Location? Location { get; set; }
 
