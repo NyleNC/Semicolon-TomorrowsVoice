@@ -55,6 +55,7 @@ namespace TomorrowsVoices.Controllers
         // GET: Director/Create
         public IActionResult Create()
         {
+            Director director = new Director();
             PopulateDropDownLists();
             return View();
         }
@@ -64,15 +65,38 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email")] Director director)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email,Location.City")] Director director)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(director);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            try {
+                if (ModelState.IsValid)
+                {
+                    // Ensure the Location object is properly initialized
+                    if (director.Location == null)
+                    {
+                        director.Location = new Location();
+                    }
+
+                    _context.Add(director);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+
             }
+            catch (DbUpdateException dex)
+            {
+                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Director.Email"))
+                {
+                    ModelState.AddModelError("Email", "Unable to save changes. Remember, " +
+                        "You cant have the same email ");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                }
+            }
+            PopulateDropDownLists(director);
             return View(director);
+
         }
 
         // GET: Director/Edit/5
@@ -91,29 +115,34 @@ namespace TomorrowsVoices.Controllers
             PopulateDropDownLists(director);
             return View(director);
         }
-
         // POST: Director/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Email")] Director director)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id != director.ID)
+            var directorToUpdate = await _context.Directors
+        .Include(d => d.Location) 
+        .FirstOrDefaultAsync(d => d.ID == id);
+
+
+            if (directorToUpdate == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (await TryUpdateModelAsync<Director>(directorToUpdate, "",
+                  p => p.FirstName, p => p.LastName, p => p.Email, p => p.Location))
             {
                 try
                 {
-                    _context.Update(director);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DirectorExists(director.ID))
+                    if (!DirectorExists(directorToUpdate.ID))
                     {
                         return NotFound();
                     }
@@ -122,9 +151,20 @@ namespace TomorrowsVoices.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (DbUpdateException dex)
+                {
+                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Director.Email"))
+                    {
+                        ModelState.AddModelError("Email", "Unable to save changes.Remember,cannot duplicate the same email");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    }
+                }
             }
-            return View(director);
+            PopulateDropDownLists(directorToUpdate);
+            return View(directorToUpdate);
         }
 
         // GET: Director/Delete/5
@@ -136,6 +176,8 @@ namespace TomorrowsVoices.Controllers
             }
 
             var director = await _context.Directors
+                .Include(d=>d.Location)
+                  .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (director == null)
             {
@@ -150,12 +192,21 @@ namespace TomorrowsVoices.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var director = await _context.Directors.FindAsync(id);
-            if (director != null)
+            var director = await _context.Directors
+                   .Include(d => d.Location)
+                   .FirstOrDefaultAsync(m => m.ID == id);
+            try
             {
-                _context.Directors.Remove(director);
+                if (director != null)
+                {
+                    _context.Directors.Remove(director);
+                }
             }
-
+            catch (DbUpdateException)
+            {
+                //Note: there is really no reason a delete should fail if you can "talk" to the database.
+                ModelState.AddModelError("", "Unable to delete record. Try again, and if the problem persists see your system administrator.");
+            }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

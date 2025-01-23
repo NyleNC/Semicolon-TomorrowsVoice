@@ -16,7 +16,11 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TomorrowsVoices")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< Updated upstream
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e67b408c6a02ee485b10b7979c966523d752a91c")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3b63c3ec143ecf0c6233b8df4ea3382a98f499b4")]
+>>>>>>> Stashed changes
 [assembly: System.Reflection.AssemblyProductAttribute("TomorrowsVoices")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TomorrowsVoices")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
