@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TomorrowsVoices.Data;
@@ -21,7 +22,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Director
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? actionButton, string sortDirection = "asc", string sortField = "Director")
         {
             var directors = await _context.Directors
                 .Include(d => d.Location) // Include Location for each Director
@@ -29,6 +30,42 @@ namespace TomorrowsVoices.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
+            string[] sortOptions = new[] { "Director" };
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+        
+
+                if (sortOptions.Contains(actionButton))//Change of sort is requested
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton;//Sort by the button clicked
+                }
+            }
+            // sorting functionality
+            if (sortField == "Director")
+            {
+                if (sortDirection == "asc")
+                {
+                    directors = directors
+                        .OrderBy(p => p.LastName)
+                        .ThenBy(p => p.FirstName) 
+                        .ToList();
+                }
+                else
+                {
+                    directors = directors
+                        .OrderByDescending(p => p.LastName)
+                        .ThenByDescending(p => p.FirstName) 
+                        .ToList();
+                }
+            }
+            ViewData["sortField"] = sortField;
+                ViewData["sortDirection"] = sortDirection;
+
+            
             return View(directors);
         }
 
@@ -216,7 +253,7 @@ namespace TomorrowsVoices.Controllers
             var dQuery = from d in _context.Directors
                          orderby d.LastName, d.FirstName
                          select d;
-            ViewData["DoctorID"] = new SelectList(dQuery, "ID", "DirectorFullName", director?.ID);
+            ViewData["DirectorID"] = new SelectList(dQuery, "ID", "DirectorFullName", director?.ID);
         }
 
         private bool DirectorExists(int id)
