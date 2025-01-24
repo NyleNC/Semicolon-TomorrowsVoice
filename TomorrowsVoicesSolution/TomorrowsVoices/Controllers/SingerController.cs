@@ -158,6 +158,24 @@ namespace TomorrowsVoices.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        // POST: Singer/ToggleAvailability/
+        [HttpPost]
+        public async Task<IActionResult> ToggleAvailability(int id)
+        {
+            var singer = await _context.Singers.FindAsync(id);
+            if (singer == null) return NotFound();
+
+            singer.IsAvailable = !singer.IsAvailable;
+            singer.UpdatedAt = DateTime.Now;
+
+            _context.Update(singer);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
         private bool SingerExists(int id)
         {
             return _context.Singers.Any(e => e.ID == id);
