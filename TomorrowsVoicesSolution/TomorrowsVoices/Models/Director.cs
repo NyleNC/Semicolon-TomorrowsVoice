@@ -37,6 +37,10 @@ namespace TomorrowsVoices.Models
         ////public DateTime? UpdatedAt{ get; private set; }
  
         public Location? Location { get; set; }
+<<<<<<< Updated upstream
+=======
+   
+>>>>>>> Stashed changes
 
     }
 }
