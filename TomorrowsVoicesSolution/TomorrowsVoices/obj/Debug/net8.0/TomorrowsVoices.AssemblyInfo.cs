@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TomorrowsVoices")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3cd3db5d1b5cd8fb438ab4d7d0e3ba25a63eb679")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+10cf4770e4181e1d107692705ca4b969b8d9815b")]
 [assembly: System.Reflection.AssemblyProductAttribute("TomorrowsVoices")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TomorrowsVoices")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

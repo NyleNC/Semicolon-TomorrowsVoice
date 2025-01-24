@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -22,26 +21,22 @@ namespace TomorrowsVoices.Controllers
         // GET: Singer
         public async Task<IActionResult> Index()
         {
-            var tomorrowsVoicesContext = _context.Singers
+            var singers = _context.Singers
+                .AsNoTracking()
                 .Include(s => s.Location);
-            return View(await tomorrowsVoicesContext.ToListAsync());
+            return View(await singers.ToListAsync());
         }
 
         // GET: Singer/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var singer = await _context.Singers
+                .AsNoTracking()
                 .Include(s => s.Location)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (singer == null)
-            {
-                return NotFound();
-            }
+            if (singer == null) return NotFound();
 
             return View(singer);
         }
@@ -49,95 +44,100 @@ namespace TomorrowsVoices.Controllers
         // GET: Singer/Create
         public IActionResult Create()
         {
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID");
-            return View();
+            var locations = _context.Locations.ToList();
+            if (!locations.Any())
+            {
+                ModelState.AddModelError("", "No locations found. Please add a location first.");
+                return View();
+            }
+
+            ViewData["Title"] = "Create";
+            ViewData["LocationID"] = new SelectList(locations, "ID", "City");
+            return View(new TomorrowsVoices.Models.Singer());
         }
 
+
         // POST: Singer/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,CreatedAt,UpdatedAt,LocationID")] Singer singer)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,LocationID,IsAvailable")] Singer singer)
         {
             if (ModelState.IsValid)
             {
+                singer.CreatedAt = DateTime.Now;
+                singer.UpdatedAt = DateTime.Now;
+
                 _context.Add(singer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", singer.LocationID);
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
             return View(singer);
         }
+
+
+
+
+
+
 
         // GET: Singer/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var singer = await _context.Singers.FindAsync(id);
-            if (singer == null)
-            {
-                return NotFound();
-            }
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", singer.LocationID);
+            if (singer == null) return NotFound();
+
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
             return View(singer);
         }
 
         // POST: Singer/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,CreatedAt,UpdatedAt,LocationID")] Singer singer)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,LocationID,IsAvailable")] Singer singer)
         {
-            if (id != singer.ID)
-            {
-                return NotFound();
-            }
+            if (id != singer.ID) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(singer);
+                    var existingSinger = await _context.Singers.FindAsync(id);
+                    if (existingSinger == null) return NotFound();
+
+                    existingSinger.FirstName = singer.FirstName;
+                    existingSinger.LastName = singer.LastName;
+                    existingSinger.LocationID = singer.LocationID;
+                    existingSinger.IsAvailable = singer.IsAvailable;
+                    existingSinger.UpdatedAt = DateTime.Now;
+
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SingerExists(singer.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!SingerExists(singer.ID)) return NotFound();
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", singer.LocationID);
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
             return View(singer);
         }
+
+
 
         // GET: Singer/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var singer = await _context.Singers
+                .AsNoTracking()
                 .Include(s => s.Location)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (singer == null)
-            {
-                return NotFound();
-            }
+            if (singer == null) return NotFound();
 
             return View(singer);
         }
@@ -148,21 +148,14 @@ namespace TomorrowsVoices.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var singer = await _context.Singers.FindAsync(id);
-            if (singer != null)
+            if (singer == null)
             {
-                _context.Singers.Remove(singer);
+                return NotFound();
             }
 
+            _context.Singers.Remove(singer);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private void PopulateDropDownLists(Singer? singer = null)
-        {
-            var dQuery = from d in _context.Directors
-                         orderby d.LastName, d.FirstName
-                         select d;
-            ViewData["SingerID"] = new SelectList(dQuery, "ID", "Singer",singer?.ID);
         }
 
         private bool SingerExists(int id)
