@@ -34,3 +34,13 @@ TomorrowsVoicesSolution/.vs/TomorrowsVoicesSolution/v17/DocumentLayout.json
 /TomorrowsVoicesSolution/.vs/TomorrowsVoicesSolution/v17/.suo
 /TomorrowsVoicesSolution/.vs/TomorrowsVoicesSolution/v17/DocumentLayout.json
 /.gitignore
+/TomorrowsVoicesSolution/TomorrowsVoices/bin
+/TomorrowsVoicesSolution/TomorrowsVoices/obj
+/TomorrowsVoicesSolution/TomorrowsVoices/bin/Debug/net8.0/TomorrowsVoices.dll
+/TomorrowsVoicesSolution/TomorrowsVoices/bin/Debug/net8.0/TomorrowsVoices.exe
+/TomorrowsVoicesSolution/TomorrowsVoices/bin/Debug/net8.0/TomorrowsVoices.pdb
+/TomorrowsVoicesSolution/TomorrowsVoices/bin/Debug/net8.0/TomorrowsVoices.staticwebassets.endpoints.json
+/.gitignore
+/TomorrowsVoicesSolution/TomorrowsVoices/obj/Debug/net8.0/ref/TomorrowsVoices.dll
+/TomorrowsVoicesSolution/TomorrowsVoices/obj/Debug/net8.0/refint/TomorrowsVoices.dll
+/TomorrowsVoicesSolution/TomorrowsVoices/obj/Debug/net8.0/staticwebassets/msbuild.TomorrowsVoices.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
