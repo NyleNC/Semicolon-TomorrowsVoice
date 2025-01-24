@@ -1229,3 +1229,5 @@ C:\Users\moham\Documents\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\Tomorr
 C:\Users\moham\Documents\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\obj\Debug\net8.0\TomorrowsVoices.pdb
 C:\Users\moham\Documents\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\obj\Debug\net8.0\TomorrowsVoices.genruntimeconfig.cache
 C:\Users\moham\Documents\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\obj\Debug\net8.0\ref\TomorrowsVoices.dll
+E:\GitHub TV-3\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\EPPlus.dll
+E:\GitHub TV-3\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\System.Xml.XPath.XmlDocument.dll

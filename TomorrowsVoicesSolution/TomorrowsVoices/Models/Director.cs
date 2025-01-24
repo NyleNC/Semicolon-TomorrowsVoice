@@ -7,20 +7,20 @@ namespace TomorrowsVoices.Models
     {
         public int ID { get; set; }
 
-        [Display(Name ="Director")]
+        [Display(Name = "Director")]
         public string DirectorFullName
         {
             get
             {
-                return FirstName +" "+LastName;
-               
+                return FirstName + " " + LastName;
+
             }
         }
 
         [Display(Name = "First Name")]
         [Required(ErrorMessage = "You cannot leave the first name blank.")]
         [StringLength(50, ErrorMessage = "First name cannot be more than 50 characters long.")]
-        public string? FirstName { get; set; } = ""; 
+        public string? FirstName { get; set; } = "";
 
         [Display(Name = "Last Name")]
         [Required(ErrorMessage = "You cannot leave the last name blank.")]
@@ -35,12 +35,7 @@ namespace TomorrowsVoices.Models
         ////[Required(ErrorMessage = "You must select the date")]
         ////public DateTime? CreatedAt { get; set; }
         ////public DateTime? UpdatedAt{ get; private set; }
- 
-        public Location? Location { get; set; }
-<<<<<<< Updated upstream
-=======
-   
->>>>>>> Stashed changes
 
+        public Location? Location { get; set; }
     }
 }
