@@ -42,9 +42,12 @@
                     <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">Details</a>
                     <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger">Delete</a>
 
-                    <a asp-action="ToggleAvailability" asp-route-id="@item.ID" class="btn btn-sm btn-secondary">
-                        @(item.IsAvailable ? "Mark as Unavailable" : "Mark as Available")
-                    </a>
+                    <form asp-action="ToggleAvailability" asp-route-id="@item.ID" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-secondary">
+                            @(item.IsAvailable ? "Mark as Unavailable" : "Mark as Available")
+                        </button>
+                    </form>
+
                 </td>
             </tr>
         }
