@@ -9,40 +9,57 @@ namespace TomorrowsVoices.Data
     public static class TomorrowsVoicesInitializer
     {
         public static void Initialize(IServiceProvider serviceProvider)
+
         {
             using (var context = new TomorrowsVoicesContext(
                 serviceProvider.GetRequiredService<DbContextOptions<TomorrowsVoicesContext>>()))
             {
                 //Seed Data
-                // Look for any Doctors.  Since we can't have patients without Doctors.
+                // 
                 if (!context.Directors.Any())
                 {
                     context.Directors.AddRange(
                     new Director
                     {
-                        FirstName = "Gregory",
-                        LastName = "House",
-                        Email = "sX@xvarier.com"
+                        FirstName = "Tom",
+                        LastName = "Ronton",
+                        Email = "tronton@tv.com"
                     },
                        new Director
                        {
-                           FirstName = "Dave",
-                           LastName = "Kendell",
-                           Email = "dkendell@tv.com"
+                           FirstName = "Niam",
+                           LastName = "Garrison",
+                           Email = "ngarrison@tv.com"
                        },
                     new Director
                     {
-                        FirstName = "Doogie",
-                        LastName = "Houser",
-                        Email = "esX@xvarier.com"
+                        FirstName = "Sasha",
+                        LastName = "Katherine",
+                        Email = "skatherine@tv.com"
                     },
                     new Director
                     {
-                        FirstName = "Charles",
-                        LastName = "Xavier",
-                        Email = "charlesX@xvarier.com"
+                        FirstName = "Vanda",
+                        LastName = "Cooper",
+                        Email = "vcooper@tv.com"
 
-                    });
+
+                    },
+                    new Director
+                    {
+                        FirstName = "Calob",
+                        LastName = "Garett",
+                        Email = "cgarett@tv.com"
+                    },
+                    new Director
+                    {
+                        FirstName = "Monica",
+                        LastName = "Trails",
+                        Email = "mtrails@tv.com"
+                    }
+              
+            
+         );
                     context.SaveChanges();
                 }
 
@@ -52,20 +69,36 @@ namespace TomorrowsVoices.Data
                     new Location
                     {
                         City = City.Toronto,
-                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Gregory" && d.LastName == "House").ID
-
-                    },
-                    new Location
-                    {
-                        City = City.Niagara,
-                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Doogie" && d.LastName == "Houser").ID
+                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Tom" && d.LastName == "Ronton").ID
 
                     },
                     new Location
                     {
                         City = City.Saskatoon,
-                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Charles" && d.LastName == "Xavier").ID
+                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Sasha" && d.LastName == "Katherine").ID
+                    },
+                    new Location
+                    {
+                        City = City.Niagara,
+                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Niam" && d.LastName == "Garrison").ID
+
+                    },
+                    new Location
+                    {
+                        City = City.Vancouver,
+                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Vanda" && d.LastName == "Cooper").ID
+                    },
+                    new Location
+                    {
+                        City = City.Calgary,
+                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Calob" && d.LastName == "Garett").ID
+                    },
+                    new Location
+                    {
+                        City = City.Montreal,
+                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Monica" && d.LastName == "Trails").ID
                     }
+
                     );
                     context.SaveChanges();
                 }

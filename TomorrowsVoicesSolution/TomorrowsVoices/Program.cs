@@ -53,7 +53,8 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    TomorrowsVoicesInitializer.Initialize(services);
+    TomorrowsVoicesInitializer.Initialize(serviceProvider: services
+       );
 }
 
 app.Run();

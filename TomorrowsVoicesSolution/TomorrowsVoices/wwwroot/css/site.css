@@ -24,3 +24,7 @@ body {
 .form-group {
     margin-bottom: 1rem;
 }
+button.no-pointer-events {
+    pointer-events: none; /* Prevent the button from being clickable or hovered */
+    cursor: default; /* Prevent the hand cursor from appearing */
+}
