@@ -241,7 +241,9 @@ namespace TomorrowsVoices.Controllers
                 return NotFound();
             }
 
-            var director = await _context.Directors.FindAsync(id);
+            var director = await _context.Directors
+                .Include(d => d.Location)
+                .FirstOrDefaultAsync(x => x.ID == id);
             if (director == null)
             {
                 return NotFound();

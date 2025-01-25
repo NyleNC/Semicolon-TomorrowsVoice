@@ -42,8 +42,8 @@ namespace TomorrowsVoices.Controllers
             if (id == null) return NotFound();
 
             var singer = await _context.Singers
-                .AsNoTracking()
                 .Include(s => s.Location)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (singer == null) return NotFound();
 
