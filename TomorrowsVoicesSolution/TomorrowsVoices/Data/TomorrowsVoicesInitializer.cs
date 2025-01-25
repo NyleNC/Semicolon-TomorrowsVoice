@@ -47,18 +47,18 @@ namespace TomorrowsVoices.Data
                     },
                     new Director
                     {
-                        FirstName = "Calob",
-                        LastName = "Garett",
-                        Email = "cgarett@tv.com"
+                        FirstName = "Ham",
+                        LastName = "Elton",
+                        Email = "helton@tv.com"
                     },
                     new Director
                     {
-                        FirstName = "Monica",
-                        LastName = "Trails",
-                        Email = "mtrails@tv.com"
+                        FirstName = "Serg",
+                        LastName = "Urls",
+                        Email = "surls@tv.com"
                     }
-              
-            
+
+
          );
                     context.SaveChanges();
                 }
@@ -90,13 +90,13 @@ namespace TomorrowsVoices.Data
                     },
                     new Location
                     {
-                        City = City.Calgary,
-                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Calob" && d.LastName == "Garett").ID
+                        City = City.Hamilton,
+                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Ham" && d.LastName == "Elton").ID
                     },
                     new Location
                     {
-                        City = City.Montreal,
-                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Monica" && d.LastName == "Trails").ID
+                        City = City.Surrey,
+                        DirectorID = context.Directors.FirstOrDefault(static d => d.FirstName == "Serg" && d.LastName == "Urls").ID
                     }
 
                     );
@@ -219,6 +219,6 @@ namespace TomorrowsVoices.Data
             }
         }
     }
-        }
-    
+}
+
 

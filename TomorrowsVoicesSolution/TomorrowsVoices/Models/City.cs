@@ -7,7 +7,7 @@ namespace TomorrowsVoices.Models
         Saskatoon = 2,
         Niagara = 3,
         Vancouver =4,
-        Calgary =5,
-        Montreal =6,
+        Hamilton =5,
+        Surrey =6,
     }
 }

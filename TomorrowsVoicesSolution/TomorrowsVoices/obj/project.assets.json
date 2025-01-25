@@ -11030,23 +11030,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\nyleb\\.nuget\\packages\\": {},
+    "C:\\Users\\shahr\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "H:\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\TomorrowsVoices.csproj",
+      "projectUniqueName": "C:\\git\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\TomorrowsVoices.csproj",
       "projectName": "TomorrowsVoices",
-      "projectPath": "H:\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\TomorrowsVoices.csproj",
-      "packagesPath": "C:\\Users\\nyleb\\.nuget\\packages\\",
-      "outputPath": "H:\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\obj\\",
+      "projectPath": "C:\\git\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\TomorrowsVoices.csproj",
+      "packagesPath": "C:\\Users\\shahr\\.nuget\\packages\\",
+      "outputPath": "C:\\git\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\nyleb\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\shahr\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -11073,8 +11073,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.100"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -11130,7 +11129,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
