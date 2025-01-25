@@ -4,23 +4,41 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create Atttendance</h1>
 
-<h4>Session</h4>
+<h4>Session Information</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+                        <label asp-for="LocationID" class="control-label"></label>
+                        <select asp-for="LocationID" class="form-control"
+                                asp-items="Html.GetEnumSelectList<City>()"
+                                onchange="updateDirectorName(this.value)"
+                                id="LocationDropDown">
+                            <option value="" selected>Select the City</option>
+                        </select>
+                        <span asp-validation-for="LocationID" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="DirectorName">Director in Charge</label>
+                        <input type="text" id="DirectorName" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group">
-                <label asp-for="Date" class="control-label"></label>
+                <label asp-for="Date" class="control-label">Session Date</label>
                 <input asp-for="Date" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="LocationID" class="control-label"></label>
-                <select asp-for="LocationID" class ="form-control" asp-items="ViewBag.LocationID"></select>
-            </div>
+           
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -34,4 +52,30 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+        function updateDirectorName(locationId) {
+            if (!locationId || locationId == "") {
+                document.getElementById("DirectorName").value = "";
+                return;
+            }
+
+            fetch(`/Session/GetDirectorByLocation?locationId=${locationId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("DirectorName").value = data.directorName || "No director assigned";
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+       
+        document.addEventListener("DOMContentLoaded", () => {
+            let locationDropdown = document.getElementById("LocationID");
+            if (locationDropdown) {
+                locationDropdown.value = "";
+            }
+            updateDirectorName("");
+
+
+		})
+</script>
 }

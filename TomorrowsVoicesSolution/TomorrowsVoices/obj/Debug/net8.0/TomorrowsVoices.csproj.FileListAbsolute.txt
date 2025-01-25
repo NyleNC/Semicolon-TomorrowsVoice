@@ -1233,3 +1233,5 @@ E:\GitHub TV-3\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\
 E:\GitHub TV-3\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\System.Xml.XPath.XmlDocument.dll
 H:\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\EPPlus.dll
 H:\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\System.Xml.XPath.XmlDocument.dll
+C:\git\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\EPPlus.dll
+C:\git\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\System.Xml.XPath.XmlDocument.dll

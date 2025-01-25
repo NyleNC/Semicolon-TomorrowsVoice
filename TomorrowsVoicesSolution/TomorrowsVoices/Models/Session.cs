@@ -13,7 +13,7 @@ namespace TomorrowsVoices.Models
         public DateTime? Date{ get; set; }
 
         [Display(Name = "City")]
-        public int LocationID { get; set; }
+        public int? LocationID { get; set; }
 
         public Location? Location { get; set; }
       

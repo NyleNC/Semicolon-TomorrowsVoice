@@ -37,7 +37,9 @@ namespace TomorrowsVoices.Controllers
             }
 
             var session = await _context.Sessions
-                .Include(s => s.Location)
+                .Include(s => s.Location).ThenInclude(l => l.Director)
+                .Include(s => s.Attendance)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (session == null)
             {
@@ -50,16 +52,18 @@ namespace TomorrowsVoices.Controllers
         // GET: Session/Create
         public IActionResult Create()
         {
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID");
-            return View();
+            Session session = new Session { LocationID = null };
+            return View(session);
         }
+
+
 
         // POST: Session/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Status,Date,LocationID")] Session session)
+        public async Task<IActionResult> Create([Bind("Date,LocationID")] Session session)
         {
             if (ModelState.IsValid)
             {
@@ -67,7 +71,7 @@ namespace TomorrowsVoices.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", session.LocationID);
+            LocationSelectList();
             return View(session);
         }
 
@@ -162,5 +166,27 @@ namespace TomorrowsVoices.Controllers
         {
             return _context.Sessions.Any(e => e.ID == id);
         }
+
+
+
+        private SelectList LocationSelectList()
+        {
+            return new SelectList(_context.Locations
+                .OrderBy(d => d.City)
+                , "ID", "City");
+        }
+
+        [HttpGet]
+        public JsonResult GetDirectorByLocation(int locationId)
+        {
+            var director = _context.Locations
+                                   .Where(l => l.ID == locationId)
+                                   .Select(l => l.Director.DirectorFullName) // Make sure `Director` exists and has a Name
+                                   .FirstOrDefault();
+
+            return Json(new { directorName = director });
+        }
+
+
     }
 }
