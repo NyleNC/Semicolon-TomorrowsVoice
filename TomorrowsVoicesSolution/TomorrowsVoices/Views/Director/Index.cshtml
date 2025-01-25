@@ -42,9 +42,41 @@
 <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
 <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
 
+    <button class="btn btn-outline-danger mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
+            data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+        Filter/Search @ViewData["numberFilters"]
+    </button><br />
+    <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
+        <div class="card card-body bg-light">
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label class="control-label">Search by Director Name:</label>
+                    @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Filter by City:</label>
+                        @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Cities"], new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">Search by Email:</label>
+                    @Html.TextBox("SearchEmail", null, new { @class = "form-control" })
+                </div>
+              
+          
+                
+                </div>
+              
+    <div class="form-group col-md-2 align-self-start">
+        <input type="submit" name="actionButton" value="Filter"
+               class="btn btn-outline-primary" />
+        <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
+    </div>
+        </div>
+    </div>
 <table class="table table-hover">
         <thead class="table-dark">
-            
         <tr>
                 <th class="d-none d-md-table-cell">
                     <button type="button" name="actionButton" value="#" class="btn btn-toolbar text-white"> #</button>
@@ -66,15 +98,40 @@
                         }
                     </button>
                 </th>
-
-                <th class="d-none d-md-table-cell">
-                    <button type="button" value="City" class="btn btn-toolbar text-white"> City</button>
+                <th>
+                    <button type="button" name="actionButton" value="City" class="btn btn-toolbar text-white" onclick="handleSort(event, 'City')">
+                        City
+                        @if (ViewData["sortField"]?.ToString() == "City")
+                        {
+                            if (ViewData["sortDirection"]?.ToString() == "asc")
+                            {
+                                <i class="bi bi-sort-alpha-up ms-2"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-sort-alpha-down ms-2"></i>
+                            }
+                        }
+                    </button>
+                </th>
+                <th>
+                    <button type="button" name="actionButton" value="Email" class="btn btn-toolbar text-white" onclick="handleSort(event, 'Email')">
+                        Email
+                        @if (ViewData["sortField"]?.ToString() == "Email")
+                        {
+                            if (ViewData["sortDirection"]?.ToString() == "asc")
+                            {
+                                <i class="bi bi-sort-alpha-up ms-2"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-sort-alpha-down ms-2"></i>
+                            }
+                        }
+                    </button>
                 </th>
                 <th class="d-none d-md-table-cell">
-                    <button type="button" name="actionButton" value="Email" class="btn btn-toolbar text-white"> Email</button>
-                </th >
-                <th class="d-none d-md-table-cell">
-                    <button type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white"> Actions</button>
+                    <button type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white no-pointer-events"> Actions</button>
                 </th>
         </tr>
  </thead>
@@ -107,17 +164,21 @@
 </form>
 <script>
     function handleSort(event, field) {
-        event.preventDefault();  // Prevent the default button behavior (no page reload)
+        event.preventDefault();
+        const form = event.target.closest('form');
+        const sortField = form.querySelector('input[name="sortField"]');
+        const sortDirection = form.querySelector('input[name="sortDirection"]');
 
-        // Toggle the sort direction based on the current direction
-        var sortDirection = "@ViewData["sortDirection"]" === "asc" ? "desc" : "asc";
+        if (sortField.value === field) {
+            // Toggle sort direction
+            sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+        } else {
+            // Set new field and default to ascending order
+            sortField.value = field;
+            sortDirection.value = "asc";
+        }
 
-        // Set the sort field and direction values in hidden inputs
-        document.querySelector("input[name='sortField']").value = field;
-        document.querySelector("input[name='sortDirection']").value = sortDirection;
-
-        // Submit the form to apply the sort without refreshing the page
-        var form = event.target.closest('form');
-        form.submit();  // Submits the form without reloading or scrolling
+        // Submit the form
+        form.submit();
     }
 </script>

@@ -5,6 +5,9 @@ namespace TomorrowsVoices.Models
     {
         Toronto,
         Saskatoon,
-        Niagara
+        Niagara,
+        Vancouver,
+        Calgary,
+        Montreal,
     }
 }
