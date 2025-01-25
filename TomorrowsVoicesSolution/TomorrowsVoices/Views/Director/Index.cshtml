@@ -18,7 +18,7 @@
         <div class="text-danger">@Html.Raw(TempData["Feedback"])</div>
 
         <form asp-action="InsertFromExcel" asp-controller="Director" method="post" enctype="multipart/form-data">
-    
+
             <div class="card-body">
                 <div>
                     <div class="d-flex justify-content-end align-items-end mb-lg-5">
@@ -39,8 +39,8 @@
 
 <form asp-action="Index" method="get">
 
-<input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
-<input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
 
     <button class="btn btn-outline-danger mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
             data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
@@ -63,28 +63,28 @@
                     <label class="control-label">Search by Email:</label>
                     @Html.TextBox("SearchEmail", null, new { @class = "form-control" })
                 </div>
-              
-          
-                
-                </div>
-              
-    <div class="form-group col-md-2 align-self-start">
-        <input type="submit" name="actionButton" value="Filter"
-               class="btn btn-outline-primary" />
-        <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
-    </div>
+
+
+
+            </div>
+
+            <div class="form-group col-md-2 align-self-start">
+                <input type="submit" name="actionButton" value="Filter"
+                       class="btn btn-outline-primary" />
+                <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
+            </div>
         </div>
     </div>
-<table class="table table-hover">
+    <table class="table table-hover">
         <thead class="table-dark">
-        <tr>
+            <tr>
                 <th class="d-none d-md-table-cell">
                     <button type="button" name="actionButton" value="#" class="btn btn-toolbar text-white"> #</button>
                 </th>
                 <th>
 
                     <button type="button" name="actionButton" value="Director" class="btn btn-toolbar text-white" onclick="handleSort(event, 'Director')">
-                        Director 
+                        Director
                         @if (ViewData["sortField"]?.ToString() == "Director")
                         {
                             if (ViewData["sortDirection"]?.ToString() == "asc")
@@ -133,34 +133,39 @@
                 <th class="d-none d-md-table-cell">
                     <button type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white no-pointer-events"> Actions</button>
                 </th>
-        </tr>
- </thead>
-    <tbody >
-@foreach (var item in Model) {
-        <tr >
-            <td>
-                @{@index}
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.DirectorFullName)
-            </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Location.City)
-                </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID" class= "btn btn-sm btn-warning">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID" class= "btn btn-sm btn-info">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID" class= "btn btn-sm btn-danger">Delete</a>
-            </td>
-        </tr>
-        index++;
-}   
-    </tbody>
-</table>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @{
+                            @index
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DirectorFullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Location.City)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+                index++;
+            }
+        </tbody>
+    </table>
+    <partial name="_PagingNavBar" />
+
 </form>
 <script>
     function handleSort(event, field) {
@@ -181,4 +186,10 @@
         // Submit the form
         form.submit();
     }
+</script>
+<script type="text/javascript">
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
 </script>

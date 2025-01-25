@@ -1235,3 +1235,5 @@ H:\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\ne
 H:\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\System.Xml.XPath.XmlDocument.dll
 C:\git\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\EPPlus.dll
 C:\git\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\System.Xml.XPath.XmlDocument.dll
+C:\Users\moham\Documents\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\EPPlus.dll
+C:\Users\moham\Documents\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\bin\Debug\net8.0\System.Xml.XPath.XmlDocument.dll
