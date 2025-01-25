@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Create";
+    var presentSingersCount = ViewBag.PresentSingersCount ?? "0/0";
+    var absentSingersCount = ViewBag.AbsentSingersCount ?? "0/0";
 }
 
 <h1>Create Atttendance</h1>
@@ -38,6 +40,28 @@
                 <input asp-for="Date" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="presentSingersCount">Present Singers Count</label>
+                        <input type="text" id="presentSingersCount" class="form-control" value="@presentSingersCount" readonly>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="absentSingersCount">Absent Singers Count</label>
+                        <input type="text" id="absentSingersCount" class="form-control" value="@absentSingersCount" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Notes" class="control-label"></label>
+                <textarea asp-for="Notes" rows="5" class="form-control"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
            
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -54,28 +78,25 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 <script>
         function updateDirectorName(locationId) {
-            if (!locationId || locationId == "") {
-                document.getElementById("DirectorName").value = "";
-                return;
-            }
-
             fetch(`/Session/GetDirectorByLocation?locationId=${locationId}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("DirectorName").value = data.directorName || "No director assigned";
                 })
                 .catch(error => console.error('Error:', error));
+
+            document.addEventListener("DOMContentLoaded", () => {
+                let locationDropdown = document.getElementById("LocationID");
+                if (locationDropdown) {
+                    locationDropdown.value = "";
+                }
+                updateDirectorName("");
+
+
+            })
         }
 
        
-        document.addEventListener("DOMContentLoaded", () => {
-            let locationDropdown = document.getElementById("LocationID");
-            if (locationDropdown) {
-                locationDropdown.value = "";
-            }
-            updateDirectorName("");
-
-
-		})
+        
 </script>
 }

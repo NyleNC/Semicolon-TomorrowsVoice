@@ -24,7 +24,8 @@ namespace TomorrowsVoices.Controllers
         {
             var tomorrowsVoicesContext = _context.Sessions
                 .Include(s => s.Location).ThenInclude(l => l.Director)
-                .Include(s => s.Attendance);
+                .Include(s => s.Attendance)
+                .AsNoTracking();
             return View(await tomorrowsVoicesContext.ToListAsync());
         }
 
@@ -46,6 +47,15 @@ namespace TomorrowsVoices.Controllers
                 return NotFound();
             }
 
+            var presentSingersCount = session.Attendance.Count(a => a.Status == true);
+            var absentSingersCount = session.Attendance.Count(a => a.Status == false);
+            var totalSingersCount = session.Attendance.Count();
+
+            ViewBag.PresentSingersCount = $"{presentSingersCount}/{totalSingersCount}";
+            ViewBag.AbsentSingersCount = $"{absentSingersCount}/{totalSingersCount}";
+
+
+
             return View(session);
         }
 
@@ -63,12 +73,28 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Date,LocationID")] Session session)
+        public async Task<IActionResult> Create([Bind("Date,Notes,LocationID")] Session session)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(session);
                 await _context.SaveChangesAsync();
+
+
+                var attendances = _context.Attendances
+                    .Where( async => async.SessionID == session.ID)
+                    .Include(a => a.Singer)
+                    .ToList();
+
+                var presentSingersCount = session.Attendance.Count(a => a.Status == true);
+                var absentSingersCount = session.Attendance.Count(a => a.Status == false);
+                var totalSingersCount = session.Attendance.Count();
+
+                ViewBag.PresentSingersCount = $"{presentSingersCount}/{totalSingersCount}";
+                ViewBag.AbsentSingersCount = $"{absentSingersCount}/{totalSingersCount}";
+
+
+
                 return RedirectToAction(nameof(Index));
             }
             LocationSelectList();
@@ -97,7 +123,7 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Status,Date,LocationID")] Session session)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Notes,Date,LocationID")] Session session)
         {
             if (id != session.ID)
             {

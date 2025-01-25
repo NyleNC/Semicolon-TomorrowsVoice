@@ -3,11 +3,11 @@ namespace TomorrowsVoices.Models
 {
     public enum City
     {
-        Toronto,
-        Saskatoon,
-        Niagara,
-        Vancouver,
-        Calgary,
-        Montreal,
+        Toronto = 1,
+        Saskatoon = 2,
+        Niagara = 3,
+        Vancouver =4,
+        Calgary =5,
+        Montreal =6,
     }
 }
