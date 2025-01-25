@@ -74,7 +74,7 @@ namespace TomorrowsVoices.Controllers
                 {
                     directors = (IQueryable<Director>)directors
                         .AsEnumerable() 
-.Where(p => p.Location != null && p.Location.City.ToString().Contains(SearchCity));
+                        .Where(p => p.Location != null && p.Location.City.ToString().Contains(SearchCity));
                   
                     numberFilters++;
                 }

@@ -30,11 +30,6 @@
     </div>
 </div>
 
-<style>
-    .card-body {
-        margin-bottom: 0rem; /* Adjust the value as needed */
-    }
-</style>
 
 <form asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
@@ -111,20 +106,24 @@
         </tbody>
     </table>
 </form>
-
+ 
 <script>
     function handleSort(event, field) {
-        event.preventDefault();  // Prevent the default button behavior (no page reload)
+        event.preventDefault();
+        const form = event.target.closest('form');
+        const sortField = form.querySelector('input[name="sortField"]');
+        const sortDirection = form.querySelector('input[name="sortDirection"]');
 
-        // Toggle the sort direction based on the current direction
-        var sortDirection = "@ViewData["sortDirection"]" === "asc" ? "desc" : "asc";
+        if (sortField.value === field) {
+            // Toggle sort direction
+            sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+        } else {
+            // Set new field and default to ascending order
+            sortField.value = field;
+            sortDirection.value = "asc";
+        }
 
-        // Set the sort field and direction values in hidden inputs
-        document.querySelector("input[name='sortField']").value = field;
-        document.querySelector("input[name='sortDirection']").value = sortDirection;
-
-        // Submit the form to apply the sort without refreshing the page
-        var form = event.target.closest('form');
-        form.submit();  // Submits the form without reloading or scrolling
+        // Submit the form
+        form.submit();
     }
 </script>

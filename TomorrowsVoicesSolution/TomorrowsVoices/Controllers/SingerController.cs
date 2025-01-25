@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,19 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Singer
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, string? actionButton, string sortDirection = "asc", string sortField = "Director")
         {
             var singers = _context.Singers
                 .AsNoTracking()
                 .Include(s => s.Location);
+
+            #region 
+
+            #endregion
+
+
+
+
             return View(await singers.ToListAsync());
         }
 
