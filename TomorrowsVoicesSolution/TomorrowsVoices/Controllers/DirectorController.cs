@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
+using TomorrowsVoices.Utilities;
 
 
 namespace TomorrowsVoices.Controllers
@@ -25,7 +26,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Director
-        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, string? actionButton, string sortDirection = "asc", string sortField = "Director")
+        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Director")
         {
             var directors = _context.Directors
                 .Include(d => d.Location) // Include Location for each Director
@@ -36,6 +37,8 @@ namespace TomorrowsVoices.Controllers
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
+                page = 1;//Reset page to start
+
                 if (sortOptions.Contains(actionButton))
                 {
                     if (actionButton == sortField) //Reverse order on same field
@@ -153,7 +156,13 @@ namespace TomorrowsVoices.Controllers
             // Set the ViewData for Cities dropdown
             ViewData["Cities"] = cityList;
 
-            return View(directors);
+            //Handle Paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+
+            var pagedData = await PaginatedList<Director>.CreateAsync(directors.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
         }
 
 

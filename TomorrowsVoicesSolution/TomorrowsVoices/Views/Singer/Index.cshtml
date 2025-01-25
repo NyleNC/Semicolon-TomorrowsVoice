@@ -110,6 +110,7 @@
             }
         </tbody>
     </table>
+    <partial name="_PagingNavBar"/>
 </form>
 
 <script>
@@ -127,4 +128,10 @@
         var form = event.target.closest('form');
         form.submit();  // Submits the form without reloading or scrolling
     }
+</script>
+<script type="text/javascript">
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
 </script>

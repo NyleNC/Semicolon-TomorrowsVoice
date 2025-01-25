@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
+using TomorrowsVoices.Utilities;
 
 namespace TomorrowsVoices.Controllers
 {
@@ -19,12 +20,19 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Singer
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page, int? pageSizeID)
         {
             var singers = _context.Singers
                 .AsNoTracking()
                 .Include(s => s.Location);
-            return View(await singers.ToListAsync());
+
+            //Handle Paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+
+            var pagedData = await PaginatedList<Singer>.CreateAsync(singers.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
         }
 
         // GET: Singer/Details/5
