@@ -29,14 +29,14 @@ namespace TomorrowsVoices.Data
                .HasOne(l => l.Director)
                .WithOne(d => d.Location)
                .HasForeignKey<Location>(l => l.DirectorID);
-              
+
 
             // One-to-Many: Location -> Singers
             modelBuilder.Entity<Singer>()
                 .HasOne(s => s.Location)
                 .WithMany(l => l.Singer)
-                .HasForeignKey(s => s.LocationID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(s => s.LocationID);
+            
 
          
       

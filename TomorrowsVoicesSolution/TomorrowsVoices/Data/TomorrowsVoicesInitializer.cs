@@ -9,12 +9,13 @@ namespace TomorrowsVoices.Data
     public static class TomorrowsVoicesInitializer
     {
         public static void Initialize(IServiceProvider serviceProvider)
+
         {
             using (var context = new TomorrowsVoicesContext(
                 serviceProvider.GetRequiredService<DbContextOptions<TomorrowsVoicesContext>>()))
             {
                 //Seed Data
-                // Look for any Doctors.  Since we can't have patients without Doctors.
+                // 
                 if (!context.Directors.Any())
                 {
                     context.Directors.AddRange(
@@ -42,6 +43,7 @@ namespace TomorrowsVoices.Data
                         LastName = "Cooper",
                         Email = "vcooper@tv.com"
 
+
                     },
                     new Director
                     {
@@ -55,7 +57,9 @@ namespace TomorrowsVoices.Data
                         LastName = "Trails",
                         Email = "mtrails@tv.com"
                     }
-                    );
+              
+            
+         );
                     context.SaveChanges();
                 }
 

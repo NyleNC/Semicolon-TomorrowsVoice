@@ -12,6 +12,7 @@ using OfficeOpenXml;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
 
+
 namespace TomorrowsVoices.Controllers
 {
     public class DirectorController : Controller
@@ -24,36 +25,15 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Director
-        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity,string? actionButton, string sortDirection = "asc", string sortField = "Director")
+        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, string? actionButton, string sortDirection = "asc", string sortField = "Director")
         {
-            var directors = await _context.Directors
+            var directors = _context.Directors
                 .Include(d => d.Location) // Include Location for each Director
-                .AsNoTracking()
-                .ToListAsync();
-
-            //Count the number of filters applied - start by assuming no filters
+                .AsNoTracking();
+            string[] sortOptions = new[] { "Director", "City", "Email" };
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
-            if (!String.IsNullOrEmpty(SearchString))
-            {
-                directors = directors.Where(p => p.LastName != null && p.LastName.Contains(SearchString)
-                                            || p.FirstName != null && p.FirstName.Contains(SearchString))
-                                     .ToList();
-                numberFilters++;
-            }
-            if (!String.IsNullOrEmpty(SearchEmail))
-            {
-                directors = directors.Where(p => p.Email != null && p.Email.Contains(SearchEmail))
-                                     .ToList();
-                numberFilters++;
-            }
-            if (!string.IsNullOrEmpty(SearchCity))
-            {
-                directors = directors.Where(p => p.Location != null && p.Location.City.ToString().Contains(SearchCity, StringComparison.OrdinalIgnoreCase))
-                                     .ToList();
-                numberFilters++;
-            }
-            string[] sortOptions = new[] { "Director", "City", "Email" };
+
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
                 if (sortOptions.Contains(actionButton))
@@ -65,6 +45,41 @@ namespace TomorrowsVoices.Controllers
                     sortField = actionButton; //Sort by the button clicked
                 }
             }
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                directors = directors.Where(p => p.LastName != null && p.LastName.Contains(SearchString)
+                                                || p.FirstName != null && p.FirstName.Contains(SearchString));
+
+                numberFilters++;
+            }
+            if (!String.IsNullOrEmpty(SearchEmail))
+            {
+                directors = directors.Where(p => p.Email != null && p.Email.Contains(SearchEmail));
+
+                numberFilters++;
+            }
+
+            if (!string.IsNullOrEmpty(SearchCity))
+            {
+                // If City is an Enum:
+                if (Enum.TryParse<City>(SearchCity, true, out var searchCityEnum))
+                {
+                    directors = directors
+                        .Where(p => p.Location != null && p.Location.City == searchCityEnum); 
+                    numberFilters++;
+                }
+                // If City is a string:
+                else
+                {
+                    directors = (IQueryable<Director>)directors
+                        .AsEnumerable() 
+.Where(p => p.Location != null && p.Location.City.ToString().Contains(SearchCity));
+                  
+                    numberFilters++;
+                }
+            }
+
             // sorting functionality
             if (sortField == "Director")
             {
@@ -72,15 +87,13 @@ namespace TomorrowsVoices.Controllers
                 {
                     directors = directors
                         .OrderBy(p => p.LastName)
-                        .ThenBy(p => p.FirstName)
-                        .ToList();
+                        .ThenBy(p => p.FirstName);
                 }
                 else
                 {
                     directors = directors
                         .OrderByDescending(p => p.LastName)
-                        .ThenByDescending(p => p.FirstName)
-                        .ToList();
+                        .ThenBy(p => p.FirstName);
                 }
             }
             else if (sortField == "Email")
@@ -90,16 +103,14 @@ namespace TomorrowsVoices.Controllers
                     directors = directors
                         .OrderBy(p => p.Email)
                         .ThenBy(p => p.LastName)
-                        .ThenBy(p => p.FirstName)
-                        .ToList();
+                        .ThenBy(p => p.FirstName);
                 }
                 else
                 {
                     directors = directors
                         .OrderByDescending(p => p.Email)
-                        .ThenByDescending(p => p.LastName)
-                        .ThenByDescending(p => p.FirstName)
-                        .ToList();
+                        .ThenBy(p => p.LastName)
+                        .ThenBy(p => p.FirstName);
                 }
             }
             else if (sortField == "City")
@@ -107,40 +118,44 @@ namespace TomorrowsVoices.Controllers
                 if (sortDirection == "asc")
                 {
                     directors = directors
-                        .OrderBy(p => p.Location?.City)
+                        .OrderBy(p => p.Location.City)
                         .ThenBy(p => p.LastName)
-                        .ThenBy(p => p.FirstName)
-                        .ToList();
+                        .ThenBy(p => p.FirstName);
                 }
                 else
                 {
                     directors = directors
-                        .OrderByDescending(p => p.Location?.City)
-                        .ThenByDescending(p => p.LastName)
-                        .ThenByDescending(p => p.FirstName)
-                        .ToList();
+                        .OrderByDescending(p => p.Location.City)
+                        .ThenBy(p => p.LastName)
+                        .ThenBy(p => p.FirstName);
                 }
             }
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["numberFilters"] = numberFilters;
-            var cityList = directors.Select(d => d.Location?.City.ToString())
-                                    .Distinct()
-                                    .Where(city => city != null)
-                                    .Select(city => new SelectListItem
-                                    {
-                                        Value = city,
-                                        Text = city
-                                    }).ToList();
 
-            // Add a default option for "All Conditions"
+            var cityList = directors
+                .AsEnumerable()
+                .Select(d => d.Location?.City.ToString())
+                .Where(city => city != null)
+                .Distinct()
+                .Select(city => new SelectListItem
+                {
+                    Value = city,
+                    Text = city
+                })
+                .ToList();
+
+            // Add a default option for "All Cities"
             cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
 
             // Set the ViewData for Cities dropdown
             ViewData["Cities"] = cityList;
+
             return View(directors);
         }
+
 
         // GET: Director/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -180,10 +195,10 @@ namespace TomorrowsVoices.Controllers
             try {
                 if (ModelState.IsValid)
                 {
-                    // Ensure the Location object is properly initialized
+                    // Check if the Location is null before saving
                     if (director.Location == null)
                     {
-                        director.Location = new Location();
+                        director.Location = new Location(); 
                     }
 
                     _context.Add(director);
@@ -274,60 +289,51 @@ namespace TomorrowsVoices.Controllers
             PopulateDropDownLists(directorToUpdate);
             return View(directorToUpdate);
         }
-
+        // GET: Director/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Directors == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var appointmentReason = await _context.Directors
+            var director = await _context.Directors
+                .Include(d => d.Location)
+                  .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (appointmentReason == null)
+            if (director == null)
             {
                 return NotFound();
             }
 
-            return View(appointmentReason);
+            return View(director);
         }
 
-        // POST: AppointmentReason/Delete/5
+        // POST: Director/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Directors == null)
-            {
-                return Problem("Entity set 'MedicalOfficeContext.AppointmentReasons'  is null.");
-            }
-            var director= await _context.Directors
-                  .FirstOrDefaultAsync(m => m.ID == id);
+            var director = await _context.Directors
+                   .Include(d => d.Location)
+                   .FirstOrDefaultAsync(m => m.ID == id);
             try
             {
                 if (director != null)
                 {
                     _context.Directors.Remove(director);
                 }
-                await _context.SaveChangesAsync();
-                return Redirect(ViewData["returnURL"].ToString());
             }
-            catch (DbUpdateException dex)
+            catch (DbUpdateException)
             {
-                ExceptionMessageVM msg = new();
-                if (dex.GetBaseException().Message.Contains("FOREIGN KEY constraint failed"))
-                {
-                    msg.ErrProperty = "";
-                    msg.ErrMessage = "Unable to Delete " + ViewData["ControllerFriendlyName"] +
-                        ". Remember, you cannot delete a " + ViewData["ControllerFriendlyName"] +
-                        " that has related records.";
-                }
-                ModelState.AddModelError(msg.ErrProperty, msg.ErrMessage);
+                //Note: there is really no reason a delete should fail if you can "talk" to the database.
+                ModelState.AddModelError("", "Unable to delete record. Try again, and if the problem persists see your system administrator.");
             }
-            return View(director);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
-
+        //ImportExcel
         [HttpPost]
         public async Task<IActionResult> InsertFromExcel(IFormFile theExcel)
         {
@@ -356,18 +362,13 @@ namespace TomorrowsVoices.Controllers
                         int successCount = 0;
                         int errorCount = 0;
 
-        
-                        if (workSheet.Cells[1, 1].Text == "FirstName" &&
-                            workSheet.Cells[1, 2].Text == "LastName" &&
-                            workSheet.Cells[1, 3].Text == "City" &&
-                            workSheet.Cells[1, 4].Text == "Email")
+                        if (workSheet.Cells[1, 1].Text == "FirstName" && workSheet.Cells[1, 2].Text == "LastName" && workSheet.Cells[1, 3].Text == "City" && workSheet.Cells[1, 4].Text == "Email")
                         {
                             for (int row = start.Row + 1; row <= end.Row; row++)
                             {
                                 Director director = new Director();
                                 try
                                 {
-                               
                                     director.FirstName = workSheet.Cells[row, 1].Text;
                                     director.LastName = workSheet.Cells[row, 2].Text;
                                     string cityName = workSheet.Cells[row, 3].Text;
@@ -377,11 +378,11 @@ namespace TomorrowsVoices.Controllers
                                     if (string.IsNullOrEmpty(director.FirstName) || string.IsNullOrEmpty(director.LastName) || string.IsNullOrEmpty(director.Email))
                                     {
                                         errorCount++;
-                                        feedBack += $"Error: Row {row} has missing required fields.<br />";
-                                        continue;
+                                        feedBack += $"Error: Row {row} has missing fields.<br />";
+                                        continue; // Skip invalid row
                                     }
 
-                                    if (!_context.Directors.Any(d => d.FirstName == director.FirstName && d.LastName == director.LastName && d.Email == director.Email))
+                                    if (!_context.Directors.Any(d => d.Email == director.Email))
                                     {
                                         if (Enum.TryParse(cityName, true, out City parsedCity))
                                         {
@@ -390,12 +391,11 @@ namespace TomorrowsVoices.Controllers
                                             {
                                                 location = new Location { City = parsedCity };
                                                 _context.Locations.Add(location);
-                                                await _context.SaveChangesAsync();
+                                                await _context.SaveChangesAsync(); 
                                             }
-
                                             director.Location = location;
+
                                             _context.Directors.Add(director);
-                                            await _context.SaveChangesAsync();
                                             successCount++;
                                         }
                                         else
@@ -407,52 +407,27 @@ namespace TomorrowsVoices.Controllers
                                     else
                                     {
                                         errorCount++;
-                                        feedBack += $"Error: Director {director.FirstName} {director.LastName} with email {director.Email} is a duplicate.<br />";
+                                        feedBack += $"Error: Director with email {director.Email} already exists.<br />";
                                     }
-                                }
-                                catch (DbUpdateException dex)
-                                {
-                                    errorCount++;
-                                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
-                                    {
-                                        feedBack += $"Error: Record {director.FirstName} {director.LastName} was rejected as a duplicate.<br />";
-                                    }
-                                    else
-                                    {
-                                        feedBack += $"Error: Record {director.FirstName} {director.LastName} caused a database error.<br />";
-                                    }
-                                    _context.Remove(director);
                                 }
                                 catch (Exception ex)
                                 {
                                     errorCount++;
-                                    feedBack += $"Error: An error occurred while processing row {row}. Details: {ex.Message}<br />";
+                                    feedBack += $"Error: Exception in row {row} - {ex.Message}<br />";
                                 }
                             }
 
-                            feedBack += $"Finished Importing {successCount + errorCount} Records with {successCount} inserted and {errorCount} rejected.";
+                            await _context.SaveChangesAsync(); 
                         }
                         else
                         {
-                            feedBack = "Error: Invalid file format. Ensure the first row contains 'FirstName', 'LastName', 'City', and 'Email'.";
+                            feedBack += "Error: Invalid Excel file format.<br />";
                         }
                     }
-                    else
-                    {
-                        feedBack = "Error: That file is not an Excel spreadsheet.";
-                    }
-                }
-                else
-                {
-                    feedBack = "Error: File appears to be empty.";
+                    TempData["Feedback"] = feedBack;
+                    
                 }
             }
-            else
-            {
-                feedBack = "Error: No file uploaded.";
-            }
-
-            TempData["Feedback"] = feedBack;
             return RedirectToAction("Index");
         }
         private void PopulateDropDownLists(Director? director = null)
