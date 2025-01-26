@@ -293,12 +293,14 @@ namespace TomorrowsVoices.Data
                     new Session
                     {
                         Date = DateTime.Parse("2024/12/29"),
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Toronto).ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Toronto).ID,
+                        Notes = "1 Person was not able to commute."
                     },
                     new Session
                     {
                         Date = DateTime.Parse("2024/12/29"),
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Hamilton).ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Hamilton).ID,
+                        Notes = "2 People were feeling sick and didn't show up."
                     }
                 );
                 context.SaveChanges();
