@@ -5,7 +5,7 @@ using TomorrowsVoices.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 //db contexts
@@ -53,8 +53,11 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    TomorrowsVoicesInitializer.Initialize(serviceProvider: services
-       );
+    TomorrowsVoicesInitializer.Initialize(serviceProvider: services, DeleteDatabase: true,
+        UseMigrations: true, SeedSampleData: true);
+
+    //ApplicationDbInitializer.Initialize(serviceProvider: services,
+    //    UseMigrations: true, SeedSampleData: true);
 }
 
 app.Run();

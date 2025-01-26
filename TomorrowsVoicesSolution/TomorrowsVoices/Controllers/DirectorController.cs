@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
+using TomorrowsVoices.Utilities;
 
 
 namespace TomorrowsVoices.Controllers
@@ -25,17 +26,20 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Director
-        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, string? actionButton, string sortDirection = "asc", string sortField = "Director")
+        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Director")
         {
             var directors = _context.Directors
                 .Include(d => d.Location) // Include Location for each Director
                 .AsNoTracking();
+
             string[] sortOptions = new[] { "Director", "City", "Email" };
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
+                page = 1;//Reset page to start
+
                 if (sortOptions.Contains(actionButton))
                 {
                     if (actionButton == sortField) //Reverse order on same field
@@ -74,7 +78,7 @@ namespace TomorrowsVoices.Controllers
                 {
                     directors = (IQueryable<Director>)directors
                         .AsEnumerable() 
-.Where(p => p.Location != null && p.Location.City.ToString().Contains(SearchCity));
+                        .Where(p => p.Location != null && p.Location.City.ToString().Contains(SearchCity));
                   
                     numberFilters++;
                 }
@@ -153,7 +157,13 @@ namespace TomorrowsVoices.Controllers
             // Set the ViewData for Cities dropdown
             ViewData["Cities"] = cityList;
 
-            return View(directors);
+            //Handle Paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+
+            var pagedData = await PaginatedList<Director>.CreateAsync(directors.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
         }
 
 
@@ -190,40 +200,57 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email,Location.City")] Director director)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email,Location")] Director director)
         {
-            try {
-                if (ModelState.IsValid)
+            if (ModelState.IsValid)
+            {
+                try
                 {
-                    // Check if the Location is null before saving
-                    if (director.Location == null)
+                    
+                    if (director.Location != null && director.Location.City != null)
                     {
-                        director.Location = new Location(); 
-                    }
+                     
+                        var existingDirector = await _context.Directors.Include(d => d.Location)
+                            .FirstOrDefaultAsync(d => d.Location.City == director.Location.City);
 
+                        if (existingDirector != null)
+                        {
+                          
+                            ModelState.AddModelError("Location.City", "A director is already assigned to this city.");
+                            PopulateDropDownLists(director); 
+                            return View(director);
+                        }
+                    }
+                
+
+                   
                     _context.Add(director);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
+                catch (DbUpdateException dex)
+                {
+                    var baseMessage = dex.GetBaseException().Message;
 
-            }
-            catch (DbUpdateException dex)
-            {
-                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Director.Email"))
-                {
-                    ModelState.AddModelError("Email", "Unable to save changes. Remember, " +
-                        "You cant have the same email ");
+                    if (baseMessage.Contains("UNIQUE constraint failed"))
+                    {
+                        ModelState.AddModelError("Email", "Unable to save changes. Remember, you can't have the same email.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    }
                 }
-                else
-                {
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
-                }
+
+                // Ensure dropdown lists are populated even if ModelState is not valid
+                PopulateDropDownLists(director);
+                return View(director);
             }
+
+            // Ensure dropdown lists are populated even if ModelState is not valid
             PopulateDropDownLists(director);
             return View(director);
-
         }
-
         // GET: Director/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -232,7 +259,9 @@ namespace TomorrowsVoices.Controllers
                 return NotFound();
             }
 
-            var director = await _context.Directors.FindAsync(id);
+            var director = await _context.Directors
+                .Include(d => d.Location)
+                .FirstOrDefaultAsync(x => x.ID == id);
             if (director == null)
             {
                 return NotFound();
@@ -260,9 +289,24 @@ namespace TomorrowsVoices.Controllers
             {
                 try
                 {
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+
+                    if (directorToUpdate.Location != null && directorToUpdate.Location.City != null)
+                    {
+
+                        var existingDirector = await _context.Directors.Include(d => d.Location)
+                            .FirstOrDefaultAsync(d => d.Location.City == directorToUpdate.Location.City);
+
+                        if (existingDirector != null)
+                        {
+
+                            ModelState.AddModelError("Location.City", "A director is already assigned to this city.");
+                            PopulateDropDownLists(directorToUpdate);
+                            return View(directorToUpdate);
+                        }
+                    }
                 }
+
+
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!DirectorExists(directorToUpdate.ID))
@@ -276,7 +320,7 @@ namespace TomorrowsVoices.Controllers
                 }
                 catch (DbUpdateException dex)
                 {
-                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Email"))
+                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
                     {
                         ModelState.AddModelError("Email", "Unable to save changes.Remember,cannot duplicate the same email");
                     }
@@ -333,103 +377,7 @@ namespace TomorrowsVoices.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //ImportExcel
-        [HttpPost]
-        public async Task<IActionResult> InsertFromExcel(IFormFile theExcel)
-        {
-            string feedBack = string.Empty;
-
-            if (theExcel != null)
-            {
-                string mimeType = theExcel.ContentType;
-                long fileLength = theExcel.Length;
-
-                if (!(mimeType == "" || fileLength == 0)) // Looks like we have a file!!!
-                {
-                    if (mimeType.Contains("excel") || mimeType.Contains("spreadsheet"))
-                    {
-                        ExcelPackage excel;
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await theExcel.CopyToAsync(memoryStream);
-                            excel = new ExcelPackage(memoryStream);
-                        }
-
-                        var workSheet = excel.Workbook.Worksheets[0];
-                        var start = workSheet.Dimension.Start;
-                        var end = workSheet.Dimension.End;
-
-                        int successCount = 0;
-                        int errorCount = 0;
-
-                        if (workSheet.Cells[1, 1].Text == "FirstName" && workSheet.Cells[1, 2].Text == "LastName" && workSheet.Cells[1, 3].Text == "City" && workSheet.Cells[1, 4].Text == "Email")
-                        {
-                            for (int row = start.Row + 1; row <= end.Row; row++)
-                            {
-                                Director director = new Director();
-                                try
-                                {
-                                    director.FirstName = workSheet.Cells[row, 1].Text;
-                                    director.LastName = workSheet.Cells[row, 2].Text;
-                                    string cityName = workSheet.Cells[row, 3].Text;
-                                    director.Email = workSheet.Cells[row, 4].Text;
-
-                                    // Validate data before adding
-                                    if (string.IsNullOrEmpty(director.FirstName) || string.IsNullOrEmpty(director.LastName) || string.IsNullOrEmpty(director.Email))
-                                    {
-                                        errorCount++;
-                                        feedBack += $"Error: Row {row} has missing fields.<br />";
-                                        continue; // Skip invalid row
-                                    }
-
-                                    if (!_context.Directors.Any(d => d.Email == director.Email))
-                                    {
-                                        if (Enum.TryParse(cityName, true, out City parsedCity))
-                                        {
-                                            var location = _context.Locations.FirstOrDefault(l => l.City == parsedCity);
-                                            if (location == null)
-                                            {
-                                                location = new Location { City = parsedCity };
-                                                _context.Locations.Add(location);
-                                                await _context.SaveChangesAsync(); 
-                                            }
-                                            director.Location = location;
-
-                                            _context.Directors.Add(director);
-                                            successCount++;
-                                        }
-                                        else
-                                        {
-                                            errorCount++;
-                                            feedBack += $"Error: Invalid city '{cityName}' in row {row}.<br />";
-                                        }
-                                    }
-                                    else
-                                    {
-                                        errorCount++;
-                                        feedBack += $"Error: Director with email {director.Email} already exists.<br />";
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    errorCount++;
-                                    feedBack += $"Error: Exception in row {row} - {ex.Message}<br />";
-                                }
-                            }
-
-                            await _context.SaveChangesAsync(); 
-                        }
-                        else
-                        {
-                            feedBack += "Error: Invalid Excel file format.<br />";
-                        }
-                    }
-                    TempData["Feedback"] = feedBack;
-                    
-                }
-            }
-            return RedirectToAction("Index");
-        }
+       
         private void PopulateDropDownLists(Director? director = null)
         {
             var dQuery = from d in _context.Directors
