@@ -14,7 +14,7 @@ namespace TomorrowsVoices.Models
 
         [MaxLength(2000, ErrorMessage = "Limit of 2000 characters for notes.")]
         [DataType(DataType.MultilineText)]
-        public string Notes { get; set; } = "";
+        public string? Notes { get; set; } = "";
 
 
         [Display(Name = "City")]

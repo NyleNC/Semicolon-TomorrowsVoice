@@ -11,6 +11,10 @@ using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
 using TomorrowsVoices.ViewModels;
 using TomorrowsVoices.Utilities;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System.Drawing;
+using TomorrowsVoices.Data.TVMigrations;
 
 namespace TomorrowsVoices.Controllers
 {
@@ -319,54 +323,133 @@ namespace TomorrowsVoices.Controllers
             ViewData["selOpts"] = new MultiSelectList(selected.OrderBy(s => s.DisplayText), "ID", "DisplayText");
             ViewData["availOpts"] = new MultiSelectList(available.OrderBy(s => s.DisplayText), "ID", "DisplayText");
         }
-      private void UpdateSessionSingers(string[] selectedOptions, Session sessionToUpdate)
-{
-    var allSingerIDs = _context.Singers.Select(s => s.ID).ToHashSet(); // Get all singers
-    var selectedOptionsHS = new HashSet<int>(selectedOptions.Select(int.Parse)); // Convert selected IDs to HashSet<int>
+        private void UpdateSessionSingers(string[] selectedOptions, Session sessionToUpdate)
+      {
+        var allSingerIDs = _context.Singers.Select(s => s.ID).ToHashSet(); // Get all singers
+        var selectedOptionsHS = new HashSet<int>(selectedOptions.Select(int.Parse)); 
 
-    // Get all current attendance records for this session
-    var currentAttendance = sessionToUpdate.Attendance.ToList();
+        // Get all current attendance records for this session
+        var currentAttendance = sessionToUpdate.Attendance.ToList();
 
-    foreach (var singerID in allSingerIDs)
-    {
-        var existingAttendance = currentAttendance.FirstOrDefault(a => a.SingerID == singerID);
-
-        if (selectedOptionsHS.Contains(singerID)) // Singer was selected
+        foreach (var singerID in allSingerIDs)  
         {
-            if (existingAttendance == null) // If not already in attendance, add it with Status = true
+            var existingAttendance = currentAttendance.FirstOrDefault(a => a.SingerID == singerID);
+
+            if (selectedOptionsHS.Contains(singerID)) // Singer was selected
             {
-                sessionToUpdate.Attendance.Add(new Attendance
+                if (existingAttendance == null) // If not already in attendance, add it with Status = true
                 {
-                    SingerID = singerID,
-                    SessionID = sessionToUpdate.ID,
-                    Status = true
-                });
+                    sessionToUpdate.Attendance.Add(new Attendance
+                    {
+                        SingerID = singerID,
+                        SessionID = sessionToUpdate.ID,
+                        Status = true
+                    });
+                }
+                else // If already exists, ensure Status is true
+                {
+                    existingAttendance.Status = true;
+                }
             }
-            else // If already exists, ensure Status is true
+            else // Singer was NOT selected
             {
-                existingAttendance.Status = true;
+                if (existingAttendance != null) // If already exists, set Status = false
+                {
+                    existingAttendance.Status = false;
+                }
+                else // If not in attendance, add it with Status = false
+                {
+                    sessionToUpdate.Attendance.Add(new Attendance
+                    {
+                        SingerID = singerID,
+                        SessionID = sessionToUpdate.ID,
+                        Status = false
+                    });
+                }
             }
         }
-        else // Singer was NOT selected
+           
+      }
+
+        public IActionResult AttendanceReportExport()
         {
-            if (existingAttendance != null) // If already exists, set Status = false
-            {
-                existingAttendance.Status = false;
-            }
-            else // If not in attendance, add it with Status = false
-            {
-                sessionToUpdate.Attendance.Add(new Attendance
+            var sessAtts = _context.Sessions
+                .Include(s => s.Location).ThenInclude(l => l.Director)
+                .Include(s => s.Attendance).ThenInclude(a => a.Singer)
+                .OrderBy(s => s.Date)
+                .Select(x => new
                 {
-                    SingerID = singerID,
-                    SessionID = sessionToUpdate.ID,
-                    Status = false
-                });
+                    x.Date,
+                    Attendance = $"{x.Attendance.Count(a => a.Status)}/{x.Attendance.Count}", 
+                    x.Location.City,
+                    Director = x.Location.Director.DirectorFullName
+                    ,
+                    Notes = x.Notes
+                })
+                .ToList();
+            ;
+
+
+
+            int numRows = sessAtts.Count();
+
+            if (numRows > 0)
+            {
+                using (ExcelPackage excel = new ExcelPackage())
+                {
+                    var workSheet = excel.Workbook.Worksheets.Add("Session Attendance Report");
+
+                    workSheet.Cells[1, 1].Value = "Attendance Report";
+                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 5])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        Rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        Rng.Style.Fill.BackgroundColor.SetColor(Color.LightPink);
+                    }
+
+                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 5])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(Color.LightSalmon);
+                    }
+
+                    workSheet.Cells[3, 1].Value = "Date";
+                    workSheet.Cells[3, 2].Value = "Attendance";
+                    workSheet.Cells[3, 3].Value = "City";
+                    workSheet.Cells[3, 4].Value = "Director";
+                    workSheet.Cells[3, 5].Value = "Notes";
+
+
+
+                    workSheet.Cells[3,1].LoadFromCollection(sessAtts, true);
+                    var range = workSheet.Cells[4, 1, workSheet.Dimension.End.Row, workSheet.Dimension.End.Column];
+                    range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+
+                    workSheet.Column(1).Style.Numberformat.Format = "mmm d, yyyy";
+
+                    workSheet.Cells.AutoFitColumns();
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "Attendance Report.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not build and download the file.");
+                    }
+                }     
             }
+            return NotFound("No data.");
+
         }
-    }
-}
-
-
 
         private bool SessionExists(int id)
         {

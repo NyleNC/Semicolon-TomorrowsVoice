@@ -28,3 +28,18 @@ button.no-pointer-events {
     pointer-events: none; /* Prevent the button from being clickable or hovered */
     cursor: default; /* Prevent the hand cursor from appearing */
 }
+
+
+.header-logo {
+    max-width: 75px;
+    height: auto;
+}
+
+
+.footer-logo {
+    max-width: 60px; 
+    height: auto;
+}
+
+
+
