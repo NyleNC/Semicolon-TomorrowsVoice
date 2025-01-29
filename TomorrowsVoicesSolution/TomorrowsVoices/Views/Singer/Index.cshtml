@@ -4,14 +4,13 @@
 
 @{
     ViewData["Title"] = "Singers";
-    int index = 1;
 }
 
 <h1>Singers</h1>
 
 <div class="d-flex justify-content-between align-items-end mb-3">
     <div class="text-center">
-        <a asp-action="Create" class="btn btn-primary">Add Singer</a>
+        <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-user.png" alt="add-singer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Singer</a>
     </div>
   @*   <div>
         <div class="text-danger">@Html.Raw(TempData["Feedback"])</div>
@@ -38,9 +37,6 @@
     <table class="table table-striped table-hover">
         <thead class="table-dark">
             <tr>
-                <th class="d-none d-md-table-cell">
-                    <button type="button" name="actionButton" value="#" class="btn btn-toolbar text-white"> #</button>
-                </th>
                 <th>
                     <button type="button" name="actionButton" value="Singer" class="btn btn-toolbar text-white" onclick="handleSort(event, 'Singer')">
                         Singer
@@ -62,13 +58,7 @@
                 </th>
                 <th class="d-none d-md-table-cell">
                     <button type="button" name="actionButton" value="Availability" class="btn btn-toolbar text-white">Availability</button>
-                </th>
-                <th class="d-none d-md-table-cell">
-                    <button type="button" name="actionButton" value="CreatedAt" class="btn btn-toolbar text-white">Created At</button>
-                </th>
-                <th class="d-none d-md-table-cell">
-                    <button type="button" name="actionButton" value="UpdatedAt" class="btn btn-toolbar text-white">Updated At</button>
-                </th>
+                </th>                 
                 <th class="d-none d-md-table-cell">
                     <button type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white">Actions</button>
                 </th>
@@ -78,30 +68,26 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@index</td>
                     <td>@Html.DisplayFor(modelItem => item.FullName)</td>
                     <td>@(item.Location != null ? item.Location.City : "Not Set")</td>
                     <td>
                         <span style="color:black" class="badge @(item.IsAvailable ? "badge-success" : "badge-danger")">
                             @(item.IsAvailable ? "Available" : "Not Available")
                         </span>
-                    </td>
-                    <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    </td>            
                     <td>
-                        @(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm") : "Never Updated")
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger">Delete</a> |
+                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger"><img src="~/Images/archive.png" alt="archive-icon" style="height: 24px; width: auto; margin-right: 10px" />Delete</a> |
                         <form asp-action="ToggleAvailability" asp-route-id="@item.ID" method="post" style="display:inline;">
                             <button type="submit" class="btn btn-sm btn-secondary">
                                 @(item.IsAvailable ? "Mark as Unavailable" : "Mark as Available")
                             </button>
                         </form>
                     </td>
+                     
+                  
                 </tr>
-                index++;
             }
         </tbody>
     </table>
