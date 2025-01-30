@@ -174,7 +174,7 @@ namespace TomorrowsVoices.Controllers
             
 
             if (await TryUpdateModelAsync<Session>(sessionToUpdate, "",
-                s => s.Date, s => s.Notes, s => s.LocationID))
+                s => s.Date, s => s.Notes, s => s.Location))
             {
                 try
                 {
@@ -250,12 +250,12 @@ namespace TomorrowsVoices.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                //var returnUrl = ViewData["returnURL"]?.ToString();
-                //if (string.IsNullOrEmpty(returnUrl))
-                //{
-                //    return RedirectToAction(nameof(Index));
-                //}
-                //return Redirect(returnUrl);
+                var returnUrl = ViewData["returnURL"]?.ToString();
+                if (string.IsNullOrEmpty(returnUrl))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return Redirect(returnUrl);
             }
             catch (DbUpdateException dex)
             {
@@ -269,7 +269,7 @@ namespace TomorrowsVoices.Controllers
                 }
 
             }
-
+            await _context.SaveChangesAsync();
             return View(session);
         }
         private SelectList LocationSelectList()

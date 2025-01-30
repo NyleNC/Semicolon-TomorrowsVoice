@@ -123,14 +123,14 @@ namespace TomorrowsVoices.Controllers
                 {
                     directors = directors
                         .OrderBy(p => p.Location.City)
-                        .ThenBy(p => p.LastName)
+                           .ThenBy(p => p.LastName)
                         .ThenBy(p => p.FirstName);
                 }
                 else
                 {
                     directors = directors
                         .OrderByDescending(p => p.Location.City)
-                        .ThenBy(p => p.LastName)
+                              .ThenBy(p => p.LastName)
                         .ThenBy(p => p.FirstName);
                 }
             }
@@ -215,8 +215,7 @@ namespace TomorrowsVoices.Controllers
 
                         if (existingDirector != null)
                         {
-                          
-                            ModelState.AddModelError("Location.City", "A director is already assigned to this city.");
+                    ModelState.AddModelError("Location.City", $"{director.DirectorFullName} is already assigned to this City: {director.Location.City}");
                             PopulateDropDownLists(director); 
                             return View(director);
                         }
@@ -360,6 +359,8 @@ namespace TomorrowsVoices.Controllers
         {
             var director = await _context.Directors
                    .Include(d => d.Location)
+                   .ThenInclude(d=>d.Session)
+                    .ThenInclude(s => s.Attendance) 
                    .FirstOrDefaultAsync(m => m.ID == id);
             try
             {
@@ -367,17 +368,31 @@ namespace TomorrowsVoices.Controllers
                 {
                     _context.Directors.Remove(director);
                 }
+
+                await _context.SaveChangesAsync();
+                var returnUrl = ViewData["returnURL"]?.ToString();
+                if (string.IsNullOrEmpty(returnUrl))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return Redirect(returnUrl);
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException dex)
             {
-                //Note: there is really no reason a delete should fail if you can "talk" to the database.
-                ModelState.AddModelError("", "Unable to delete record. Try again, and if the problem persists see your system administrator.");
+                if (dex.GetBaseException().Message.Contains("FOREIGN KEY constraint failed"))
+                {
+                    ModelState.AddModelError("", "Unable to Delete Director.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                }
             }
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return View(director);
+
         }
 
-       
+
         private void PopulateDropDownLists(Director? director = null)
         {
             var dQuery = from d in _context.Directors

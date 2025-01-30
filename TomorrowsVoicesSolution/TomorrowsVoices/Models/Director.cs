@@ -36,6 +36,7 @@ namespace TomorrowsVoices.Models
         ////public DateTime? CreatedAt { get; set; }
         ////public DateTime? UpdatedAt{ get; private set; }
 
+  
         public Location? Location { get; set; }
     }
 }

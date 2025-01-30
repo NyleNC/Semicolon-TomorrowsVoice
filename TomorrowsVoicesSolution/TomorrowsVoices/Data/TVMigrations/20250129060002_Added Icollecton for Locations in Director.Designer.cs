@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TomorrowsVoices.Data;
 
@@ -10,9 +11,11 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    partial class TomorrowsVoicesContextModelSnapshot : ModelSnapshot
+    [Migration("20250129060002_Added Icollecton for Locations in Director")]
+    partial class AddedIcollectonforLocationsinDirector
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -81,10 +84,15 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Property<int>("DirectorID")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("DirectorID1")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("ID");
 
                     b.HasIndex("DirectorID")
                         .IsUnique();
+
+                    b.HasIndex("DirectorID1");
 
                     b.ToTable("Locations");
                 });
@@ -201,6 +209,10 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
+                    b.HasOne("TomorrowsVoices.Models.Director", null)
+                        .WithMany("Locations")
+                        .HasForeignKey("DirectorID1");
+
                     b.Navigation("Director");
                 });
 
@@ -239,6 +251,8 @@ namespace TomorrowsVoices.Data.TVMigrations
             modelBuilder.Entity("TomorrowsVoices.Models.Director", b =>
                 {
                     b.Navigation("Location");
+
+                    b.Navigation("Locations");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Location", b =>

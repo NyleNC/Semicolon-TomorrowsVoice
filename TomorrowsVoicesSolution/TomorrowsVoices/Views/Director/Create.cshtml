@@ -13,24 +13,25 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" placeholder="Director First Name"/>
+
+                <label asp-for="FirstName"  class="control-label" ></label>
+                <input asp-for="FirstName" class="form-control" placeholder="John" />
+
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" placeholder="Director Last Name" />
+                <input asp-for="LastName" class="form-control" placeholder="Doe"/>
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Location.City" class="control-label"></label>
-                <select asp-for="Location.City" class="form-control"
-                        asp-items="Html.GetEnumSelectList<City>()"></select>
+                <input asp-for="Location.City" class="form-control" placeholder="St.Catharines"/>
                 <span asp-validation-for="Location.City" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" placeholder="Director Email Address" />
+                <input asp-for="Email" class="form-control" placeholder="management@gmail.com" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
          

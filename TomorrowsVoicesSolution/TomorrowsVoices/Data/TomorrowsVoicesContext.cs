@@ -24,24 +24,42 @@ namespace TomorrowsVoices.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            //one to one relationship between location and director
+           
+       
 
             modelBuilder.Entity<Location>()
                .HasOne(l => l.Director)
                .WithOne(d => d.Location)
-               .HasForeignKey<Location>(l => l.DirectorID);
+               .HasForeignKey<Location>(l => l.DirectorID)
+               .OnDelete(DeleteBehavior.SetNull);
+
 
 
             // One-to-Many: Location -> Singers
             modelBuilder.Entity<Singer>()
                 .HasOne(s => s.Location)
                 .WithMany(l => l.Singer)
-                .HasForeignKey(s => s.LocationID);
-            
+                .HasForeignKey(s => s.LocationID)
+                   .OnDelete(DeleteBehavior.SetNull);
 
-         
-      
+
+            modelBuilder.Entity<Attendance>()
+                .HasOne(a => a.Singer)
+                .WithMany(s => s.Attendance)
+                .HasForeignKey(a => a.SingerID)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Session>()
+                .HasOne(Session => Session.Location)
+                .WithMany(Location => Location.Session)
+                .HasForeignKey(Session => Session.LocationID)
+             .OnDelete(DeleteBehavior.SetNull);
+
+
             // is unique for email
             modelBuilder.Entity<Director>()
+
                 .HasIndex(d=>d.Email)
                 .IsUnique();
 
