@@ -9,7 +9,7 @@ namespace TomorrowsVoices.Models
        public City City { get; set; }
 
 
-        public int DirectorID { get; set; }
+        public int? DirectorID { get; set; }
 
 
         public Director? Director { get; set; }

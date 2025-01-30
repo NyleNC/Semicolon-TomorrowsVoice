@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using MedicalOffice.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -341,7 +342,6 @@ namespace TomorrowsVoices.Controllers
             }
 
             var director = await _context.Directors
-                .Include(d => d.Location)
                   .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (director == null)
@@ -352,46 +352,31 @@ namespace TomorrowsVoices.Controllers
             return View(director);
         }
 
+        // delete is finally working , we can finally delete director without an error
         // POST: Director/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var director = await _context.Directors
-                   .Include(d => d.Location)
-                   .ThenInclude(d=>d.Session)
-                    .ThenInclude(s => s.Attendance) 
-                   .FirstOrDefaultAsync(m => m.ID == id);
+            var director = await _context.Directors.FindAsync(id);
+
+            if (director == null)
+            {
+                return NotFound();
+            }
+
             try
             {
-                if (director != null)
-                {
-                    _context.Directors.Remove(director);
-                }
-
+                _context.Directors.Remove(director);
                 await _context.SaveChangesAsync();
-                var returnUrl = ViewData["returnURL"]?.ToString();
-                if (string.IsNullOrEmpty(returnUrl))
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                return Redirect(returnUrl);
+                return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateException dex)
+            catch (Exception)
             {
-                if (dex.GetBaseException().Message.Contains("FOREIGN KEY constraint failed"))
-                {
-                    ModelState.AddModelError("", "Unable to Delete Director.");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
-                }
+                ModelState.AddModelError("", "An error occurred while trying to delete the Director. Please try again.");
+                return View(director);
             }
-            return View(director);
-
         }
-
 
         private void PopulateDropDownLists(Director? director = null)
         {

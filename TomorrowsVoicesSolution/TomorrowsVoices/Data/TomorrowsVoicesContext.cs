@@ -25,8 +25,8 @@ namespace TomorrowsVoices.Data
             base.OnModelCreating(modelBuilder);
 
             //one to one relationship between location and director
-           
-       
+
+
 
             modelBuilder.Entity<Location>()
                .HasOne(l => l.Director)
@@ -41,20 +41,20 @@ namespace TomorrowsVoices.Data
                 .HasOne(s => s.Location)
                 .WithMany(l => l.Singer)
                 .HasForeignKey(s => s.LocationID)
-                   .OnDelete(DeleteBehavior.SetNull);
+                   .OnDelete(DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<Attendance>()
                 .HasOne(a => a.Singer)
                 .WithMany(s => s.Attendance)
                 .HasForeignKey(a => a.SingerID)
-                  .OnDelete(DeleteBehavior.SetNull);
+                  .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Session>()
                 .HasOne(Session => Session.Location)
                 .WithMany(Location => Location.Session)
                 .HasForeignKey(Session => Session.LocationID)
-             .OnDelete(DeleteBehavior.SetNull);
+             .OnDelete(DeleteBehavior.Restrict);
 
 
             // is unique for email

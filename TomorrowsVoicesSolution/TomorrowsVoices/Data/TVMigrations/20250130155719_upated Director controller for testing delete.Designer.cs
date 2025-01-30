@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TomorrowsVoices.Data;
 
@@ -10,9 +11,11 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    partial class TomorrowsVoicesContextModelSnapshot : ModelSnapshot
+    [Migration("20250130155719_upated Director controller for testing delete")]
+    partial class upatedDirectorcontrollerfortestingdelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -78,7 +81,7 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Property<int>("City")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("DirectorID")
+                    b.Property<int>("DirectorID")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ID");
@@ -185,7 +188,7 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.HasOne("TomorrowsVoices.Models.Singer", "Singer")
                         .WithMany("Attendance")
                         .HasForeignKey("SingerID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.Navigation("Session");
@@ -198,7 +201,8 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.HasOne("TomorrowsVoices.Models.Director", "Director")
                         .WithOne("Location")
                         .HasForeignKey("TomorrowsVoices.Models.Location", "DirectorID")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.Navigation("Director");
                 });
@@ -219,7 +223,7 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.HasOne("TomorrowsVoices.Models.Location", "Location")
                         .WithMany("Session")
                         .HasForeignKey("LocationID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Location");
                 });
@@ -229,7 +233,7 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.HasOne("TomorrowsVoices.Models.Location", "Location")
                         .WithMany("Singer")
                         .HasForeignKey("LocationID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.Navigation("Location");
