@@ -36,15 +36,15 @@
             </div>
          
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <button type="submit" class="btn btn-primary">
+                <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+					Create
             </div>
+            <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Director Page</a>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

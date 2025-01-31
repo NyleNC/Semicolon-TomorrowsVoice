@@ -4,6 +4,8 @@
     ViewData["Title"] = "Edit";
 }
 
+
+
 <h1>Edit</h1>
 
 <h4>Director</h4>
@@ -35,16 +37,19 @@
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-success"  />
-            </div>
+            
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="form-group">
+    <button type="submit" class="btn btn-success">
+        <img src="~/Images/save-changes-icon.png" alt="Save changes" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+        Save
+    </button>
 </div>
+<a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Director Page</a>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
