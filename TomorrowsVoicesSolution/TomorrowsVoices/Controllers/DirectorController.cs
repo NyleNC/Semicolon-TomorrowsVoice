@@ -91,14 +91,14 @@ namespace TomorrowsVoices.Controllers
                 if (sortDirection == "asc")
                 {
                     directors = directors
-                        .OrderBy(p => p.LastName)
-                        .ThenBy(p => p.FirstName);
+                        .OrderBy(p => p.FirstName)
+                        .ThenBy(p => p.LastName);
                 }
                 else
                 {
                     directors = directors
-                        .OrderByDescending(p => p.LastName)
-                        .ThenBy(p => p.FirstName);
+                        .OrderByDescending(p => p.FirstName)
+                        .ThenBy(p => p.LastName);
                 }
             }
             else if (sortField == "Email")
@@ -107,8 +107,8 @@ namespace TomorrowsVoices.Controllers
                 {
                     directors = directors
                         .OrderBy(p => p.Email)
-                        .ThenBy(p => p.LastName)
-                        .ThenBy(p => p.FirstName);
+                        .ThenBy(p => p.FirstName)
+                        .ThenBy(p => p.LastName);
                 }
                 else
                 {
