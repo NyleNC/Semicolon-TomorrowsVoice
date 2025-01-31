@@ -11,13 +11,7 @@ namespace TomorrowsVoices.Models
         #region Summary Properties
 
         [Display(Name = "Singer")]
-        public string FullName
-        {
-            get
-            {
-                return $"{FirstName} {LastName}";
-            }
-        }
+        public string FullName => $"{FirstName} {LastName}";
         #endregion
 
         [Display(Name = "First Name")]
