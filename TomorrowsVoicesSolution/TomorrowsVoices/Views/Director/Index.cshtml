@@ -158,28 +158,26 @@
     <partial name="_PagingNavBar" />
 </form>
 <script>
-    function handleSort(event, field) {
-        event.preventDefault();
-        const form = event.target.closest('form');
-        const sortField = form.querySelector('input[name="sortField"]');
-        const sortDirection = form.querySelector('input[name="sortDirection"]');
+  
+    </script>
 
-        if (sortField.value === field) {
-            // Toggle sort direction
-            sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
-        } else {
-            // Set new field and default to ascending order
-            sortField.value = field;
-            sortDirection.value = "asc";
-        }
-
-        // Submit the form
-        form.submit();
-    }
-</script>
 <script type="text/javascript">
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
+    })      
+    function handleSort(event, field) {
+            event.preventDefault();
+            const form = event.target.closest('form');
+            const sortField = form.querySelector('input[name="sortField"]');
+            const sortDirection = form.querySelector('input[name="sortDirection"]');
+
+            if (sortField.value === field) {
+                sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+            } else {
+                sortField.value = field;
+                sortDirection.value = "asc";
+            }
+            form.submit();
+        }
 </script>

@@ -1,5 +1,6 @@
 ﻿@model TomorrowsVoices.Models.Director
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 @{
     ViewData["Title"] = "Edit";
 }
@@ -25,11 +26,10 @@
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
-          
+
             <div class="form-group">
                 <label asp-for="Location.City" class="control-label"></label>
-                <select asp-for="Location.City" class="form-control"
-                        asp-items="Html.GetEnumSelectList<City>()"></select>
+                <select asp-for="Location.City" class="form-control city-dropdown" asp-items="Html.GetEnumSelectList<City>()"></select>
                 <span asp-validation-for="Location.City" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -51,6 +51,48 @@
 <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Director Page</a>
 
 
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+<script>
+    $(document).ready(function () {
+        $("#City").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("CitySuggestions", "Director")',
+                    type: "GET",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item, value: item };
+                        }));
+                    }
+                });
+            },
+            minLength: 1,
+            messages: {
+                noResults: "No cities found",
+                results: function () { return ""; }
+            },
+     open: function () {
+
+                var autocompleteList = $(".ui-autocomplete");
+                autocompleteList.css({
+                    "max-height": "200px",
+                    "overflow-y": "auto",
+                     "overflow-x": "hidden"
+                });
+            }
+        });
+    });
+       $(document).ready(function() {
+        $('.city-dropdown').select2({
+            placeholder: "Select a city",
+            allowClear: true
+        });
+    });
+</script>

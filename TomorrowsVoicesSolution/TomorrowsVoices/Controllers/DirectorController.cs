@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.EntityFrameworkCore.Storage;
 using OfficeOpenXml;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
@@ -142,24 +142,21 @@ namespace TomorrowsVoices.Controllers
             ViewData["sortDirection"] = sortDirection;
             ViewData["numberFilters"] = numberFilters;
 
-            var cityList = directors
-                .AsEnumerable()
-                .Select(d => d.Location?.City.ToString())
-                .Where(city => city != null)
-                .Distinct()
-                .Select(city => new SelectListItem
-                {
-                    Value = city,
-                    Text = city
-                })
-                .ToList();
+            var cityList = Enum.GetValues(typeof(City))
+            .Cast<City>()
+            .Select(city => new SelectListItem
+            {
+                Value = city.ToString(),
+                Text = DisplayNameEnum(city)
+            })
+            .OrderBy(c => c.Text) 
+            .ToList();
 
         
             cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
 
-         
+     
             ViewData["Cities"] = cityList;
-
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
@@ -205,29 +202,40 @@ namespace TomorrowsVoices.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email,Location")] Director director)
         {
-           
-
             if (ModelState.IsValid)
             {
                 try
                 {
-
+                    // Validate the city input from the user
                     if (director.Location != null && !string.IsNullOrEmpty(director.Location.City.ToString()))
                     {
+                        // Check if the entered city name is valid (matches a City enum name)
+                        bool isValidCity = Enum.GetNames(typeof(City))
+                            .Any(cityName => string.Equals(cityName, director.Location.City.ToString(), StringComparison.OrdinalIgnoreCase));
+
+                        if (!isValidCity)
+                        {
+                            // Add an error if the city is not valid
+                            ModelState.AddModelError("Location.City", "Invalid city name entered.");
+                            PopulateDropDownLists(director); // Repopulate dropdown in case of errors
+                            return View(director);
+                        }
+
+                        // Check if a director is already assigned to the entered city
                         var existingDirector = await _context.Directors.Include(d => d.Location)
-                            .FirstOrDefaultAsync(d => d.Location.City == director.Location.City);
+                            .FirstOrDefaultAsync(d => d.Location.City == director.Location.City)
+                            ;
 
                         if (existingDirector != null)
                         {
+                            // Add an error if someone is already assigned to this city
                             ModelState.AddModelError("Location.City", $"Someone is already assigned to this City: {director.Location.City}");
                             PopulateDropDownLists(director);
                             return View(director);
                         }
-               
                     }
 
-
-
+                    // Add the new director to the database
                     _context.Add(director);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -247,7 +255,7 @@ namespace TomorrowsVoices.Controllers
                 }
             }
 
-       
+            // Repopulate the dropdowns in case of validation errors
             PopulateDropDownLists(director);
             return View(director);
         }
@@ -274,37 +282,32 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id, string[] selectedOptions)
         {
             var directorToUpdate = await _context.Directors
-        .Include(d => d.Location) 
-        .FirstOrDefaultAsync(d => d.ID == id);
+                .Include(s => s.Location)
+                .FirstOrDefaultAsync(m => m.ID == id);
+
             if (directorToUpdate == null)
             {
                 return NotFound();
             }
 
+            // UpdateSessionSingers(selectedOptions, directorToUpdate); // This line is causing the error
+
             if (await TryUpdateModelAsync<Director>(directorToUpdate, "",
-                  p => p.FirstName, p => p.LastName, p => p.Email, p => p.Location))
+                 d => d.Location))
             {
                 try
                 {
-
-                    if (directorToUpdate.Location != null && directorToUpdate.Location.City != null)
-                    {
-                        var existingDirector = await _context.Directors.Include(d => d.Location)
-                            .FirstOrDefaultAsync(d => d.Location.City == directorToUpdate.Location.City);
-                        if (existingDirector != null)
-                        {
-
-                            ModelState.AddModelError("Location.City", "A director is already assigned to this city.");
-                            PopulateDropDownLists(directorToUpdate);
-                            return View(directorToUpdate);
-                        }
-                    }
+                    _context.Update(directorToUpdate);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Details", new { directorToUpdate.ID });
                 }
-
-
+                catch (RetryLimitExceededException /* dex */)
+                {
+                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!DirectorExists(directorToUpdate.ID))
@@ -316,21 +319,17 @@ namespace TomorrowsVoices.Controllers
                         throw;
                     }
                 }
-                catch (DbUpdateException dex)
+                catch (DbUpdateException)
                 {
-                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
-                    {
-                        ModelState.AddModelError("Email", "Unable to save changes.Remember,cannot duplicate the same email");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
-                    }
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
             }
+
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", directorToUpdate.Location?.ID);
             PopulateDropDownLists(directorToUpdate);
             return View(directorToUpdate);
         }
+
         // GET: Director/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
