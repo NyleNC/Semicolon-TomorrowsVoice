@@ -29,6 +29,8 @@ namespace TomorrowsVoices.Models
 
         [StringLength(255)]
         [DataType(DataType.EmailAddress)]
+
+        [Required(ErrorMessage = "You cannot leave the email blank.")]
         public string? Email { get; set; }
 
         //might not be needed
