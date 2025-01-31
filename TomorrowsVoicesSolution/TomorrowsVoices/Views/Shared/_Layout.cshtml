@@ -6,7 +6,12 @@
     <title>@ViewData["Title"] - TomorrowsVoices</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
     <link rel="stylesheet" href="~/TomorrowsVoices.styles.css" asp-append-version="true" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+ 
 
 </head>
 <body>
@@ -56,8 +61,9 @@
                 <a class="text-white mx-4 text-decoration-none" asp-area="" asp-controller="Singer" asp-action="Index">Singers</a>
                 <a class="text-white mx-4 text-decoration-none" asp-area="" asp-controller="Session" asp-action="Index">Attendance</a>
             </div>
+            </div>
         </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

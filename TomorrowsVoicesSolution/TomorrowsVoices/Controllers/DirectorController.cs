@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using MedicalOffice.ViewModels;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+
 using OfficeOpenXml;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
@@ -30,7 +32,7 @@ namespace TomorrowsVoices.Controllers
         public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Director")
         {
             var directors = _context.Directors
-                .Include(d => d.Location) // Include Location for each Director
+                .Include(d => d.Location) 
                 .AsNoTracking();
 
             string[] sortOptions = new[] { "Director", "City", "Email" };
@@ -53,28 +55,28 @@ namespace TomorrowsVoices.Controllers
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                directors = directors.Where(p => p.LastName != null && p.LastName.Contains(SearchString)
-                                                || p.FirstName != null && p.FirstName.Contains(SearchString));
+                directors = directors.Where(p => p.LastName != null && p.LastName.ToLower().Contains(SearchString.ToLower())
+                                                || p.FirstName!= null && p.FirstName.ToLower().Contains(SearchString.ToLower()));
 
                 numberFilters++;
             }
             if (!String.IsNullOrEmpty(SearchEmail))
             {
-                directors = directors.Where(p => p.Email != null && p.Email.Contains(SearchEmail));
+                directors = directors.Where(p => p.Email != null && p.Email.ToLower().Contains(SearchEmail.ToLower()));
 
                 numberFilters++;
             }
 
             if (!string.IsNullOrEmpty(SearchCity))
             {
-                // If City is an Enum:
+             
                 if (Enum.TryParse<City>(SearchCity, true, out var searchCityEnum))
                 {
                     directors = directors
                         .Where(p => p.Location != null && p.Location.City == searchCityEnum); 
                     numberFilters++;
                 }
-                // If City is a string:
+          
                 else
                 {
                     directors = (IQueryable<Director>)directors
@@ -114,8 +116,8 @@ namespace TomorrowsVoices.Controllers
                 {
                     directors = directors
                         .OrderByDescending(p => p.Email)
-                        .ThenBy(p => p.LastName)
-                        .ThenBy(p => p.FirstName);
+                        .ThenBy(p => p.FirstName)
+                        .ThenBy(p => p.LastName);
                 }
             }
             else if (sortField == "City")
@@ -124,15 +126,15 @@ namespace TomorrowsVoices.Controllers
                 {
                     directors = directors
                         .OrderBy(p => p.Location.City)
-                           .ThenBy(p => p.LastName)
-                        .ThenBy(p => p.FirstName);
+                           .ThenBy(p => p.FirstName)
+                        .ThenBy(p => p.LastName);
                 }
                 else
                 {
                     directors = directors
                         .OrderByDescending(p => p.Location.City)
-                              .ThenBy(p => p.LastName)
-                        .ThenBy(p => p.FirstName);
+                              .ThenBy(p => p.FirstName)
+                        .ThenBy(p => p.LastName);
                 }
             }
 
@@ -152,10 +154,10 @@ namespace TomorrowsVoices.Controllers
                 })
                 .ToList();
 
-            // Add a default option for "All Cities"
+        
             cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
 
-            // Set the ViewData for Cities dropdown
+         
             ViewData["Cities"] = cityList;
 
             //Handle Paging
@@ -203,27 +205,29 @@ namespace TomorrowsVoices.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email,Location")] Director director)
         {
+           
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    
-                    if (director.Location != null && director.Location.City != null)
+
+                    if (director.Location != null && !string.IsNullOrEmpty(director.Location.City.ToString()))
                     {
-                     
                         var existingDirector = await _context.Directors.Include(d => d.Location)
                             .FirstOrDefaultAsync(d => d.Location.City == director.Location.City);
 
                         if (existingDirector != null)
                         {
-                    ModelState.AddModelError("Location.City", $"{director.DirectorFullName} is already assigned to this City: {director.Location.City}");
-                            PopulateDropDownLists(director); 
+                            ModelState.AddModelError("Location.City", $"Someone is already assigned to this City: {director.Location.City}");
+                            PopulateDropDownLists(director);
                             return View(director);
                         }
+               
                     }
-                
 
-                   
+
+
                     _context.Add(director);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -241,13 +245,9 @@ namespace TomorrowsVoices.Controllers
                         ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                     }
                 }
-
-                // Ensure dropdown lists are populated even if ModelState is not valid
-                PopulateDropDownLists(director);
-                return View(director);
             }
 
-            // Ensure dropdown lists are populated even if ModelState is not valid
+       
             PopulateDropDownLists(director);
             return View(director);
         }
@@ -292,10 +292,8 @@ namespace TomorrowsVoices.Controllers
 
                     if (directorToUpdate.Location != null && directorToUpdate.Location.City != null)
                     {
-
                         var existingDirector = await _context.Directors.Include(d => d.Location)
                             .FirstOrDefaultAsync(d => d.Location.City == directorToUpdate.Location.City);
-
                         if (existingDirector != null)
                         {
 
@@ -384,6 +382,29 @@ namespace TomorrowsVoices.Controllers
                          orderby d.LastName, d.FirstName
                          select d;
             ViewData["DirectorID"] = new SelectList(dQuery, "ID", "DirectorFullName", director?.ID);
+        }
+
+        //Autocomplete for City
+        public JsonResult CitySuggestions(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                return Json(new List<object>()); 
+            }
+            var suggestions = Enum.GetValues(typeof(City))
+                .Cast<City>()
+                .Select(city => DisplayNameEnum(city))
+                .Where(cityName => cityName.StartsWith(term, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            return Json(suggestions);
+        }
+
+        public static string DisplayNameEnum(Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+            var attribute = (DisplayAttribute)Attribute.GetCustomAttribute(field, typeof(DisplayAttribute));
+            return attribute != null ? attribute.Name : value.ToString();
         }
 
         private bool DirectorExists(int id)
