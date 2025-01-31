@@ -1,4 +1,5 @@
  using System;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -197,7 +198,7 @@ namespace TomorrowsVoices.Controllers
             }
 
             ViewData["Title"] = "Create";
-            ViewData["LocationID"] = new SelectList(locations, "ID", "City");
+            ViewData["LocationID"] = new SelectList(locations, "ID", "Location.City");
             return View(new TomorrowsVoices.Models.Singer());
         }
 
@@ -205,7 +206,7 @@ namespace TomorrowsVoices.Controllers
         // POST: Singer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,LocationID,IsAvailable")] Singer singer)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Location.City,IsAvailable")] Singer singer)
         {
             if (ModelState.IsValid)
             {
@@ -216,7 +217,7 @@ namespace TomorrowsVoices.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", singer.Location.City);
             return View(singer);
         }
 
@@ -328,7 +329,28 @@ namespace TomorrowsVoices.Controllers
             return Json(new { success = true, isAvailable = singer.IsAvailable });
         }
 
+        //added the autocomplete 
+        public JsonResult CitySuggestions(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                return Json(new List<object>());
+            }
+            var suggestions = Enum.GetValues(typeof(City))
+                .Cast<City>()
+                .Select(city => DisplayNameEnum(city))
+                .Where(cityName => cityName.StartsWith(term, StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
+            return Json(suggestions);
+        }
+
+        public static string DisplayNameEnum(Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+            var attribute = (DisplayAttribute)Attribute.GetCustomAttribute(field, typeof(DisplayAttribute));
+            return attribute != null ? attribute.Name : value.ToString();
+        }
 
         private bool SingerExists(int id)
         {

@@ -223,7 +223,8 @@ namespace TomorrowsVoices.Controllers
 
                         // Check if a director is already assigned to the entered city
                         var existingDirector = await _context.Directors.Include(d => d.Location)
-                            .FirstOrDefaultAsync(d => d.Location.City == director.Location.City);
+                            .FirstOrDefaultAsync(d => d.Location.City == director.Location.City)
+                            ;
 
                         if (existingDirector != null)
                         {
