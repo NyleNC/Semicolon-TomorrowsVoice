@@ -45,13 +45,12 @@
                 <img src="~/Images/filter-search.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
                 Filter/Search (@ViewData["numberFilters"])
             </button>
-        </div>
-        <div class="form-group col-md-1">
-            <a asp-action="Index" class="btn btn-danger text-white"><img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Clear</a>
+            <a asp-action="Index" class="mb-3 btn btn-danger text-white"><img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Clear</a>
+
         </div>
     </div>
     <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
-        <div class="card card-body" style="background-color:mediumpurple">
+        <div class="card card-body" style="background-color:lightgray">
             <div class="row">
                 <div class="form-group col-md-3">
                     <label class="control-label">Search by Director Name:</label>
@@ -70,7 +69,7 @@
             </div>
             <div class="form-group col-md-2 align-self-start">
                 <input type="submit" name="actionButton" value="Filter"
-                       class="btn btn-outline-info text-white" />
+                       class="btn text-white" style="background-color: mediumpurple"/>
               
             </div>
         </div>
