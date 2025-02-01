@@ -32,6 +32,7 @@ namespace TomorrowsVoices.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [Display(Name = "Last Updated")]
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd HH:mm", ApplyFormatInEditMode = true)]
         public DateTime? UpdatedAt { get; set; }
 
 
