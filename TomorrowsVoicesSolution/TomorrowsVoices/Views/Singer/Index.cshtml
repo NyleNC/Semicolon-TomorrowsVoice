@@ -125,8 +125,8 @@
                 </th>
                 
                 <th>
-                    <button type="button" name="actionButton" value="Location" class="btn btn-toolbar text-white" onclick="handleSort(event, 'Location')">
-                        Location
+                    <button type="button" name="actionButton" value="City" class="btn btn-toolbar text-white" onclick="handleSort(event, 'Location')">
+                        City
                         @if (ViewData["sortField"]?.ToString() == "Location")
                         {
                             if (ViewData["sortDirection"]?.ToString() == "asc")
@@ -143,8 +143,8 @@
 
               
                 <th>
-                    <button type="button" name="actionButton" value="IsAvailable" class="btn btn-toolbar text-white" onclick="handleSort(event, 'IsAvailable')">
-                        City
+                    <button type="button" name="actionButton" value="Availability" class="btn btn-toolbar text-white" onclick="handleSort(event, 'IsAvailable')">    
+                        Availability
                         @if (ViewData["sortField"]?.ToString() == "IsAvailable")
                         {
                             if (ViewData["sortDirection"]?.ToString() == "asc")

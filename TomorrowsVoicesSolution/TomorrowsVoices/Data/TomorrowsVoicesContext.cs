@@ -32,6 +32,7 @@ namespace TomorrowsVoices.Data
                .HasOne(l => l.Director)
                .WithOne(d => d.Location)
                .HasForeignKey<Location>(l => l.DirectorID)
+               .IsRequired(false)
                .OnDelete(DeleteBehavior.SetNull);
 
 

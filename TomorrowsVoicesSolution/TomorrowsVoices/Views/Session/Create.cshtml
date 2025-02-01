@@ -18,14 +18,14 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
-                        <label asp-for="Location.City" class="control-label"></label>
-                        <select asp-for="Location.City" class="form-control"
+                        <label asp-for="LocationID" class="control-label"></label>
+                        <select asp-for="LocationID" class="form-control"
                                 asp-items="Html.GetEnumSelectList<City>()"
                                 onchange="updateDirectorName(this.value)"
                                 id="LocationDropDown">
                             <option value="" selected>Select the City</option>
                         </select>
-                        <span asp-validation-for="Location.City" class="text-danger"></span>
+                        <span asp-validation-for="LocationID" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
