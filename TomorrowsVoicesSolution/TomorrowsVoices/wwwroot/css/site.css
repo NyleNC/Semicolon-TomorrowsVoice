@@ -42,4 +42,7 @@ button.no-pointer-events {
 }
 
 
-
+label.required:after {
+    content: " *";
+    color: red;
+}
