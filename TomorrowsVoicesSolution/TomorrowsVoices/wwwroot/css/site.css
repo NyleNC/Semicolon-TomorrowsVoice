@@ -46,3 +46,16 @@ label.required:after {
     content: " *";
     color: red;
 }
+
+
+.table-custom {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .3);
+}
+
+
+.page-link-custom{
+    background-color: #343a40 !important;
+    color: #ffffff !important;
+}

@@ -283,11 +283,11 @@ namespace TomorrowsVoices.Controllers
         public JsonResult GetDirectorByLocation(int locationId)
         {
             var director = _context.Locations
-                                   .Where(l => l.ID == locationId)
-                                   .Select(l => l.Director.DirectorFullName) // Make sure `Director` exists and has a Name
-                                   .FirstOrDefault();
+                .Include(l => l.Director) 
+                .FirstOrDefault(l => l.ID == locationId)
+                ?.Director?.DirectorFullName;
 
-            return Json(new { directorName = director });
+            return Json(new { directorName = director ?? "No director assigned" });
         }
 
         private void PopulateAssignedSingerData(Session session)
