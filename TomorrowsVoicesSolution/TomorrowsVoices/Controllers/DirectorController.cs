@@ -295,8 +295,10 @@ namespace TomorrowsVoices.Controllers
 
             // UpdateSessionSingers(selectedOptions, directorToUpdate); // This line is causing the error
 
-            if (await TryUpdateModelAsync<Director>(directorToUpdate, "",
-                 d => d.Location))
+            if (await TryUpdateModelAsync<Director>(
+      directorToUpdate, "",
+      d => d.FirstName, d => d.LastName, d => d.Email, d => d.Location))
+
             {
                 try
                 {
