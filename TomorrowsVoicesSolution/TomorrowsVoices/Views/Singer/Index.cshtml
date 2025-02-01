@@ -69,8 +69,15 @@
                 <img src="~/Images/filter-search.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
                 Filter/Search (@ViewData["numberFilters"])
             </button>
-            <a asp-action="Index" class="mb-3 btn btn-danger text-white"><img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Clear</a>
 
+            <!-- Conditionally render the "Clear" button -->
+            @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+            {
+                <a asp-action="Index" class="mb-3 btn btn-danger text-white">
+                    <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                    Clear
+                </a>
+            }
         </div>
     </div>
     <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
