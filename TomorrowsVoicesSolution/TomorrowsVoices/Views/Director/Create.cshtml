@@ -1,6 +1,7 @@
 ﻿@model TomorrowsVoices.Models.Director
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
 @{
     ViewData["Title"] = "Create";
 }
@@ -41,6 +42,8 @@
                 <button type="submit" class="btn btn-primary">
                 <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
 					Create
+                    
+                </button>
             </div>
             <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Director Page</a>
         </form>

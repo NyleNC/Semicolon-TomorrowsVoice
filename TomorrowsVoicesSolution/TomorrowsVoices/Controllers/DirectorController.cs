@@ -282,7 +282,7 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string[] selectedOptions)
+        public async Task<IActionResult> Edit(int id)
         {
             var directorToUpdate = await _context.Directors
                 .Include(s => s.Location)
@@ -295,8 +295,10 @@ namespace TomorrowsVoices.Controllers
 
             // UpdateSessionSingers(selectedOptions, directorToUpdate); // This line is causing the error
 
-            if (await TryUpdateModelAsync<Director>(directorToUpdate, "",
-                 d => d.Location))
+            if (await TryUpdateModelAsync<Director>(
+      directorToUpdate, "",
+      d => d.FirstName, d => d.LastName, d => d.Email, d => d.Location))
+
             {
                 try
                 {
@@ -325,7 +327,7 @@ namespace TomorrowsVoices.Controllers
                 }
             }
 
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", directorToUpdate.Location?.ID);
+          
             PopulateDropDownLists(directorToUpdate);
             return View(directorToUpdate);
         }
