@@ -131,7 +131,43 @@
 
             })
         }
-
+            $(document).ready(function () {
+        $("#City").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("CitySuggestions", "Director")',
+                    type: "GET",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item, value: item };
+                        }));
+                    }
+                });
+            },
+            minLength: 1,
+            messages: {
+                noResults: "No cities found",
+                results: function () { return ""; }
+            },
+     open: function () {
+               
+                var autocompleteList = $(".ui-autocomplete");
+                autocompleteList.css({
+                    "max-height": "200px",  
+                    "overflow-y": "auto", 
+                     "overflow-x": "hidden"
+                });
+            }
+        });
+    });
+       $(document).ready(function() {
+        $('.city-dropdown').select2({
+            placeholder: "Select a city",
+            allowClear: true
+        });
+    });
 </script>
 }
 

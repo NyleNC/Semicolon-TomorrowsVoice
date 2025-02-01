@@ -388,13 +388,18 @@ namespace TomorrowsVoices.Controllers
         {
             if (string.IsNullOrWhiteSpace(term))
             {
-                return Json(new List<object>()); 
+                return Json(new List<object>());
             }
+
             var suggestions = Enum.GetValues(typeof(City))
-                .Cast<City>()
-                .Select(city => DisplayNameEnum(city))
-                .Where(cityName => cityName.StartsWith(term, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+      .Cast<City>()
+      .Select(city => new SelectListItem
+      {
+          Value = city.ToString(),
+          Text = DisplayNameEnum(city)
+      })
+      .OrderBy(c => c.Text)
+      .ToList();
 
             return Json(suggestions);
         }
