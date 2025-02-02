@@ -79,6 +79,7 @@ namespace TomorrowsVoices.Controllers
         {
             Session session = new Session { LocationID = null };
             PopulateAssignedSingerData(session);
+            ViewData["LocationID"] = LocationSelectList();
             return View(session);
         }
 
@@ -276,17 +277,25 @@ namespace TomorrowsVoices.Controllers
         {
             return new SelectList(_context.Locations
                 .OrderBy(d => d.City)
-                , "ID", "City");
+                .Select(l => new { l.ID, l.City }), 
+                "ID", "City");
         }
-
         [HttpGet]
         public JsonResult GetDirectorByLocation(int locationId)
         {
+
+
+           
             var director = _context.Locations
-                .Include(l => l.Director) 
+                .Include(l => l.Director) // Ensure Director is included
                 .FirstOrDefault(l => l.ID == locationId)
                 ?.Director?.DirectorFullName;
 
+            // If no director is found in the database, check if it's an enum value
+            if (director == null && Enum.IsDefined(typeof(City), locationId))
+            {
+                director = "No director assigned"; // Default message for enum-based cities
+            }
             return Json(new { directorName = director ?? "No director assigned" });
         }
 
