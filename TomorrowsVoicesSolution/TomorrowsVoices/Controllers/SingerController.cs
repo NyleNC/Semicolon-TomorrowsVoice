@@ -206,7 +206,7 @@ namespace TomorrowsVoices.Controllers
         // POST: Singer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Location.City,IsAvailable")] Singer singer)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Location,IsAvailable")] Singer singer)
         {
             if (ModelState.IsValid)
             {
@@ -217,7 +217,7 @@ namespace TomorrowsVoices.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", singer.Location.City);
+          
             return View(singer);
         }
 
@@ -235,14 +235,13 @@ namespace TomorrowsVoices.Controllers
             var singer = await _context.Singers.FindAsync(id);
             if (singer == null) return NotFound();
 
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
             return View(singer);
         }
 
         // POST: Singer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,LocationID,IsAvailable")] Singer singer)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Location,IsAvailable")] Singer singer)
         {
             if (id != singer.ID) return NotFound();
 
@@ -255,7 +254,7 @@ namespace TomorrowsVoices.Controllers
 
                     existingSinger.FirstName = singer.FirstName;
                     existingSinger.LastName = singer.LastName;
-                    existingSinger.LocationID = singer.LocationID;
+                    existingSinger.Location = singer.Location;
                     existingSinger.IsAvailable = singer.IsAvailable;
                     existingSinger.UpdatedAt = DateTime.Now;
 
@@ -268,7 +267,7 @@ namespace TomorrowsVoices.Controllers
                     throw;
                 }
             }
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
+       
             return View(singer);
         }
 
