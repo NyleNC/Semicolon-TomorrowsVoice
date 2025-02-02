@@ -148,7 +148,7 @@ namespace TomorrowsVoices.Controllers
             {
                 return NotFound();
             }
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", session.LocationID);
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", session.LocationID);
             PopulateAssignedSingerData(session);
             return View(session);
         }
@@ -206,7 +206,7 @@ namespace TomorrowsVoices.Controllers
             }
     
         
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", sessionToUpdate.LocationID);
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", sessionToUpdate.Location);
             PopulateAssignedSingerData(sessionToUpdate);
             return View(sessionToUpdate);
         }
