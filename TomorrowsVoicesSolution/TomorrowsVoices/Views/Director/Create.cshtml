@@ -93,3 +93,38 @@
         });
     });
 </script>
+
+<div class="form-group">
+    <button type="button" id="fillPresetButton" class="btn btn-secondary">Fill Preset Values</button>
+</div>
+
+<script>
+    document.getElementById("fillPresetButton").addEventListener("click", function () {
+        // Preset Values
+        let defaultValues = {
+            FirstName: "Exa",
+            LastName: "Maple",
+            City: "Barrie",
+            Email: "emaple@tv.com"
+        };
+
+        // Only set fields that are empty
+        if (!document.getElementById("FirstName").value) {
+            document.getElementById("FirstName").value = defaultValues.FirstName;
+        }
+        if (!document.getElementById("LastName").value) {
+            document.getElementById("LastName").value = defaultValues.LastName;
+        }
+        if (!document.getElementById("Email").value) {
+            document.getElementById("Email").value = defaultValues.Email;
+        }
+    });
+
+    $(document).ready(function () {
+        // Initialize Select2 for City dropdown
+        $('.city-dropdown').select2({
+            placeholder: "Select a city",
+            allowClear: true
+        });
+    });
+</script>
