@@ -18,9 +18,9 @@ namespace TomorrowsVoices.Models
 
 
         [Display(Name = "City")]
-        public int? LocationID { get; set; }
+        public int LocationID { get; set; }
 
-        public Location? Location { get; set; }
+        public Location Location { get; set; }
       
         public ICollection<Attendance> Attendance { get; set; } = new HashSet<Attendance>();
 

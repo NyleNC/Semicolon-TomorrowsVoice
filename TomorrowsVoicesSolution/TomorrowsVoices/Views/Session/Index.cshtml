@@ -15,27 +15,26 @@
 </p>
 <form asp-action="Index" method="get">
     <table class="table table-striped table-hover table-custom">
-        <thead>
-            <tr class="table-dark">
+        <thead class="table-dark">
+            <tr>
 				<th>
-					City
+                        <button style="font-weight: 700" type="button" name="actionButton" value="City" class="btn btn-toolbar text-white no-pointer-events">City</button>
 				</th>
 				<th>
-                    Date
+                        <button style="font-weight: 700" type="button" name="actionButton" value="Date" class="btn btn-toolbar text-white no-pointer-events">Date</button>
                 </th>
                 <th>
-                    Attendance
-                </th>
-              
-                <th>
-                    Director
+                        <button style="font-weight: 700" type="button" name="actionButton" value="Attendance" class="btn btn-toolbar text-white no-pointer-events">Attendance</button>
                 </th>
                 <th>
-                    Actions
+                    <button style="font-weight: 700" type="button" name="actionButton" value="Director" class="btn btn-toolbar text-white no-pointer-events">Director</button>
+                </th>
+                <th>
+                   <button style="font-weight: 700" type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white no-pointer-events">Actions</button>
                 </th>
             </tr>
         </thead>
-        <tbody>
+        <tbody style="overflow: visible">
             @foreach (var item in Model)
             {
                 <tr>
@@ -57,9 +56,38 @@
                         @Html.DisplayFor(modelItem => item.Location.Director.DirectorFullName)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger"><img src="~/Images/archive.png" alt="archive-icon" style="height: 24px; width: auto; margin-right: 10px" />Delete</a>
+                        <div class="d-none d-lg-inline">
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger"><img src="~/Images/archive.png" alt="archive-icon" style="height: 24px; width: auto; margin-right: 10px" />Delete</a>
+                        </div>
+                        <div class="d-lg-none">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm dropdown-toggle" style="background-color: mediumpurple; color: white" data-bs-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID">
+                                                <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID">
+                                                <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Delete" asp-route-id="@item.ID">
+                                                <img src="~/Images/archive.png" alt="archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                        </div>
+
+                    
+                    
                     </td>
                 </tr>
 

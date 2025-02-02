@@ -50,13 +50,57 @@ label.required:after {
 
 .table-custom {
     border-radius: 10px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .3);
 }
-
 
 .page-link-custom{
     background-color: #343a40 !important;
     color: #ffffff !important;
     border: none
+}
+
+.table-custom thead tr th button {
+    padding-left: 0
+}
+
+
+@media (max-width: 991.99px) {
+    .d-lg-inline {
+        display: none !important;
+    }
+
+    .d-lg-none {
+        display: block !important;
+    }
+
+    .table-custom button {
+        font-size: 10px;
+    }
+
+    .table-custom tbody td {
+        font-size: 11px;
+    }
+
+    .table-custom {
+        border-radius: 10px;
+        overflow: visible;
+    }
+
+}
+
+.d-lg-none, .d-none {
+    transition: opacity 0.3s ease-in-out;
+}
+
+
+@media (min-width: 992px) {
+    .d-lg-inline {
+        display: inline-block !important;
+    }
+
+    .d-lg-none {
+        display: none !important;
+    }
+
 }

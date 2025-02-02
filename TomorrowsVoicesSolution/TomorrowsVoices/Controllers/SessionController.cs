@@ -77,7 +77,7 @@ namespace TomorrowsVoices.Controllers
         // GET: Session/Create
         public IActionResult Create()
         {
-            Session session = new Session { LocationID = null };
+            Session session = new Session();
             PopulateAssignedSingerData(session);
             ViewData["LocationID"] = LocationSelectList();
             return View(session);
@@ -90,7 +90,7 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Date,Notes,LocationID")] Session session,
+        public async Task<IActionResult> Create([Bind("Date,Notes,Location")] Session session,
             string[] selectedOptions)
         {
             try

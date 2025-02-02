@@ -23,9 +23,9 @@
         <nav class="navbar navbar-expand-lg bg-dark navbar-toggleable-sm navbar-light bg-black border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/tv-logo.png" alt="Tomorrow's Voices Logo" class="header-logo"></a>
-                <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <button class="navbar-toggler" style="background-color:white; border-color: white" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon "></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav bg-black flex-grow-1">
@@ -55,17 +55,28 @@
     </div>
 
     <footer class="border-top footer text-muted bg-black">
-        <div class="container py-1 d-flex justify-content-between align-items-center">
-            <div>
-                <img src="~/images/tv-logo.png" alt="Tomorrow's Voices Logo" class="footer-logo">
+        <div class="container py-3">
+            <div class="row align-items-center">
+                <!-- Logo Section -->
+                <div class="col-12 col-md-3 text-center text-md-start mb-md-0">
+                    <img src="~/images/tv-logo.png" alt="Tomorrow's Voices Logo" class="footer-logo">
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="col-12 col-md-6 d-flex flex-wrap justify-content-center text-center">
+                    <a class="text-white mx-2 text-decoration-none" asp-area="" asp-controller="Director" asp-action="Index">Directors</a>
+                    <a class="text-white mx-2 text-decoration-none" asp-area="" asp-controller="Singer" asp-action="Index">Singers</a>
+                    <a class="text-white mx-2 text-decoration-none" asp-area="" asp-controller="Session" asp-action="Index">Attendance</a>
+                </div>
+
+                <!-- Optional Extra Section -->
+                <div class="col-12 col-md-3 text-center text-md-end mt-md-0">
+                    <small class="text-white">© 2025 Tomorrow's Voices</small>
+                </div>
             </div>
-            <div class="d-flex justify-content-center flex-grow-1">
-                <a class="text-white mx-4 text-decoration-none" asp-area="" asp-controller="Director" asp-action="Index">Directors</a>
-                <a class="text-white mx-4 text-decoration-none" asp-area="" asp-controller="Singer" asp-action="Index">Singers</a>
-                <a class="text-white mx-4 text-decoration-none" asp-area="" asp-controller="Session" asp-action="Index">Attendance</a>
-            </div>
-            </div>
-        </footer>
+        </div>
+    </footer>
+
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
