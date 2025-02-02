@@ -275,16 +275,18 @@ namespace TomorrowsVoices.Controllers
         }
         private SelectList LocationSelectList()
         {
-            return new SelectList(_context.Locations
-                .OrderBy(d => d.City)
-                .Select(l => new { l.ID, l.City }), 
-                "ID", "City");
+            return new SelectList(
+                _context.Locations
+                    .GroupBy(l => l.City)           
+                    .OrderBy(g => g.Key)            
+                    .Select(g => g.FirstOrDefault()) 
+                    .ToList(),                        
+                "ID",                               
+                "City");                            
         }
         [HttpGet]
         public JsonResult GetDirectorByLocation(int locationId)
         {
-
-
            
             var director = _context.Locations
                 .Include(l => l.Director) // Ensure Director is included
