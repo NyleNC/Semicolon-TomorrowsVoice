@@ -104,3 +104,37 @@
              });
     </script>
 }
+<div class="form-group">
+    <button type="button" id="fillPresetButton" class="btn btn-secondary">Fill Preset Values</button>
+</div>
+
+<script>
+    document.getElementById("fillPresetButton").addEventListener("click", function () {
+        // Preset Values
+        let defaultValues = {
+            FirstName: "Alex",
+            LastName: "Moore",
+            City: "Toronto",
+            IsAvailable: true
+        };
+
+        // Set fields only if they are empty
+        if (!document.getElementById("FirstName").value) {
+            document.getElementById("FirstName").value = defaultValues.FirstName;
+        }
+        if (!document.getElementById("LastName").value) {
+            document.getElementById("LastName").value = defaultValues.LastName;
+        }
+
+        // Check "IsAvailable"
+        document.getElementById("IsAvailable").checked = defaultValues.IsAvailable;
+    });
+
+    $(document).ready(function () {
+        // Initialize Select2 for City dropdown
+        $('.city-dropdown').select2({
+            placeholder: "Select a city",
+            allowClear: true
+        });
+    });
+</script>

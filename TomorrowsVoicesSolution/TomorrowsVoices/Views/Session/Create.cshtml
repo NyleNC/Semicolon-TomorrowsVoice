@@ -180,3 +180,42 @@
 </script>
 }
 
+<div class="form-group">
+    <button type="button" id="fillPresetButton" class="btn btn-secondary">Fill Preset Values</button>
+</div>
+
+<script>
+    document.getElementById("fillPresetButton").addEventListener("click", function () {
+        let defaultValues = {
+            LocationID: $("#LocationDropDown option:first").val(),
+            Date: new Date().toISOString().split('T')[0], // Today's date
+            Notes: "Session went well."
+        };
+
+        // Set Location Dropdown (only if empty)
+        let locationDropdown = $("#LocationDropDown");
+        if (!locationDropdown.val()) {
+            locationDropdown.val(defaultValues.LocationID).trigger('change');
+            updateDirectorName(defaultValues.LocationID);
+        }
+
+        // Set Date
+        let dateField = document.getElementById("Date");
+        if (!dateField.value) {
+            dateField.value = defaultValues.Date;
+        }
+
+        // Set Notes
+        let notesField = document.getElementById("Notes");
+        if (!notesField.value) {
+            notesField.value = defaultValues.Notes;
+        }
+    });
+
+    $(document).ready(function () {
+        $('.city-dropdown').select2({
+            placeholder: "Select a city",
+            allowClear: true
+        });
+    });
+</script>
