@@ -88,8 +88,10 @@
                     @Html.TextBox("SearchString", null, new { @class = "form-control" })
                 </div>
                 <div class="col-md-4">
-                    <label class="control-label">Search by Location:</label>
-                    <input type="text" class="form-control" name="searchLocation" placeholder="Search by Location" value="@Context.Request.Query["searchLocation"]" />
+                    <div class="form-group">
+                        <label class="control-label">Filter by City:</label>
+                        @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Location"], new { @class = "form-control" })
+                    </div>
                 </div>
                 <div class="col-md-2">
                     <label class="control-label">Search by Availability:</label>

@@ -23,7 +23,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Singer
-        public async Task<IActionResult> Index(string? searchString, string? searchLocation, bool? searchIsAvailable, int? page, int? pageSizeID, string? actionButton, string? SearchString, string? SearchCity, string sortDirection = "asc", string sortField = "Name")
+        public async Task<IActionResult> Index(bool? searchIsAvailable, int? page, int? pageSizeID, string? actionButton, string? SearchString, string? SearchCity, string sortDirection = "asc", string sortField = "Name")
         {
             var singers = _context.Singers
                 .Include(s => s.Location) // Include Location for each Singer
