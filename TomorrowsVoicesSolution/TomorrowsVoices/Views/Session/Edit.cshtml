@@ -1,6 +1,7 @@
 ﻿@model TomorrowsVoices.Models.Session
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @{
     ViewData["Title"] = "Edit";
     var presentSingersCount = ViewBag.PresentSingersCount ?? "0/0";
@@ -123,6 +124,24 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        $(document).ready(function() {
+            // Add/Remove buttons logic
+            $('#btnLeft').click(function() {
+                $('#availOptions option:selected').appendTo('#selectedOptions');
+            });
+
+            $('#btnRight').click(function() {
+                $('#selectedOptions option:selected').appendTo('#availOptions');
+            });
+
+            // Ensure all selectedOptions are submitted
+            $('form').submit(function() {
+                $('#selectedOptions option').prop('selected', true);
+            });
+        });
+    </script>
+}
     <script src="~/js/multiselect.js"></script>
     <script>
         function updateDirectorName(locationId) {

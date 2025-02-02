@@ -148,7 +148,15 @@ namespace TomorrowsVoices.Controllers
             {
                 return NotFound();
             }
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", session.LocationID);
+            ViewData["LocationID"] = new SelectList(
+                _context.Locations
+                    .GroupBy(l => l.City)
+                    .OrderBy(g => g.Key)
+                    .Select(g => g.FirstOrDefault())
+                    .ToList(),
+                "ID",
+                "City", session.LocationID);
+
             PopulateAssignedSingerData(session);
             return View(session);
         }
@@ -175,11 +183,11 @@ namespace TomorrowsVoices.Controllers
 
 
             if (await TryUpdateModelAsync<Session>(sessionToUpdate, "",
-                s => s.Date, s => s.Notes, s => s.Location))
+                s => s.Date, s => s.Notes, s => s.LocationID))
             {
                 try
                 {
-                    _context.Update(sessionToUpdate);
+                    //_context.Update(sessionToUpdate);
                     await _context.SaveChangesAsync();
                     return RedirectToAction("Details", new { sessionToUpdate.ID });
                 }
