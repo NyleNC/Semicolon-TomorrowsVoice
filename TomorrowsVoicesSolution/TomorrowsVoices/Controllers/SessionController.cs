@@ -77,7 +77,7 @@ namespace TomorrowsVoices.Controllers
         // GET: Session/Create
         public IActionResult Create()
         {
-            Session session = new Session();
+            Session session = new Session { LocationID = null };
             PopulateAssignedSingerData(session);
             ViewData["LocationID"] = LocationSelectList();
             return View(session);
@@ -90,7 +90,7 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Date,Notes,Location")] Session session,
+        public async Task<IActionResult> Create([Bind("Date,Notes,LocationID")] Session session,
             string[] selectedOptions)
         {
             try
@@ -148,7 +148,7 @@ namespace TomorrowsVoices.Controllers
             {
                 return NotFound();
             }
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", session.LocationID);
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", session.LocationID);
             PopulateAssignedSingerData(session);
             return View(session);
         }
@@ -160,7 +160,7 @@ namespace TomorrowsVoices.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, string[] selectedOptions)
         {
-        
+
             var sessionToUpdate = await _context.Sessions
                 .Include(s => s.Location).ThenInclude(l => l.Director)
                 .Include(s => s.Attendance).ThenInclude(a => a.Singer)
@@ -168,11 +168,11 @@ namespace TomorrowsVoices.Controllers
 
             if (sessionToUpdate == null)
             {
-               return NotFound();
+                return NotFound();
             }
-             
+
             UpdateSessionSingers(selectedOptions, sessionToUpdate);
-            
+
 
             if (await TryUpdateModelAsync<Session>(sessionToUpdate, "",
                 s => s.Date, s => s.Notes, s => s.Location))
@@ -181,7 +181,7 @@ namespace TomorrowsVoices.Controllers
                 {
                     _context.Update(sessionToUpdate);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("Details", new { sessionToUpdate.ID});
+                    return RedirectToAction("Details", new { sessionToUpdate.ID });
                 }
                 catch (RetryLimitExceededException /* dex */)
                 {
@@ -202,11 +202,11 @@ namespace TomorrowsVoices.Controllers
                 {
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
-               
+
             }
-    
-        
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", sessionToUpdate.Location);
+
+
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", sessionToUpdate.LocationID);
             PopulateAssignedSingerData(sessionToUpdate);
             return View(sessionToUpdate);
         }
@@ -224,7 +224,7 @@ namespace TomorrowsVoices.Controllers
                 .Include(s => s.Attendance).ThenInclude(a => a.Singer)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
-             
+
             if (session == null)
             {
                 return NotFound();
@@ -277,17 +277,19 @@ namespace TomorrowsVoices.Controllers
         {
             return new SelectList(
                 _context.Locations
-                    .GroupBy(l => l.City)           
-                    .OrderBy(g => g.Key)            
-                    .Select(g => g.FirstOrDefault()) 
-                    .ToList(),                        
-                "ID",                               
-                "City");                            
+                    .GroupBy(l => l.City)
+                    .OrderBy(g => g.Key)
+                    .Select(g => g.FirstOrDefault())
+                    .ToList(),
+                "ID",
+                "City");
         }
         [HttpGet]
         public JsonResult GetDirectorByLocation(int locationId)
         {
-           
+
+
+
             var director = _context.Locations
                 .Include(l => l.Director) // Ensure Director is included
                 .FirstOrDefault(l => l.ID == locationId)
@@ -335,52 +337,52 @@ namespace TomorrowsVoices.Controllers
             ViewData["availOpts"] = new MultiSelectList(available.OrderBy(s => s.DisplayText), "ID", "DisplayText");
         }
         private void UpdateSessionSingers(string[] selectedOptions, Session sessionToUpdate)
-      {
-        var allSingerIDs = _context.Singers.Select(s => s.ID).ToHashSet(); // Get all singers
-        var selectedOptionsHS = new HashSet<int>(selectedOptions.Select(int.Parse)); 
-
-        // Get all current attendance records for this session
-        var currentAttendance = sessionToUpdate.Attendance.ToList();
-
-        foreach (var singerID in allSingerIDs)  
         {
-            var existingAttendance = currentAttendance.FirstOrDefault(a => a.SingerID == singerID);
+            var allSingerIDs = _context.Singers.Select(s => s.ID).ToHashSet(); // Get all singers
+            var selectedOptionsHS = new HashSet<int>(selectedOptions.Select(int.Parse));
 
-            if (selectedOptionsHS.Contains(singerID)) // Singer was selected
+            // Get all current attendance records for this session
+            var currentAttendance = sessionToUpdate.Attendance.ToList();
+
+            foreach (var singerID in allSingerIDs)
             {
-                if (existingAttendance == null) // If not already in attendance, add it with Status = true
+                var existingAttendance = currentAttendance.FirstOrDefault(a => a.SingerID == singerID);
+
+                if (selectedOptionsHS.Contains(singerID)) // Singer was selected
                 {
-                    sessionToUpdate.Attendance.Add(new Attendance
+                    if (existingAttendance == null) // If not already in attendance, add it with Status = true
                     {
-                        SingerID = singerID,
-                        SessionID = sessionToUpdate.ID,
-                        Status = true
-                    });
+                        sessionToUpdate.Attendance.Add(new Attendance
+                        {
+                            SingerID = singerID,
+                            SessionID = sessionToUpdate.ID,
+                            Status = true
+                        });
+                    }
+                    else // If already exists, ensure Status is true
+                    {
+                        existingAttendance.Status = true;
+                    }
                 }
-                else // If already exists, ensure Status is true
+                else // Singer was NOT selected
                 {
-                    existingAttendance.Status = true;
+                    if (existingAttendance != null) // If already exists, set Status = false
+                    {
+                        existingAttendance.Status = false;
+                    }
+                    else // If not in attendance, add it with Status = false
+                    {
+                        sessionToUpdate.Attendance.Add(new Attendance
+                        {
+                            SingerID = singerID,
+                            SessionID = sessionToUpdate.ID,
+                            Status = false
+                        });
+                    }
                 }
             }
-            else // Singer was NOT selected
-            {
-                if (existingAttendance != null) // If already exists, set Status = false
-                {
-                    existingAttendance.Status = false;
-                }
-                else // If not in attendance, add it with Status = false
-                {
-                    sessionToUpdate.Attendance.Add(new Attendance
-                    {
-                        SingerID = singerID,
-                        SessionID = sessionToUpdate.ID,
-                        Status = false
-                    });
-                }
-            }
+
         }
-           
-      }
 
         public IActionResult AttendanceReportExport()
         {
@@ -391,7 +393,7 @@ namespace TomorrowsVoices.Controllers
                 .Select(x => new
                 {
                     x.Date,
-                    Attendance = $"{x.Attendance.Count(a => a.Status)}/{x.Attendance.Count}", 
+                    Attendance = $"{x.Attendance.Count(a => a.Status)}/{x.Attendance.Count}",
                     x.Location.City,
                     Director = x.Location.Director.DirectorFullName
                     ,
@@ -437,7 +439,7 @@ namespace TomorrowsVoices.Controllers
 
 
 
-                    workSheet.Cells[3,1].LoadFromCollection(sessAtts, true);
+                    workSheet.Cells[3, 1].LoadFromCollection(sessAtts, true);
                     var range = workSheet.Cells[4, 1, workSheet.Dimension.End.Row, workSheet.Dimension.End.Column];
                     range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
 
@@ -456,7 +458,7 @@ namespace TomorrowsVoices.Controllers
                     {
                         return BadRequest("Could not build and download the file.");
                     }
-                }     
+                }
             }
             return NotFound("No data.");
 
@@ -469,7 +471,7 @@ namespace TomorrowsVoices.Controllers
 
 
 
-      
+
 
 
     }
