@@ -186,10 +186,10 @@ namespace TomorrowsVoices.Controllers
 
             return View(singer);
         }
-
         // GET: Singer/Create
         public IActionResult Create()
         {
+            // Ensure there is at least one location (you might also want to check directors)
             var locations = _context.Locations.ToList();
             if (!locations.Any())
             {
@@ -197,12 +197,20 @@ namespace TomorrowsVoices.Controllers
                 return View();
             }
 
+            // Build the filtered city list from Directors.
+            // This returns only those cities (as strings) that are used by a Director.
+            var cityList = _context.Directors
+                .Where(d => d.Location != null)
+                .Select(d => d.Location.City.ToString())
+                .Distinct()
+                .ToList();
+
+            // Create a SelectList for the dropdown.
+            ViewBag.CityList = new SelectList(cityList);
+
             ViewData["Title"] = "Create";
-            ViewData["LocationID"] = new SelectList(locations, "ID", "Location.City");
             return View(new TomorrowsVoices.Models.Singer());
         }
-
-
         // POST: Singer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -221,12 +229,6 @@ namespace TomorrowsVoices.Controllers
             return View(singer);
         }
 
-
-
-
-
-
-
         // GET: Singer/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -235,9 +237,17 @@ namespace TomorrowsVoices.Controllers
             var singer = await _context.Singers.FindAsync(id);
             if (singer == null) return NotFound();
 
+            // Build the filtered city list from Directors.
+            var cityList = _context.Directors
+                .Where(d => d.Location != null)
+                .Select(d => d.Location.City.ToString())
+                .Distinct()
+                .ToList();
+
+            ViewBag.CityList = new SelectList(cityList, singer.Location?.City.ToString());
+
             return View(singer);
         }
-
         // POST: Singer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -267,11 +277,9 @@ namespace TomorrowsVoices.Controllers
                     throw;
                 }
             }
-       
+            
             return View(singer);
         }
-
-
 
         // GET: Singer/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -302,13 +310,6 @@ namespace TomorrowsVoices.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-
-
-
-
-
-
         // POST: Singer/ToggleAvailability/
         [HttpPost]
         public IActionResult ToggleAvailability(int id)
