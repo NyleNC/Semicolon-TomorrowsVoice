@@ -290,7 +290,10 @@ namespace TomorrowsVoices.Controllers
                 .AsNoTracking()
                 .Include(s => s.Location)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (singer == null) return NotFound();
+            if (singer == null)
+            {
+                return NotFound();
+            }
 
             return View(singer);
         }
@@ -306,9 +309,17 @@ namespace TomorrowsVoices.Controllers
                 return NotFound();
             }
 
-            _context.Singers.Remove(singer);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _context.Singers.Remove(singer);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "An error occurred while trying to delete the Singer. Please try again.");
+                return View(singer);
+            }
         }
         // POST: Singer/ToggleAvailability/
         [HttpPost]
