@@ -401,7 +401,8 @@ namespace TomorrowsVoices.Controllers
                 .Select(x => new
                 {
                     x.Date,
-                    Attendance = $"{x.Attendance.Count(a => a.Status)}/{x.Attendance.Count}",
+                    AttendancePresent = x.Attendance.Count(a => a.Status),
+                    AttendanceTotal = x.Attendance.Count,
                     x.Location.City,
                     Director = x.Location.Director.DirectorFullName
                     ,
@@ -431,7 +432,7 @@ namespace TomorrowsVoices.Controllers
                         Rng.Style.Fill.BackgroundColor.SetColor(Color.LightPink);
                     }
 
-                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 5])
+                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 6])
                     {
                         headings.Style.Font.Bold = true;
                         var fill = headings.Style.Fill;
@@ -439,15 +440,20 @@ namespace TomorrowsVoices.Controllers
                         fill.BackgroundColor.SetColor(Color.LightSalmon);
                     }
 
-                    workSheet.Cells[3, 1].Value = "Date";
-                    workSheet.Cells[3, 2].Value = "Attendance";
-                    workSheet.Cells[3, 3].Value = "City";
-                    workSheet.Cells[3, 4].Value = "Director";
-                    workSheet.Cells[3, 5].Value = "Notes";
-
-
-
                     workSheet.Cells[3, 1].LoadFromCollection(sessAtts, true);
+
+
+                    workSheet.Cells[3, 1].Value = "Date";
+                    workSheet.Cells[3, 2].Value = "Attended Singers";
+                    workSheet.Cells[3, 3].Value = "Total Singers";
+                    workSheet.Cells[3, 4].Value = "City";
+                    workSheet.Cells[3, 5].Value = "Director";
+                    workSheet.Cells[3, 6].Value = "Notes";
+
+
+
+
+
                     var range = workSheet.Cells[4, 1, workSheet.Dimension.End.Row, workSheet.Dimension.End.Column];
                     range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
 
