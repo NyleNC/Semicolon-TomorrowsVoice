@@ -3,49 +3,104 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 @{
     ViewData["Title"] = "Edit";
+    var presentSingersCount = ViewBag.PresentSingersCount ?? "0/0";
+    var absentSingersCount = ViewBag.AbsentSingersCount ?? "0/0";
 }
 
 <h1>Edit</h1>
 
 <h4>Session Attendance</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<p class="mb-4" style="font-weight: 500">Fields marked <span style="color: red">*</span> are required.</p>
+
+
+
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
-            <div class="form-group">
-                <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" />
-                <span asp-validation-for="Date" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Location.City" class="control-label"></label>
-                <select asp-for="Location.City" class="form-control city-dropdown" asp-items="Html.GetEnumSelectList<City>()"></select>
-                <span asp-validation-for="Location.City" class="text-danger"></span>
-            </div>
-            <div class="col-md-8">
-                <div class="row">
-                    <div class="form-group col-md-6">
-                        <label class="control-label"> Singers Attended</label> <button type="button" id="btnRight" class="btn btn-danger btn-sm">
-                            <strong>-</strong>
-                        </button>
-                        @Html.ListBox("selectedOptions", (MultiSelectList)ViewBag.selOpts, new { @size = 10, @class = "form-control" })
-                    </div>
-
-                    <div class="form-group col-md-6">
-                        <label class="control-label"> Choose Singers</label> <button type="button" id="btnLeft" class="btn btn-success btn-sm">
-                            <strong>+</strong>
-                        </button>
-                        @Html.ListBox("availOptions", (MultiSelectList)ViewBag.availOpts, new { @size = 10, @class = "form-control" })
+    <div class="mt-4 row">
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-6">
+			        <div class="form-group">
+				        <label asp-for="Location.City" class="control-label"></label><span style="color: red">*</span>
+				        <select asp-for="Location.City" class="form-control city-dropdown" asp-items="ViewBag.LocationID"></select>
+				        <span asp-validation-for="Location.City" class="text-danger"></span>
+			        </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="DirectorName" style="font-weight: 500">Director in Charge</label>
+                        <input type="text" id="DirectorName" class="form-control" readonly>
                     </div>
                 </div>
             </div>
+
             <div class="form-group">
-                <label asp-for="Notes" class="control-label"></label>
-                <textarea asp-for="Notes" rows="5" class="form-control"></textarea>
-                <span asp-validation-for="Notes" class="text-danger"></span>
+                <label asp-for="Date" class="control-label"></label><span style="color: red">*</span>
+                <input asp-for="Date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
             </div>
+			
+            
+            <div class="form-group">
+				<label asp-for="Notes" class="control-label"></label>
+				<textarea asp-for="Notes" rows="5" class="form-control"></textarea>
+				<span asp-validation-for="Notes" class="text-danger"></span>
+			</div>
+        </div>
+        <div class="col-md-7 ms-auto">
+            <div class="row">
+                <div class="col-md">
+                    <div class="form-group">
+                        <label for="absentSingersCount" style="font-weight: 500">Absent Singers Count</label>
+                        <input type="text" id="absentSingersCount" class="form-control" value="@absentSingersCount" readonly>
+                    </div>
+                </div>
+
+                <div class="col-md">
+                    <div class="form-group">
+                        <label for="presentSingersCount" style="font-weight: 500">Present Singers Count</label>
+                        <input type="text" id="presentSingersCount" class="form-control" value="@presentSingersCount" readonly>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="control-label" style="font-weight: 700"> Choose Singers</label> <button type="button" id="btnLeft" class="btn btn-success btn-sm">
+                            <strong>+</strong>
+                        </button>&nbsp;&nbsp;
+                        @*
+
+                        ***** This is a good opportunity for us to have a Add Singers Shortcut****
+
+                        <button class="btn btn-sm btn-outline-secondary" id="nowAddSinger"
+                        data-bs-toggle="modal" data-bs-target="#addSingerModal"
+                        type="button">
+                        <strong>Add Singer</strong>
+                        </button> *@
+                        @Html.ListBox("availOptions", (MultiSelectList)ViewBag.availOpts,
+                                 new { @size = 10, @class = "form-control", @style = "margin-top: 0.5rem;" })
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label class="control-label" style="font-weight: 700"> Singers Attended</label> <button type="button" id="btnRight" class="btn btn-danger btn-sm">
+                            <strong>-</strong>
+                        </button>
+                        @Html.ListBox("selectedOptions", (MultiSelectList)ViewBag.selOpts,
+                                 new { @size = 10, @class = "form-control", @style = "margin-top: 0.5rem;" })
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+            
+        <div class="col-md-4">
             <div class="form-group">
                 <button type="submit" class="btn btn-success">
                     <img src="~/Images/save-changes-icon.png" alt="Save changes" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
@@ -53,7 +108,7 @@
                 </button>
             </div>
             <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Attendance Page</a>
-
+        </div>
         </form>
     </div>
 </div>

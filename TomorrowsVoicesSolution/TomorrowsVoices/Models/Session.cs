@@ -2,7 +2,7 @@
 
 namespace TomorrowsVoices.Models
 {
-    public class Session 
+    public class Session : IValidatableObject
     {
         public int ID { get; set; }
 
@@ -23,5 +23,13 @@ namespace TomorrowsVoices.Models
         public Location? Location { get; set; }
       
         public ICollection<Attendance> Attendance { get; set; } = new HashSet<Attendance>();
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Date.HasValue && Date.Value > DateTime.Today)
+            {
+                yield return new ValidationResult("Session date cannot be in the future.", new[] { nameof(Date) });
+            }
+        }
     }
 }
