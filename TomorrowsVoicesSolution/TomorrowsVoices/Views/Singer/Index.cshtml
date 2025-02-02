@@ -191,8 +191,8 @@
                     <td>
                         <div class="d-none d-lg-inline">
                             <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.ID" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger"><img src="~/Images/archive.png" alt="archive-icon" style="height: 24px; width: auto; margin-right: 10px" />Delete</a>
+                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a>
+                            @* <a asp-action="Delete" asp-route-id="@item.ID" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger"><img src="~/Images/archive.png" alt="archive-icon" style="height: 24px; width: auto; margin-right: 10px" />Delete</a> *@
                         </div>
                         <div class="d-lg-none">
                             <div class="btn-group">
@@ -210,11 +210,11 @@
                                             <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
                                         </a>
                                     </li>
-                                    <li>
+                                    @* <li>
                                         <a class="dropdown-item" asp-action="Delete" asp-route-id="@item.ID">
                                             <img src="~/Images/archive.png" alt="archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Delete
                                         </a>
-                                    </li>
+                                    </li> *@
                                 </ul>
                             </div>
                         </div>
