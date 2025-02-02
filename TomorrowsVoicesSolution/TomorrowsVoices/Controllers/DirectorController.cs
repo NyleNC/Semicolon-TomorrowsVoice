@@ -142,16 +142,16 @@ namespace TomorrowsVoices.Controllers
             ViewData["sortDirection"] = sortDirection;
             ViewData["numberFilters"] = numberFilters;
 
-            var cityList = Enum.GetValues(typeof(City))
-            .Cast<City>()
-            .Select(city => new SelectListItem
-            {
-                Value = city.ToString(),
-                Text = DisplayNameEnum(city)
-            })
-            .OrderBy(c => c.Text) 
-            .ToList();
-
+            var cityList =directors .AsEnumerable()
+                .Select(d => d.Location?.City.ToString())
+                .Where(city => city != null)
+                .Distinct()
+                .Select(city => new SelectListItem
+                {
+                    Value = city,
+                    Text = city
+                })
+                .ToList();
         
             cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
 
