@@ -190,9 +190,7 @@
     </table>
     <partial name="_PagingNavBar" />
 </form>
-<script>
-  
-    </script>
+
 
 <script type="text/javascript">
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -213,4 +211,18 @@
             }
             form.submit();
         }
+
 </script>
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '@TempData["SuccessMessage"]',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+}

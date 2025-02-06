@@ -238,6 +238,8 @@ namespace TomorrowsVoices.Controllers
                     // Add the new director to the database
                     _context.Add(director);
                     await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = $"{director.DirectorFullName} successfully added in the city of {director.Location.City}";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException dex)
