@@ -23,7 +23,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Singer
-        public async Task<IActionResult> Index(bool? searchIsAvailable, int? page, int? pageSizeID, string? actionButton, string? SearchString, string? SearchCity, string sortDirection = "asc", string sortField = "Name")
+        public async Task<IActionResult> Index(/*bool? searchIsAvailable,*/ int? page, int? pageSizeID, string? actionButton, string? SearchString, string? SearchCity, string sortDirection = "asc", string sortField = "Name")
         {
             var singers = _context.Singers
                 .Include(s => s.Location) // Include Location for each Singer
@@ -74,11 +74,11 @@ namespace TomorrowsVoices.Controllers
                 }
             }
 
-            if (searchIsAvailable != null)
-            {
-                singers = singers.Where(s => s.IsAvailable == searchIsAvailable);
-                numberFilters++;
-            }
+            //if (searchIsAvailable != null)
+            //{
+            //    singers = singers.Where(s => s.IsAvailable == searchIsAvailable);
+            //    numberFilters++;
+            //}
 
             // Sorting logic based on selected field and direction
             if (sortField == "FullName")

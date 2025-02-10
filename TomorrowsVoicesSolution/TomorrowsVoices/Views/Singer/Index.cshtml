@@ -150,7 +150,7 @@
                     </button>
                 </th>
 
-              
+           @*    
                 <th>
                     <button style="font-weight: 700" type="button" name="actionButton" value="Availability" class="btn btn-toolbar text-white" onclick="handleSort(event, 'IsAvailable')">
                         Availability
@@ -166,7 +166,7 @@
                             }
                         }
                     </button>
-                </th>
+                </th> *@
 
 
 
@@ -181,13 +181,13 @@
                 <tr>
                     <td>@Html.DisplayFor(modelItem => item.FullName)</td>
                     <td>@(item.Location != null ? item.Location.City : "Not Set")</td>
-                    <td>
+                 @*    <td>
                         <button type="button" class="toggle-btn btn @(item.IsAvailable ? "btn-success" : "btn-danger")"
                                 data-id="@item.ID">
                             <i class="bi @(item.IsAvailable ? "bi-check-circle" : "bi-x-circle")"></i>
                             @(item.IsAvailable ? "Available" : "Unavailable")
                         </button>
-                    </td>
+                    </td> *@
                     <td>
                         <div class="d-none d-lg-inline">
                             <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
