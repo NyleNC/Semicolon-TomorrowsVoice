@@ -17,7 +17,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <input asp-for="FirstName" class="form-control" placeholder="Singer First Name"/>
+                <input asp-for="FirstName" class="form-control" placeholder="Singer First Name" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -33,9 +33,9 @@
                 </select>
                 <span asp-validation-for="Location.City" class="text-danger"></span>
             </div>
-     @*        <div class="form-group">
-                <label asp-for="IsAvailable" style="font-weight: 700"></label>
-                <input asp-for="IsAvailable" type="checkbox" class="form-check-input" checked="checked" />
+            @*        <div class="form-group">
+            <label asp-for="IsAvailable" style="font-weight: 700"></label>
+            <input asp-for="IsAvailable" type="checkbox" class="form-check-input" checked="checked" />
             </div> *@
 
             <div class="form-group">
@@ -43,15 +43,19 @@
                 <p class="form-control-plaintext">@Model.CreatedAt</p>
             </div>
 
-            <div class="form-group">
+            <div class="form-group d-inline-block">
                 <label asp-for="UpdatedAt" class="control-label" style="font-weight: 500">Updated At</label>
                 <p class="form-control-plaintext">@Model.UpdatedAt</p>
             </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">
-                <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-					Create
+             <div class="form-group d-flex gap-2">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                        Create
+                </div>
+                <div class="form-group d-inline">
+                    <button type="button" id="fillPresetButton" class="btn btn-secondary" style="background-color: navy;">Fill Preset Values</button>
+                </div>
             </div>
             <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Singer Page</a>
 
@@ -85,18 +89,18 @@
                          noResults: "No cities found",
                          results: function () { return ""; }
                      },
-              open: function () {
+                     open: function () {
 
                          var autocompleteList = $(".ui-autocomplete");
                          autocompleteList.css({
                              "max-height": "200px",
                              "overflow-y": "auto",
-                              "overflow-x": "hidden"
+                             "overflow-x": "hidden"
                          });
                      }
                  });
              });
-                $(document).ready(function() {
+             $(document).ready(function () {
                  $('.city-dropdown').select2({
                      placeholder: "Select a city",
                      allowClear: true
@@ -104,9 +108,7 @@
              });
     </script>
 }
-<div class="form-group">
-    <button type="button" id="fillPresetButton" class="btn btn-secondary">Fill Preset Values</button>
-</div>
+
 
 <script>
     document.getElementById("fillPresetButton").addEventListener("click", function () {

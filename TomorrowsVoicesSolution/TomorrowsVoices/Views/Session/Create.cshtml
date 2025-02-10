@@ -13,111 +13,117 @@
 <hr />
 <p class="mb-4" style="font-weight: 500">Fields marked <span style="color: red">*</span> are required.</p>
 <form asp-action="Create">
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="mt-4 row">
         <div class="col-md-4">
-			    <div class="row">
-				    <div class="col-md-6">
-					    <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
                         <label asp-for="LocationID" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                         <select asp-for="LocationID" class="form-control city-dropdown"
                                 asp-items="ViewBag.LocationID"
                                 onchange="updateDirectorName(this.value)"
-                                id="LocationDropDown">                     
+                                id="LocationDropDown">
                         </select>
-                            <span asp-validation-for="LocationID" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="DirectorName" style="font-weight: 700">Director in Charge</label>
-                            <input type="text" id="DirectorName" class="form-control" readonly>
-                        </div>
+                        <span asp-validation-for="LocationID" class="text-danger"></span>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="DirectorName" style="font-weight: 700">Director in Charge</label>
+                        <input type="text" id="DirectorName" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
 
-                <div class="form-group">
+            <div class="form-group">
                 <label asp-for="Date" class="control-label" style="font-weight: 700">Session Date</label><span style="color: red">*</span>
-                    <input asp-for="Date" class="form-control" />
-                    <span asp-validation-for="Date" class="text-danger"></span>
-                </div>
+                <input asp-for="Date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
 
-           
-                <div class="form-group">
-                    <label asp-for="Notes" style="font-weight: 700" class="control-label"></label>
-                    <textarea asp-for="Notes" rows="5" class="form-control"></textarea>
-                    <span asp-validation-for="Notes" class="text-danger"></span>
-                </div>
 
-	    </div>
+            <div class="form-group">
+                <label asp-for="Notes" style="font-weight: 700" class="control-label"></label>
+                <textarea asp-for="Notes" rows="5" class="form-control"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+
+        </div>
         <div class="col-md-7 ms-auto">
-         @*        <div class="row">
-					    <div class="col-md">
-						    <div class="form-group">
-							    <label for="absentSingersCount" style="font-weight: 500">Absent Singers Count</label>
-							    <input type="text" id="absentSingersCount" class="form-control" value="@absentSingersCount" readonly>
-						    </div>
-					    </div>
+            @*        <div class="row">
+            <div class="col-md">
+            <div class="form-group">
+            <label for="absentSingersCount" style="font-weight: 500">Absent Singers Count</label>
+            <input type="text" id="absentSingersCount" class="form-control" value="@absentSingersCount" readonly>
+            </div>
+            </div>
 
-                        <div class="col-md">
-                        <div class="form-group">
-                            <label for="presentSingersCount" style="font-weight: 500">Present Singers Count</label>
-                            <input type="text" id="presentSingersCount" class="form-control" value="@presentSingersCount" readonly>
-                        </div>
+            <div class="col-md">
+            <div class="form-group">
+            <label for="presentSingersCount" style="font-weight: 500">Present Singers Count</label>
+            <input type="text" id="presentSingersCount" class="form-control" value="@presentSingersCount" readonly>
+            </div>
+            </div>
+
+
+            </div> *@
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="control-label" style="font-weight: 700"> Choose Singers</label> <button type="button" id="btnLeft" class="btn btn-success btn-sm">
+                            <strong>+</strong>
+                        </button>&nbsp;&nbsp;
+                        @*
+
+                        ***** This is a good opportunity for us to have a Add Singers Shortcut****
+
+                        <button class="btn btn-sm btn-outline-secondary" id="nowAddSinger"
+                        data-bs-toggle="modal" data-bs-target="#addSingerModal"
+                        type="button">
+                        <strong>Add Singer</strong>
+                        </button> *@
+                        @Html.ListBox("availOptions", (MultiSelectList)ViewBag.availOpts,
+                                 new { @size = 10, @class = "form-control", @style = "margin-top: 0.5rem;" })
                     </div>
 
-               
-                </div> *@
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label class="control-label" style="font-weight: 700"> Choose Singers</label> <button type="button" id="btnLeft" class="btn btn-success btn-sm">
-                                <strong>+</strong>
-                            </button>&nbsp;&nbsp;
-                            @*
-
-                            ***** This is a good opportunity for us to have a Add Singers Shortcut****
-
-                            <button class="btn btn-sm btn-outline-secondary" id="nowAddSinger"
-                            data-bs-toggle="modal" data-bs-target="#addSingerModal"
-                            type="button">
-                            <strong>Add Singer</strong>
-                            </button> *@
-                            @Html.ListBox("availOptions", (MultiSelectList)ViewBag.availOpts,
-                                     new { @size = 10, @class = "form-control", @style = "margin-top: 0.5rem;" })
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label class="control-label" style="font-weight: 700"> Singers Attended</label> <button type="button" id="btnRight" class="btn btn-danger btn-sm">
-                                <strong>-</strong>
-                            </button>
-                            @Html.ListBox("selectedOptions", (MultiSelectList)ViewBag.selOpts,
-                                     new { @size = 10, @class = "form-control", @style = "margin-top: 0.5rem;" })
-                        </div>
-
-
+                    <div class="form-group col-md-6">
+                        <label class="control-label" style="font-weight: 700"> Singers Attended</label> <button type="button" id="btnRight" class="btn btn-danger btn-sm">
+                            <strong>-</strong>
+                        </button>
+                        @Html.ListBox("selectedOptions", (MultiSelectList)ViewBag.selOpts,
+                                 new { @size = 10, @class = "form-control", @style = "margin-top: 0.5rem;" })
                     </div>
+
+
                 </div>
+            </div>
 
         </div>
     </div>
 
     <div class="col-md-4">
-                <div class="form-group">
-        <button type="submit" id="btnSubmit" class="btn btn-primary">
-        <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-			Create
-            </button>
+        <div class="form-group d-flex gap-2">
+            <div class="form-group">
+                <button type="submit" id="btnSubmit" class="btn btn-primary">
+                    <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                    Create
+                </button>
+            </div>
+            <div class="form-group">
+                <button type="button" id="fillPresetButton" class="btn btn-secondary fill-btn" style="background-color: navy;">Fill Preset Values</button>
+            </div>
+        </div>
+        <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Attendance Page</a>
     </div>
-    <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Attendance Page</a>
-    </div>
-</form>    
-       
+</form>
+
 
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
 
 
@@ -216,12 +222,6 @@
             });
         </script>
         <script src="~/js/multiselect.js"></script>
-}}
- 
-
-
-
-<div class="form-group">
-    <button type="button" id="fillPresetButton" class="btn btn-secondary">Fill Preset Values</button>
-</div>
+    }
+}
 
