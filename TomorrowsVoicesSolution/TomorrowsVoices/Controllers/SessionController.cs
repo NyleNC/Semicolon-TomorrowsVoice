@@ -15,6 +15,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Drawing;
 using TomorrowsVoices.Data.TVMigrations;
+using System.IO;
 
 namespace TomorrowsVoices.Controllers
 {
@@ -28,13 +29,163 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Session
-        public async Task<IActionResult> Index(int? page, int? pageSizeID)
+        public async Task<IActionResult> Index(string? SearchString,DateTime StartDate, DateTime EndDate, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Session")
         {
-            var sessions = _context.Sessions
-                .Include(s => s.Location).ThenInclude(l => l.Director)
-                .Include(s => s.Attendance).ThenInclude(a => a.Singer)
-                .AsNoTracking();
+          
+            string[] sortOptions = new[] { "City", "Date", "Attendance","Director" };
+            int numberFilters = 0;
 
+
+
+			if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+			{
+				page = 1;//Reset page to start
+
+				if (sortOptions.Contains(actionButton))
+				{
+					if (actionButton == sortField) //Reverse order on same field
+					{
+						sortDirection = sortDirection == "asc" ? "desc" : "asc";
+					}
+					sortField = actionButton; //Sort by the button clicked
+				}
+			}
+
+
+			//Always Filter by date range
+			//If first time loading the page, set the date range filter based on the values in the database
+			if (EndDate == DateTime.MinValue)
+            {
+                StartDate = _context.Sessions.Min(o => o.Date).Value;
+                EndDate = _context.Sessions.Max(o => o.Date).Value;
+            }
+            //Check the order of the dates and swap them if required
+            if (EndDate < StartDate)
+            {
+                DateTime temp = EndDate;
+                EndDate = StartDate;
+                StartDate = temp;
+            }
+            //Save to View Data
+            ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
+            ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
+
+            var sessions = _context.Sessions
+              .Include(s => s.Location).ThenInclude(l => l.Director)
+              .Include(s => s.Attendance).ThenInclude(a => a.Singer)
+               .Where(a => a.Date >= StartDate && a.Date <= EndDate.AddDays(1))
+              .AsNoTracking();
+
+        
+     
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                sessions = sessions.Where(p => p.Location.Director.LastName != null && p.Location.Director.LastName.ToLower().Contains(SearchString.ToLower())
+                                                || p.Location.Director.FirstName != null && p.Location.Director.FirstName.ToLower().Contains(SearchString.ToLower()));
+
+                numberFilters++;
+            }
+            if (!string.IsNullOrEmpty(SearchCity))
+            {
+
+                if (Enum.TryParse<City>(SearchCity, true, out var searchCityEnum))
+                {
+                    sessions = sessions
+                        .Where(p => p.Location != null && p.Location.City == searchCityEnum);
+                    numberFilters++;
+                }
+
+                //else
+                //{
+                //    directors = (IQueryable<Director>)directors
+                //    .AsEnumerable()
+                //        .Where(p => p.Location != null && p.Location.City.ToString().Contains(SearchCity));
+
+                //    numberFilters++;
+                //}
+            }
+
+
+            // sorting functionality
+            if (sortField == "Director")
+            {
+                if (sortDirection == "asc")
+                {
+                    sessions = sessions
+                        .OrderBy(p => p.Location.Director.Location.Director.FirstName)
+                        .ThenBy(p => p.Location.Director.Location.Director.LastName);
+                }
+                else
+                {
+                    sessions = sessions
+                        .OrderByDescending(p => p.Location.Director.Location.Director.FirstName)
+                        .ThenBy(p => p.Location.Director.Location.Director.LastName);
+                }
+            }
+            else if (sortField == "Date")
+            {
+                if (sortDirection == "asc")
+                {
+                    sessions = sessions
+                        .OrderBy(p => p.Date);
+                }
+                else
+                {
+                    sessions = sessions
+                        .OrderByDescending(p => p.Date);
+                }
+            }
+            else if (sortField == "Attendance")
+            {
+                if (sortDirection == "asc")
+                {
+                    sessions = sessions
+                        .OrderBy(p => p.Attendance.Count(a => a.Status == true));
+                }
+                else
+                {
+                    sessions = sessions
+                        .OrderByDescending(p => p.Attendance.Count(a => a.Status == true));
+                }
+            }
+            else if (sortField == "City")
+            {
+                if (sortDirection == "asc")
+                {
+                    sessions = sessions
+                        .OrderBy(p => p.Location.City)
+                           .ThenBy(p => p.Location.Director.FirstName)
+                        .ThenBy(p => p.Location.Director.LastName);
+                }
+                else
+                {
+                    sessions = sessions
+                        .OrderByDescending(p => p.Location.City)
+                              .ThenBy(p => p.Location.Director.FirstName)
+                        .ThenBy(p => p.Location.Director.LastName);
+                }
+            }
+
+			ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            ViewData["numberFilters"] = numberFilters;
+
+            var cityList = sessions.AsEnumerable()
+                .Select(d => d.Location?.City.ToString())
+                .Where(city => city != null)
+                .Distinct()
+                .Select(city => new SelectListItem
+                {
+                    Value = city,
+                    Text = city
+                })
+                .ToList();
+
+            cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
+
+
+            ViewData["Cities"] = cityList;
 
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
@@ -422,7 +573,7 @@ namespace TomorrowsVoices.Controllers
                     var workSheet = excel.Workbook.Worksheets.Add("Session Attendance Report");
 
                     workSheet.Cells[1, 1].Value = "Attendance Report";
-                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 5])
+                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 6])
                     {
                         Rng.Merge = true; //Merge columns start and end range
                         Rng.Style.Font.Bold = true; //Font should be bold
