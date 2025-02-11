@@ -29,7 +29,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="Location.City" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <select asp-for="Location.City" class="form-control city-dropdown" asp-items="Html.GetEnumSelectList<City>()"></select>
+                <select asp-for="Location.City" class="form-control city-dropdown" asp-items="Html.GetEnumSelectList<City>()">
+                    <option value="">Select a city</option>
+                </select>
                 <span asp-validation-for="Location.City" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -37,13 +39,18 @@
                 <input asp-for="Email" class="form-control" placeholder="example@tv.com" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-         
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">
-                <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-					Create
-                    
-                </button>
+
+            <div class="form-group d-flex gap-2">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                        Create
+
+                    </button>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="fillPresetButton" class="btn btn-secondary" style="background-color: navy;">Fill Preset Values</button>
+                </div>
             </div>
             <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Director Page</a>
         </form>
@@ -52,7 +59,9 @@
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 <script>
     $(document).ready(function () {
@@ -75,28 +84,24 @@
                 noResults: "No cities found",
                 results: function () { return ""; }
             },
-     open: function () {
-               
+            open: function () {
+
                 var autocompleteList = $(".ui-autocomplete");
                 autocompleteList.css({
-                    "max-height": "200px",  
-                    "overflow-y": "auto", 
-                     "overflow-x": "hidden"
+                    "max-height": "200px",
+                    "overflow-y": "auto",
+                    "overflow-x": "hidden"
                 });
             }
         });
     });
-       $(document).ready(function() {
+    $(document).ready(function () {
         $('.city-dropdown').select2({
             placeholder: "Select a city",
             allowClear: true
         });
     });
 </script>
-
-<div class="form-group">
-    <button type="button" id="fillPresetButton" class="btn btn-secondary">Fill Preset Values</button>
-</div>
 
 <script>
     document.getElementById("fillPresetButton").addEventListener("click", function () {

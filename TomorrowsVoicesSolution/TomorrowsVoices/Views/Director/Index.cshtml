@@ -82,55 +82,72 @@
         </div>
     </div>
     <table class="table table-striped table-hover table-custom">
-        <thead class="table-dark">
+        <thead class="table-dark ">
             <tr>
-                <th>
-                        <button style="font-weight: 700" type="button" name="actionButton" value="Director" class="btn btn-toolbar text-white" onclick="handleSort(event, 'Director')">
+                <th >
+                    <button style="font-weight: 700" type="submit" name="actionButton" value="Director" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Director')">
                         Director
                         @if (ViewData["sortField"]?.ToString() == "Director")
                         {
                             if (ViewData["sortDirection"]?.ToString() == "asc")
                             {
-                                <i class="bi bi-sort-alpha-up ms-2"></i>
+                                <i class="fa-solid fa-sort-up fa-sm" style="color: #ffffff;"></i>
                             }
                             else
                             {
-                                <i class="bi bi-sort-alpha-down ms-2"></i>
+                                <i class="fa-solid fa-sort-down fa-sm" style="color: #ffffff;"></i>
                             }
                         }
+                        else
+                        {
+                            <i class="fas fa-sort fa-sm d-inline" style="color: #ffffff;"></i>
+                        }
                     </button>
+                   
                 </th>
                 <th>
-                        <button style="font-weight: 700" type="button" name="actionButton" value="City" class="btn btn-toolbar text-white" onclick="handleSort(event, 'City')">
+                        <button style="font-weight: 700" type="button" name="actionButton" value="City" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'City')">
                         City
                         @if (ViewData["sortField"]?.ToString() == "City")
                         {
+
                             if (ViewData["sortDirection"]?.ToString() == "asc")
                             {
-                                <i class="bi bi-sort-alpha-up ms-2"></i>
+                                <i class="fa-solid fa-sort-up fa-sm" style="color: #ffffff;"></i>
                             }
                             else
                             {
-                                <i class="bi bi-sort-alpha-down ms-2"></i>
+                                <i class="fa-solid fa-sort-down fa-sm" style="color: #ffffff;"></i>
                             }
                         }
+                        else
+                        {
+                            <i class="fas fa-sort fa-sm  d-inline" style="color: #ffffff;"></i>
+                        }
                     </button>
+                   
                 </th>
                 <th>
-                        <button style="font-weight: 700" type="button" name="actionButton" value="Email" class="btn btn-toolbar text-white" onclick="handleSort(event, 'Email')">
+                    <button style="font-weight: 700" type="button" name="actionButton" value="Email" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'Email')">
                         Email
-                        @if (ViewData["sortField"]?.ToString() == "Email")
+                      @if (ViewData["sortField"]?.ToString() == "Email")
+                    {
+
+                        if (ViewData["sortDirection"]?.ToString() == "asc")
                         {
-                            if (ViewData["sortDirection"]?.ToString() == "asc")
-                            {
-                                <i class="bi bi-sort-alpha-up ms-2"></i>
-                            }
-                            else
-                            {
-                                <i class="bi bi-sort-alpha-down ms-2"></i>
-                            }
+                            <i class="fa-solid fa-sort-up fa-sm" style="color: #ffffff;"></i>
                         }
+                        else
+                        {
+                            <i class="fa-solid fa-sort-down fa-sm" style="color: #ffffff;"></i>
+                        }
+                    }
+                    else
+                    {
+                        <i class="fas fa-sort fa-sm d-inline" style="color: #ffffff;"></i>
+                    }
                     </button>
+                   
                 </th>
                 <th>
                     <button style="font-weight: 700" type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white no-pointer-events">Actions</button>
