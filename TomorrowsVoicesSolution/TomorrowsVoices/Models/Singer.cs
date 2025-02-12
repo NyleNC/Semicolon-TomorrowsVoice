@@ -29,11 +29,11 @@ namespace TomorrowsVoices.Models
 
 
         [Display(Name = "Created On")]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedOn { get; set; } = DateTime.Now;
 
         [Display(Name = "Last Updated")]
         [DisplayFormat(DataFormatString = "yyyy-MM-dd HH:mm", ApplyFormatInEditMode = true)]
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime? UpdatedOn { get; set; }
 
 
         [Display(Name = "City")]

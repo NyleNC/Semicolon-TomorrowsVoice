@@ -104,3 +104,22 @@ label.required:after {
     }
 
 }
+
+
+.select2-selection {
+    height: 40px !important; /* Adjust as needed /
+    line-height: 35px !important; / Ensure text aligns properly */
+    padding-top: 5px !important;
+    width:auto;
+    display:block;
+}
+
+.select2-container--default .select2-dropdown {
+    position: absolute !important;
+    border: 1px solid #aaa;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1051;  /*Ensure it's above other elements*/ 
+}
+ 

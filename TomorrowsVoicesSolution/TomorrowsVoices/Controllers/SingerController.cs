@@ -218,8 +218,8 @@ namespace TomorrowsVoices.Controllers
         {
             if (ModelState.IsValid)
             {
-                singer.CreatedAt = DateTime.Now;
-                singer.UpdatedAt = DateTime.Now;
+                singer.CreatedOn = DateTime.Now;
+                singer.UpdatedOn = DateTime.Now;
 
                 _context.Add(singer);
                 await _context.SaveChangesAsync();
@@ -267,7 +267,7 @@ namespace TomorrowsVoices.Controllers
                     existingSinger.LastName = singer.LastName;
                     existingSinger.Location = singer.Location;
                     existingSinger.IsAvailable = singer.IsAvailable;
-                    existingSinger.UpdatedAt = DateTime.Now;
+                    existingSinger.UpdatedOn = DateTime.Now;
 
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = $"The singer {existingSinger.FullName} has been edited and saved";
@@ -335,7 +335,7 @@ namespace TomorrowsVoices.Controllers
 
             // Toggle the availability status
             singer.IsAvailable = !singer.IsAvailable;
-            singer.UpdatedAt = DateTime.Now;
+            singer.UpdatedOn = DateTime.Now;
             _context.SaveChanges();  // Save the updated status
 
             // Return the updated availability status as JSON
