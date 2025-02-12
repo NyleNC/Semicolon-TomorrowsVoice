@@ -249,17 +249,19 @@ namespace TomorrowsVoices.Controllers
         // GET: Session/Create
         public IActionResult Create()
         {
-            int? firstLocationId = _context.Locations.OrderBy(l => l.City).FirstOrDefault()?.ID;
-
-            Session session = new Session { LocationID = firstLocationId };
+            // Do not set a default LocationID
+            Session session = new Session();
 
             PopulateAssignedSingerData(session);
 
-            ViewData["FirstLocationID"] = firstLocationId;
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", firstLocationId);
+            // Create a SelectList with a placeholder option
+            var locations = _context.Locations.OrderBy(l => l.City).ToList();
+            var locationSelectList = new SelectList(locations, "ID", "City");
+            ViewData["LocationID"] = locationSelectList;
 
             return View(session);
         }
+
 
 
         // POST: Session/Create

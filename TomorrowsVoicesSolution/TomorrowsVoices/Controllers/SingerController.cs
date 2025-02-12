@@ -227,8 +227,8 @@ namespace TomorrowsVoices.Controllers
             }
 
             singer.Location = existingLocation;
-            singer.CreatedAt = DateTime.Now;
-            singer.UpdatedAt = DateTime.Now;
+            singer.CreatedOn = DateTime.Now;
+            singer.UpdatedOn = DateTime.Now;
 
             _context.Add(singer);
             await _context.SaveChangesAsync();

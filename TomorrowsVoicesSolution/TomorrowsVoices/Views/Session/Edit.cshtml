@@ -189,18 +189,21 @@
 
 <script>
     function updateDirectorAndSingers(locationId) {
+        let directorNameField = $("#DirectorName");
+        let availableSingers = $("#availOptions");
+
         if (!locationId) {
-            $("#DirectorName").val("No director assigned");
-            $("#availOptions").empty();
+            directorNameField.val("No director assigned");
+            availableSingers.empty();
+            availableSingers.append(`<option disabled>Select a City to see the corresponding list of Singers.</option>`);
             return;
         }
 
         fetch(`/Session/GetDirectorAndSingersByLocation?locationId=${locationId}`)
             .then(response => response.json())
             .then(data => {
-                $("#DirectorName").val(data.directorName || "No director assigned");
+                directorNameField.val(data.directorName || "No director assigned");
 
-                let availableSingers = $("#availOptions");
                 availableSingers.empty();
 
                 if (data.singers.length === 0) {
@@ -215,6 +218,16 @@
     }
 
     $(document).ready(function () {
+        $('.city-dropdown').select2({
+            placeholder: "Select a city",
+            allowClear: true
+        });
+
+        // Set initial state of the "Choose Singers" list
+        let availableSingers = $("#availOptions");
+        availableSingers.empty();
+        availableSingers.append(`<option disabled>Select a City to see the corresponding list of Singers.</option>`);
+
         $("#btnLeft").click(function () {
             $("#availOptions option:selected").each(function () {
                 $("#selectedOptions").append($(this));
@@ -228,7 +241,9 @@
         });
     });
 </script>
-}
+
+
+
 
 @if (TempData["SuccessMessage"] != null)
 {
