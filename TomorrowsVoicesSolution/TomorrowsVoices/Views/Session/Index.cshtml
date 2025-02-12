@@ -39,26 +39,46 @@
         <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
             <div class="card card-body" style="background-color:lightgray">
                 <div class="row">
-                    <div class="form-group col-md-3">
-                        <label class="control-label">Search by Director Name:</label>
-                        @Html.TextBox("SearchString", null, new { @class = "form-control" })
-                    </div>        
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="control-label">Filter by City:</label>
-                            @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Cities"], new { @class = "form-control" })
-                        </div>
-                    </div>
-                    <div class="form-group col-md-3">
+				    <div class="col-md-3">
+					    <div class="form-group">
+						    <label class="control-label">Filter by City:</label>
+						    @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Cities"], new { @class = "form-control" })
+					    </div>
+				</div>   
+                <div class="form-group col-md-3">
+					<label class="control-label">Search by Director Name:</label>
+					@Html.TextBox("SearchString", null, new { @class = "form-control" })
+				</div>
+                <div class="row d-flex align-items-center ">
+                    <div class="form-group col-md-2">
                         <label class="control-label">From Date:</label>
                         <input class="form-control" type="date" id="StartDate" name="StartDate"
                                value="@ViewData["StartDate"]" aria-describedby="EndDate" aria-invalid="false">
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-2">
                         <label class="control-label">To Date:</label>
                         <input class="form-control" type="date" id="StartDate" name="EndDate"
                                value="@ViewData["EndDate"]" aria-describedby="EndDate" aria-invalid="false">
                     </div>
+
+
+
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Total Present Singers</label>
+                        <div class="d-flex align-items-center gap-1">
+                            <label class="control-label d-inline-block">Min:</label>
+                            <input class="form-control" style="width: 64px; padding-left: 10px; padding-right: 6px; " type="number" id="minPresentSinger" name="minPresentSinger"
+                                   value="@ViewData["minPresentSinger"]" aria-describedby="minPresentSinger" aria-invalid="false">
+
+                            <label class="control-label d-inline-block">Max:</label>
+                            <input class="form-control" style="width: 64px; padding-left: 10px; padding-right: 6px; " type="number" id="maxPresentSinger" name="maxPresentSinger"
+                                   value="@ViewData["maxPresentSinger"]" aria-describedby="maxPresentSinger" aria-invalid="false">
+                        </div>
+
+                    </div>
+
+                </div>
+				
               
                 </div>
                 <div class="form-group col-md-2 align-self-start">
@@ -169,11 +189,10 @@
                     <td>
                         @{
                             int presentSingers = item.Attendance.Count(a => a.Status);
-                            int registeredSingers = item.Attendance.Count();
+                            int availableSingersInCity = ViewData["AvailableSingers_" + item.Location.ID] as int? ?? 0;
                         }
-                        @presentSingers / @registeredSingers
+                        @presentSingers / @availableSingersInCity
                     </td>
-                   
                     <td>
                         @Html.DisplayFor(modelItem => item.Location.Director.DirectorFullName)
                     </td>
