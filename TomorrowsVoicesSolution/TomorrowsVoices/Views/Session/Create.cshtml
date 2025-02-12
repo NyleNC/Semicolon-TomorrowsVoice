@@ -22,11 +22,14 @@
                         <label asp-for="LocationID" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                         <select asp-for="LocationID" class="form-control city-dropdown"
                                 asp-items="ViewBag.LocationID"
-                                onchange="updateDirectorName(this.value)"
+                                onchange="updateDirectorAndSingers(this.value)"
                                 id="LocationDropDown">
+       
                         </select>
+
                         <span asp-validation-for="LocationID" class="text-danger"></span>
                     </div>
+
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
@@ -163,24 +166,7 @@
             });
         </script>
         <script>
-            function updateDirectorName(locationId) {
-                fetch(`/Session/GetDirectorByLocation?locationId=${locationId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById("DirectorName").value = data.directorName || "No director assigned";
-                    })
-                    .catch(error => console.error('Error:', error));
-
-                document.addEventListener("DOMContentLoaded", () => {
-                    let locationDropdown = document.getElementById("LocationID");
-                    if (locationDropdown) {
-                        locationDropdown.value = "";
-                    }
-                    updateDirectorName("");
-
-
-                })
-            }
+         
 
 
             $(document).ready(function () {
@@ -222,6 +208,65 @@
             });
         </script>
         <script src="~/js/multiselect.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let firstLocationId = "@ViewData["FirstLocationID"]";
+
+                if (firstLocationId && firstLocationId !== "null") {
+                    updateDirectorAndSingers(firstLocationId);
+                }
+            });
+
+            document.addEventListener("DOMContentLoaded", function () {
+                let firstLocationId = "@ViewData["FirstLocationID"]";
+
+                if (firstLocationId && firstLocationId !== "null" && !isNaN(firstLocationId)) {
+                    updateDirectorAndSingers(parseInt(firstLocationId, 10));
+                    $("#LocationDropDown").val(firstLocationId).trigger("change");
+                }
+            });
+
+
+            function updateDirectorAndSingers(locationId) {
+                if (!locationId) {
+                    $("#DirectorName").val("No director assigned");
+                    $("#availOptions").empty();
+                    return;
+                }
+
+                fetch(`/Session/GetDirectorAndSingersByLocation?locationId=${locationId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        $("#DirectorName").val(data.directorName || "No director assigned");
+
+                        let availableSingers = $("#availOptions");
+                        availableSingers.empty();
+
+                        if (data.singers.length === 0) {
+                            availableSingers.append(`<option disabled>No singers available</option>`);
+                        } else {
+                            data.singers.forEach(singer => {
+                                availableSingers.append(`<option value="${singer.id}">${singer.name}</option>`);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error fetching director and singers:', error));
+            }
+
+            $(document).ready(function () {
+                $("#btnLeft").click(function () {
+                    $("#availOptions option:selected").each(function () {
+                        $("#selectedOptions").append($(this));
+                    });
+                });
+
+                $("#btnRight").click(function () {
+                    $("#selectedOptions option:selected").each(function () {
+                        $("#availOptions").append($(this));
+                    });
+                });
+            });
+        </script>
     }
 }
 

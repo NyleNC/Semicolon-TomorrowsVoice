@@ -29,7 +29,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Session
-        public async Task<IActionResult> Index(string? SearchString,DateTime StartDate, DateTime EndDate, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Session")
+        public async Task<IActionResult> Index(string? SearchString, int? minPresentSinger, int? maxPresentSinger,DateTime StartDate, DateTime EndDate, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Session")
         {
           
             string[] sortOptions = new[] { "City", "Date", "Attendance","Director" };
@@ -86,6 +86,18 @@ namespace TomorrowsVoices.Controllers
 
                 numberFilters++;
             }
+
+            if (minPresentSinger.HasValue || maxPresentSinger.HasValue)
+            {
+                sessions = sessions.Where(p =>
+                    (!minPresentSinger.HasValue || p.Attendance.Count(a => a.Status) >= minPresentSinger.Value) &&
+                    (!maxPresentSinger.HasValue || p.Attendance.Count(a => a.Status) <= maxPresentSinger.Value)
+                );
+
+                numberFilters++;
+            }
+
+
             if (!string.IsNullOrEmpty(SearchCity))
             {
 
@@ -187,6 +199,19 @@ namespace TomorrowsVoices.Controllers
 
             ViewData["Cities"] = cityList;
 
+         
+            var availableSingersPerCity = _context.Singers
+                .GroupBy(s => s.LocationID)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            foreach (var session in sessions)
+            {
+                int locationId = session.Location?.ID ?? 0;
+                ViewData["AvailableSingers_" + locationId] = availableSingersPerCity.ContainsKey(locationId)
+                    ? availableSingersPerCity[locationId]
+                    : 0;
+            }
+
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
 
@@ -214,11 +239,7 @@ namespace TomorrowsVoices.Controllers
             }
 
             var presentSingersCount = session.Attendance.Count(a => a.Status == true);
-            var absentSingersCount = session.Attendance.Count(a => a.Status == false);
             var totalSingersCount = session.Attendance.Count();
-
-            ViewBag.PresentSingersCount = $"{presentSingersCount}/{totalSingersCount}";
-            ViewBag.AbsentSingersCount = $"{absentSingersCount}/{totalSingersCount}";
 
 
 
@@ -228,12 +249,17 @@ namespace TomorrowsVoices.Controllers
         // GET: Session/Create
         public IActionResult Create()
         {
-            Session session = new Session { LocationID = null };
+            int? firstLocationId = _context.Locations.OrderBy(l => l.City).FirstOrDefault()?.ID;
+
+            Session session = new Session { LocationID = firstLocationId };
+
             PopulateAssignedSingerData(session);
-            ViewData["LocationID"] = LocationSelectList();
+
+            ViewData["FirstLocationID"] = firstLocationId;
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", firstLocationId);
+
             return View(session);
         }
-
 
 
         // POST: Session/Create
@@ -261,9 +287,6 @@ namespace TomorrowsVoices.Controllers
                     var presentSingersCount = session.Attendance.Count(a => a.Status == true);
                     var absentSingersCount = session.Attendance.Count(a => a.Status == false);
                     var totalSingersCount = session.Attendance.Count();
-
-                    ViewBag.PresentSingersCount = $"{presentSingersCount}/{totalSingersCount}";
-                    ViewBag.AbsentSingersCount = $"{absentSingersCount}/{totalSingersCount}";
 
 
 
@@ -444,42 +467,47 @@ namespace TomorrowsVoices.Controllers
                 "City");
         }
         [HttpGet]
-        public JsonResult GetDirectorByLocation(int locationId)
+        [HttpGet]
+        public JsonResult GetDirectorAndSingersByLocation(int locationId)
         {
-
-
-
             var director = _context.Locations
-                .Include(l => l.Director) // Ensure Director is included
+                .Include(l => l.Director)
                 .FirstOrDefault(l => l.ID == locationId)
-                ?.Director?.DirectorFullName;
+                ?.Director?.DirectorFullName ?? "No director assigned";
 
-            // If no director is found in the database, check if it's an enum value
-            if (director == null && Enum.IsDefined(typeof(City), locationId))
-            {
-                director = "No director assigned"; // Default message for enum-based cities
-            }
-            return Json(new { directorName = director ?? "No director assigned" });
+            var singers = _context.Singers
+                .Where(s => s.LocationID == locationId)
+                .Select(s => new
+                {
+                    id = s.ID,
+                    name = $"{s.FullName} ({s.Location.City})"
+                })
+                .ToList();
+
+            return Json(new { directorName = director, singers });
         }
 
         private void PopulateAssignedSingerData(Session session)
         {
-            //For this to work, you must have Included the child collection in the parent object
-            var allOptions = _context.Singers;
+            var allOptions = _context.Singers.Include(s => s.Location);
             var currentOptionsHS = new HashSet<int>(session.Attendance
                 .Where(a => a.Status == true)
                 .Select(a => a.SingerID));
-            //Instead of one list with a boolean, we will make two lists
+
             var selected = new List<ListOptionVM>();
             var available = new List<ListOptionVM>();
+
             foreach (var s in allOptions)
             {
+                string locationInfo = s.Location != null ? $" ({s.Location.City})" : "";
+                string displayText = $"{s.FullName}{locationInfo}";
+
                 if (currentOptionsHS.Contains(s.ID))
                 {
                     selected.Add(new ListOptionVM
                     {
                         ID = s.ID,
-                        DisplayText = s.FullName
+                        DisplayText = displayText
                     });
                 }
                 else
@@ -487,7 +515,7 @@ namespace TomorrowsVoices.Controllers
                     available.Add(new ListOptionVM
                     {
                         ID = s.ID,
-                        DisplayText = s.FullName
+                        DisplayText = displayText
                     });
                 }
             }
@@ -495,6 +523,7 @@ namespace TomorrowsVoices.Controllers
             ViewData["selOpts"] = new MultiSelectList(selected.OrderBy(s => s.DisplayText), "ID", "DisplayText");
             ViewData["availOpts"] = new MultiSelectList(available.OrderBy(s => s.DisplayText), "ID", "DisplayText");
         }
+
         private void UpdateSessionSingers(string[] selectedOptions, Session sessionToUpdate)
         {
             var allSingerIDs = _context.Singers.Select(s => s.ID).ToHashSet(); // Get all singers

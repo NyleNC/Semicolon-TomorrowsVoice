@@ -145,12 +145,37 @@ namespace TomorrowsVoices.Data
             if (!context.Singers.Any())
             {
                 context.Singers.AddRange(
+                   
+                    //Niagara
                     new Singer
                     {
                         FirstName = "Bruce",
                         LastName = "House",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Toronto).ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Niagara).ID
                     },
+                    new Singer
+                    {
+                        FirstName = "Torffin",
+                        LastName = "Snow",
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Niagara).ID
+                    },
+                    new Singer
+                    {
+                        FirstName = "Hall",
+                        LastName = "Houser",
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Niagara).ID
+                    },
+                    new Singer
+                    {
+                        FirstName = "Radin",
+                        LastName = "Shahravan",
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Niagara).ID
+                    }
+
+
+
+                    // Toronto
+                    ,
                     new Singer
                     {
                         FirstName = "Tyler",
@@ -169,112 +194,17 @@ namespace TomorrowsVoices.Data
                         LastName = "Baker",
                         LocationID = context.Locations.FirstOrDefault(l => l.City == City.Toronto).ID
                     },
-                    new Singer
-                    {
-                        FirstName = "Hall",
-                        LastName = "Houser",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Niagara).ID
-                    },
-                    new Singer
-                    {
-                        FirstName = "Radin",
-                        LastName = "Shahravan",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Niagara).ID
-                    },
+
+
+                    // Saskatoon
                     new Singer
                     {
                         FirstName = "Logan",
                         LastName = "Xavier",
                         LocationID = context.Locations.FirstOrDefault(l => l.City == City.Saskatoon).ID
-                    },
-
-
-
-
-
-                     new Singer
-                     {
-                         FirstName = "Clark",
-                         LastName = "Jamey",
-                         LocationID = context.Locations.FirstOrDefault(l => l.City == City.Toronto).ID
-                     },
-                    new Singer
-                    {
-                        FirstName = "Bruce",
-                        LastName = "Burlington",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Saskatoon).ID
-                    },
-                    new Singer
-                    {
-                        FirstName = "Peter",
-                        LastName = "Smith",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Niagara).ID
-                    },
-                    new Singer
-                    {
-                        FirstName = "Tony",
-                        LastName = "Morteli",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Saskatoon).ID
-                    },
-
-
-
-
-
-                    new Singer
-                    {
-                        FirstName = "Moein",
-                        LastName = "Jamey",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Toronto).ID
-                    },
-                    new Singer
-                    {
-                        FirstName = "Reza",
-                        LastName = "Burlington",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Saskatoon).ID
-                    },
-                    new Singer
-                    {
-                        FirstName = "Ali",
-                        LastName = "Smith",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Niagara).ID
-                    },
-                    new Singer
-                    {
-                        FirstName = "Taha",
-                        LastName = "Morteli",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Saskatoon).ID
-                    },
-                    new Singer
-                    {
-                        FirstName = "Vince",
-                        LastName = "Jamey",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Toronto).ID
-                    },
-                    new Singer
-                    {
-                        FirstName = "Walter",
-                        LastName = "Burlington",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Saskatoon).ID
-                    },
-                    new Singer
-                    {
-                        FirstName = "Sina",
-                        LastName = "Smith",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Niagara).ID
-                    },
-                    new Singer
-                    {
-                        FirstName = "Mahan",
-                        LastName = "Morteli",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Saskatoon).ID
-                    },
-                    new Singer
-                    {
-                        FirstName = "Sepehr",
-                        LastName = "Jamey",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Toronto).ID
                     }
+
+
                 );
                 context.SaveChanges();
             }
@@ -288,19 +218,8 @@ namespace TomorrowsVoices.Data
                     new Session
                     {
                         Date = DateTime.Parse("2024/12/29"),
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Niagara).ID
-                    },
-                    new Session
-                    {
-                        Date = DateTime.Parse("2024/12/29"),
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Toronto).ID,
-                        Notes = "1 Person was not able to commute."
-                    },
-                    new Session
-                    {
-                        Date = DateTime.Parse("2024/12/29"),
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Hamilton).ID,
-                        Notes = "2 People were feeling sick and didn't show up."
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == City.Niagara).ID,
+              
                     }
                 );
                 context.SaveChanges();
@@ -311,131 +230,37 @@ namespace TomorrowsVoices.Data
         {
             if (!context.Attendances.Any())
             {
-                var radin = context.Singers.FirstOrDefault(s => s.FirstName == "Radin");
-                var session = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2024/12/29"));
+        
+                context.Attendances.AddRange(
+                    new Attendance
+                    {
+                        Status = true,
+                        SingerID =  context.Singers.FirstOrDefault(s => s.FirstName == "Radin").ID,
+                        SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Niagara).ID
+                    },
+                    new Attendance
+                    {
+                        Status = true,
+                        SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Hall").ID,
+                        SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Niagara).ID
+                    },
+                    new Attendance
+                    {
+                        Status = false,
+                        SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Torffin").ID,
+                        SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Niagara).ID
+                    },
+                    new Attendance
+                    {
+                        Status = true,
+                        SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Bruce").ID,
+                        SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Niagara).ID
+                    }
 
-                if (radin != null && session != null)
-                {
-                    context.Attendances.AddRange(
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID =  context.Singers.FirstOrDefault(s => s.FirstName == "Radin").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Niagara).ID
-                        },
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Hall").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Niagara).ID
-                        },
-                        new Attendance
-                        {
-                            Status = false,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Logan").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Niagara).ID
-                        },
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Tyler").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Niagara).ID
-                        },
-                        new Attendance
-                        {
-                            Status = false,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Theo").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Niagara).ID
-                        },
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "James").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Niagara).ID
-                        },
-
-
-
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Tony").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Toronto).ID
-                        },
-                        new Attendance
-                        {
-                            Status = false,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Bruce").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Toronto).ID
-                        },
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Peter").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Toronto).ID
-                        },
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Clark").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Toronto).ID
-                        },
-
-
-
-
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Taha").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Hamilton).ID
-                        },
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Sina").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Hamilton).ID
-                        },
-
-                        new Attendance
-                        {
-                            Status = false,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Reza").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Hamilton).ID
-                        },
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Vince").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Hamilton).ID
-
-                        },
-
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Sepehr").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Hamilton).ID
-                        },
-                        new Attendance
-                        {
-                            Status = false,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Ali").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Hamilton).ID
-                        },
-                        
-                        new Attendance
-                        {
-                            Status = true,
-                            SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Moein").ID,
-                            SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == City.Hamilton).ID
-                        }
-                    
-
-                    );
-                    context.SaveChanges();
-                }
+                );
+                context.SaveChanges();
             }
+            
         }
     }
 }

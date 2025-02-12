@@ -25,13 +25,12 @@
                 <input asp-for="LastName" class="form-control" placeholder="Singer Last Name" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
-
             <div class="form-group">
-                <label asp-for="Location.City" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <select asp-for="Location.City" class="form-control city-dropdown" asp-items="ViewBag.CityList">
-                    <option value="">Select a city</option>
+                <label asp-for="LocationID" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+                <select asp-for="LocationID" class="form-control city-dropdown" asp-items="ViewBag.CityList">
+                    <option value="">Select a location</option>
                 </select>
-                <span asp-validation-for="Location.City" class="text-danger"></span>
+                <span asp-validation-for="LocationID" class="text-danger"></span>
             </div>
             @*        <div class="form-group">
             <label asp-for="IsAvailable" style="font-weight: 700"></label>

@@ -189,7 +189,6 @@ namespace TomorrowsVoices.Controllers
         // GET: Singer/Create
         public IActionResult Create()
         {
-            // Ensure there is at least one location (you might also want to check directors)
             var locations = _context.Locations.ToList();
             if (!locations.Any())
             {
@@ -197,36 +196,38 @@ namespace TomorrowsVoices.Controllers
                 return View();
             }
 
-            // Build the filtered city list from Directors.
-            // This returns only those cities (as strings) that are used by a Director.
-            var cityList = _context.Directors
-                .Where(d => d.Location != null)
-                .Select(d => d.Location.City.ToString())
-                .Distinct()
-                .ToList();
-
-            // Create a SelectList for the dropdown.
-            ViewBag.CityList = new SelectList(cityList);
+            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
 
             ViewData["Title"] = "Create";
-            return View(new TomorrowsVoices.Models.Singer());
+            return View(new Singer());
         }
+
         // POST: Singer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Location,IsAvailable")] Singer singer)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,LocationID,IsAvailable")] Singer singer)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                singer.CreatedAt = DateTime.Now;
-                singer.UpdatedAt = DateTime.Now;
-
-                _context.Add(singer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
+                return View(singer);
             }
-          
-            return View(singer);
+
+            var existingLocation = await _context.Locations.FindAsync(singer.LocationID);
+            if (existingLocation == null)
+            {
+                ModelState.AddModelError("LocationID", "Invalid location selected.");
+                ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
+                return View(singer);
+            }
+
+            singer.Location = existingLocation;
+            singer.CreatedAt = DateTime.Now;
+            singer.UpdatedAt = DateTime.Now;
+
+            _context.Add(singer);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Singer/Edit/5
