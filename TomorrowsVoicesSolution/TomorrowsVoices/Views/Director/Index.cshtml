@@ -9,11 +9,11 @@
 <h1>Directors</h1>
 
 
-<div class="d-flex justify-content-between align-items-start mb-3">
+<div class="d-flex justify-content-between align-items-start mb-1">
     <p class="mb-2">
         <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-user.png" alt="add-director-icon" style="height: 24px; width: auto; margin-right: 10px"/>Add Director</a>
     </p>
-  @*   <div>
+    <div>
         <div class="text-danger">@Html.Raw(TempData["Feedback"])</div>
 
         <form asp-action="InsertFromExcel" asp-controller="Director" method="post" enctype="multipart/form-data"> 
@@ -31,13 +31,22 @@
                 </div>
 
             </div>
+         
         </form>
-    </div> *@
+    </div>
+  
 </div>
+
 
 <form asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @Html.Raw(TempData["Success"])
+        </div>
+    }
     <div class="row">
         <div class="col-10">
             <button class="btn mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
@@ -158,7 +167,6 @@
             @foreach (var item in Model)
             {
                 <tr>
-
                     <td>
                         @Html.DisplayFor(modelItem => item.DirectorFullName)
                     </td>
@@ -168,7 +176,6 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Email)
                     </td>
-
                     <td>
                             <div class="d-none d-lg-inline">
                                 <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |

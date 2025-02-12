@@ -209,8 +209,13 @@ namespace TomorrowsVoices.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
-                return View(singer);
+                singer.CreatedAt = DateTime.Now;
+                singer.UpdatedAt = DateTime.Now;
+
+                _context.Add(singer);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"{singer.FullName} has been successfully added in the city of {singer.Location.City}";
+                return RedirectToAction(nameof(Index));
             }
 
             var existingLocation = await _context.Locations.FindAsync(singer.LocationID);
@@ -270,6 +275,7 @@ namespace TomorrowsVoices.Controllers
                     existingSinger.UpdatedAt = DateTime.Now;
 
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"The singer {existingSinger.FullName} has been edited and saved";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
