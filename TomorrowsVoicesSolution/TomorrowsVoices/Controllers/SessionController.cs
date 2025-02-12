@@ -266,7 +266,7 @@ namespace TomorrowsVoices.Controllers
                     ViewBag.AbsentSingersCount = $"{absentSingersCount}/{totalSingersCount}";
 
 
-
+                    TempData["SuccessMessage"] = $"{presentSingersCount} singers out of {totalSingersCount} attended ";
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -319,6 +319,7 @@ namespace TomorrowsVoices.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, string[] selectedOptions)
         {
+    
 
             var sessionToUpdate = await _context.Sessions
                 .Include(s => s.Location).ThenInclude(l => l.Director)
@@ -338,8 +339,12 @@ namespace TomorrowsVoices.Controllers
             {
                 try
                 {
+                    var presentSingersCount = sessionToUpdate.Attendance.Count(a => a.Status == true);
+                    var absentSingersCount = sessionToUpdate.Attendance.Count(a => a.Status == false);
+                    var totalSingersCount = sessionToUpdate.Attendance.Count();
                     //_context.Update(sessionToUpdate);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"Changes saved. {presentSingersCount} singers out of {totalSingersCount} attended "; 
                     return RedirectToAction("Details", new { sessionToUpdate.ID });
                 }
                 catch (RetryLimitExceededException /* dex */)

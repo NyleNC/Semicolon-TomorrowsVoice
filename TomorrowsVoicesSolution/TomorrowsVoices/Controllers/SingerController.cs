@@ -223,6 +223,7 @@ namespace TomorrowsVoices.Controllers
 
                 _context.Add(singer);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"{singer.FullName} has been successfully added in the city of {singer.Location.City}";
                 return RedirectToAction(nameof(Index));
             }
           
@@ -269,6 +270,7 @@ namespace TomorrowsVoices.Controllers
                     existingSinger.UpdatedAt = DateTime.Now;
 
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"The singer {existingSinger.FullName} has been edited and saved";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)

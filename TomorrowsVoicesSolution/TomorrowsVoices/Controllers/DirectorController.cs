@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using OfficeOpenXml;
 using TomorrowsVoices.Data;
+using TomorrowsVoices.Data.TVMigrations;
 using TomorrowsVoices.Models;
 using TomorrowsVoices.Utilities;
 
@@ -306,7 +307,8 @@ namespace TomorrowsVoices.Controllers
                 {
                     _context.Update(directorToUpdate);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("Details", new { directorToUpdate.ID });
+                    TempData["SuccessMessage"] = $"{directorToUpdate.DirectorFullName} has been edited and saved";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (RetryLimitExceededException /* dex */)
                 {
@@ -327,6 +329,7 @@ namespace TomorrowsVoices.Controllers
                 {
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
+            
             }
 
           
@@ -387,6 +390,111 @@ namespace TomorrowsVoices.Controllers
             ViewData["DirectorID"] = new SelectList(dQuery, "ID", "DirectorFullName", director?.ID);
         }
 
+        //ImportExcel
+        [HttpPost]
+        public async Task<IActionResult> InsertFromExcel(IFormFile theExcel)
+        {
+            string feedBack = string.Empty;
+            string successMessage = string.Empty;
+            if (theExcel == null || theExcel.Length == 0)
+            {
+                TempData["Feedback"] = "Error: No file uploaded. Please select an Excel file.";
+                return RedirectToAction("Index");
+            }
+            if (theExcel != null)
+            {
+                string mimeType = theExcel.ContentType;
+                long fileLength = theExcel.Length;
+
+                if (!(mimeType == "" || fileLength == 0)) // Looks like we have a file!!!
+                {
+                    if (mimeType.Contains("excel") || mimeType.Contains("spreadsheet"))
+                    {
+                        ExcelPackage excel;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await theExcel.CopyToAsync(memoryStream);
+                            excel = new ExcelPackage(memoryStream);
+                        }
+
+                        var workSheet = excel.Workbook.Worksheets[0];
+                        var start = workSheet.Dimension.Start;
+                        var end = workSheet.Dimension.End;
+
+                        int successCount = 0;
+                        int errorCount = 0;
+
+                        if (workSheet.Cells[1, 1].Text == "FirstName" && workSheet.Cells[1, 2].Text == "LastName" && workSheet.Cells[1, 3].Text == "City" && workSheet.Cells[1, 4].Text == "Email")
+                        {
+                            for (int row = start.Row + 1; row <= end.Row; row++)
+                            {
+                                Director director = new Director();
+                                try
+                                {
+                                    director.FirstName = workSheet.Cells[row, 1].Text;
+                                    director.LastName = workSheet.Cells[row, 2].Text;
+                                    string cityName = workSheet.Cells[row, 3].Text;
+                                    director.Email = workSheet.Cells[row, 4].Text;
+
+                                    // Validate data before adding
+                                    if (string.IsNullOrEmpty(director.FirstName) || string.IsNullOrEmpty(director.LastName) || string.IsNullOrEmpty(director.Email))
+                                    {
+                                        errorCount++;
+                                        feedBack += $"Error: Row {row} has missing fields.<br />";
+                                        continue; // Skip invalid row
+                                    }
+
+                                    if (!_context.Directors.Any(d => d.Email == director.Email))
+                                    {
+                                        if (Enum.TryParse(cityName, true, out City parsedCity))
+                                        {
+                                            var location = _context.Locations.FirstOrDefault(l => l.City == parsedCity);
+                                            if (location == null)
+                                            {
+                                                location = new Location { City = parsedCity };
+                                                _context.Locations.Add(location);
+                                                await _context.SaveChangesAsync();
+                                            }
+                                            director.Location = location;
+
+                                            _context.Directors.Add(director);
+                                            successCount++;
+                                        }
+                                        else
+                                        {
+                                            errorCount++;
+                                            feedBack += $"Error: Invalid city '{cityName}' in row {row}.<br />";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        errorCount++;
+                                        feedBack += $"Error: Director with email {director.Email} already exists.<br />";
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    errorCount++;
+                                    feedBack += $"Error: Exception in row {row} - {ex.Message}<br />";
+                                }
+                            }
+
+                            await _context.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            feedBack += "Error: Invalid Excel file format.<br />";
+                        }
+                        TempData["Success"] = $"{successCount} directors successfully added.";
+                        
+                    }
+                 
+                    TempData["Feedback"] = feedBack;
+
+                }
+            }
+            return RedirectToAction("Index");
+        }
         //Autocomplete for City
         public JsonResult CitySuggestions(string term)
         {
