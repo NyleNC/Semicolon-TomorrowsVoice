@@ -101,22 +101,14 @@ namespace TomorrowsVoices.Controllers
             if (!string.IsNullOrEmpty(SearchCity))
             {
 
-                if (Enum.TryParse<City>(SearchCity, true, out var searchCityEnum))
-                {
+            
                     sessions = sessions
-                        .Where(p => p.Location != null && p.Location.City == searchCityEnum);
+                 .Where(p => p.Location.City != null && p.Location.City == SearchCity);
                     numberFilters++;
-                }
-
-                //else
-                //{
-                //    directors = (IQueryable<Director>)directors
-                //    .AsEnumerable()
-                //        .Where(p => p.Location != null && p.Location.City.ToString().Contains(SearchCity));
-
-                //    numberFilters++;
-                //}
             }
+
+               
+            
 
 
             // sorting functionality
@@ -258,6 +250,7 @@ namespace TomorrowsVoices.Controllers
             var locations = _context.Locations.OrderBy(l => l.City).ToList();
             var locationSelectList = new SelectList(locations, "ID", "City");
             ViewData["LocationID"] = locationSelectList;
+            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
 
             return View(session);
         }

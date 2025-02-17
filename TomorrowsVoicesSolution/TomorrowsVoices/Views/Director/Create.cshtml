@@ -29,7 +29,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Location.City" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <select asp-for="Location.City" class="form-control city-dropdown" asp-items="Html.GetEnumSelectList<City>()">
+                <select asp-for="Location.City" class="form-control city-dropdown" asp-items="ViewBag.CityList">
                     <option value="">Select a city</option>
                 </select>
                 <span asp-validation-for="Location.City" class="text-danger"></span>
@@ -63,45 +63,72 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-<script>
-    $(document).ready(function () {
-        $("#City").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '@Url.Action("CitySuggestions", "Director")',
-                    type: "GET",
-                    dataType: "json",
-                    data: { term: request.term },
-                    success: function (data) {
-                        response($.map(data, function (item) {
-                            return { label: item, value: item };
-                        }));
-                    }
-                });
-            },
-            minLength: 1,
-            messages: {
-                noResults: "No cities found",
-                results: function () { return ""; }
-            },
-            open: function () {
 
-                var autocompleteList = $(".ui-autocomplete");
-                autocompleteList.css({
-                    "max-height": "200px",
-                    "overflow-y": "auto",
-                    "overflow-x": "hidden"
-                });
+<script>
+        $(document).ready(function () {
+        $(".city-dropdown").select2({
+            placeholder: "Select a city",
+            allowClear: true,
+            ajax: {
+                url: '@Url.Action("CitySuggestions", "Director")',
+                dataType: "json",
+                delay: 250,
+                data: function (params) {
+                    return { term: params.term }; // pass the search term
+                },
+                processResults: function (data) {
+                    var results = $.map(data, function (item) {
+                        return { id: item.id, text: item.text }; // Use id and text as is
+                    });
+
+                    // If "Add new City" is not part of the data, add it as an option
+                    if (!data.some(item => item.text === "Add new City")) {
+                        results.push({
+                            id: "Add new City",
+                            text: "Add new City"
+                        });
+                    }
+
+                    return { results: results };
+                }
+            },
+            minimumInputLength: 1 // Minimum characters to trigger the search
+        }).on("select2:select", function (e) {
+            var selectedCity = e.params.data.text;
+
+            // Check if the user selected the "Add new City" option
+            if (selectedCity === "Add new City") {
+                var cityName = e.params.data.id.replace("Add new City: '", "").replace("'", ""); // Get the city name entered by user
+                addNewCity(cityName); // Call function to add the new city
             }
         });
     });
-    $(document).ready(function () {
-        $('.city-dropdown').select2({
-            placeholder: "Select a city",
-            allowClear: true
+
+    function addNewCity(cityName) {
+        $.ajax({
+            url: '@Url.Action("AddCity", "Director")',
+            type: "POST",
+            data: { cityName: cityName },
+            success: function (response) {
+                if (response.success) {
+                    alert("City added successfully!");
+
+                    // After the city is added to the database, we can refresh the Select2 dropdown
+                    // This ensures that the new city is fetched from the server and added correctly
+                    $(".city-dropdown").val(cityName).trigger('change'); // Trigger change to select the new city
+
+                } else {
+                    alert("Error: " + response.message);
+                }
+            },
+            error: function () {
+                alert("An error occurred while adding the city.");
+            }
         });
-    });
+    }
 </script>
+
+
 
 <script>
     document.getElementById("fillPresetButton").addEventListener("click", function () {
@@ -125,11 +152,4 @@
         }
     });
 
-    $(document).ready(function () {
-        // Initialize Select2 for City dropdown
-        $('.city-dropdown').select2({
-            placeholder: "Select a city",
-            allowClear: true
-        });
-    });
 </script>

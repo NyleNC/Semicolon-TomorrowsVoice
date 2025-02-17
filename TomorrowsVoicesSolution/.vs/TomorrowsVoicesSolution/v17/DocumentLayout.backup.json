@@ -1,18 +1,26 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\moham\\Documents\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\",
+  "WorkspaceRootPath": "C:\\Users\\nyleb\\Downloads\\nyle city string\\TomorrowsVoicesSolution\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\moham\\documents\\semicolon-tomorrowsvoice\\tomorrowsvoicessolution\\tomorrowsvoices\\views\\director\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\downloads\\nyle city string\\tomorrowsvoicessolution\\tomorrowsvoices\\views\\session\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\views\\session\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\downloads\\nyle city string\\tomorrowsvoicessolution\\tomorrowsvoices\\views\\director\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\views\\director\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\moham\\documents\\semicolon-tomorrowsvoice\\tomorrowsvoicessolution\\tomorrowsvoices\\views\\singer\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\views\\singer\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\downloads\\nyle city string\\tomorrowsvoicessolution\\tomorrowsvoices\\controllers\\sessioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\controllers\\sessioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\moham\\documents\\semicolon-tomorrowsvoice\\tomorrowsvoicessolution\\tomorrowsvoices\\views\\session\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\views\\session\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\downloads\\nyle city string\\tomorrowsvoicessolution\\tomorrowsvoices\\controllers\\directorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\controllers\\directorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|c:\\users\\nyleb\\downloads\\nyle city string\\tomorrowsvoicessolution\\tomorrowsvoices\\views\\session\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{00EA2BA8-7173-4538-B08A-B59D290DE164}|TomorrowsVoices\\TomorrowsVoices.csproj|solutionrelative:tomorrowsvoices\\views\\session\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -21,83 +29,107 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 11,
+          "DockedWidth": 153,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
-              "Name": "ST:1477434216:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+              "Name": "ST:1:0:{fabf9319-47eb-497e-b8f6-d9f73fba5f55}"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:47892051:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:1346882368:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:695079430:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+              "Name": "ST:315630841:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:1025111540:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+              "Name": "ST:665499870:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+              "Name": "ST:2094199144:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:1133163928:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\nyleb\\Downloads\\nyle city string\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Session\\Create.cshtml",
+              "RelativeDocumentMoniker": "TomorrowsVoices\\Views\\Session\\Create.cshtml",
+              "ToolTip": "C:\\Users\\nyleb\\Downloads\\nyle city string\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Session\\Create.cshtml",
+              "RelativeToolTip": "TomorrowsVoices\\Views\\Session\\Create.cshtml",
+              "ViewState": "AgIAAFcAAAAAAAAAAAAAAG8AAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-02-17T22:46:04.226Z",
+              "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:1582545779:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "C:\\Users\\nyleb\\Downloads\\nyle city string\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Session\\Edit.cshtml",
+              "RelativeDocumentMoniker": "TomorrowsVoices\\Views\\Session\\Edit.cshtml",
+              "ToolTip": "C:\\Users\\nyleb\\Downloads\\nyle city string\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Session\\Edit.cshtml",
+              "RelativeToolTip": "TomorrowsVoices\\Views\\Session\\Edit.cshtml",
+              "ViewState": "AgIAAKgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-02-17T22:45:30.286Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\moham\\Documents\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Session\\Create.cshtml",
-              "RelativeDocumentMoniker": "TomorrowsVoices\\Views\\Session\\Create.cshtml",
-              "ToolTip": "C:\\Users\\moham\\Documents\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Session\\Create.cshtml",
-              "RelativeToolTip": "TomorrowsVoices\\Views\\Session\\Create.cshtml",
-              "ViewState": "AgIAAFYAAAAAAAAAAAAmwHEAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-02T06:10:52.408Z",
+              "Title": "SessionController.cs",
+              "DocumentMoniker": "C:\\Users\\nyleb\\Downloads\\nyle city string\\TomorrowsVoicesSolution\\TomorrowsVoices\\Controllers\\SessionController.cs",
+              "RelativeDocumentMoniker": "TomorrowsVoices\\Controllers\\SessionController.cs",
+              "ToolTip": "C:\\Users\\nyleb\\Downloads\\nyle city string\\TomorrowsVoicesSolution\\TomorrowsVoices\\Controllers\\SessionController.cs",
+              "RelativeToolTip": "TomorrowsVoices\\Controllers\\SessionController.cs",
+              "ViewState": "AgIAAOAAAAAAAAAAAAAwwPwAAABQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T22:45:09.405Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DirectorController.cs",
+              "DocumentMoniker": "C:\\Users\\nyleb\\Downloads\\nyle city string\\TomorrowsVoicesSolution\\TomorrowsVoices\\Controllers\\DirectorController.cs",
+              "RelativeDocumentMoniker": "TomorrowsVoices\\Controllers\\DirectorController.cs",
+              "ToolTip": "C:\\Users\\nyleb\\Downloads\\nyle city string\\TomorrowsVoicesSolution\\TomorrowsVoices\\Controllers\\DirectorController.cs",
+              "RelativeToolTip": "TomorrowsVoices\\Controllers\\DirectorController.cs",
+              "ViewState": "AgIAAKcAAAAAAAAAAAAwwLgAAAALAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T19:43:24.217Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\moham\\Documents\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Singer\\Create.cshtml",
-              "RelativeDocumentMoniker": "TomorrowsVoices\\Views\\Singer\\Create.cshtml",
-              "ToolTip": "C:\\Users\\moham\\Documents\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Singer\\Create.cshtml",
-              "RelativeToolTip": "TomorrowsVoices\\Views\\Singer\\Create.cshtml",
-              "ViewState": "AgIAABUAAAAAAAAAAAAqwDkAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-02T06:07:56.683Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\moham\\Documents\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Director\\Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\nyleb\\Downloads\\nyle city string\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Director\\Create.cshtml",
               "RelativeDocumentMoniker": "TomorrowsVoices\\Views\\Director\\Create.cshtml",
-              "ToolTip": "C:\\Users\\moham\\Documents\\Semicolon-TomorrowsVoice\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Director\\Create.cshtml",
+              "ToolTip": "C:\\Users\\nyleb\\Downloads\\nyle city string\\TomorrowsVoicesSolution\\TomorrowsVoices\\Views\\Director\\Create.cshtml",
               "RelativeToolTip": "TomorrowsVoices\\Views\\Director\\Create.cshtml",
-              "ViewState": "AgIAACAAAAAAAAAAAAAqwCoAAAAxAAAAAAAAAA==",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAB8AAABeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-02T06:01:37.862Z",
+              "WhenOpened": "2025-02-17T19:43:21.362Z",
               "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 145,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             }
           ]
         }

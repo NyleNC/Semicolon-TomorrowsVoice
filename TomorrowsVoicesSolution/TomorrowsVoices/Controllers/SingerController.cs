@@ -23,13 +23,13 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Singer
-        public async Task<IActionResult> Index(/*bool? searchIsAvailable,*/ int? page, int? pageSizeID, string? actionButton, string? SearchString, string? SearchCity, string sortDirection = "asc", string sortField = "Name")
+        public async Task<IActionResult> Index(int? page, int? pageSizeID, string? actionButton, string? SearchString, string? SearchCity, string sortDirection = "asc", string sortField = "Name")
         {
             var singers = _context.Singers
                 .Include(s => s.Location) // Include Location for each Singer
                 .AsNoTracking();
 
-            string[] sortOptions = new[] { "FullName", "Location", "IsAvailable" };
+            string[] sortOptions = new[] { "FullName", "Location" };
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
 
@@ -56,29 +56,12 @@ namespace TomorrowsVoices.Controllers
 
             if (!string.IsNullOrEmpty(SearchCity))
             {
-                // If City is an Enum:
-                if (Enum.TryParse<City>(SearchCity, true, out var searchCityEnum))
-                {
-                    singers = singers
-                        .Where(p => p.Location != null && p.Location.City == searchCityEnum);
-                    numberFilters++;
-                }
-                // If City is a string:
-                else
-                {
-                    singers = (IQueryable<Singer>)singers
-                        .AsEnumerable()
-                        .Where(p => p.Location != null && p.Location.City.ToString().Contains(SearchCity));
+                singers = singers
+               .Where(p => p.Location.City != null && p.Location.City == SearchCity);
+                numberFilters++;
 
-                    numberFilters++;
-                }
             }
 
-            //if (searchIsAvailable != null)
-            //{
-            //    singers = singers.Where(s => s.IsAvailable == searchIsAvailable);
-            //    numberFilters++;
-            //}
 
             // Sorting logic based on selected field and direction
             if (sortField == "FullName")
@@ -127,19 +110,6 @@ namespace TomorrowsVoices.Controllers
                 }
             }
 
-            else if (sortField == "IsAvailable")
-            {
-                if (sortDirection == "asc")
-                {
-                    singers = singers
-                        .OrderBy(s => s.IsAvailable);
-                }
-                else
-                {
-                    singers = singers
-                        .OrderByDescending(s => s.IsAvailable);
-                }
-            }
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
@@ -205,7 +175,7 @@ namespace TomorrowsVoices.Controllers
         // POST: Singer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,LocationID,IsAvailable")] Singer singer)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,LocationID")] Singer singer)
         {
             if (!ModelState.IsValid)
             {
@@ -250,14 +220,14 @@ namespace TomorrowsVoices.Controllers
                 .Distinct()
                 .ToList();
 
-            ViewBag.CityList = new SelectList(cityList, singer.Location?.City.ToString());
+            ViewBag.CityList = new SelectList(cityList, singer.Location?.City);
 
             return View(singer);
         }
         // POST: Singer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Location,IsAvailable")] Singer singer)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Location")] Singer singer)
         {
             if (id != singer.ID) return NotFound();
 
@@ -328,24 +298,6 @@ namespace TomorrowsVoices.Controllers
                 return View(singer);
             }
         }
-        // POST: Singer/ToggleAvailability/
-        [HttpPost]
-        public IActionResult ToggleAvailability(int id)
-        {
-            var singer = _context.Singers.Find(id);  // Find the singer by ID
-            if (singer == null)
-            {
-                return Json(new { success = false, message = "Singer not found" });
-            }
-
-            // Toggle the availability status
-            singer.IsAvailable = !singer.IsAvailable;
-            singer.UpdatedOn = DateTime.Now;
-            _context.SaveChanges();  // Save the updated status
-
-            // Return the updated availability status as JSON
-            return Json(new { success = true, isAvailable = singer.IsAvailable });
-        }
 
         //added the autocomplete 
         public JsonResult CitySuggestions(string term)
@@ -354,10 +306,10 @@ namespace TomorrowsVoices.Controllers
             {
                 return Json(new List<object>());
             }
-            var suggestions = Enum.GetValues(typeof(City))
-                .Cast<City>()
-                .Select(city => DisplayNameEnum(city))
-                .Where(cityName => cityName.StartsWith(term, StringComparison.OrdinalIgnoreCase))
+
+            var suggestions = _context.Locations
+                .Where(c => c.City.StartsWith(term, StringComparison.OrdinalIgnoreCase))
+                .Select(c => c.City)
                 .ToList();
 
             return Json(suggestions);
