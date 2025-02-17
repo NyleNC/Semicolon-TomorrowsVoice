@@ -370,7 +370,7 @@ namespace TomorrowsVoices.Controllers
                     //_context.Update(sessionToUpdate);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = $"Changes saved. {presentSingersCount} singers out of {totalSingersCount} attended "; 
-                    return RedirectToAction("Details", new { sessionToUpdate.ID });
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (RetryLimitExceededException /* dex */)
                 {
