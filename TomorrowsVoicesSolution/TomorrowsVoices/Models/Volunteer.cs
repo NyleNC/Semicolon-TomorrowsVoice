@@ -22,6 +22,12 @@ namespace TomorrowsVoices.Models
         [DataType(DataType.PhoneNumber)]
         public string? Phone { get; set; }
 
+
+        public int VolLocationID { get; set; }
+
+        public VolLocation? VolLocation { get; set; }
+
         public ICollection<VolAttendance> VolAttendance { get; set; } = new HashSet<VolAttendance>();
+
     }
 }
