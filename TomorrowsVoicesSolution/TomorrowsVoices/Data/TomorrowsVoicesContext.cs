@@ -67,5 +67,6 @@ namespace TomorrowsVoices.Data
 
 
         }
+        public DbSet<TomorrowsVoices.Models.VolLocation> VolLocation { get; set; } = default!;
     }
 }
