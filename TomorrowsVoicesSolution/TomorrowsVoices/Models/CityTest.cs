@@ -2,7 +2,7 @@
 
 namespace TomorrowsVoices.Models
 {
-    public enum City
+    public enum CityTest
     {
         [Display(Name = "Abbotsford")]
         Abbotsford = 1,

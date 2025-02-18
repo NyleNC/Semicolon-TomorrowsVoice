@@ -6,11 +6,10 @@ namespace TomorrowsVoices.Models
     {
        public int ID { get; set; }
    
-       public City City { get; set; }
+       public string City { get; set; }
 
 
         public int? DirectorID { get; set; }
-
 
         public Director? Director { get; set; }
 

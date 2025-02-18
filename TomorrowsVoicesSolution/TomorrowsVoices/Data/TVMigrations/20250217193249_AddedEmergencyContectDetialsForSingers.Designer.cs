@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TomorrowsVoices.Data;
 
@@ -10,9 +11,11 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    partial class TomorrowsVoicesContextModelSnapshot : ModelSnapshot
+    [Migration("20250217193249_AddedEmergencyContectDetialsForSingers")]
+    partial class AddedEmergencyContectDetialsForSingers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -76,9 +79,8 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("City")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("DirectorID")
                         .HasColumnType("INTEGER");

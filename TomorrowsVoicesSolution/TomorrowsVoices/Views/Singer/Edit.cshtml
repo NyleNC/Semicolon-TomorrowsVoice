@@ -45,6 +45,21 @@
             </div> *@
 
             <div class="form-group">
+                <label asp-for="EmergencyContactName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+                <input asp-for="EmergencyContactName" class="form-control" placeholder="Guardian/Parent Full Name" />
+                <span asp-validation-for="EmergencyContactName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EmergencyContactNumber" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+                <input asp-for="EmergencyContactNumber" class="form-control" placeholder="Guardian/Parent Contact Number" />
+                <span asp-validation-for="EmergencyContactNumber" class="text-danger"></span>
+            </div>
+
+
+
+
+
+            <div class="form-group">
                 <label asp-for="CreatedOn" class="control-label" style="font-weight: 700"></label>
                 <p class="form-control-plaintext">@Model.CreatedOn.ToString("MMM/dd/yyyy | hh:mm:ss tt")</p>
             </div>

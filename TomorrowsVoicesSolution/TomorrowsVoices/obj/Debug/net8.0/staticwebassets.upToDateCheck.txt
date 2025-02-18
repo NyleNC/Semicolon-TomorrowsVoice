@@ -1,5 +1,16 @@
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\Images\add-attendance.png
+wwwroot\Images\add-user.png
+wwwroot\Images\archive.png
+wwwroot\Images\clear-icon.png
+wwwroot\Images\create-icon.png
+wwwroot\Images\details.png
+wwwroot\Images\edit-value.png
+wwwroot\Images\export-csv.png
+wwwroot\Images\filter-search.png
+wwwroot\Images\previous-page-icon.png
+wwwroot\Images\save-changes-icon.png
 wwwroot\Images\tv-logo.png
 wwwroot\js\multiselect.js
 wwwroot\js\site.js

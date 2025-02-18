@@ -71,21 +71,11 @@ namespace TomorrowsVoices.Controllers
             if (!string.IsNullOrEmpty(SearchCity))
             {
              
-                if (Enum.TryParse<City>(SearchCity, true, out var searchCityEnum))
-                {
+                
                     directors = directors
-                        .Where(p => p.Location != null && p.Location.City == searchCityEnum); 
+                        .Where(p => p.Location.City != null && p.Location.City == SearchCity); 
                     numberFilters++;
-                }
-          
-                else
-                {
-                    directors = (IQueryable<Director>)directors
-                        .AsEnumerable() 
-                        .Where(p => p.Location != null && p.Location.City.ToString().Contains(SearchCity));
-                  
-                    numberFilters++;
-                }
+               
             }
 
             // sorting functionality
@@ -192,6 +182,7 @@ namespace TomorrowsVoices.Controllers
         public IActionResult Create()
         {
             Director director = new Director();
+            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
             PopulateDropDownLists();
             return View();
         }
@@ -201,31 +192,37 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+      
         public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email,Location")] Director director)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Validate the city input from the user
-                    if (director.Location != null && !string.IsNullOrEmpty(director.Location.City.ToString()))
+                    // Validate and add the city if it doesn't exist
+                    if (director.Location != null && !string.IsNullOrEmpty(director.Location.City))
                     {
-                        // Check if the entered city name is valid (matches a City enum name)
-                        bool isValidCity = Enum.GetNames(typeof(City))
-                            .Any(cityName => string.Equals(cityName, director.Location.City.ToString(), StringComparison.OrdinalIgnoreCase));
-
-                        if (!isValidCity)
+                        // Check if the city already exists in the database
+                        var existingCity = await _context.Locations
+       .FirstOrDefaultAsync(l => l.City.ToLower() == director.Location.City.ToLower());
+   
+                        // If the city doesn't exist, add it
+                        if (existingCity == null)
                         {
-                            // Add an error if the city is not valid
-                            ModelState.AddModelError("Location.City", "Invalid city name entered.");
-                            PopulateDropDownLists(director); // Repopulate dropdown in case of errors
-                            return View(director);
+                            var newCity = new Location { City = director.Location.City };
+                            _context.Locations.Add(newCity);
+                            await _context.SaveChangesAsync(); // Save changes so the new city gets an ID
+                            director.Location = newCity; // Set the new city to the director
+                        }
+                        else
+                        {
+                            director.Location = existingCity; // If the city exists, assign it to the director
                         }
 
-                        // Check if a director is already assigned to the entered city
-                        var existingDirector = await _context.Directors.Include(d => d.Location)
-                            .FirstOrDefaultAsync(d => d.Location.City == director.Location.City)
-                            ;
+                        // Check if a director is already assigned to this city
+                        var existingDirector = await _context.Directors
+                            .Include(d => d.Location)
+                            .FirstOrDefaultAsync(d => d.Location.City == director.Location.City);
 
                         if (existingDirector != null)
                         {
@@ -277,6 +274,8 @@ namespace TomorrowsVoices.Controllers
             {
                 return NotFound();
             }
+
+            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
             PopulateDropDownLists(director);
             return View(director);
         }
@@ -446,12 +445,11 @@ namespace TomorrowsVoices.Controllers
 
                                     if (!_context.Directors.Any(d => d.Email == director.Email))
                                     {
-                                        if (Enum.TryParse(cityName, true, out City parsedCity))
-                                        {
-                                            var location = _context.Locations.FirstOrDefault(l => l.City == parsedCity);
+                                       
+                                            var location = _context.Locations.FirstOrDefault(l => l.City == cityName);
                                             if (location == null)
                                             {
-                                                location = new Location { City = parsedCity };
+                                                location = new Location { City = cityName };
                                                 _context.Locations.Add(location);
                                                 await _context.SaveChangesAsync();
                                             }
@@ -459,12 +457,8 @@ namespace TomorrowsVoices.Controllers
 
                                             _context.Directors.Add(director);
                                             successCount++;
-                                        }
-                                        else
-                                        {
-                                            errorCount++;
-                                            feedBack += $"Error: Invalid city '{cityName}' in row {row}.<br />";
-                                        }
+                                        
+                                      
                                     }
                                     else
                                     {
@@ -503,25 +497,57 @@ namespace TomorrowsVoices.Controllers
                 return Json(new List<object>());
             }
 
-            var suggestions = Enum.GetValues(typeof(City))
-      .Cast<City>()
-      .Select(city => new SelectListItem
-      {
-          Value = city.ToString(),
-          Text = DisplayNameEnum(city)
-      })
-      .OrderBy(c => c.Text)
-      .ToList();
+            var suggestions = _context.Locations
+                .Where(c => c.City.StartsWith(term.ToLower()))  // Case-insensitive using ToLower()
+                .Select(c => c.City)
+                .ToList();
 
-            return Json(suggestions);
+            // Add the "Add new City" option if the city is not found in the suggestions list
+            if (!suggestions.Any(c => c.ToString().ToLower().StartsWith(term.ToLower())))
+            {
+                suggestions.Add($"Add new City: '{term}'");
+            }
+
+            // Return suggestions with formatted items
+            var result = suggestions.Select(c => new
+            {
+                id = c,
+                text = c.StartsWith("Add new City:") ? "Add new City" : c
+            }).ToList();
+
+            return Json(result);
         }
 
-        public static string DisplayNameEnum(Enum value)
+        //public static string DisplayNameEnum(Enum value)
+        //{
+        //    var field = value.GetType().GetField(value.ToString());
+        //    var attribute = (DisplayAttribute)Attribute.GetCustomAttribute(field, typeof(DisplayAttribute));
+        //    return attribute != null ? attribute.Name : value.ToString();
+        //}
+
+
+        [HttpPost]
+        public JsonResult AddCity(string cityName)
         {
-            var field = value.GetType().GetField(value.ToString());
-            var attribute = (DisplayAttribute)Attribute.GetCustomAttribute(field, typeof(DisplayAttribute));
-            return attribute != null ? attribute.Name : value.ToString();
+            if (string.IsNullOrWhiteSpace(cityName))
+            {
+                return Json(new { success = false, message = "City name cannot be empty." });
+            }
+
+            bool exists = _context.Locations
+         .Any(c => c.City.ToLower() == cityName.ToLower());
+            if (exists)
+            {
+                return Json(new { success = false, message = "City already exists." });
+            }
+
+            var newCity = new Location { City = cityName };
+            _context.Locations.Add(newCity);
+            _context.SaveChanges();
+
+            return Json(new { success = true });
         }
+
 
         private bool DirectorExists(int id)
         {
