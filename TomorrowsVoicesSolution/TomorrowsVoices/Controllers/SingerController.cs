@@ -222,7 +222,7 @@ namespace TomorrowsVoices.Controllers
                 .Distinct()
                 .ToList();
 
-            ViewBag.CityList = new SelectList(cityList, singer.Location?.City);
+            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
 
             return View(singer);
         }
