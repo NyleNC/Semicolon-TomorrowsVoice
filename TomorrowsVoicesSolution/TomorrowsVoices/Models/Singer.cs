@@ -12,6 +12,11 @@ namespace TomorrowsVoices.Models
 
         [Display(Name = "Singer")]
         public string FullName => $"{FirstName} {LastName}";
+
+        [Display(Name = "Emergency Contact Number")]
+        public string FormattedContactNumber => "(" + EmergencyContactNumber.Substring(0, 3) + ") "
+        + EmergencyContactNumber.Substring(3, 3) + "-" + EmergencyContactNumber[6..];
+
         #endregion
 
         [Display(Name = "First Name")]
@@ -34,6 +39,22 @@ namespace TomorrowsVoices.Models
         [Display(Name = "Last Updated")]
         [DisplayFormat(DataFormatString = "yyyy-MM-dd HH:mm", ApplyFormatInEditMode = true)]
         public DateTime? UpdatedOn { get; set; }
+
+
+        // Fields for Emergency details
+        [Display(Name = "Parent/Guardian Name")]
+        [Required(ErrorMessage = "Guardian/Parents Name is required.")]
+        [StringLength(100, ErrorMessage = "Name cannot be more than 100 characters long.")]
+        public string? EmergencyContactName { get; set; }
+
+        [Display(Name = "Parent/Guardian Contact Number")]
+        [Required(ErrorMessage = "Phone number is required.")]
+        [RegularExpression("^\\d{10}$", ErrorMessage = "Please enter a valid 10-digit phone number (no spaces).")]
+        [DataType(DataType.PhoneNumber)]
+        //[MaxLength(10)]
+        public string? EmergencyContactNumber { get; set; }
+
+
 
 
         [Display(Name = "City")]

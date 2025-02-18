@@ -14,22 +14,26 @@
             <img src="~/Images/add-user.png" alt="add-singer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Singer
         </a>
     </div>
-  @*   <div>
+    <div>
         <div class="text-danger">@Html.Raw(TempData["Feedback"])</div>
+        <div class="text-success">@Html.Raw(TempData["Success"])</div>
 
-        <form asp-action="InsertFromExcel" asp-controller="Singer" method="post" enctype="multipart/form-data">
-            <div class="card-body p-0" >
-                <div class="d-flex justify-content-between align-items-end">
-                    <div>
-                        <label class="control-label custom-file-label">Upload Excel File:</label>
-                        <input type="file" class="form-control" name="theExcel" id="theExcel" style="max-width: 300px;">
+        <form asp-action="InsertSingersFromExcel" asp-controller="Singer" method="post" enctype="multipart/form-data">
+            <div class="card-body">
+                <div>
+                    <div class="d-flex justify-content-end align-items-end mb-lg-5">
+                        <div>
+                            <label class="control-label custom-file-label">Upload Excel File:</label>
+                            <input type="file" class="form-control" name="theExcel" id="theExcel" style="max-width: 300px;">
+                        </div>
+                        <input type="submit" value="Upload Data" class="btn btn-dark ms-2" />
                     </div>
-                    <input type="submit" value="Upload Data" class="btn btn-dark ms-2" />
                 </div>
             </div>
         </form>
-    </div> *@
+    </div>
 </div>
+
 
 
 @* <!-- Search & Filter Form -->

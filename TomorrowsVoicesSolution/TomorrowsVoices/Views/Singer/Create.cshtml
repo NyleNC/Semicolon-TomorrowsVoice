@@ -5,7 +5,6 @@
     ViewData["Title"] = "Create";
 }
 
-
 <h1>Create</h1>
 
 <h4>Singer</h4>
@@ -17,12 +16,12 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <input asp-for="FirstName" class="form-control" placeholder="Singer First Name" />
+                <input asp-for="FirstName" class="form-control" placeholder="Jon" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <input asp-for="LastName" class="form-control" placeholder="Singer Last Name" />
+                <input asp-for="LastName" class="form-control" placeholder="Snow" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -32,17 +31,21 @@
                 </select>
                 <span asp-validation-for="LocationID" class="text-danger"></span>
             </div>
-            @*        <div class="form-group">
-            <label asp-for="IsAvailable" style="font-weight: 700"></label>
-            <input asp-for="IsAvailable" type="checkbox" class="form-check-input" checked="checked" />
-            </div> *@
-
+            <div class="form-group">
+                <label asp-for="EmergencyContactName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+                <input asp-for="EmergencyContactName" class="form-control" placeholder="Lyanna Stark" />
+                <span asp-validation-for="EmergencyContactName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EmergencyContactNumber" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+                <input asp-for="EmergencyContactNumber" class="form-control" placeholder="1234567890" id="EmergencyContactNumber" />
+                <span asp-validation-for="EmergencyContactNumber" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="CreatedOn" class="control-label"><strong>Created On</strong></label>
                 <p class="form-control-plaintext">@Model.CreatedOn.ToString("MMM/dd/yyyy | hh:mm:ss tt")</p>
             </div>
-
-             <div class="form-group d-flex gap-2">
+            <div class="form-group d-flex gap-2">
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">
                         <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
@@ -53,57 +56,53 @@
                 </div>
             </div>
             <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Singer Page</a>
-
         </form>
     </div>
 </div>
 
-
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-
-    }<script>
-             $(document).ready(function () {
-                 $("#City").autocomplete({
-                     source: function (request, response) {
-                         $.ajax({
-                             url: '@Url.Action("CitySuggestions", "Director")',
-                             type: "GET",
-                             dataType: "json",
-                             data: { term: request.term },
-                             success: function (data) {
-                                 response($.map(data, function (item) {
-                                     return { label: item, value: item };
-                                 }));
-                             }
-                         });
-                     },
-                     minLength: 1,
-                     messages: {
-                         noResults: "No cities found",
-                         results: function () { return ""; }
-                     },
-                     open: function () {
-
-                         var autocompleteList = $(".ui-autocomplete");
-                         autocompleteList.css({
-                             "max-height": "200px",
-                             "overflow-y": "auto",
-                             "overflow-x": "hidden"
-                         });
-                     }
-                 });
-             });
-             $(document).ready(function () {
-                 $('.city-dropdown').select2({
-                     placeholder: "Select a city",
-                     allowClear: true
-                 });
-             });
+    }
+    <script>
+        $(document).ready(function () {
+            $("#City").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("CitySuggestions", "Director")',
+                        type: "GET",
+                        dataType: "json",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item, value: item };
+                            }));
+                        }
+                    });
+                },
+                minLength: 1,
+                messages: {
+                    noResults: "No cities found",
+                    results: function () { return ""; }
+                },
+                open: function () {
+                    var autocompleteList = $(".ui-autocomplete");
+                    autocompleteList.css({
+                        "max-height": "200px",
+                        "overflow-y": "auto",
+                        "overflow-x": "hidden"
+                    });
+                }
+            });
+        });
+        $(document).ready(function () {
+            $('.city-dropdown').select2({
+                placeholder: "Select a city",
+                allowClear: true
+            });
+        });
     </script>
 }
-
 
 <script>
     document.getElementById("fillPresetButton").addEventListener("click", function () {
@@ -136,15 +135,14 @@
     });
 </script>
 
-
 <script>
-        $(document).ready(function() {
+    $(document).ready(function() {
         $('.city-dropdown').select2({
             placeholder: "Select a city",
             allowClear: true,
             dropdownParent: $('body') // This will make select2's dropdown overflow outside the container.
         }).on('select2:open', function (e) {
-        const $dropdown = $(".select2-dropdown");
+            const $dropdown = $(".select2-dropdown");
             const $select2 = $(this).data('select2');
             if ($select2 && $select2.options && $select2.options.options) {
                 $dropdown.css('z-index', 1051);
@@ -152,4 +150,36 @@
         });
     });
 
+    // For emergency contact number format
+                document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {
+        let cursorPosition = e.target.selectionStart;
+        let value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+
+        if (value.length > 10) {
+            value = value.substring(0, 10); // Limit to 10 digits
+        }
+
+        let formattedValue = "";
+
+        if (value.length > 0) {
+            formattedValue += "(" + value.substring(0, 3);
+        }
+        if (value.length >= 4) {
+            formattedValue += ") " + value.substring(3, 6);
+        }
+        if (value.length >= 7) {
+            formattedValue += "-" + value.substring(6, 10);
+        }
+
+        e.target.value = formattedValue;
+    });
+
+
+
+
+    // Event listener for input field
+    document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {
+        e.target.value = formatPhoneNumber(e.target.value);
+    });
 </script>
+

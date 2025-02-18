@@ -145,34 +145,40 @@ namespace TomorrowsVoices.Data
             if (!context.Singers.Any())
             {
                 context.Singers.AddRange(
-                   
-                    //Niagara
+
+                    // Niagara
                     new Singer
                     {
                         FirstName = "Bruce",
                         LastName = "House",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID,
+                        EmergencyContactName = "John House",
+                        EmergencyContactNumber = "1234567890"
                     },
                     new Singer
                     {
                         FirstName = "Torffin",
                         LastName = "Snow",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID,
+                        EmergencyContactName = "Jane Snow",
+                        EmergencyContactNumber = "0987654321"
                     },
                     new Singer
                     {
                         FirstName = "Hall",
                         LastName = "Houser",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID,
+                        EmergencyContactName = "Mary Houser",
+                        EmergencyContactNumber = "1122334455"
                     },
                     new Singer
                     {
                         FirstName = "Radin",
                         LastName = "Shahravan",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID,
+                        EmergencyContactName = "Ali Shahravan",
+                        EmergencyContactNumber = "2233445566"
                     }
-
-
 
                     // Toronto
                     ,
@@ -180,28 +186,35 @@ namespace TomorrowsVoices.Data
                     {
                         FirstName = "Tyler",
                         LastName = "Klassen",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                        EmergencyContactName = "Sarah Klassen",
+                        EmergencyContactNumber = "3344556677"
                     },
                     new Singer
                     {
                         FirstName = "James",
                         LastName = "Rodrigo",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                        EmergencyContactName = "Maria Rodrigo",
+                        EmergencyContactNumber = "4455667788"
                     },
                     new Singer
                     {
                         FirstName = "Theo",
                         LastName = "Baker",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                        EmergencyContactName = "Tom Baker",
+                        EmergencyContactNumber = "5566778899"
                     },
-
 
                     // Saskatoon
                     new Singer
                     {
                         FirstName = "Logan",
                         LastName = "Xavier",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                        EmergencyContactName = "Laura Xavier",
+                        EmergencyContactNumber = "6677889900"
                     }
 
 
