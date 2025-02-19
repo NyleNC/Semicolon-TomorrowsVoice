@@ -131,4 +131,6 @@ label.required:after {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1051;  /*Ensure it's above other elements*/ 
 }
- 
+.dropdown-divider {
+    border-top: 1px solid #000000
+}
