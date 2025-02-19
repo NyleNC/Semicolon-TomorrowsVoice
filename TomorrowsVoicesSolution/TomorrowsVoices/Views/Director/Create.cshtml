@@ -65,74 +65,113 @@
 }
 
 <script>
-        $(document).ready(function () {
+       $(document).ready(function () {
+        // Initialize the select2 dropdown with AJAX search
         $(".city-dropdown").select2({
             placeholder: "Select a city",
             allowClear: true,
+            minimumInputLength: 1,  // Start searching after typing 1 character
             ajax: {
-                url: '@Url.Action("CitySuggestions", "Director")',
+                url: '@Url.Action("CitySuggestions", "Director")',  // Your CitySuggestions action
                 dataType: "json",
                 delay: 250,
                 data: function (params) {
-                    return { term: params.term }; // pass the search term
+                    return { term: params.term }; // Pass the search term
                 },
-                processResults: function (data) {
+                processResults: function (data, params) {
                     var results = $.map(data, function (item) {
-                        return { id: item.id, text: item.text }; // Use id and text as is
+                        return { id: item.id, text: item.text };
                     });
 
-                    // If "Add new City" is not part of the data, add it as an option
-                    if (!data.some(item => item.text === "Add new City")) {
+                    // If no results, add the "Add new City" option
+                    if (params.term && results.length === 0) {
                         results.push({
-                            id: "Add new City",
-                            text: "Add new City"
+                            id: "add_new_city",
+                            text: `Add new City: "${params.term}"`,
+                            newCityName: params.term
                         });
                     }
 
                     return { results: results };
                 }
-            },
-            minimumInputLength: 1 // Minimum characters to trigger the search
-        }).on("select2:select", function (e) {
-            var selectedCity = e.params.data.text;
-
-            // Check if the user selected the "Add new City" option
-            if (selectedCity === "Add new City") {
-                var cityName = e.params.data.id.replace("Add new City: '", "").replace("'", ""); // Get the city name entered by user
-                addNewCity(cityName); // Call function to add the new city
             }
         });
+
+        // Fetch cities on page load and prepopulate dropdown
+        loadCities();
+
+        // Load all cities initially
+        function loadCities() {
+            $.ajax({
+                url: '@Url.Action("GetInitialCities", "Director")', // Fetch all cities action
+                type: "GET",
+                success: function (data) {
+                    var cityDropdown = $(".city-dropdown");
+                    var options = [];
+
+                    // Empty the existing options before appending new ones
+                    cityDropdown.empty();
+
+                    // Create options for all initial cities
+                    $.each(data, function (index, item) {
+                        options.push(new Option(item.text, item.id, false, false));
+                    });
+
+                    // Append all cities at once
+                    cityDropdown.append(options).trigger("change");
+                },
+                error: function () {
+                    alert("An error occurred while loading cities.");
+                }
+            });
+        }
+
+        // Handle selecting or typing a new city
+        $(".city-dropdown").on("select2:select", function (e) {
+            var newCityName = e.params.data.newCityName;
+
+            // If "Add new City" was selected, add it
+            if (e.params.data.id === "add_new_city" && newCityName) {
+                addNewCity(newCityName);
+            }
+        }).on("select2:open", function () {
+            var searchInput = $(".select2-search__field");
+            searchInput.off("keydown").on("keydown", function (e) {
+                if (e.key === "Enter") {
+                    var currentValue = $(this).val();
+                    if (currentValue) {
+                        addNewCity(currentValue);
+                    }
+                }
+            });
+        });
+
+        // Function to add a new city
+        function addNewCity(cityName) {
+            $.ajax({
+                url: '@Url.Action("AddCity", "Director")',
+                type: "POST",
+                data: { cityName: cityName },
+                success: function (response) {
+                    if (response.success) {
+                        alert(`${cityName} has been added to the list!`);
+
+                        // Append the new city to the dropdown list
+                        var cityDropdown = $(".city-dropdown");
+                        var newOption = new Option(cityName, response.cityId, true, true);
+                        cityDropdown.append(newOption).trigger("change"); // Append and trigger change event
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while adding the city.");
+                }
+            });
+        }
     });
 
-       function addNewCity(cityName) {
-        $.ajax({
-            url: '@Url.Action("AddCity", "Director")',
-            type: "POST",
-            data: { cityName: cityName },
-            success: function (response) {
-                if (response.success) {
-                    alert("City added successfully!");
 
-                    // Check if the city already exists in the dropdown
-                    var cityDropdown = $(".city-dropdown");
-                    var cityExists = cityDropdown.find("option").filter(function () {
-                        return $(this).text().trim() === cityName.trim();
-                    }).length > 0;
-
-                    if (!cityExists) {
-                        // Add the new city as an option and select it
-                        var newOption = new Option(cityName, response.cityId, true, true);
-                        cityDropdown.append(newOption).trigger('change'); // Append and trigger change event
-                    }
-                } else {
-                    alert("Error: " + response.message);
-                }
-            },
-            error: function () {
-                alert("An error occurred while adding the city.");
-            }
-        });
-    }
 </script>
 
 

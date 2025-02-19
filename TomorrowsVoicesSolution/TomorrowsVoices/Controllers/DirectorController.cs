@@ -498,34 +498,20 @@ namespace TomorrowsVoices.Controllers
             }
 
             var suggestions = _context.Locations
-                .Where(c => c.City.StartsWith(term.ToLower()))  // Case-insensitive using ToLower()
-                .Select(c => c.City)
+                .Where(c => c.City.ToLower().StartsWith(term.ToLower())) 
+                .Select(c => new { id = c.ID, text = c.City })
                 .ToList();
 
-            // Add the "Add new City" option if the city is not found in the suggestions list
-            if (!suggestions.Any(c => c.ToString().ToLower().StartsWith(term.ToLower())))
-            {
-                suggestions.Add($"Add new City: '{term}'");
-            }
+            return Json(suggestions);
+         }
+        public JsonResult GetInitialCities()
+        {
+            var cities = _context.Locations
+                .Select(c => new { id = c.ID, text = c.City })
+                .ToList();
 
-            // Return suggestions with formatted items
-            var result = suggestions.Select(c => new
-            {
-                id = c,
-                text = c.StartsWith("Add new City:") ? "Add new City" : c
-            }).ToList();
-
-            return Json(result);
+            return Json(cities);
         }
-
-        //public static string DisplayNameEnum(Enum value)
-        //{
-        //    var field = value.GetType().GetField(value.ToString());
-        //    var attribute = (DisplayAttribute)Attribute.GetCustomAttribute(field, typeof(DisplayAttribute));
-        //    return attribute != null ? attribute.Name : value.ToString();
-        //}
-
-
         [HttpPost]
         public JsonResult AddCity(string cityName)
         {
@@ -534,8 +520,7 @@ namespace TomorrowsVoices.Controllers
                 return Json(new { success = false, message = "City name cannot be empty." });
             }
 
-            bool exists = _context.Locations
-         .Any(c => c.City.ToLower() == cityName.ToLower());
+            bool exists = _context.Locations.Any(c => c.City.ToLower() == cityName.ToLower());
             if (exists)
             {
                 return Json(new { success = false, message = "City already exists." });
@@ -545,9 +530,9 @@ namespace TomorrowsVoices.Controllers
             _context.Locations.Add(newCity);
             _context.SaveChanges();
 
-            return Json(new { success = true });
+            // Return the new city's ID so it can be selected
+            return Json(new { success = true, cityId = newCity.ID });
         }
-
 
         private bool DirectorExists(int id)
         {
