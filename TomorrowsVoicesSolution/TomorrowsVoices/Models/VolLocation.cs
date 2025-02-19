@@ -10,7 +10,6 @@ namespace TomorrowsVoices.Models
         [StringLength(250, ErrorMessage = "City cannot be more than 250 characters long.")]
         public string City { get; set; } = "";
 
-
         public ICollection<Volunteer> Volunteers { get; set; } = new HashSet<Volunteer>();   
 
         public ICollection<Event> Events { get; set; } = new HashSet<Event>();

@@ -33,12 +33,6 @@ namespace TomorrowsVoices.Models
         [Required(ErrorMessage = "You cannot leave the email blank.")]
         public string? Email { get; set; }
 
-        //might not be needed
-        ////[Required(ErrorMessage = "You must select the date")]
-        ////public DateTime? CreatedAt { get; set; }
-        ////public DateTime? UpdatedAt{ get; private set; }
-
-  
         public Location? Location { get; set; }
     }
 }

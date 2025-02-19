@@ -27,7 +27,7 @@ namespace TomorrowsVoices.Models
 
         public VolLocation? VolLocation { get; set; }
 
-        public ICollection<VolAttendance> VolAttendance { get; set; } = new HashSet<VolAttendance>();
+        public ICollection<VolAttendance> VolAttendances { get; set; } = new HashSet<VolAttendance>();
 
     }
 }
