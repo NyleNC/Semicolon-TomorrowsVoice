@@ -146,7 +146,7 @@
     });
 
     // For emergency contact number format
-                document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {
+    document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {
         let cursorPosition = e.target.selectionStart;
         let value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
 
@@ -169,8 +169,11 @@
         e.target.value = formattedValue;
     });
 
-
-
+    // Remove formatting before form submission
+    document.querySelector('form').addEventListener('submit', function (e) {
+        let emergencyContactNumber = document.getElementById('EmergencyContactNumber');
+        emergencyContactNumber.value = emergencyContactNumber.value.replace(/\D/g, ""); // Remove non-numeric characters
+    });
 
     // Event listener for input field
     document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {

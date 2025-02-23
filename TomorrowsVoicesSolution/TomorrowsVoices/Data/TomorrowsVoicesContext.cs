@@ -19,15 +19,13 @@ namespace TomorrowsVoices.Data
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Singer> Singers { get; set; }
 
-        //Db sets for all the choir administration classes
 
+        //Db sets for all the Volunteer Management classes
         public DbSet<Event> Events  { get; set; }
-
         public DbSet<Volunteer> Volunteers { get; set; }
-
         public DbSet<VolAttendance> VolAttendances { get; set; }
-
         public DbSet<VolLocation> VolLocations { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -100,9 +98,6 @@ namespace TomorrowsVoices.Data
 
                 .HasIndex(d=>d.Email)
                 .IsUnique();
-
-
-
         }
     }
 }
