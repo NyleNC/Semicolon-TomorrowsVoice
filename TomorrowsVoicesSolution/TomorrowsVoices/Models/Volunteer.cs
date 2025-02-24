@@ -23,6 +23,11 @@ namespace TomorrowsVoices.Models
         public string? Phone { get; set; }
 
 
+        [StringLength(255)]
+        [DataType(DataType.EmailAddress)]
+
+        [Required(ErrorMessage = "You cannot leave the email blank.")]
+        public string? Email { get; set; }
         public int VolLocationID { get; set; }
 
         public VolLocation? VolLocation { get; set; }
