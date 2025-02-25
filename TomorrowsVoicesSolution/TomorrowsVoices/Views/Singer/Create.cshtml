@@ -145,6 +145,8 @@
         });
     });
 
+
+//For Phone Number Formating.
     // For emergency contact number format
     document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {
         let cursorPosition = e.target.selectionStart;
@@ -174,6 +176,8 @@
         let emergencyContactNumber = document.getElementById('EmergencyContactNumber');
         emergencyContactNumber.value = emergencyContactNumber.value.replace(/\D/g, ""); // Remove non-numeric characters
     });
+//End
+
 
     // Event listener for input field
     document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {
