@@ -64,39 +64,39 @@ namespace TomorrowsVoices.Data
                 context.Directors.AddRange(
                     new Director
                     {
-                        FirstName = "Tom",
-                        LastName = "Ronton",
-                        Email = "tronton@tv.com"
+                        FirstName = "Anais",
+                        LastName = "Kelsey-Verdecchia",
+                        Email = "averdecchia@tv.com"
                     },
                     new Director
                     {
-                        FirstName = "Niam",
-                        LastName = "Garrison",
-                        Email = "ngarrison@tv.com"
+                        FirstName = "Brian",
+                        LastName = "Paul",
+                        Email = "bpaul@tv.com"
                     },
                     new Director
                     {
-                        FirstName = "Sasha",
-                        LastName = "Katherine",
-                        Email = "skatherine@tv.com"
+                        FirstName = "Mendelt",
+                        LastName = "Hoekstra",
+                        Email = "mhoekstra@tv.com"
                     },
                     new Director
                     {
-                        FirstName = "Vanda",
-                        LastName = "Cooper",
-                        Email = "vcooper@tv.com"
+                        FirstName = "Monique",
+                        LastName = "Hoekstra",
+                        Email = "mhoekstra@tv.com"
                     },
                     new Director
                     {
-                        FirstName = "Ham",
-                        LastName = "Elton",
-                        Email = "helton@tv.com"
+                        FirstName = "Melissa",
+                        LastName = "Dutch",
+                        Email = "mdutch@tv.com"
                     },
                     new Director
                     {
-                        FirstName = "Serg",
-                        LastName = "Urls",
-                        Email = "surls@tv.com"
+                        FirstName = "Frances",
+                        LastName = "Olson",
+                        Email = "folson@tv.com"
                     }
                 );
                 context.SaveChanges();
@@ -111,32 +111,32 @@ namespace TomorrowsVoices.Data
                     new Location
                     {
                         City = "Toronto",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Tom" && d.LastName == "Ronton").ID
+                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Anais" && d.LastName == "Kelsey-Verdecchia").ID
                     },
                     new Location
                     {
                         City = "Saskatoon",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Sasha" && d.LastName == "Katherine").ID
+                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Brian" && d.LastName == "Paul").ID
                     },
                     new Location
                     {
-                        City = "Niagara",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Niam" && d.LastName == "Garrison").ID
+                        City = "St. Catharines",
+                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Mendelt" && d.LastName == "Hoekstra").ID
                     },
                     new Location
                     {
                         City ="Vancouver",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Vanda" && d.LastName == "Cooper").ID
+                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Monique" && d.LastName == "Hoekstra").ID
                     },
                     new Location
                     {
                         City = "Hamilton",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Ham" && d.LastName == "Elton").ID
+                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Melissa" && d.LastName == "Dutch").ID
                     },
                     new Location
                     {
                         City = "Surrey",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Serg" && d.LastName == "Urls").ID
+                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Frances" && d.LastName == "Olson").ID
                     }
                 );
                 context.SaveChanges();
@@ -149,76 +149,497 @@ namespace TomorrowsVoices.Data
             {
                 context.Singers.AddRange(
 
-                    // Niagara
-                    new Singer
-                    {
-                        FirstName = "Bruce",
-                        LastName = "House",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID,
-                        EmergencyContactName = "John House",
-                        EmergencyContactNumber = "1234567890"
-                    },
-                    new Singer
-                    {
-                        FirstName = "Torffin",
-                        LastName = "Snow",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID,
-                        EmergencyContactName = "Jane Snow",
-                        EmergencyContactNumber = "0987654321"
-                    },
-                    new Singer
-                    {
-                        FirstName = "Hall",
-                        LastName = "Houser",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID,
-                        EmergencyContactName = "Mary Houser",
-                        EmergencyContactNumber = "1122334455"
-                    },
-                    new Singer
-                    {
-                        FirstName = "Radin",
-                        LastName = "Shahravan",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID,
-                        EmergencyContactName = "Ali Shahravan",
-                        EmergencyContactNumber = "2233445566"
-                    }
+            // Toronto
+            new Singer
+            {
+                FirstName = "Michael",
+                LastName = "Johnson",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                EmergencyContactName = "Sarah Johnson",
+                EmergencyContactNumber = "6471234567"
+            },
+            new Singer
+            {
+                FirstName = "Emily",
+                LastName = "Clark",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                EmergencyContactName = "David Clark",
+                EmergencyContactNumber = "6479876543"
+            },
+            new Singer
+            {
+                FirstName = "Nathan",
+                LastName = "Williams",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                EmergencyContactName = "Laura Williams",
+                EmergencyContactNumber = "4165557890"
+            },
+            new Singer
+            {
+                FirstName = "Sophia",
+                LastName = "Martinez",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                EmergencyContactName = "Carlos Martinez",
+                EmergencyContactNumber = "4167778888"
+            },
+            new Singer
+            {
+                FirstName = "Daniel",
+                LastName = "Brown",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                EmergencyContactName = "Linda Brown",
+                EmergencyContactNumber = "6472223333"
+            },
+            new Singer
+            {
+                FirstName = "Ava",
+                LastName = "Taylor",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                EmergencyContactName = "Robert Taylor",
+                EmergencyContactNumber = "4169990000"
+            },
+            new Singer
+            {
+                FirstName = "Lucas",
+                LastName = "Harris",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                EmergencyContactName = "Emma Harris",
+                EmergencyContactNumber = "6475556666"
+            },
+            new Singer
+            {
+                FirstName = "Olivia",
+                LastName = "Moore",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                EmergencyContactName = "Henry Moore",
+                EmergencyContactNumber = "4163334444"
+            },
+            new Singer
+            {
+                FirstName = "Ethan",
+                LastName = "White",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                EmergencyContactName = "Sophia White",
+                EmergencyContactNumber = "6477778888"
+            },
+            new Singer
+            {
+                FirstName = "Charlotte",
+                LastName = "Lee",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                EmergencyContactName = "Daniel Lee",
+                EmergencyContactNumber = "4161112222"
+            },
 
-                    // Toronto
-                    ,
-                    new Singer
-                    {
-                        FirstName = "Tyler",
-                        LastName = "Klassen",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
-                        EmergencyContactName = "Sarah Klassen",
-                        EmergencyContactNumber = "3344556677"
-                    },
-                    new Singer
-                    {
-                        FirstName = "James",
-                        LastName = "Rodrigo",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
-                        EmergencyContactName = "Maria Rodrigo",
-                        EmergencyContactNumber = "4455667788"
-                    },
-                    new Singer
-                    {
-                        FirstName = "Theo",
-                        LastName = "Baker",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
-                        EmergencyContactName = "Tom Baker",
-                        EmergencyContactNumber = "5566778899"
-                    },
+            // Saskatoon
+            new Singer
+            {
+                FirstName = "Benjamin",
+                LastName = "Adams",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                EmergencyContactName = "Megan Adams",
+                EmergencyContactNumber = "3065551234"
+            },
+            new Singer
+            {
+                FirstName = "Emma",
+                LastName = "Scott",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                EmergencyContactName = "James Scott",
+                EmergencyContactNumber = "3064445678"
+            },
+            new Singer
+            {
+                FirstName = "Liam",
+                LastName = "Cooper",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                EmergencyContactName = "Natalie Cooper",
+                EmergencyContactNumber = "3068889999"
+            },
+            new Singer
+            {
+                FirstName = "Isabella",
+                LastName = "Fisher",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                EmergencyContactName = "Ethan Fisher",
+                EmergencyContactNumber = "3062223333"
+            },
+            new Singer
+            {
+                FirstName = "Mason",
+                LastName = "Hall",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                EmergencyContactName = "Ava Hall",
+                EmergencyContactNumber = "3067770000"
+            },
+            new Singer
+            {
+                FirstName = "Grace",
+                LastName = "Carter",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                EmergencyContactName = "Logan Carter",
+                EmergencyContactNumber = "3069991111"
+            },
+            new Singer
+            {
+                FirstName = "Jacob",
+                LastName = "Reed",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                EmergencyContactName = "Emily Reed",
+                EmergencyContactNumber = "3065556666"
+            },
+            new Singer
+            {
+                FirstName = "Aiden",
+                LastName = "Graham",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                EmergencyContactName = "Sophia Graham",
+                EmergencyContactNumber = "3064447777"
+            },
+            new Singer
+            {
+                FirstName = "Lily",
+                LastName = "Parker",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                EmergencyContactName = "Benjamin Parker",
+                EmergencyContactNumber = "3063338888"
+            },
+            new Singer
+            {
+                FirstName = "Noah",
+                LastName = "Ward",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                EmergencyContactName = "Isabella Ward",
+                EmergencyContactNumber = "3061112222"
+            },
 
-                    // Saskatoon
-                    new Singer
-                    {
-                        FirstName = "Logan",
-                        LastName = "Xavier",
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
-                        EmergencyContactName = "Laura Xavier",
-                        EmergencyContactNumber = "6677889900"
-                    }
+            // Surrey
+            new Singer
+            {
+                FirstName = "William",
+                LastName = "Davis",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                EmergencyContactName = "Hannah Davis",
+                EmergencyContactNumber = "6045551234"
+            },
+            new Singer
+            {
+                FirstName = "Chloe",
+                LastName = "Bennett",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                EmergencyContactName = "Lucas Bennett",
+                EmergencyContactNumber = "6044445678"
+            },
+            new Singer
+            {
+                FirstName = "Henry",
+                LastName = "Wilson",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                EmergencyContactName = "Ava Wilson",
+                EmergencyContactNumber = "6048889999"
+            },
+            new Singer
+            {
+                FirstName = "Ella",
+                LastName = "Robinson",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                EmergencyContactName = "Ethan Robinson",
+                EmergencyContactNumber = "6042223333"
+            },
+            new Singer
+            {
+                FirstName = "Sebastian",
+                LastName = "Walker",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                EmergencyContactName = "Mia Walker",
+                EmergencyContactNumber = "6047770000"
+            },
+            new Singer
+            {
+                FirstName = "Madison",
+                LastName = "King",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                EmergencyContactName = "Alexander King",
+                EmergencyContactNumber = "6049991111"
+            },
+            new Singer
+            {
+                FirstName = "David",
+                LastName = "Evans",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                EmergencyContactName = "Charlotte Evans",
+                EmergencyContactNumber = "6045556666"
+            },
+            new Singer
+            {
+                FirstName = "Mila",
+                LastName = "Cruz",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                EmergencyContactName = "James Cruz",
+                EmergencyContactNumber = "6044447777"
+            },
+            new Singer
+            {
+                FirstName = "Samuel",
+                LastName = "Mitchell",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                EmergencyContactName = "Sophia Mitchell",
+                EmergencyContactNumber = "6043338888"
+            },
+            new Singer
+            {
+                FirstName = "Zoe",
+                LastName = "Nelson",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                EmergencyContactName = "Benjamin Nelson",
+                EmergencyContactNumber = "6041112222"
+            },
+            // Vancouver
+            new Singer
+            {
+                FirstName = "James",
+                LastName = "Anderson",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                EmergencyContactName = "Emily Anderson",
+                EmergencyContactNumber = "6041234567"
+            },
+            new Singer
+            {
+                FirstName = "Sophia",
+                LastName = "Baker",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                EmergencyContactName = "Daniel Baker",
+                EmergencyContactNumber = "6049876543"
+            },
+            new Singer
+            {
+                FirstName = "Ethan",
+                LastName = "Wright",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                EmergencyContactName = "Laura Wright",
+                EmergencyContactNumber = "6045557890"
+            },
+            new Singer
+            {
+                FirstName = "Ava",
+                LastName = "Hill",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                EmergencyContactName = "Christopher Hill",
+                EmergencyContactNumber = "6047778888"
+            },
+            new Singer
+            {
+                FirstName = "Benjamin",
+                LastName = "Turner",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                EmergencyContactName = "Olivia Turner",
+                EmergencyContactNumber = "6042223333"
+            },
+            new Singer
+            {
+                FirstName = "Mia",
+                LastName = "Adams",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                EmergencyContactName = "Matthew Adams",
+                EmergencyContactNumber = "6049990000"
+            },
+            new Singer
+            {
+                FirstName = "Noah",
+                LastName = "Morris",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                EmergencyContactName = "Hannah Morris",
+                EmergencyContactNumber = "6045556666"
+            },
+            new Singer
+            {
+                FirstName = "Charlotte",
+                LastName = "Phillips",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                EmergencyContactName = "Jacob Phillips",
+                EmergencyContactNumber = "6043334444"
+            },
+            new Singer
+            {
+                FirstName = "Liam",
+                LastName = "Stewart",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                EmergencyContactName = "Sophia Stewart",
+                EmergencyContactNumber = "6047778888"
+            },
+            new Singer
+            {
+                FirstName = "Isabella",
+                LastName = "Mitchell",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                EmergencyContactName = "William Mitchell",
+                EmergencyContactNumber = "6041112222"
+            },
+
+            // Hamilton
+            new Singer
+            {
+                FirstName = "Mason",
+                LastName = "Carter",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                EmergencyContactName = "Ella Carter",
+                EmergencyContactNumber = "9055551234"
+            },
+            new Singer
+            {
+                FirstName = "Emma",
+                LastName = "Parker",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                EmergencyContactName = "Benjamin Parker",
+                EmergencyContactNumber = "9054445678"
+            },
+            new Singer
+            {
+                FirstName = "Jacob",
+                LastName = "Cooper",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                EmergencyContactName = "Grace Cooper",
+                EmergencyContactNumber = "9058889999"
+            },
+            new Singer
+            {
+                FirstName = "Aiden",
+                LastName = "Ward",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                EmergencyContactName = "Isabella Ward",
+                EmergencyContactNumber = "9052223333"
+            },
+            new Singer
+            {
+                FirstName = "Lily",
+                LastName = "Foster",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                EmergencyContactName = "Nathan Foster",
+                EmergencyContactNumber = "9057770000"
+            },
+            new Singer
+            {
+                FirstName = "Lucas",
+                LastName = "Reed",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                EmergencyContactName = "Sophia Reed",
+                EmergencyContactNumber = "9059991111"
+            },
+            new Singer
+            {
+                FirstName = "Olivia",
+                LastName = "Gray",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                EmergencyContactName = "Daniel Gray",
+                EmergencyContactNumber = "9055556666"
+            },
+            new Singer
+            {
+                FirstName = "Ethan",
+                LastName = "Bell",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                EmergencyContactName = "Charlotte Bell",
+                EmergencyContactNumber = "9054447777"
+            },
+            new Singer
+            {
+                FirstName = "Zoe",
+                LastName = "Howard",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                EmergencyContactName = "James Howard",
+                EmergencyContactNumber = "9053338888"
+            },
+            new Singer
+            {
+                FirstName = "William",
+                LastName = "Murphy",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                EmergencyContactName = "Emma Murphy",
+                EmergencyContactNumber = "9051112222"
+            },
+
+            // St. Catharines
+            new Singer
+            {
+                FirstName = "Henry",
+                LastName = "Collins",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                EmergencyContactName = "Ava Collins",
+                EmergencyContactNumber = "2895551234"
+            },
+            new Singer
+            {
+                FirstName = "Ella",
+                LastName = "Ramirez",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                EmergencyContactName = "Ethan Ramirez",
+                EmergencyContactNumber = "2894445678"
+            },
+            new Singer
+            {
+                FirstName = "Sebastian",
+                LastName = "Fisher",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                EmergencyContactName = "Lily Fisher",
+                EmergencyContactNumber = "2898889999"
+            },
+            new Singer
+            {
+                FirstName = "Madison",
+                LastName = "Ross",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                EmergencyContactName = "Jacob Ross",
+                EmergencyContactNumber = "2892223333"
+            },
+            new Singer
+            {
+                FirstName = "David",
+                LastName = "Evans",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                EmergencyContactName = "Charlotte Evans",
+                EmergencyContactNumber = "2897770000"
+            },
+            new Singer
+            {
+                FirstName = "Mila",
+                LastName = "Hughes",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                EmergencyContactName = "James Hughes",
+                EmergencyContactNumber = "2899991111"
+            },
+            new Singer
+            {
+                FirstName = "Samuel",
+                LastName = "Bennett",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                EmergencyContactName = "Sophia Bennett",
+                EmergencyContactNumber = "2895556666"
+            },
+            new Singer
+            {
+                FirstName = "Zoe",
+                LastName = "Cruz",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                EmergencyContactName = "Benjamin Cruz",
+                EmergencyContactNumber = "2894447777"
+            },
+            new Singer
+            {
+                FirstName = "Michael",
+                LastName = "Nelson",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                EmergencyContactName = "Emma Nelson",
+                EmergencyContactNumber = "2893338888"
+            },
+            new Singer
+            {
+                FirstName = "Harper",
+                LastName = "Scott",
+                LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                EmergencyContactName = "Daniel Scott",
+                EmergencyContactNumber = "2891112222"
+            }
+
 
 
                 );
@@ -231,12 +652,81 @@ namespace TomorrowsVoices.Data
             if (!context.Sessions.Any())
             {
                 context.Sessions.AddRange(
+                    // Toronto
                     new Session
                     {
-                        Date = DateTime.Parse("2024/12/29"),
-                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Niagara").ID,
-              
+                        Date = DateTime.Parse("2025/02/14"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
+                    },
+                    new Session
+                    {
+                        Date = DateTime.Parse("2025/02/21"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Toronto").ID,
                     }
+                    ,
+                    // Saskatoon
+                    new Session
+                    {
+                        Date = DateTime.Parse("2025/02/14"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                    },
+                    new Session
+                    {
+                        Date = DateTime.Parse("2025/02/21"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Saskatoon").ID,
+                    }
+                    ,
+
+
+                    // Surrey
+                    new Session
+                    {
+                        Date = DateTime.Parse("2025/02/14"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                    },
+                    new Session
+                    {
+                        Date = DateTime.Parse("2025/02/21"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Surrey").ID,
+                    }
+                    ,
+
+                    // Vancouver
+                    new Session
+                    {
+                        Date = DateTime.Parse("2025/02/14"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                    },
+                    new Session
+                    {
+                        Date = DateTime.Parse("2025/02/21"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Vancouver").ID,
+                    },
+                    // Hamilton
+                    new Session
+                    {
+                        Date = DateTime.Parse("2025/02/14"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                    },
+                    new Session
+                    {
+                        Date = DateTime.Parse("2025/02/21"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "Hamilton").ID,
+                    },
+
+                    // St. Catharines
+                    new Session
+                    {
+                        Date = DateTime.Parse("2025/02/14"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                    },
+                    new Session
+                    {
+                        Date = DateTime.Parse("2025/02/21"),
+                        LocationID = context.Locations.FirstOrDefault(l => l.City == "St. Catharines").ID,
+                    }
+
+                 
                 );
                 context.SaveChanges();
             }
@@ -248,30 +738,776 @@ namespace TomorrowsVoices.Data
             {
         
                 context.Attendances.AddRange(
-                    new Attendance
-                    {
-                        Status = true,
-                        SingerID =  context.Singers.FirstOrDefault(s => s.FirstName == "Radin").ID,
-                        SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == "Niagara").ID
-                    },
-                    new Attendance
-                    {
-                        Status = true,
-                        SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Hall").ID,
-                        SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == "Niagara").ID
-                    },
-                    new Attendance
-                    {
-                        Status = false,
-                        SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Torffin").ID,
-                        SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == "Niagara").ID
-                    },
-                    new Attendance
-                    {
-                        Status = true,
-                        SingerID = context.Singers.FirstOrDefault(s => s.FirstName == "Bruce").ID,
-                        SessionID = context.Sessions.FirstOrDefault(s => s.Location.City == "Niagara").ID
-                    }
+
+
+                // Attendances for Toronto singers
+                new Attendance
+                {
+                    Status = false, // Michael Johnson
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6471234567").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Toronto").ID
+
+                },
+                new Attendance
+                {
+                    Status = true, // Emily Clark
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6479876543").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Nathan Williams
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "4165557890").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Sophia Martinez
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "4167778888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Daniel Brown
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6472223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Ava Taylor
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "4169990000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Lucas Harris
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6475556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Olivia Moore
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "4163334444").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Ethan White
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6477778888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Charlotte Lee
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "4161112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Toronto").ID
+                },
+
+
+
+                   new Attendance
+                   {
+                       Status = false, // Michael Johnson
+                       SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6471234567").ID,
+                       SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Toronto").ID
+
+                   },
+                new Attendance
+                {
+                    Status = false, // Emily Clark
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6479876543").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Nathan Williams
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "4165557890").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Sophia Martinez
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "4167778888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Daniel Brown
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6472223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Ava Taylor
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "4169990000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Lucas Harris
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6475556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Olivia Moore
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "4163334444").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Ethan White
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6477778888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Toronto").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Charlotte Lee
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "4161112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Toronto").ID
+                }
+                ,
+
+                // Attendances for Saskatoon singers
+                new Attendance
+                {
+                    Status = false, // Benjamin Adams
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3065551234").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Emma Scott
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3064445678").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Liam Cooper
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3068889999").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Isabella Fisher
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3062223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Mason Hall
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3067770000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Grace Carter
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3069991111").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Jacob Reed
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3065556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Aiden Graham
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3064447777").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Lily Parker
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3063338888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Noah Ward
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3061112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Saskatoon").ID
+                },
+
+
+                new Attendance
+                {
+                    Status = false, // Benjamin Adams
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3065551234").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Emma Scott
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3064445678").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Liam Cooper
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3068889999").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Isabella Fisher
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3062223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Mason Hall
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3067770000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Grace Carter
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3069991111").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Jacob Reed
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3065556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Aiden Graham
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3064447777").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Lily Parker
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3063338888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Saskatoon").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Noah Ward
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "3061112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Saskatoon").ID
+                },
+
+
+                // Attendances for Surrey singers
+                new Attendance
+                {
+                    Status = false, // William Davis
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6045551234").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Chloe Bennett
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6044445678").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Henry Wilson
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6048889999").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Ella Robinson
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6042223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Sebastian Walker
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6047770000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Madison King
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6049991111").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = false, // David Evans
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6045556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Mila Cruz
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6044447777").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Samuel Mitchell
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6043338888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Zoe Nelson
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6041112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Surrey").ID
+                },
+
+
+
+
+
+                  new Attendance
+                  {
+                      Status = false, // William Davis
+                      SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6045551234").ID,
+                      SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Surrey").ID
+                  },
+                new Attendance
+                {
+                    Status = true, // Chloe Bennett
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6044445678").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Henry Wilson
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6048889999").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Ella Robinson
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6042223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Sebastian Walker
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6047770000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Madison King
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6049991111").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = false, // David Evans
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6045556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Mila Cruz
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6044447777").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Samuel Mitchell
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6043338888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Surrey").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Zoe Nelson
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6041112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Surrey").ID
+                },
+
+
+
+                // Attendances for Hamilton singers
+                new Attendance
+                {
+                    Status = false, // Mason Carter
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9055551234").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Emma Parker
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9054445678").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Jacob Cooper
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9058889999").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Aiden Ward
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9052223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Lily Foster
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9057770000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Lucas Reed
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9059991111").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Olivia Gray
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9055556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Ethan Bell
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9054447777").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Zoe Howard
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9053338888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = false, // William Murphy
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9051112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Hamilton").ID
+                },
+
+
+
+
+
+
+                new Attendance
+                {
+                    Status = true, // Mason Carter
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9055551234").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Emma Parker
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9054445678").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Jacob Cooper
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9058889999").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Aiden Ward
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9052223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Lily Foster
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9057770000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Lucas Reed
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9059991111").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Olivia Gray
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9055556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Ethan Bell
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9054447777").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Zoe Howard
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9053338888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Hamilton").ID
+                },
+                new Attendance
+                {
+                    Status = true, // William Murphy
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "9051112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Hamilton").ID
+                },
+
+
+
+                // Attendances for Vancouver
+                new Attendance
+                {
+                    Status = false, // Mason Carter
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6041234567").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Emma Parker
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6049876543").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Jacob Cooper
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6045557890").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Aiden Ward
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6047778888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Lily Foster
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6042223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Lucas Reed
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6049990000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Olivia Gray
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6045556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Ethan Bell
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6043334444").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Zoe Howard
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6047778888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = true, // William Murphy
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6041112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "Vancouver").ID
+                },
+
+
+
+
+                         new Attendance
+                         {
+                             Status = false, // Mason Carter
+                             SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6041234567").ID,
+                             SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Vancouver").ID
+                         },
+                new Attendance
+                {
+                    Status = true, // Emma Parker
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6049876543").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Jacob Cooper
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6045557890").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Aiden Ward
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6047778888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Lily Foster
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6042223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Lucas Reed
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6049990000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Olivia Gray
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6045556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Ethan Bell
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6043334444").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Zoe Howard
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6047778888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Vancouver").ID
+                },
+                new Attendance
+                {
+                    Status = false, // William Murphy
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "6041112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "Vancouver").ID
+                },
+
+
+                // Attendances for St. Catharines singers
+                   new Attendance
+                   {
+                       Status = false, // Mason Carter
+                       SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2895551234").ID,
+                       SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "St. Catharines").ID
+                   },
+                new Attendance
+                {
+                    Status = true, // Emma Parker
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2894445678").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Jacob Cooper
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2898889999").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Aiden Ward
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2892223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = false, // Lily Foster
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2897770000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Lucas Reed
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2899991111").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Olivia Gray
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2895556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Ethan Bell
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2894447777").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Zoe Howard
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2893338888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // William Murphy
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2891112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/14") && s.Location.City == "St. Catharines").ID
+                },
+
+
+
+
+
+                new Attendance
+                {
+                    Status = false, // Mason Carter
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2895551234").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Emma Parker
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2894445678").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Jacob Cooper
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2898889999").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Aiden Ward
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2892223333").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Lily Foster
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2897770000").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Lucas Reed
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2899991111").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Olivia Gray
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2895556666").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Ethan Bell
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2894447777").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // Zoe Howard
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2893338888").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "St. Catharines").ID
+                },
+                new Attendance
+                {
+                    Status = true, // William Murphy
+                    SingerID = context.Singers.FirstOrDefault(s => s.EmergencyContactNumber == "2891112222").ID,
+                    SessionID = context.Sessions.FirstOrDefault(s => s.Date == DateTime.Parse("2025/02/21") && s.Location.City == "St. Catharines").ID
+                }
+
+
+
 
                 );
                 context.SaveChanges();
