@@ -99,7 +99,6 @@
             <div class="form-group col-md-2 align-self-start">
                 <input type="submit" name="actionButton" value="Filter"
                        class="btn text-white" style="background-color: #6423e7" />
-              
             </div>
         </div>
     </div>
@@ -215,10 +214,12 @@
                         @Html.DisplayFor(modelItem => item.Email)
                     </td>
                     <td>
-                            <div class="d-none d-lg-inline">
-                                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
-                                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a> |
-                            <input type="hidden" name="id" value="@item.ID" />
+
+                        <div class="d-none d-lg-inline">
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a> |
+
+                            <!-- Archive Form -->
                             <form asp-action="Archive" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="@item.ID" />
                                 <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger">
@@ -250,10 +251,7 @@
                                         </li>
                                     </ul>
                                 </div>
-                        </div>
-            
-              
-                      
+                        </div>          
                 </tr>
        
             }
@@ -276,7 +274,8 @@
 
             if (sortField.value === field) {
                 sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
-            } else {
+            } 
+            else {
                 sortField.value = field;
                 sortDirection.value = "asc";
             }

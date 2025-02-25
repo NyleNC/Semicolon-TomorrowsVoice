@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using OfficeOpenXml;
 using TomorrowsVoices.Data;
-using TomorrowsVoices.Data.TVMigrations;
+
 using TomorrowsVoices.Models;
 using TomorrowsVoices.Utilities;
 
@@ -536,18 +536,18 @@ namespace TomorrowsVoices.Controllers
             return Json(new { success = true, cityId = newCity.ID });
         }
         [HttpPost]
- 
-          public async Task<IActionResult> Archive(int id)
+        public async Task<IActionResult> Archive(int id)
         {
             var director = await _context.Directors.FindAsync(id);
-            if (director != null)
+            if (director == null)
             {
-                director.IsArchived = !director.IsArchived;
-                _context.Update(director);
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
-           
-      
+
+            director.IsArchived = true;
+            await _context.SaveChangesAsync();
+
+       
 
         TempData["SuccessMessage"] = "Director archived successfully!";
             return RedirectToAction(nameof(Index));

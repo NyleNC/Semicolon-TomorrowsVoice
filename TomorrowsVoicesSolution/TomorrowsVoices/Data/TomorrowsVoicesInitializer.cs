@@ -84,7 +84,7 @@ namespace TomorrowsVoices.Data
                     {
                         FirstName = "Monique",
                         LastName = "Hoekstra",
-                        Email = "mhoekstra@tv.com"
+                        Email = "monhoekstra@tv.com"
                     },
                     new Director
                     {

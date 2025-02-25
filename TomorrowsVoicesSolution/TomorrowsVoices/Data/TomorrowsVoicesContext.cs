@@ -92,8 +92,14 @@ namespace TomorrowsVoices.Data
                 .HasForeignKey(Session => Session.LocationID)
              .OnDelete(DeleteBehavior.Restrict);
 
+            // is unique for email
+            modelBuilder.Entity<Director>()
 
-    
+                .HasIndex(d => d.Email)
+                .IsUnique();
+
+
+
         }
     }
 }
