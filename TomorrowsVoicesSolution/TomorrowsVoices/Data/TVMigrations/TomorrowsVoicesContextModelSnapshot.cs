@@ -100,6 +100,10 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasMaxLength(30)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("TEXT");
 
@@ -250,10 +254,6 @@ namespace TomorrowsVoices.Data.TVMigrations
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ScheduledEndTime")
                         .HasColumnType("TEXT");

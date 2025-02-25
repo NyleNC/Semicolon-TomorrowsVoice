@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     /// <inheritdoc />
-    public partial class a : Migration
+    public partial class newmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -70,6 +70,7 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
                     StartTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EndTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     VolLocationID = table.Column<int>(type: "INTEGER", nullable: false),
@@ -170,7 +171,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                     ActualStartTime = table.Column<DateTime>(type: "TEXT", nullable: true),
                     ActualEndTime = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Status = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Notes = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
                     VolunteerID = table.Column<int>(type: "INTEGER", nullable: true),
                     EventID = table.Column<int>(type: "INTEGER", nullable: false),
                     IsArchived = table.Column<bool>(type: "INTEGER", nullable: false)
@@ -251,6 +251,12 @@ namespace TomorrowsVoices.Data.TVMigrations
                 name: "IX_Attendances_SingerID",
                 table: "Attendances",
                 column: "SingerID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Directors_Email",
+                table: "Directors",
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_VolLocationID",
