@@ -93,11 +93,7 @@ namespace TomorrowsVoices.Data
              .OnDelete(DeleteBehavior.Restrict);
 
 
-            // is unique for email
-            modelBuilder.Entity<Director>()
-
-                .HasIndex(d=>d.Email)
-                .IsUnique();
+    
         }
     }
 }
