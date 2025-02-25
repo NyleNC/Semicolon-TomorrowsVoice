@@ -21,9 +21,6 @@ namespace TomorrowsVoices.Models
         [Required(ErrorMessage = "You must select the status of the volunteer.")]
         public bool Status { get; set; }
 
-        [StringLength(2000, ErrorMessage = "Limit of 2000 characters for notes.")]
-        public string? Notes { get; set; }
-
         public int? VolunteerID { get; set; }
 
         public Volunteer? Volunteer { get; set; }
