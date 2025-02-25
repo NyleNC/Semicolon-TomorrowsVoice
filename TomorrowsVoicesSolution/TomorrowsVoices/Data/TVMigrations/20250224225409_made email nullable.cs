@@ -5,7 +5,7 @@
 namespace TomorrowsVoices.Data.TVMigrations
 {
     /// <inheritdoc />
-    public partial class Deleteddatabase : Migration
+    public partial class madeemailnullable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

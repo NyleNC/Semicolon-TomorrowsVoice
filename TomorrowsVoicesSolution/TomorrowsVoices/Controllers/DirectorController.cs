@@ -30,12 +30,13 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Director
-        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Director")
+        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Director", bool archived = false)
         {
             var directors = _context.Directors
+                 .Where(d => d.IsArchived== archived)
                 .Include(d => d.Location) 
                 .AsNoTracking();
-
+            ViewData["ActiveTab"] = archived ? "archived" : "active";
             string[] sortOptions = new[] { "Director", "City", "Email" };
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
@@ -192,48 +193,39 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-      
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email,Location")] Director director)
+
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email,LocationID")] Director director)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     // Validate and add the city if it doesn't exist
-                    if (director.Location != null && !string.IsNullOrEmpty(director.Location.City))
+                    if (director.LocationID > 0)
                     {
-                        // Check if the city already exists in the database
-                        var existingCity = await _context.Locations
-       .FirstOrDefaultAsync(l => l.City.ToLower() == director.Location.City.ToLower());
-   
-                        // If the city doesn't exist, add it
-                        if (existingCity == null)
+                        var location = await _context.Locations.FindAsync(director.LocationID);
+                        if (location == null)
                         {
-                            var newCity = new Location { City = director.Location.City };
-                            _context.Locations.Add(newCity);
-                            await _context.SaveChangesAsync(); // Save changes so the new city gets an ID
-                            director.Location = newCity; // Set the new city to the director
-                        }
-                        else
-                        {
-                            director.Location = existingCity; // If the city exists, assign it to the director
+                            ModelState.AddModelError("LocationID", "Invalid city selected.");
+                            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
+                            return View(director);
                         }
 
                         // Check if a director is already assigned to this city
                         var existingDirector = await _context.Directors
                             .Include(d => d.Location)
-                            .FirstOrDefaultAsync(d => d.Location.City == director.Location.City);
+                            .FirstOrDefaultAsync(d => d.LocationID == director.LocationID);
 
                         if (existingDirector != null)
                         {
-                            // Add an error if someone is already assigned to this city
-                            ModelState.AddModelError("Location.City", $"Someone is already assigned to this City: {director.Location.City}");
-                            PopulateDropDownLists(director);
+                            ModelState.AddModelError("LocationID", $"Someone is already assigned to this City: {location.City}");
+                            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
                             return View(director);
                         }
+
+                        director.Location = location;
                     }
 
-                    // Add the new director to the database
                     _context.Add(director);
                     await _context.SaveChangesAsync();
 
@@ -255,10 +247,10 @@ namespace TomorrowsVoices.Controllers
                 }
             }
 
-            // Repopulate the dropdowns in case of validation errors
-            PopulateDropDownLists(director);
+            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
             return View(director);
         }
+
         // GET: Director/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -269,14 +261,13 @@ namespace TomorrowsVoices.Controllers
 
             var director = await _context.Directors
                 .Include(d => d.Location)
-                .FirstOrDefaultAsync(x => x.ID == id);
+                .FirstOrDefaultAsync(d => d.ID == id);
             if (director == null)
             {
                 return NotFound();
             }
 
-            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
-            PopulateDropDownLists(director);
+            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", director.LocationID);
             return View(director);
         }
         // POST: Director/Edit/5
@@ -284,38 +275,51 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Email,LocationID")] Director director)
         {
-            var directorToUpdate = await _context.Directors
-                .Include(s => s.Location)
-                .FirstOrDefaultAsync(m => m.ID == id);
-
-            if (directorToUpdate == null)
+            if (id != director.ID)
             {
                 return NotFound();
             }
 
-            // UpdateSessionSingers(selectedOptions, directorToUpdate); // This line is causing the error
-
-            if (await TryUpdateModelAsync<Director>(
-      directorToUpdate, "",
-      d => d.FirstName, d => d.LastName, d => d.Email, d => d.Location))
-
+            if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(directorToUpdate);
-                    await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = $"{directorToUpdate.DirectorFullName} has been edited and saved";
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (RetryLimitExceededException /* dex */)
-                {
-                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                    var directorToUpdate = await _context.Directors
+                        .Include(d => d.Location)
+                        .FirstOrDefaultAsync(d => d.ID == id);
+
+                    if (directorToUpdate == null)
+                    {
+                        return NotFound();
+                    }
+
+                    if (await TryUpdateModelAsync<Director>(
+                        directorToUpdate,
+                        "",
+                        d => d.FirstName, d => d.LastName, d => d.Email, d => d.LocationID))
+                    {
+                        var location = await _context.Locations.FindAsync(directorToUpdate.LocationID);
+                        if (location == null)
+                        {
+                            ModelState.AddModelError("LocationID", "Invalid city selected.");
+                            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", directorToUpdate.LocationID);
+                            return View(directorToUpdate);
+                        }
+
+                        directorToUpdate.Location = location;
+
+                        _context.Update(directorToUpdate);
+                        await _context.SaveChangesAsync();
+
+                        TempData["SuccessMessage"] = $"{directorToUpdate.DirectorFullName} has been edited and saved";
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DirectorExists(directorToUpdate.ID))
+                    if (!DirectorExists(director.ID))
                     {
                         return NotFound();
                     }
@@ -328,12 +332,10 @@ namespace TomorrowsVoices.Controllers
                 {
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
-            
             }
 
-          
-            PopulateDropDownLists(directorToUpdate);
-            return View(directorToUpdate);
+            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", director.LocationID);
+            return View(director);
         }
 
         // GET: Director/Delete/5
@@ -355,7 +357,7 @@ namespace TomorrowsVoices.Controllers
             return View(director);
         }
 
-        // delete is finally working , we can finally delete director without an error
+        // Delete is finally working , we can finally Delete director without an error
         // POST: Director/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -376,7 +378,7 @@ namespace TomorrowsVoices.Controllers
             }
             catch (Exception)
             {
-                ModelState.AddModelError("", "An error occurred while trying to delete the Director. Please try again.");
+                ModelState.AddModelError("", "An error occurred while trying to Delete the Director. Please try again.");
                 return View(director);
             }
         }
@@ -533,7 +535,39 @@ namespace TomorrowsVoices.Controllers
             // Return the new city's ID so it can be selected
             return Json(new { success = true, cityId = newCity.ID });
         }
+        [HttpPost]
+ 
+          public async Task<IActionResult> Archive(int id)
+        {
+            var director = await _context.Directors.FindAsync(id);
+            if (director != null)
+            {
+                director.IsArchived = !director.IsArchived;
+                _context.Update(director);
+                await _context.SaveChangesAsync();
+            }
+           
+      
 
+        TempData["SuccessMessage"] = "Director archived successfully!";
+            return RedirectToAction(nameof(Index));
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> UnArchive(int id)
+        {
+            var director = await _context.Directors.FindAsync(id);
+            if (director == null)
+            {
+                return NotFound();
+            }
+
+            director.IsArchived = false;
+            _context.Update(director);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
         private bool DirectorExists(int id)
         {
             return _context.Directors.Any(e => e.ID == id);

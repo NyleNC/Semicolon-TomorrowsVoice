@@ -11,8 +11,8 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    [Migration("20250129004754_added cascade delete for Singer and location")]
-    partial class addedcascadedeleteforSingerandlocation
+    [Migration("20250129004754_added cascade Delete for Singer and location")]
+    partial class addedcascadeDeleteforSingerandlocation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

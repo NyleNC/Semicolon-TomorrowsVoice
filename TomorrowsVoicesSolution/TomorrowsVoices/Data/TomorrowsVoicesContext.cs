@@ -39,7 +39,7 @@ namespace TomorrowsVoices.Data
                .IsRequired(false)
                .OnDelete(DeleteBehavior.SetNull);
 
-            // PREVENT CASCADE DELETE FROM VOLUNTEER LOCATION TO VOLUNTEER
+            // PREVENT CASCADE Delete FROM VOLUNTEER LOCATION TO VOLUNTEER
             modelBuilder.Entity<VolLocation>()
               .HasMany(l => l.Volunteers)
               .WithOne(d => d.VolLocation)
@@ -47,7 +47,7 @@ namespace TomorrowsVoices.Data
               .OnDelete(DeleteBehavior.Restrict);
 
 
-            // PREVENT CASCADE DELETE FROM VOLUNTEER LOCATION TO EVENT
+            // PREVENT CASCADE Delete FROM VOLUNTEER LOCATION TO EVENT
             modelBuilder.Entity<VolLocation>()
               .HasMany(l => l.Events)
               .WithOne(d => d.VolLocation)
@@ -56,7 +56,7 @@ namespace TomorrowsVoices.Data
 
 
 
-            // PREVENT CASCADE DELETE FROM Event TO Attendance
+            // PREVENT CASCADE Delete FROM Event TO Attendance
             modelBuilder.Entity<Event>()
              .HasMany(l => l.VolAttendances)
              .WithOne(d => d.Event)
@@ -64,7 +64,7 @@ namespace TomorrowsVoices.Data
              .OnDelete(DeleteBehavior.Restrict);
 
 
-            // PREVENT CASCADE DELETE FROM Volunteer TO Attendance
+            // PREVENT CASCADE Delete FROM Volunteer TO Attendance
             modelBuilder.Entity<Volunteer>()
              .HasMany(l => l.VolAttendances)
              .WithOne(d => d.Volunteer)

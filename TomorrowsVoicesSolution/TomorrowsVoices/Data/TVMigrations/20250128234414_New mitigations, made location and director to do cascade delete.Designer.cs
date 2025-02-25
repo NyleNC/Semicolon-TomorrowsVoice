@@ -11,8 +11,8 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    [Migration("20250128234414_New mitigations, made location and director to do cascade delete")]
-    partial class Newmitigationsmadelocationanddirectortodocascadedelete
+    [Migration("20250128234414_New mitigations, made location and director to do cascade Delete")]
+    partial class NewmitigationsmadelocationanddirectortodocascadeDelete
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

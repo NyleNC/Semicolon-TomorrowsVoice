@@ -30,6 +30,7 @@ namespace TomorrowsVoices.Models
 
         public int EventID { get; set; }   
 
-        public Event Event { get; set; }   
+        public Event? Event { get; set; }
+        public bool IsArchived { get; set; }
     }
 }

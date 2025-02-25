@@ -27,12 +27,13 @@ namespace TomorrowsVoices.Models
         [DataType(DataType.EmailAddress)]
 
         [Required(ErrorMessage = "You cannot leave the email blank.")]
-        public string? Email { get; set; }
+        public string? Email { get; set; } = null;
         public int VolLocationID { get; set; }
 
         public VolLocation? VolLocation { get; set; }
 
         public ICollection<VolAttendance> VolAttendances { get; set; } = new HashSet<VolAttendance>();
+        public bool IsArchived { get; set; }
 
     }
 }

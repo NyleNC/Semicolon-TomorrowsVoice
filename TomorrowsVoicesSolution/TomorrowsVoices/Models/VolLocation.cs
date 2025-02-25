@@ -13,5 +13,6 @@ namespace TomorrowsVoices.Models
         public ICollection<Volunteer> Volunteers { get; set; } = new HashSet<Volunteer>();   
 
         public ICollection<Event> Events { get; set; } = new HashSet<Event>();
+        public bool IsArchived { get; set; }
     }
 }

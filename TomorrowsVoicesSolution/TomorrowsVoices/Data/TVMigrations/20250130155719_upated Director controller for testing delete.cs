@@ -5,7 +5,7 @@
 namespace TomorrowsVoices.Data.TVMigrations
 {
     /// <inheritdoc />
-    public partial class upatedDirectorcontrollerfortestingdelete : Migration
+    public partial class upatedDirectorcontrollerfortestingDelete : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

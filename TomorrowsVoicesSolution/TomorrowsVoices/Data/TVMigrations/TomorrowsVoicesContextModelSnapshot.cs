@@ -23,6 +23,9 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("SessionID")
                         .HasColumnType("INTEGER");
 
@@ -57,10 +60,16 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("LocationID")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("ID");
 
@@ -82,6 +91,9 @@ namespace TomorrowsVoices.Data.TVMigrations
 
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -157,6 +169,9 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("LocationID")
                         .HasColumnType("INTEGER");
 
@@ -194,6 +209,9 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("INTEGER");
 
@@ -228,6 +246,9 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("EventID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Notes")
@@ -266,6 +287,9 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasMaxLength(250)
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("ID");
 
                     b.ToTable("VolLocations");
@@ -277,10 +301,18 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LastName")
                         .IsRequired()

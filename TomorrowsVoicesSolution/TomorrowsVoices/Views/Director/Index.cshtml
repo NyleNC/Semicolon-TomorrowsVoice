@@ -4,10 +4,23 @@
 
 @{
     ViewData["Title"] = "Index";
+    bool isArchived = ViewData["IsArchived"] as bool? ?? false;
 }
+
 
 <h1>Directors</h1>
 
+<!-- Tab Navigation -->
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
+           asp-action="Index" asp-route-archived="false">Active</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
+           asp-action="Index" asp-route-archived="true">Archived</a>
+    </li>
+</ul>
 
 <div class="d-flex justify-content-between align-items-start mb-1">
     <p class="mb-2">
@@ -184,12 +197,14 @@
                 <th>
                     <button style="font-weight: 700" type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white no-pointer-events">Actions</button>
                 </th>
+               
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
+                 
                     <td>
                         @Html.DisplayFor(modelItem => item.DirectorFullName)
                     </td>
@@ -203,7 +218,14 @@
                             <div class="d-none d-lg-inline">
                                 <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
                                 <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.ID" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger"><img src="~/Images/archive.png" alt="archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />Delete</a>
+                            <input type="hidden" name="id" value="@item.ID" />
+                            <form asp-action="Archive" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@item.ID" />
+                                <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger">
+                                    <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                    Archive
+                                </button>
+                            </form>
                             </div>
                             <div class="d-lg-none">
                                 <div class="btn-group">
@@ -222,16 +244,18 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" asp-action="Delete" asp-route-id="@item.ID">
-                                                <img src="~/Images/archive.png" alt="archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Delete
+                                            <a class="dropdown-item" asp-action="Archive" asp-route-id="@item.ID">
+                                                <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
                                             </a>
                                         </li>
                                     </ul>
                                 </div>
-                            </div>
-                        </td>
+                        </div>
+            
+              
+                      
                 </tr>
- 
+       
             }
         </tbody>
     </table>

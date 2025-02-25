@@ -63,5 +63,6 @@ namespace TomorrowsVoices.Models
         public Location? Location { get; set; }
 
         public ICollection<Attendance> Attendance { get; set; } = new HashSet<Attendance>();
+        public bool IsArchived { get; set; }
     }
 }

@@ -33,6 +33,9 @@ namespace TomorrowsVoices.Models
         [Required(ErrorMessage = "You cannot leave the email blank.")]
         public string? Email { get; set; }
 
+        [Display(Name = "Location")]
+        public int? LocationID { get; set; }
         public Location? Location { get; set; }
+        public bool IsArchived { get; set; }
     }
 }

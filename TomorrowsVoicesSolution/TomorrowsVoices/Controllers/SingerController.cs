@@ -298,7 +298,7 @@ namespace TomorrowsVoices.Controllers
             }
             catch (Exception)
             {
-                ModelState.AddModelError("", "An error occurred while trying to delete the Singer. Please try again.");
+                ModelState.AddModelError("", "An error occurred while trying to Delete the Singer. Please try again.");
                 return View(singer);
             }
         }

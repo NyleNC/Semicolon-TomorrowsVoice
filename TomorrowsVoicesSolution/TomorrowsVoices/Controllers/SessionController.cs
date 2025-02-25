@@ -444,7 +444,7 @@ namespace TomorrowsVoices.Controllers
             {
                 if (dex.GetBaseException().Message.Contains("FOREIGN KEY constraint failed"))
                 {
-                    ModelState.AddModelError("", "Unable to Delete Session. Remember, you cannot delete a Session that has singers assigned.");
+                    ModelState.AddModelError("", "Unable to Delete Session. Remember, you cannot Delete a Session that has singers assigned.");
                 }
                 else
                 {

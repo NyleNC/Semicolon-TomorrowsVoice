@@ -5,7 +5,7 @@
 namespace TomorrowsVoices.Data.TVMigrations
 {
     /// <inheritdoc />
-    public partial class addedcascadedeleteforSingerandlocation : Migration
+    public partial class addedcascadeDeleteforSingerandlocation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

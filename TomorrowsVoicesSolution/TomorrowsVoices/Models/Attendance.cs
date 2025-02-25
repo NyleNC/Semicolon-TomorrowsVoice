@@ -23,6 +23,7 @@ namespace TomorrowsVoices.Models
         public Session? Session { get; set; }
 
         //public ICollection<Note> Note { get; set; } = new HashSet<Note>();
+        public bool IsArchived { get; set; }
 
     }
 }
