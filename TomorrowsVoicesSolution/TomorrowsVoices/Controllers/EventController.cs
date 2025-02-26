@@ -20,9 +20,11 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Event
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool archived = false)
         {
-            var tomorrowsVoicesContext = _context.Events.Include(a => a.VolLocation);
+            var tomorrowsVoicesContext = _context.Events.Where(d => d.IsArchived == archived).Include(a => a.VolLocation);
+            ViewData["IsArchived"] = archived;
+            ViewData["ActiveTab"] = archived ? "archived" : "active";
             return View(await tomorrowsVoicesContext.ToListAsync());
         }
 
@@ -153,6 +155,41 @@ namespace TomorrowsVoices.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        //archive and unarchiving
+        [HttpPost]
+        public async Task<IActionResult> Archive(int id)
+        {
+            var @event = await _context.Events.FindAsync(id);
+            if (@event == null)
+            {
+                return NotFound();
+            }
+
+            @event.IsArchived = true;
+            await _context.SaveChangesAsync();
+
+
+
+            TempData["SuccessMessage"] = "The Data has been archived successfully!";
+            return RedirectToAction(nameof(Index));
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> UnArchive(int id)
+        {
+            var @event = await _context.Events.FindAsync(id);
+            if (@event == null)
+            {
+                return NotFound();
+            }
+
+            @event.IsArchived = false;
+            _context.Update(@event);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "This archive has been activated successfully!";
             return RedirectToAction(nameof(Index));
         }
 
