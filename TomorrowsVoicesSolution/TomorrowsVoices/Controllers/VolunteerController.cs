@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
+using TomorrowsVoices.Utilities;
 
 namespace TomorrowsVoices.Controllers
 {
@@ -22,10 +25,125 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Volunteer
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Volunteer", bool archived = false)
         {
-            var tomorrowsVoicesContext = _context.Volunteers.Include(v => v.VolLocation);
-            return View(await tomorrowsVoicesContext.ToListAsync());
+            var volunteers = _context.Volunteers
+                .Where(v => v.IsArchived == archived)
+                .Include(v => v.VolLocation)
+                .AsNoTracking();
+            ViewData["ActiveTab"] = archived ? "archived" : "active";
+            string[] sortOptions = new[] { "Volunteer", "City", "Email" };
+            ViewData["Filtering"] = "btn-outline-secondary";
+            int numberFilters = 0;
+
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+
+                if (sortOptions.Contains(actionButton))
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //Sort by the button clicked
+                }
+            }
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                volunteers = volunteers.Where(v => v.LastName != null && v.LastName.ToLower().Contains(SearchString.ToLower())
+                                                || v.FirstName != null && v.FirstName.ToLower().Contains(SearchString.ToLower()));
+                numberFilters++;
+            }
+            if (!String.IsNullOrEmpty(SearchEmail))
+            {
+                volunteers = volunteers.Where(v => v.Email != null && v.Email.ToLower().Contains(SearchEmail.ToLower()));
+                numberFilters++;
+            }
+
+            if (!string.IsNullOrEmpty(SearchCity))
+            {
+                volunteers = volunteers.Where(v => v.VolLocation.City != null && v.VolLocation.City == SearchCity);
+                numberFilters++;
+            }
+
+            // sorting functionality
+            if (sortField == "Volunteer")
+            {
+                if (sortDirection == "asc")
+                {
+                    volunteers = volunteers
+                        .OrderBy(v => v.FirstName)
+                        .ThenBy(v => v.LastName);
+                }
+                else
+                {
+                    volunteers = volunteers
+                        .OrderByDescending(v => v.FirstName)
+                        .ThenBy(v => v.LastName);
+                }
+            }
+            else if (sortField == "Email")
+            {
+                if (sortDirection == "asc")
+                {
+                    volunteers = volunteers
+                        .OrderBy(v => v.Email)
+                        .ThenBy(v => v.FirstName)
+                        .ThenBy(v => v.LastName);
+                }
+                else
+                {
+                    volunteers = volunteers
+                        .OrderByDescending(v => v.Email)
+                        .ThenBy(v => v.FirstName)
+                        .ThenBy(v => v.LastName);
+                }
+            }
+            else if (sortField == "City")
+            {
+                if (sortDirection == "asc")
+                {
+                    volunteers = volunteers
+                        .OrderBy(v => v.VolLocation.City)
+                        .ThenBy(v => v.FirstName)
+                        .ThenBy(v => v.LastName);
+                }
+                else
+                {
+                    volunteers = volunteers
+                        .OrderByDescending(v => v.VolLocation.City)
+                        .ThenBy(v => v.FirstName)
+                        .ThenBy(v => v.LastName);
+                }
+            }
+
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            ViewData["numberFilters"] = numberFilters;
+
+            var cityList = volunteers.AsEnumerable()
+                .Select(v => v.VolLocation?.City.ToString())
+                .Where(city => city != null)
+                .Distinct()
+                .Select(city => new SelectListItem
+                {
+                    Value = city,
+                    Text = city
+                })
+                .ToList();
+
+            cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
+
+            ViewData["Cities"] = cityList;
+            //Handle Paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+
+            var pagedData = await PaginatedList<Volunteer>.CreateAsync(volunteers.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
         }
 
         // GET: Volunteer/Details/5
@@ -38,6 +156,7 @@ namespace TomorrowsVoices.Controllers
 
             var volunteer = await _context.Volunteers
                 .Include(v => v.VolLocation)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (volunteer == null)
             {
@@ -55,18 +174,31 @@ namespace TomorrowsVoices.Controllers
         }
 
         // POST: Volunteer/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Phone,VolLocationID")] Volunteer volunteer)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(volunteer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(volunteer);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
+            catch (DbUpdateException dex)
+            {
+                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                {
+                    ModelState.AddModelError("Email", "Unable to save changes. Remember, you cannot have duplicate email addresses.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                }
+            }
+
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", volunteer.VolLocationID);
             return View(volunteer);
         }
@@ -89,8 +221,6 @@ namespace TomorrowsVoices.Controllers
         }
 
         // POST: Volunteer/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Phone,VolLocationID")] Volunteer volunteer)
@@ -100,16 +230,24 @@ namespace TomorrowsVoices.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var volunteerToUpdate = await _context.Volunteers.FirstOrDefaultAsync(v => v.ID == id);
+
+            if (volunteerToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            if (await TryUpdateModelAsync<Volunteer>(volunteerToUpdate, "",
+                v => v.FirstName, v => v.LastName, v => v.Phone, v => v.VolLocationID))
             {
                 try
                 {
-                    _context.Update(volunteer);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VolunteerExists(volunteer.ID))
+                    if (!VolunteerExists(volunteerToUpdate.ID))
                     {
                         return NotFound();
                     }
@@ -118,30 +256,50 @@ namespace TomorrowsVoices.Controllers
                         throw;
                     }
                 }
+                catch (DbUpdateException dex)
+                {
+                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                    {
+                        ModelState.AddModelError("Email", "Unable to save changes. Remember, you cannot have duplicate email addresses.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    }
+                }
+            }
+
+            ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", volunteer.VolLocationID);
+            return View(volunteerToUpdate);
+        }
+
+        // POST: Volunteer/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var volunteer = await _context.Volunteers.FindAsync(id);
+            try
+            {
+                if (volunteer != null)
+                {
+                    _context.Volunteers.Remove(volunteer);
+                    await _context.SaveChangesAsync();
+                }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", volunteer.VolLocationID);
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "Unable to delete record. Try again, and if the problem persists see your system administrator.");
+            }
             return View(volunteer);
         }
 
-        // GET: Volunteer/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        private bool VolunteerExists(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var volunteer = await _context.Volunteers
-                .Include(v => v.VolLocation)
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (volunteer == null)
-            {
-                return NotFound();
-            }
-
-            return View(volunteer);
+            return _context.Volunteers.Any(e => e.ID == id);
         }
+
         [HttpPost]
         public async Task<IActionResult> InsertSingersFromExcel(IFormFile theExcel)
         {
@@ -255,27 +413,6 @@ namespace TomorrowsVoices.Controllers
             }
 
             return RedirectToAction("Index");
-        }
-
-
-        // POST: Volunteer/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var volunteer = await _context.Volunteers.FindAsync(id);
-            if (volunteer != null)
-            {
-                _context.Volunteers.Remove(volunteer);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool VolunteerExists(int id)
-        {
-            return _context.Volunteers.Any(e => e.ID == id);
         }
     }
 }

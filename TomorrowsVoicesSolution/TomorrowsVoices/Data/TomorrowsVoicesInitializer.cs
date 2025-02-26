@@ -1536,31 +1536,31 @@ namespace TomorrowsVoices.Data
             if (!context.Volunteers.Any())
             {
                 context.Volunteers.AddRange(
-                    new Volunteer { FirstName = "John", LastName = "Doe", Phone = "1234567890",Email="aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Jane", LastName = "Smith", Phone = "2345678901", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Alice", LastName = "Johnson", Phone = "3456789012", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Bob", LastName = "Brown", Phone = "4567890123", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Charlie", LastName = "Davis", Phone = "5678901234", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "David", LastName = "Miller", Phone = "6789012345", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Eve", LastName = "Wilson", Phone = "7890123456", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Frank", LastName = "Moore", Phone = "8901234567", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Grace", LastName = "Taylor", Phone = "9012345678", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Hank", LastName = "Anderson", Phone = "0123456789", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Ivy", LastName = "Thomas", Phone = "1234567890", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Jack", LastName = "Jackson", Phone = "2345678901", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Karen", LastName = "White", Phone = "3456789012", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Leo", LastName = "Harris", Phone = "4567890123", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Mia", LastName = "Martin", Phone = "5678901234", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Nina", LastName = "Thompson", Phone = "6789012345", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Oscar", LastName = "Garcia", Phone = "7890123456", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Paul", LastName = "Martinez", Phone = "8901234567", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Quinn", LastName = "Robinson", Phone = "9012345678", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Rose", LastName = "Clark", Phone = "0123456789", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Sam", LastName = "Rodriguez", Phone = "1234567890", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Tina", LastName = "Lewis", Phone = "2345678901", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Uma", LastName = "Lee", Phone = "3456789012", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Vince", LastName = "Walker", Phone = "4567890123", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-                    new Volunteer { FirstName = "Wendy", LastName = "Hall", Phone = "5678901234", Email = "aaa@fff.ca", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 }
+                    new Volunteer { FirstName = "John", LastName = "Doe", Phone = "1234567890", Email = "john.doe@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Jane", LastName = "Smith", Phone = "2345678901", Email = "jane.smith@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Alice", LastName = "Johnson", Phone = "3456789012", Email = "alice.johnson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Bob", LastName = "Brown", Phone = "4567890123", Email = "bob.brown@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Charlie", LastName = "Davis", Phone = "5678901234", Email = "charlie.davis@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "David", LastName = "Miller", Phone = "6789012345", Email = "david.miller@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Eve", LastName = "Wilson", Phone = "7890123456", Email = "eve.wilson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Frank", LastName = "Moore", Phone = "8901234567", Email = "frank.moore@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Grace", LastName = "Taylor", Phone = "9012345678", Email = "grace.taylor@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Hank", LastName = "Anderson", Phone = "0123456789", Email = "hank.anderson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Ivy", LastName = "Thomas", Phone = "1234567890", Email = "ivy.thomas@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Jack", LastName = "Jackson", Phone = "2345678901", Email = "jack.jackson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Karen", LastName = "White", Phone = "3456789012", Email = "karen.white@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Leo", LastName = "Harris", Phone = "4567890123", Email = "leo.harris@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Mia", LastName = "Martin", Phone = "5678901234", Email = "mia.martin@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Nina", LastName = "Thompson", Phone = "6789012345", Email = "nina.thompson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Oscar", LastName = "Garcia", Phone = "7890123456", Email = "oscar.garcia@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Paul", LastName = "Martinez", Phone = "8901234567", Email = "paul.martinez@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Quinn", LastName = "Robinson", Phone = "9012345678", Email = "quinn.robinson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Rose", LastName = "Clark", Phone = "0123456789", Email = "rose.clark@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Sam", LastName = "Rodriguez", Phone = "1234567890", Email = "sam.rodriguez@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Tina", LastName = "Lewis", Phone = "2345678901", Email = "tina.lewis@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Uma", LastName = "Lee", Phone = "3456789012", Email = "uma.lee@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Vince", LastName = "Walker", Phone = "4567890123", Email = "vince.walker@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Wendy", LastName = "Hall", Phone = "5678901234", Email = "wendy.hall@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 }
                 );
                 context.SaveChanges();
             }
@@ -1572,9 +1572,33 @@ namespace TomorrowsVoices.Data
             if (!context.Events.Any())
             {
                 context.Events.AddRange(
-                    new Event { Name = "Community Cleanup", Description = "A community cleanup event.", StartTime = DateTime.Parse("2024-02-20 09:00"), EndTime = DateTime.Parse("2024-02-20 12:00"), VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID },
-                    new Event { Name = "Food Drive", Description = "A food drive for the local food bank.", StartTime = DateTime.Parse("2024-03-10 10:00"), EndTime = DateTime.Parse("2024-03-10 14:00"), VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID },
-                    new Event { Name = "Blood Donation Camp", Description = "A blood donation camp.", StartTime = DateTime.Parse("2024-04-05 08:00"), EndTime = DateTime.Parse("2024-04-05 13:00"), VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID }
+                    new Event
+                    {
+                        Name = "Community Cleanup",
+                        Description = "A community cleanup event.",
+                        StartTime = DateTime.Parse("2024-02-20 09:00"),
+                        EndTime = DateTime.Parse("2024-02-20 12:00"),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
+                        Notes = "20 volunteers showed up and the event was successful."
+                    },
+                    new Event
+                    {
+                        Name = "Food Drive",
+                        Description = "A food drive for the local food bank.",
+                        StartTime = DateTime.Parse("2024-03-10 10:00"),
+                        EndTime = DateTime.Parse("2024-03-10 14:00"),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
+                        Notes = "15 volunteers participated and collected 200 food items."
+                    },
+                    new Event
+                    {
+                        Name = "Blood Donation Camp",
+                        Description = "A blood donation camp.",
+                        StartTime = DateTime.Parse("2024-04-05 08:00"),
+                        EndTime = DateTime.Parse("2024-04-05 13:00"),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls").ID,
+                        Notes = "25 volunteers assisted and 50 units of blood were collected."
+                    }
                 );
                 context.SaveChanges();
             }
