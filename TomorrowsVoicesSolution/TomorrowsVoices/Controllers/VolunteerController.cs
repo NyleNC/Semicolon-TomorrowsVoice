@@ -451,24 +451,6 @@ namespace TomorrowsVoices.Controllers
         }
 
 
-        // POST: Volunteer/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var volunteer = await _context.Volunteers.FindAsync(id);
-            if (volunteer != null)
-            {
-                _context.Volunteers.Remove(volunteer);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool VolunteerExists(int id)
-        {
-            return _context.Volunteers.Any(e => e.ID == id);
-        }
+        
     }
 }
