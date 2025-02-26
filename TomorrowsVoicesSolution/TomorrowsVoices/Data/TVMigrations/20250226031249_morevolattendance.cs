@@ -6,7 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     /// <inheritdoc />
+<<<<<<<< HEAD:TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250226031249_morevolattendance.cs
     public partial class morevolattendance : Migration
+========
+    public partial class newmigration : Migration
+>>>>>>>> 339d316f43a1d7f9d08e1a0484e29a93979944ed:TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250225042802_new migration.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

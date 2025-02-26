@@ -11,8 +11,13 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
+<<<<<<<< HEAD:TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250226031249_morevolattendance.Designer.cs
     [Migration("20250226031249_morevolattendance")]
     partial class morevolattendance
+========
+    [Migration("20250225042802_new migration")]
+    partial class newmigration
+>>>>>>>> 339d316f43a1d7f9d08e1a0484e29a93979944ed:TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250225042802_new migration.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
