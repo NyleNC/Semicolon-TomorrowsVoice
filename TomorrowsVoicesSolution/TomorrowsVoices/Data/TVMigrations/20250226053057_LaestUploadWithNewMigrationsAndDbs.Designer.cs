@@ -11,8 +11,8 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    [Migration("20250226031435_g")]
-    partial class g
+    [Migration("20250226053057_LaestUploadWithNewMigrationsAndDbs")]
+    partial class LaestUploadWithNewMigrationsAndDbs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
