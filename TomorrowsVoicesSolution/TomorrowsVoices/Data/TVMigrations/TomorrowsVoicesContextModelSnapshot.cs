@@ -100,6 +100,10 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasMaxLength(30)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("TEXT");
 
@@ -250,10 +254,6 @@ namespace TomorrowsVoices.Data.TVMigrations
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ScheduledEndTime")
                         .HasColumnType("TEXT");
@@ -408,7 +408,7 @@ namespace TomorrowsVoices.Data.TVMigrations
             modelBuilder.Entity("TomorrowsVoices.Models.VolAttendance", b =>
                 {
                     b.HasOne("TomorrowsVoices.Models.Event", "Event")
-                        .WithMany("VolAttendances")
+                        .WithMany("VolAttendance")
                         .HasForeignKey("EventID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -441,7 +441,7 @@ namespace TomorrowsVoices.Data.TVMigrations
 
             modelBuilder.Entity("TomorrowsVoices.Models.Event", b =>
                 {
-                    b.Navigation("VolAttendances");
+                    b.Navigation("VolAttendance");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Location", b =>

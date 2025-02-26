@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
 
@@ -20,9 +21,11 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Event
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool archived = false)
         {
-            var tomorrowsVoicesContext = _context.Events.Include(a => a.VolLocation);
+            var tomorrowsVoicesContext = _context.Events.Where(d => d.IsArchived == archived).Include(a => a.VolLocation);
+            ViewData["IsArchived"] = archived;
+            ViewData["ActiveTab"] = archived ? "archived" : "active";
             return View(await tomorrowsVoicesContext.ToListAsync());
         }
 
@@ -35,7 +38,9 @@ namespace TomorrowsVoices.Controllers
             }
 
             var @event = await _context.Events
-                .Include(a => a.VolLocation)
+                .Include(Index => Index.VolLocation)
+                .Include(Index => Index.VolAttendance).ThenInclude(Index => Index.Volunteer)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (@event == null)
             {
@@ -48,8 +53,12 @@ namespace TomorrowsVoices.Controllers
         // GET: Event/Create
         public IActionResult Create()
         {
+            Event @event = new Event();
+
+             
+
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City");
-            return View();
+            return View(@event);
         }
 
         // POST: Event/Create
@@ -59,11 +68,24 @@ namespace TomorrowsVoices.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name,Description,Notes,StartTime,EndTime,VolLocationID")] Event @event)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(@event);
-                await _context.SaveChangesAsync();
+                if (ModelState.IsValid)
+                {
+                    _context.Add(@event);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", @event.VolLocationID);
                 return RedirectToAction(nameof(Index));
+            }
+            catch (RetryLimitExceededException /* dex */)
+            {
+                ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", @event.VolLocationID);
             return View(@event);
@@ -77,7 +99,10 @@ namespace TomorrowsVoices.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Events.FindAsync(id);
+            var @event = await _context.Events
+                .Include(Index => Index.VolLocation)
+                .Include(Index => Index.VolAttendance).ThenInclude(Index => Index.Volunteer)
+                .FirstOrDefaultAsync(Index => Index.ID == id);
             if (@event == null)
             {
                 return NotFound();
@@ -102,8 +127,31 @@ namespace TomorrowsVoices.Controllers
             {
                 try
                 {
-                    _context.Update(@event);
-                    await _context.SaveChangesAsync();
+                    var eventToUpdate = await _context.Events
+                        .Include(Index => Index.VolLocation)
+                        .Include(Index => Index.VolAttendance)
+                        .ThenInclude(Index => Index.Volunteer)
+                        .FirstOrDefaultAsync(Index => Index.ID == id);
+
+                    if (eventToUpdate == null)
+                    {
+                        return NotFound();
+                    }
+
+                    if (await TryUpdateModelAsync<Event>(
+                     eventToUpdate, "",
+                   Index => Index.Name, Index => Index.Description, Index => Index.Notes, Index => Index.StartTime, Index => Index.EndTime ,Index => Index.VolLocationID))
+                    {
+                        var attendance = await _context.VolAttendances
+                            .Include(Index => Index.Volunteer)
+                            .Where(Index => Index.EventID == id)
+                            .ToListAsync(); 
+                        eventToUpdate.VolAttendance = attendance;
+                        _context.Update(eventToUpdate);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -116,6 +164,11 @@ namespace TomorrowsVoices.Controllers
                         throw;
                     }
                 }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", @event.VolLocationID);
@@ -153,6 +206,41 @@ namespace TomorrowsVoices.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        //archive and unarchiving
+        [HttpPost]
+        public async Task<IActionResult> Archive(int id)
+        {
+            var @event = await _context.Events.FindAsync(id);
+            if (@event == null)
+            {
+                return NotFound();
+            }
+
+            @event.IsArchived = true;
+            await _context.SaveChangesAsync();
+
+
+
+            TempData["SuccessMessage"] = "The Data has been archived successfully!";
+            return RedirectToAction(nameof(Index));
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> UnArchive(int id)
+        {
+            var @event = await _context.Events.FindAsync(id);
+            if (@event == null)
+            {
+                return NotFound();
+            }
+
+            @event.IsArchived = false;
+            _context.Update(@event);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "This archive has been activated successfully!";
             return RedirectToAction(nameof(Index));
         }
 

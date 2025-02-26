@@ -20,9 +20,12 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: VolLocation
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool archived = false)
         {
-            return View(await _context.VolLocations.ToListAsync());
+            ViewData["IsArchived"] = archived;
+            ViewData["ActiveTab"] = archived ? "archived" : "active";
+            return View(await _context.VolLocations.Where(d => d.IsArchived == archived).ToListAsync());
+
         }
 
         // GET: VolLocation/Details/5
@@ -146,6 +149,41 @@ namespace TomorrowsVoices.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        //archive and unarchiving
+        [HttpPost]
+        public async Task<IActionResult> Archive(int id)
+        {
+            var volLocation = await _context.VolLocations.FindAsync(id);
+            if (volLocation == null)
+            {
+                return NotFound();
+            }
+
+            volLocation.IsArchived = true;
+            await _context.SaveChangesAsync();
+
+
+
+            TempData["SuccessMessage"] = "The Data has been archived successfully!";
+            return RedirectToAction(nameof(Index));
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> UnArchive(int id)
+        {
+            var volLocation = await _context.VolLocations.FindAsync(id);
+            if (volLocation == null)
+            {
+                return NotFound();
+            }
+
+            volLocation.IsArchived = false;
+            _context.Update(volLocation);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "This archive has been activated successfully!";
             return RedirectToAction(nameof(Index));
         }
 

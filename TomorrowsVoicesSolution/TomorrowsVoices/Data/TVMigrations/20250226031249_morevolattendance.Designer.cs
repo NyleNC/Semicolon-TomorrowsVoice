@@ -11,8 +11,13 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    [Migration("20250225015757_Updated added email.Unique fordirector")]
-    partial class UpdatedaddedemailUniquefordirector
+<<<<<<<< HEAD:TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250226031249_morevolattendance.Designer.cs
+    [Migration("20250226031249_morevolattendance")]
+    partial class morevolattendance
+========
+    [Migration("20250225042802_new migration")]
+    partial class newmigration
+>>>>>>>> 339d316f43a1d7f9d08e1a0484e29a93979944ed:TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250225042802_new migration.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,6 +106,10 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartTime")
@@ -253,10 +262,6 @@ namespace TomorrowsVoices.Data.TVMigrations
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ScheduledEndTime")
                         .HasColumnType("TEXT");
@@ -411,7 +416,7 @@ namespace TomorrowsVoices.Data.TVMigrations
             modelBuilder.Entity("TomorrowsVoices.Models.VolAttendance", b =>
                 {
                     b.HasOne("TomorrowsVoices.Models.Event", "Event")
-                        .WithMany("VolAttendances")
+                        .WithMany("VolAttendance")
                         .HasForeignKey("EventID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -444,7 +449,7 @@ namespace TomorrowsVoices.Data.TVMigrations
 
             modelBuilder.Entity("TomorrowsVoices.Models.Event", b =>
                 {
-                    b.Navigation("VolAttendances");
+                    b.Navigation("VolAttendance");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Location", b =>

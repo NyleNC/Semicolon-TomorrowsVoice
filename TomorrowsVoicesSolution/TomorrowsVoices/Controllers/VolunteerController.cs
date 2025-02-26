@@ -414,5 +414,61 @@ namespace TomorrowsVoices.Controllers
 
             return RedirectToAction("Index");
         }
+        //archive and unarchiving
+        [HttpPost]
+        public async Task<IActionResult> Archive(int id)
+        {
+            var volunteer = await _context.Volunteers.FindAsync(id);
+            if (volunteer == null)
+            {
+                return NotFound();
+            }
+
+            volunteer.IsArchived = true;
+            await _context.SaveChangesAsync();
+
+
+
+            TempData["SuccessMessage"] = "The Data has been archived successfully!";
+            return RedirectToAction(nameof(Index));
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> UnArchive(int id)
+        {
+            var volunteer = await _context.Volunteers.FindAsync(id);
+            if (volunteer == null)
+            {
+                return NotFound();
+            }
+
+            volunteer.IsArchived = false;
+            _context.Update(volunteer);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "This archive has been activated successfully!";
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        // POST: Volunteer/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var volunteer = await _context.Volunteers.FindAsync(id);
+            if (volunteer != null)
+            {
+                _context.Volunteers.Remove(volunteer);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool VolunteerExists(int id)
+        {
+            return _context.Volunteers.Any(e => e.ID == id);
+        }
     }
 }

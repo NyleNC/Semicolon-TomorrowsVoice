@@ -25,12 +25,15 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Singer
-        public async Task<IActionResult> Index(int? page, int? pageSizeID, string? actionButton, string? SearchString, string? SearchCity, string sortDirection = "asc", string sortField = "Name", string SingerEmergencyContactName = "EmergencyContactName", string SingerEmergencyContactNumber = "EmergencyContactNumber")
+        public async Task<IActionResult> Index( int? page, int? pageSizeID, string? actionButton, string? SearchString , string? SearchCity, bool archived = false, string sortDirection = "asc", string sortField = "Name", string SingerEmergencyContactName = "EmergencyContactName", string SingerEmergencyContactNumber = "EmergencyContactNumber")
         {
             var singers = _context.Singers
+                            .Where(d => d.IsArchived == archived)
                 .Include(s => s.Location) // Include Location for each Singer
-                .AsNoTracking();
 
+                .AsNoTracking();
+            ViewData["IsArchived"] = archived;
+            ViewData["ActiveTab"] = archived ? "archived" : "active";
             string[] sortOptions = new[] { "FullName", "Location" };
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
@@ -117,18 +120,16 @@ namespace TomorrowsVoices.Controllers
             ViewData["sortDirection"] = sortDirection;
             ViewData["numberFilters"] = numberFilters;
 
-            var cityList = singers
-                .AsEnumerable()
-                .Select(d => d.Location?.City.ToString())
-                .Where(city => city != null)
-                .Distinct()
-                .Select(city => new SelectListItem
-                {
-                    Value = city,
-                    Text = city
-                })
-                .ToList();
-
+            var cityList = singers.AsEnumerable()
+        .Where(d => d.Location?.City != null)
+        .Select(d => d.Location.City)
+        .Distinct()
+        .Select(city => new SelectListItem
+        {
+            Value = city,
+            Text = city
+        })
+        .ToList();
             // Add a default option for "All Cities"
             cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
 
@@ -445,7 +446,38 @@ namespace TomorrowsVoices.Controllers
             var attribute = (DisplayAttribute)Attribute.GetCustomAttribute(field, typeof(DisplayAttribute));
             return attribute != null ? attribute.Name : value.ToString();
         }
+        //Archiving
+        [HttpPost]
+        public async Task<IActionResult> Archive(int id)
+        {
+            var singer = await _context.Singers.FindAsync(id);
+            if (singer == null)
+            {
+                return NotFound();
+            }
 
+            singer.IsArchived = true;
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "This data has been archived successfully!";
+            return RedirectToAction(nameof(Index));
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> UnArchive(int id)
+        {
+            var singer = await _context.Singers.FindAsync(id);
+            if (singer == null)
+            {
+                return NotFound();
+            }
+
+            singer.IsArchived = false;
+            _context.Update(singer);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "This archive has been activated successfully!";
+            return RedirectToAction(nameof(Index));
+        }
         private bool SingerExists(int id)
         {
             return _context.Singers.Any(e => e.ID == id);

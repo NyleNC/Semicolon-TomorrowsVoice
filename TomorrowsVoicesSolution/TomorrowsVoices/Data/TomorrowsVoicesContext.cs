@@ -58,7 +58,7 @@ namespace TomorrowsVoices.Data
 
             // PREVENT CASCADE Delete FROM Event TO Attendance
             modelBuilder.Entity<Event>()
-             .HasMany(l => l.VolAttendances)
+             .HasMany(l => l.VolAttendance)
              .WithOne(d => d.Event)
              .HasForeignKey(d => d.EventID)
              .OnDelete(DeleteBehavior.Restrict);

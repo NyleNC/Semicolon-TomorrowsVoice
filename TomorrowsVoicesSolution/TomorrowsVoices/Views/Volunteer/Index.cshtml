@@ -4,9 +4,16 @@
 
 @{
     ViewData["Title"] = "Index";
+    bool isArchived = ViewData["IsArchived"] as bool? ?? false;
 }
 
 <h1>Volunteers</h1>
+@* Archived tabs *@
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
+           asp-action="Index" asp-route-archived="false">Active</a>
+    </li>
 
 <p class="mb-2">
     <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-user.png" alt="add-director-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Director</a>
@@ -190,10 +197,57 @@
                         @Html.DisplayFor(modelItem => item.VolLocation.City)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                    </td>
+                    <div class="d-none d-lg-inline">
+                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a>
+                        <div class="d-none d-lg-inline">
+                            @if (!item.IsArchived)
+                            {
+                                <form asp-action="Archive" method="post">
+                                    <input type="hidden" name="id" value="@item.ID" />
+                                    <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger">
+                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                        Archive
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="Unarchive" method="post">
+                                    <input type="hidden" name="id" value="@item.ID" />
+                                    <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger">
+                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                        UnArchive
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                    <div class="d-lg-none">
+                        <div class="btn-group">
+                            <button class="btn btn-sm dropdown-toggle" style="background-color: #6423e7; color: white" data-bs-toggle="dropdown">
+                                Actions
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID">
+                                        <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID">
+                                        <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-action="Archive" asp-route-id="@item.ID">
+                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
                 </tr>
             }
         </tbody>
@@ -201,6 +255,19 @@
 </form>
 <partial name="_PagingNavBar" />
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '@TempData["SuccessMessage"]',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+}
 
 <script>
     function handleSort(field) {

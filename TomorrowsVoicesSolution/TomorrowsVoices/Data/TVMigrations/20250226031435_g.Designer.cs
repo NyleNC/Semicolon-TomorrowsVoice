@@ -11,8 +11,8 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    [Migration("20250225015447_a")]
-    partial class a
+    [Migration("20250226031435_g")]
+    partial class g
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,6 +76,9 @@ namespace TomorrowsVoices.Data.TVMigrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("Directors");
                 });
 
@@ -98,6 +101,10 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartTime")
@@ -250,10 +257,6 @@ namespace TomorrowsVoices.Data.TVMigrations
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ScheduledEndTime")
                         .HasColumnType("TEXT");
@@ -408,7 +411,7 @@ namespace TomorrowsVoices.Data.TVMigrations
             modelBuilder.Entity("TomorrowsVoices.Models.VolAttendance", b =>
                 {
                     b.HasOne("TomorrowsVoices.Models.Event", "Event")
-                        .WithMany("VolAttendances")
+                        .WithMany("VolAttendance")
                         .HasForeignKey("EventID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -441,7 +444,7 @@ namespace TomorrowsVoices.Data.TVMigrations
 
             modelBuilder.Entity("TomorrowsVoices.Models.Event", b =>
                 {
-                    b.Navigation("VolAttendances");
+                    b.Navigation("VolAttendance");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Location", b =>

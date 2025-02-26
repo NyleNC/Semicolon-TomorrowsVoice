@@ -29,7 +29,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Session
-        public async Task<IActionResult> Index(string? SearchString, int? minPresentSinger, int? maxPresentSinger,DateTime StartDate, DateTime EndDate, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Session")
+        public async Task<IActionResult> Index( string? SearchString, int? minPresentSinger, int? maxPresentSinger,DateTime StartDate, DateTime EndDate, string? SearchCity, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Session")
         {
           
             string[] sortOptions = new[] { "City", "Date", "Attendance","Director" };
@@ -74,10 +74,12 @@ namespace TomorrowsVoices.Controllers
               .Include(s => s.Location).ThenInclude(l => l.Director)
               .Include(s => s.Attendance).ThenInclude(a => a.Singer)
                .Where(a => a.Date >= StartDate && a.Date <= EndDate.AddDays(1))
+               .Where(s=>s.IsArchived==archived)
               .AsNoTracking();
 
-        
-     
+            ViewData["IsArchived"] = archived;
+            ViewData["ActiveTab"] = archived ? "archived" : "active";
+
 
             if (!String.IsNullOrEmpty(SearchString))
             {
@@ -656,6 +658,41 @@ namespace TomorrowsVoices.Controllers
             }
             return NotFound("No data.");
 
+        }
+        //archive and unarchiving
+        [HttpPost]
+        public async Task<IActionResult> Archive(int id)
+        {
+            var session = await _context.Sessions.FindAsync(id);
+            if (session == null)
+            {
+                return NotFound();
+            }
+
+            session.IsArchived = true;
+            await _context.SaveChangesAsync();
+
+
+
+            TempData["SuccessMessage"] = "The Data has been archived successfully!";
+            return RedirectToAction(nameof(Index));
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> UnArchive(int id)
+        {
+            var session = await _context.Sessions.FindAsync(id);
+            if (session == null)
+            {
+                return NotFound();
+            }
+
+            session.IsArchived = false;
+            _context.Update(session);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "This archive has been activated successfully!";
+            return RedirectToAction(nameof(Index));
         }
 
         private bool SessionExists(int id)

@@ -30,12 +30,13 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Director
-        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Director", bool archived = false)
+        public async Task<IActionResult> Index( string ? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Director")
         {
             var directors = _context.Directors
                  .Where(d => d.IsArchived== archived)
                 .Include(d => d.Location) 
                 .AsNoTracking();
+            ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
             string[] sortOptions = new[] { "Director", "City", "Email" };
             ViewData["Filtering"] = "btn-outline-secondary";
@@ -133,10 +134,9 @@ namespace TomorrowsVoices.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["numberFilters"] = numberFilters;
-
-            var cityList =directors .AsEnumerable()
-                .Select(d => d.Location?.City.ToString())
-                .Where(city => city != null)
+            var cityList = directors.AsEnumerable()
+                .Where(d => d.Location?.City != null)
+                .Select(d => d.Location.City)
                 .Distinct()
                 .Select(city => new SelectListItem
                 {
@@ -144,7 +144,7 @@ namespace TomorrowsVoices.Controllers
                     Text = city
                 })
                 .ToList();
-        
+
             cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
 
      
@@ -535,6 +535,8 @@ namespace TomorrowsVoices.Controllers
             // Return the new city's ID so it can be selected
             return Json(new { success = true, cityId = newCity.ID });
         }
+
+        //archive and unarchiving
         [HttpPost]
         public async Task<IActionResult> Archive(int id)
         {
@@ -549,7 +551,7 @@ namespace TomorrowsVoices.Controllers
 
        
 
-        TempData["SuccessMessage"] = "Director archived successfully!";
+        TempData["SuccessMessage"] = "The Data has been archived successfully!";
             return RedirectToAction(nameof(Index));
 
         }
@@ -566,8 +568,10 @@ namespace TomorrowsVoices.Controllers
             _context.Update(director);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMessage"] = "This archive has been activated successfully!";
             return RedirectToAction(nameof(Index));
         }
+
         private bool DirectorExists(int id)
         {
             return _context.Directors.Any(e => e.ID == id);

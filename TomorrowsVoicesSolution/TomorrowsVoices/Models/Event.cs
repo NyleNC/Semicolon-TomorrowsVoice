@@ -31,7 +31,7 @@ namespace TomorrowsVoices.Models
         [Display(Name = "Location")]
         public VolLocation? VolLocation { get; set; }
 
-        public ICollection<VolAttendance> VolAttendances { get; set; } = new HashSet<VolAttendance>();
+        public ICollection<VolAttendance> VolAttendance { get; set; } = new HashSet<VolAttendance>();
         public bool IsArchived { get; set; }
     }
 }
