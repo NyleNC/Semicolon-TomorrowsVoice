@@ -191,7 +191,7 @@
         if (!locationId) {
             directorNameField.val("No director assigned");
             availableSingers.empty();
-            availableSingers.append(`<option disabled style="white-space: normal; word-wrap: break-word;">
+            availableSingers.append(`<option disabled>
                 Select a City to see the corresponding list of Singers.</option>`);
             return;
         }
@@ -228,7 +228,7 @@
         // Set initial state of the "Choose Singers" list
         let availableSingers = $("#availOptions");
         availableSingers.empty();
-        availableSingers.append(`<option disabled style="white-space: normal; word-wrap: break-word;">
+        availableSingers.append(`<option disabled>
             Select a City to see the corresponding list of Singers.</option>`);
 
         $("#btnLeft").click(function () {
