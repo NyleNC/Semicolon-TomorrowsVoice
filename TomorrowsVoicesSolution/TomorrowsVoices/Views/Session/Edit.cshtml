@@ -1,11 +1,12 @@
 ﻿@model TomorrowsVoices.Models.Session
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 @{
     ViewData["Title"] = "Edit";
-    var presentSingersCount = ViewBag.PresentSingersCount ?? "0/0";
-    var absentSingersCount = ViewBag.AbsentSingersCount ?? "0/0";
+    // var presentSingersCount = ViewBag.PresentSingersCount ?? "0/0";
+    // var absentSingersCount = ViewBag.AbsentSingersCount ?? "0/0";
 }
 
 <h1>Edit</h1>
@@ -27,20 +28,21 @@
                         <label asp-for="LocationID" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                         <select asp-for="LocationID" class="form-control city-dropdown"
                                 asp-items="ViewBag.LocationID"
-                                onchange="updateDirectorAndSingers(this.value)"
-                                id="LocationDropDown">
+                                onchange="updateDirectorAndSingers(this.value)">
+                            <option value="">Select a city</option>
+
                         </select>
 
                         <span asp-validation-for="LocationID" class="text-danger"></span>
                     </div>
 
                 </div>
-               <div class="col-md-6">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="DirectorName" style="font-weight: 700">Director in Charge</label>
                         <input type="text" id="DirectorName" class="form-control" readonly>
                     </div>
-                </div> 
+                </div>
             </div>
 
             <div class="form-group">
@@ -48,29 +50,29 @@
                 <input asp-for="Date" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
-			
-            
+
+
             <div class="form-group">
-				<label asp-for="Notes" class="control-label" style="font-weight: 700"></label>
-				<textarea asp-for="Notes" rows="5" class="form-control"></textarea>
-				<span asp-validation-for="Notes" class="text-danger"></span>
-			</div>
+                <label asp-for="Notes" class="control-label" style="font-weight: 700"></label>
+                <textarea asp-for="Notes" rows="5" class="form-control"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
         </div>
         <div class="col-md-7 ms-auto">
-        @*     <div class="row">
-                <div class="col-md">
-                    <div class="form-group">
-                        <label for="absentSingersCount" style="font-weight: 500">Absent Singers Count</label>
-                        <input type="text" id="absentSingersCount" class="form-control" value="@absentSingersCount" readonly>
-                    </div>
-                </div>
+            @*     <div class="row">
+            <div class="col-md">
+            <div class="form-group">
+            <label for="absentSingersCount" style="font-weight: 500">Absent Singers Count</label>
+            <input type="text" id="absentSingersCount" class="form-control" value="@absentSingersCount" readonly>
+            </div>
+            </div>
 
-                <div class="col-md">
-                    <div class="form-group">
-                        <label for="presentSingersCount" style="font-weight: 500">Present Singers Count</label>
-                        <input type="text" id="presentSingersCount" class="form-control" value="@presentSingersCount" readonly>
-                    </div>
-                </div>
+            <div class="col-md">
+            <div class="form-group">
+            <label for="presentSingersCount" style="font-weight: 500">Present Singers Count</label>
+            <input type="text" id="presentSingersCount" class="form-control" value="@presentSingersCount" readonly>
+            </div>
+            </div>
 
 
             </div> *@
@@ -106,7 +108,7 @@
             </div>
 
         </div>
-            
+
         <div class="col-md-4" style="margin-bottom: 140px">
             <div class="form-group">
                 <button type="submit" class="btn btn-success">
@@ -116,8 +118,8 @@
             </div>
             <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Attendance Page</a>
         </div>
-        
-    </form>
+
+</form>
 
 
 
@@ -126,76 +128,76 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Add/Remove buttons logic
-            $('#btnLeft').click(function() {
+            $('#btnLeft').click(function () {
                 $('#availOptions option:selected').appendTo('#selectedOptions');
             });
 
-            $('#btnRight').click(function() {
+            $('#btnRight').click(function () {
                 $('#selectedOptions option:selected').appendTo('#availOptions');
             });
 
             // Ensure all selectedOptions are submitted
-            $('form').submit(function() {
+            $('form').submit(function () {
                 $('#selectedOptions option').prop('selected', true);
             });
         });
     </script>
 }
-    <script src="~/js/multiselect.js"></script>
-    <script>
-
-
-                $(document).ready(function () {
-            $("#City").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: '@Url.Action("CitySuggestions", "Director")',
-                        type: "GET",
-                        dataType: "json",
-                        data: { term: request.term },
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return { label: item, value: item };
-                            }));
-                        }
-                    });
-                },
-                minLength: 1,
-                messages: {
-                    noResults: "No cities found",
-                    results: function () { return ""; }
-                },
-         open: function () {
-
-                    var autocompleteList = $(".ui-autocomplete");
-                    autocompleteList.css({
-                        "max-height": "200px",
-                        "overflow-y": "auto",
-                         "overflow-x": "hidden"
-                    });
-                }
-            });
+<script src="~/js/multiselect.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#City").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("CitySuggestions", "Director")',
+                    type: "GET",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item, value: item };
+                        }));
+                    }
+                });
+            },
+            minLength: 1,
+            messages: {
+                noResults: "No cities found",
+                results: function () { return ""; }
+            },
+            open: function () {
+                var autocompleteList = $(".ui-autocomplete");
+                autocompleteList.css({
+                    "max-height": "200px",
+                    "overflow-y": "auto",
+                    "overflow-x": "hidden"
+                });
+            }
         });
-           $(document).ready(function() {
-            $('.city-dropdown').select2({
-                placeholder: "Select a city",
-                allowClear: true
-            });
+        $('.city-dropdown').select2({
+            placeholder: "Select a city",
+            allowClear: true
         });
-    </script>
+    });
+</script>
 
 <script>
     function updateDirectorAndSingers(locationId) {
         let directorNameField = $("#DirectorName");
         let availableSingers = $("#availOptions");
-
+        let selectedSingers = $("#selectedOptions")
         if (!locationId) {
             directorNameField.val("No director assigned");
             availableSingers.empty();
-            availableSingers.append(`<option disabled>Select a City to see the corresponding list of Singers.</option>`);
+            availableSingers.append(`<option disabled style="white-space: normal; word-wrap: break-word;">
+                Select a City to see the corresponding list of Singers.</option>`);
             return;
+        }
+        if (locationId) {
+            selectedSingers.empty();
+
         }
 
         fetch(`/Session/GetDirectorAndSingersByLocation?locationId=${locationId}`)
@@ -221,11 +223,13 @@
             placeholder: "Select a city",
             allowClear: true
         });
+        $(".city-dropdown").val("").trigger("change");
 
         // Set initial state of the "Choose Singers" list
         let availableSingers = $("#availOptions");
         availableSingers.empty();
-        availableSingers.append(`<option disabled>Select a City to see the corresponding list of Singers.</option>`);
+        availableSingers.append(`<option disabled style="white-space: normal; word-wrap: break-word;">
+            Select a City to see the corresponding list of Singers.</option>`);
 
         $("#btnLeft").click(function () {
             $("#availOptions option:selected").each(function () {

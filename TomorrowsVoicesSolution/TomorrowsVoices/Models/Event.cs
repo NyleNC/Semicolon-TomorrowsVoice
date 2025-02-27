@@ -19,11 +19,15 @@ namespace TomorrowsVoices.Models
         [StringLength(2000, ErrorMessage = "Limit of 2000 characters for notes.")]
         public string? Notes { get; set; }
 
+        [Display(Name = "Date")]
+        public DateOnly Date { get; set; }
+
+
         [Display(Name = "Start Time")]
-        public DateTime StartTime { get; set; }
+        public TimeOnly StartTime { get; set; }
 
         [Display(Name = "End Time")]
-        public DateTime EndTime { get; set; }
+        public TimeOnly EndTime { get; set; }
 
         public int VolLocationID { get; set; }
 

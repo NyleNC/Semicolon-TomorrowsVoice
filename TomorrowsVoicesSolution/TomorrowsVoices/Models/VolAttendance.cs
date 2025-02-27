@@ -6,20 +6,24 @@ namespace TomorrowsVoices.Models
     {
         public int ID { get; set; }
 
+        [Display(Name = "Date")]
+        public DateOnly Date { get; set; }
+
         [Display(Name = "Scheduled Start Time")]
-        public DateTime ScheduledStartTime { get; set; }
+        public TimeOnly ScheduledStartTime { get; set; }
 
         [Display(Name = "Scheduled End Time")]
-        public DateTime ScheduledEndTime { get; set; }
-
-        [Display(Name = "Actual Start Time")]
-        public DateTime? ActualStartTime { get; set; }
-
-        [Display(Name = "Actual End Time")]
-        public DateTime? ActualEndTime { get; set; }
+        public TimeOnly ScheduledEndTime { get; set; }
 
         [Required(ErrorMessage = "You must select the status of the volunteer.")]
         public bool Status { get; set; }
+
+
+        [Display(Name = "Actual Start Time")]
+        public TimeOnly? ActualStartTime { get; set; }
+
+        [Display(Name = "Actual End Time")]
+        public TimeOnly? ActualEndTime { get; set; }
 
         public int? VolunteerID { get; set; }
 

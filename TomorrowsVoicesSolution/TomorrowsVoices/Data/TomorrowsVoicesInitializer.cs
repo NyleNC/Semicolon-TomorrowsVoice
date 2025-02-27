@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using TomorrowsVoices.Models;
 
@@ -1577,17 +1578,19 @@ namespace TomorrowsVoices.Data
                     {
                         Name = "Community Cleanup",
                         Description = "A community cleanup event.",
-                        StartTime = DateTime.Parse("2024-02-20 09:00"),
-                        EndTime = DateTime.Parse("2024-02-20 12:00"),
+                        Date = DateOnly.Parse("2024-02-20"),
+                        StartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        EndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
                         Notes = "20 volunteers showed up and the event was successful."
                     },
                     new Event
                     {
                         Name = "Food Drive",
-                        Description = "A food drive for the local food bank.",
-                        StartTime = DateTime.Parse("2024-03-10 10:00"),
-                        EndTime = DateTime.Parse("2024-03-10 14:00"),
+                        Description = "A food drive for the local food bank.",       
+                        Date = DateOnly.Parse("2024-03-10"),
+                        StartTime = TimeOnly.ParseExact("10:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        EndTime = TimeOnly.ParseExact("02:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
                         Notes = "15 volunteers participated and collected 200 food items."
                     },
@@ -1595,8 +1598,9 @@ namespace TomorrowsVoices.Data
                     {
                         Name = "Blood Donation Camp",
                         Description = "A blood donation camp.",
-                        StartTime = DateTime.Parse("2024-04-05 08:00"),
-                        EndTime = DateTime.Parse("2024-04-05 18:30"),
+                        Date = DateOnly.Parse("2024-04-05"),
+                        StartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        EndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls").ID,
                         Notes = "25 volunteers assisted and 50 units of blood were collected."
                     }
@@ -1610,22 +1614,22 @@ namespace TomorrowsVoices.Data
             if (!context.VolAttendances.Any())
             {
                 context.VolAttendances.AddRange(
-                    new VolAttendance { ScheduledStartTime = DateTime.Parse("2024-02-20 09:00"), ScheduledEndTime = DateTime.Parse("2024-02-20 12:00"), ActualStartTime = DateTime.Parse("2024-02-20 09:00"), ActualEndTime = DateTime.Parse("2024-02-20 12:00"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "John" && v.LastName == "Doe").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
-                    new VolAttendance { ScheduledStartTime = DateTime.Parse("2024-02-20 09:00"), ScheduledEndTime = DateTime.Parse("2024-02-20 12:00"), ActualStartTime = DateTime.Parse("2024-02-20 09:30"), ActualEndTime = DateTime.Parse("2024-02-20 12:00"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Jane" && v.LastName == "Smith").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
-                    new VolAttendance { ScheduledStartTime = DateTime.Parse("2024-02-20 09:00"), ScheduledEndTime = DateTime.Parse("2024-02-20 12:00"), Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Alice" && v.LastName == "Johnson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-02-20", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "John" && v.LastName == "Doe").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-02-20", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("09:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Jane" && v.LastName == "Smith").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-02-20", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Alice" && v.LastName == "Johnson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
 
 
 
 
-                    new VolAttendance { ScheduledStartTime = DateTime.Parse("2024-04-05 08:00"), ScheduledEndTime = DateTime.Parse("2024-04-05 11:30"), ActualStartTime = DateTime.Parse("2024-04-05 8:00"), ActualEndTime = DateTime.Parse("2024-04-05 11:30"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Bob" && v.LastName == "Brown").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-                    new VolAttendance { ScheduledStartTime = DateTime.Parse("2024-04-05 08:00"), ScheduledEndTime = DateTime.Parse("2024-04-05 11:30"), ActualStartTime = DateTime.Parse("2024-04-05 8:30"), ActualEndTime = DateTime.Parse("2024-04-05 11:30"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Charlie" && v.LastName == "Davis").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Bob" && v.LastName == "Brown").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("08:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Charlie" && v.LastName == "Davis").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
 
-                    new VolAttendance { ScheduledStartTime = DateTime.Parse("2024-04-05 11:30"), ScheduledEndTime = DateTime.Parse("2024-04-05 15:30"), ActualStartTime = DateTime.Parse("2024-04-05 11:30"), ActualEndTime = DateTime.Parse("2024-04-05 15:30"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "David" && v.LastName == "Miller").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-                    new VolAttendance { ScheduledStartTime = DateTime.Parse("2024-04-05 11:30"), ScheduledEndTime = DateTime.Parse("2024-04-05 15:30"), ActualStartTime = DateTime.Parse("2024-04-05 11:30"), ActualEndTime = DateTime.Parse("2024-04-05 15:30"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Eve" && v.LastName == "Wilson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-                    new VolAttendance { ScheduledStartTime = DateTime.Parse("2024-04-05 11:30"), ScheduledEndTime = DateTime.Parse("2024-04-05 15:30"), Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Frank" && v.LastName == "Moore").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "David" && v.LastName == "Miller").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Eve" && v.LastName == "Wilson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Frank" && v.LastName == "Moore").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
 
-                    new VolAttendance { ScheduledStartTime = DateTime.Parse("2024-04-05 15:30"), ScheduledEndTime = DateTime.Parse("2024-04-05 18:30"), ActualStartTime = DateTime.Parse("2024-04-05 15:30"), ActualEndTime = DateTime.Parse("2024-04-05 18:30"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Grace" && v.LastName == "Taylor").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-                    new VolAttendance { ScheduledStartTime = DateTime.Parse("2024-04-05 15:30"), ScheduledEndTime = DateTime.Parse("2024-04-05 18:30"), ActualStartTime = DateTime.Parse("2024-04-05 15:30"), ActualEndTime = DateTime.Parse("2024-04-05 18:30"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Hank" && v.LastName == "Anderson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID }
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Grace" && v.LastName == "Taylor").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Hank" && v.LastName == "Anderson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID }
                 );
                 context.SaveChanges();
             }
