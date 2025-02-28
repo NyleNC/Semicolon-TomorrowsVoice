@@ -2,44 +2,44 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-@{
-    ViewData["Title"] = "Index";
-    bool isArchived = ViewData["IsArchived"] as bool? ?? false;
-}
-
-<h1>Volunteers</h1>
-@* Archived tabs *@
-<ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-        <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
-           asp-action="Index" asp-route-archived="false">Active</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
-           asp-action="Index" asp-route-archived="true">Archived</a>
-    </li>
-</ul>
-
-<p class="mb-2">
-    <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-user.png" alt="add-volunteer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Volunteer</a>
-</p>
-
-<form asp-action="Index" method="get">
-    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
-    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">
-            @Html.Raw(TempData["Success"])
-        </div>
+    @{
+        ViewData["Title"] = "Index";
+        bool isArchived = ViewData["IsArchived"] as bool? ?? false;
     }
-    <div class="row">
-        <div class="col-10">
-            <button class="btn mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
-                    data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="background-color: #6423e7; color: white">
-                <img src="~/Images/filter-search.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
-                Filter/Search (@ViewData["numberFilters"])
-            </button>
+
+    <h1>Volunteers</h1>
+    @* Archived tabs *@
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
+               asp-action="Index" asp-route-archived="false">Active</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
+               asp-action="Index" asp-route-archived="true">Archived</a>
+        </li>
+    </ul>
+
+    <p class="mb-2">
+        <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-user.png" alt="add-volunteer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Volunteer</a>
+    </p>
+
+    <form asp-action="Index" method="get">
+        <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+        <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                @Html.Raw(TempData["Success"])
+            </div>
+        }
+        <div class="row">
+            <div class="col-10">
+                <button class="btn mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
+                        data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="background-color: #6423e7; color: white">
+                    <img src="~/Images/filter-search.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
+                    Filter/Search (@ViewData["numberFilters"])
+                </button>
 
             @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
             {
@@ -206,7 +206,7 @@
                     </td>
                     <td>
                         <div class="d-none d-lg-inline">
-                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a>
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
                             <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a>
                             <div class="d-none d-lg-inline">
                                 @if (!item.IsArchived)
@@ -261,36 +261,42 @@
             }
         </tbody>
     </table>
-    </div>
 </form>
 <partial name="_PagingNavBar" />
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: '@TempData["SuccessMessage"]',
-                confirmButtonText: 'OK'
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '@TempData["SuccessMessage"]',
+                    confirmButtonText: 'OK'
+                });
             });
-        });
-    </script>
-}
-
-<script>
-    function handleSort(field) {
-        const sortField = document.querySelector('input[name="sortField"]');
-        const sortDirection = document.querySelector('input[name="sortDirection"]');
-
-        if (sortField.value === field) {
-            sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
-        } else {
-            sortField.value = field;
-            sortDirection.value = 'asc';
-        }
-
-        document.querySelector('form').submit();
+        </script>
     }
-</script>
+
+    <!-- Sorting and JS Script -->
+    <script>
+        function handleSort(event, field) {
+
+            event.preventDefault();
+            const form = event.target.closest('form');
+            const sortField = form.querySelector('input[name="sortField"]');
+            const sortDirection = form.querySelector('input[name="sortDirection"]');
+
+            if (sortField.value === field) {
+                // Toggle sort direction
+                sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+            } else {
+                // Set new field and default to ascending order
+                sortField.value = field;
+                sortDirection.value = "asc";
+            }
+
+            // Submit the form
+            form.submit();
+        }
+    </script>

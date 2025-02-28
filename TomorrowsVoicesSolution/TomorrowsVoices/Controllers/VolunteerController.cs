@@ -25,14 +25,14 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Volunteer
-        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Volunteer", bool archived = false)
+        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "FullName", bool archived = false)
         {
             var volunteers = _context.Volunteers
                 .Where(v => v.IsArchived == archived)
                 .Include(v => v.VolLocation)
                 .AsNoTracking();
             ViewData["ActiveTab"] = archived ? "archived" : "active";
-            string[] sortOptions = new[] { "Volunteer", "City", "Email" };
+            string[] sortOptions = new[] { "FullName", "Location", "Email" };
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
 
@@ -52,8 +52,9 @@ namespace TomorrowsVoices.Controllers
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                volunteers = volunteers.Where(v => v.LastName != null && v.LastName.ToLower().Contains(SearchString.ToLower())
-                                                || v.FirstName != null && v.FirstName.ToLower().Contains(SearchString.ToLower()));
+                volunteers = volunteers.Where(s => s.FirstName != null && s.FirstName.ToLower().Contains(SearchString.ToLower())
+                                            || s.LastName != null && s.LastName.ToLower().Contains(SearchString.ToLower()));
+
                 numberFilters++;
             }
             if (!String.IsNullOrEmpty(SearchEmail))
@@ -68,20 +69,20 @@ namespace TomorrowsVoices.Controllers
                 numberFilters++;
             }
 
-            // sorting functionality
-            if (sortField == "Volunteer")
+            // Sorting logic based on selected field and direction
+            if (sortField == "FullName")
             {
                 if (sortDirection == "asc")
                 {
                     volunteers = volunteers
-                        .OrderBy(v => v.FirstName)
-                        .ThenBy(v => v.LastName);
+                        .OrderBy(s => s.FirstName)
+                        .ThenBy(s => s.LastName);
                 }
                 else
                 {
                     volunteers = volunteers
-                        .OrderByDescending(v => v.FirstName)
-                        .ThenBy(v => v.LastName);
+                        .OrderByDescending(s => s.FirstName)
+                        .ThenByDescending(s => s.LastName);
                 }
             }
             else if (sortField == "Email")
@@ -97,8 +98,8 @@ namespace TomorrowsVoices.Controllers
                 {
                     volunteers = volunteers
                         .OrderByDescending(v => v.Email)
-                        .ThenBy(v => v.FirstName)
-                        .ThenBy(v => v.LastName);
+                        .ThenByDescending(v => v.FirstName)
+                        .ThenByDescending(v => v.LastName);
                 }
             }
             else if (sortField == "City")
@@ -114,8 +115,8 @@ namespace TomorrowsVoices.Controllers
                 {
                     volunteers = volunteers
                         .OrderByDescending(v => v.VolLocation.City)
-                        .ThenBy(v => v.FirstName)
-                        .ThenBy(v => v.LastName);
+                        .ThenByDescending(v => v.FirstName)
+                        .ThenByDescending(v => v.LastName);
                 }
             }
 
