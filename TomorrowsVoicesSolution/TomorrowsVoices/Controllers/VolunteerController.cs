@@ -25,7 +25,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Volunteer
-        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "FullName", bool archived = false)
+        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, string sortDirection = "asc", string sortField = "Volunteer", bool archived = false)
         {
             var volunteers = _context.Volunteers
                 .Where(v => v.IsArchived == archived)
