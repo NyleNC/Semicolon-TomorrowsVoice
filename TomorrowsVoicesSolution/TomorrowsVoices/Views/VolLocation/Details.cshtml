@@ -7,7 +7,7 @@
 <h1>Details</h1>
 
 <div>
-    <h4>VolLocation</h4>
+    <h4>Location</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -19,6 +19,11 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="form-group">
+        <a asp-action="Edit" class="btn btn-warning" asp-route-id="@Model?.ID">
+            <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
+        </a>
+    </div>
+    <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Locations Page</a>
+
 </div>
