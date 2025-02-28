@@ -2,293 +2,273 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-@{
-    ViewData["Title"] = "Index";
-    bool isArchived = ViewData["IsArchived"] as bool? ?? false;
-}
-
-<h1>Volunteers</h1>
-@* Archived tabs *@
-<ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-        <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
-           asp-action="Index" asp-route-archived="false">Active</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
-           asp-action="Index" asp-route-archived="true">Archived</a>
-    </li>
-</ul>
-
-<p class="mb-2">
-    <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-user.png" alt="add-volunteer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Volunteer</a>
-</p>
-
-<form asp-action="Index" method="get">
-    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
-    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">
-            @Html.Raw(TempData["Success"])
-        </div>
+    @{
+        ViewData["Title"] = "Index";
+        bool isArchived = ViewData["IsArchived"] as bool? ?? false;
     }
-    <div class="row">
-        <div class="col-10">
-            <button class="btn mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
-                    data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="background-color: #6423e7; color: white">
-                <img src="~/Images/filter-search.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
-                Filter/Search (@ViewData["numberFilters"])
-            </button>
 
-            @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
-            {
-                <a asp-action="Index" class="mb-3 btn btn-danger text-white">
-                    <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                    Clear
-                </a>
-            }
+    <h1>Volunteers</h1>
+    @* Archived tabs *@
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
+               asp-action="Index" asp-route-archived="false">Active</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
+               asp-action="Index" asp-route-archived="true">Archived</a>
+        </li>
+    </ul>
+
+    <p class="mb-2">
+        <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-user.png" alt="add-volunteer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Volunteer</a>
+    </p>
+
+    <form asp-action="Index" method="get">
+        <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+        <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                @Html.Raw(TempData["Success"])
+            </div>
+        }
+        <div class="row">
+            <div class="col-10">
+                <button class="btn mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
+                        data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="background-color: #6423e7; color: white">
+                    <img src="~/Images/filter-search.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
+                    Filter/Search (@ViewData["numberFilters"])
+                </button>
+
+                @if (ViewData["numberFilters"] != null && (int)(ViewData["numberFilters"] ?? 0) > 0)
+                {
+                    <a asp-action="Index" class="mb-3 btn btn-danger text-white">
+                        <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                        Clear
+                    </a>
+                }
+            </div>
         </div>
-    </div>
-    <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
-        <div class="card card-body" style="background-color:lightgray">
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Search by Volunteer Name:</label>
-                    @Html.TextBox("SearchString", null, new { @class = "form-control" })
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label class="control-label">Filter by City:</label>
-                        @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Cities"], new { @class = "form-control" })
+        <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
+            <div class="card card-body" style="background-color:lightgray">
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label">Search by Volunteer Name:</label>
+                        @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">Filter by City:</label>
+                            @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)(ViewData["Cities"] ?? Enumerable.Empty<SelectListItem>()), new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="control-label">Search by Email:</label>
+                        @Html.TextBox("SearchEmail", null, new { @class = "form-control" })
                     </div>
                 </div>
-                <div class="form-group col-md-3">
-                    <label class="control-label">Search by Email:</label>
-                    @Html.TextBox("SearchEmail", null, new { @class = "form-control" })
+                <div class="form-group col-md-2 align-self-start">
+                    <input type="submit" name="actionButton" value="Filter"
+                           class="btn text-white" style="background-color: #6423e7" />
                 </div>
             </div>
-            <div class="form-group col-md-2 align-self-start">
-                <input type="submit" name="actionButton" value="Filter"
-                       class="btn text-white" style="background-color: #6423e7" />
-            </div>
         </div>
-    </div>
-    <table class="table table-striped table-hover table-custom">
-        <thead class="table-dark ">
-            <tr>
-                <th>
-                    <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort('FirstName')">
-                        First Name
-                        @if (ViewData["sortField"]?.ToString() == "FirstName")
-                        {
-                            if (ViewData["sortDirection"]?.ToString() == "asc")
-                            {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
-                            }
-                            else
-                            {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
-                        }
-                    </button>
-                </th>
-                <th>
-
-                    <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort('LastName')">
-                        Last Name
-                        @if (ViewData["sortField"]?.ToString() == "LastName")
-                        {
-                            if (ViewData["sortDirection"]?.ToString() == "asc")
-                            {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
-                            }
-                            else
-                            {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
-                        }
-                    </button>
-                </th>
-                <th>
-                    <button style="font-weight: 700" type="submit" name="actionButton" value="Email" class="btn btn-toolbar text-white d-inline" onclick="handleSort('Email')">
-                        Email
-                        @if (ViewData["sortField"]?.ToString() == "Email")
-                        {
-                            if (ViewData["sortDirection"]?.ToString() == "asc")
-                            {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
-                            }
-                            else
-                            {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
-                        }
-                    </button>
-                </th>
-                <th>
-                    <button style="font-weight: 700" type="submit" name="actionButton" value="City" class="btn btn-toolbar text-white d-inline" onclick="handleSort('City')">
-                        City
-                        @if (ViewData["sortField"]?.ToString() == "City")
-                        {
-                            if (ViewData["sortDirection"]?.ToString() == "asc")
-                            {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
-                            }
-                            else
-                            {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
-                        }
-                    </button>
-                </th>
-                <th>
-                    <button style="font-weight: 700" type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white">Actions</button>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+        <table class="table table-striped table-hover table-custom">
+            <thead class="table-dark ">
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FirstName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LastName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Email)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.VolLocation.City)
-                    </td>
-                    <td>
-                        <div class="d-none d-lg-inline">
-                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a>
-                            <div class="d-none d-lg-inline">
-                                @if (!item.IsArchived)
+                    <th>
+                        <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'FullName')">
+                            Full Name
+                            @if (ViewData["sortField"]?.ToString() == "FullName")
+                            {
+                                if (ViewData["sortDirection"]?.ToString() == "asc")
                                 {
-                                    <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
-                                        <input type="hidden" name="id" value="@item.ID" />
-                                        <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger" >
-                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                            Archive
-                                        </button>
-                                    </form>
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+
                                 }
                                 else
                                 {
-                                    <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to unarchive this item?');">
-                                        <input type="hidden" name="id" value="@item.ID" />
-                                        <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger" >
-                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                            UnArchive
-                                        </button>
-                                    </form>
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+
                                 }
-                            </div>
-                        </div>
-                        <div class="d-lg-none">
-                            <div class="btn-group">
-                                <button class="btn btn-sm dropdown-toggle" style="background-color: #6423e7; color: white" data-bs-toggle="dropdown">
-                                    Actions
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID">
-                                            <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID">
-                                            <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-action="Archive" asp-route-id="@item.ID">
-                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    
-                    </td>
+                            }
+                            else
+                            {
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
+                            }
+                        </button>
+                    </th>
+
+                    <th>
+                        <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Email')">
+                            Email
+                            @if (ViewData["sortField"]?.ToString() == "Email")
+                            {
+                                if (ViewData["sortDirection"]?.ToString() == "asc")
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
+                            }
+                        </button>
+                    </th>
+                    <th>
+                        <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                            City
+                            @if (ViewData["sortField"]?.ToString() == "City")
+                            {
+                                if (ViewData["sortDirection"]?.ToString() == "asc")
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
+                            }
+                        </button>
+                    </th>
+                    <th>
+                        <button style="font-weight: 700" type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white">Actions</button>
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</form>
-<partial name="_PagingNavBar" />
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VolLocation.City)
+                        </td>
+                        <td>
+                            <div class="d-none d-lg-inline">
+                                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a>
+                                <div class="d-none d-lg-inline">
+                                    @if (!item.IsArchived)
+                                    {
+                                        <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
+                                            <input type="hidden" name="id" value="@item.ID" />
+                                            <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger">
+                                                <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                                Archive
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to unarchive this item?');">
+                                            <input type="hidden" name="id" value="@item.ID" />
+                                            <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger">
+                                                <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                                UnArchive
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                            <div class="d-lg-none">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm dropdown-toggle" style="background-color: #6423e7; color: white" data-bs-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID">
+                                                <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID">
+                                                <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Archive" asp-route-id="@item.ID">
+                                                <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: '@TempData["SuccessMessage"]',
-                confirmButtonText: 'OK'
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
+    <partial name="_PagingNavBar" />
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '@TempData["SuccessMessage"]',
+                    confirmButtonText: 'OK'
+                });
             });
-        });
-    </script>
-}
-
-<script>
-    function handleSort(field) {
-        const sortField = document.querySelector('input[name="sortField"]');
-        const sortDirection = document.querySelector('input[name="sortDirection"]');
-
-        if (sortField.value === field) {
-            sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
-        } else {
-            sortField.value = field;
-            sortDirection.value = 'asc';
-        }
-
-        document.querySelector('form').submit();
+        </script>
     }
-</script>
+
+    <!-- Sorting and JS Script -->
+    <script>
+        function handleSort(event, field) {
+
+            event.preventDefault();
+            const form = event.target.closest('form');
+            const sortField = form.querySelector('input[name="sortField"]');
+            const sortDirection = form.querySelector('input[name="sortDirection"]');
+
+            if (sortField.value === field) {
+                // Toggle sort direction
+                sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+            } else {
+                // Set new field and default to ascending order
+                sortField.value = field;
+                sortDirection.value = "asc";
+            }
+
+            // Submit the form
+            form.submit();
+        }
+    </script>
