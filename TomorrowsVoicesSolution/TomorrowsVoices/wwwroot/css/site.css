@@ -34,7 +34,6 @@ button.no-pointer-events {
     cursor: default; /* Prevent the hand cursor from appearing */
 }
 
-
 .header-logo {
     max-width: 75px;
     height: auto;
@@ -160,4 +159,135 @@ label.required:after {
 }
 .dropdown-divider {
     border-top: 1px solid #444; /* Change divider color */
+}
+
+/* POP UP MODAL CSS */
+/* Custom styles for the modal */
+.btn-import-excel {
+    background-color: green;
+    border-color: green;
+}
+
+.btn-import-excel:hover {
+    background-color: darkgreen;
+    border-color: darkgreen;
+}
+
+.imprt-excl-modal-header {
+    background-color: green !important;
+}
+
+.import-excel-download-link {
+    color: rebeccapurple;
+}
+
+.import-excel-modal .modal-content {
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    height: 90vh; /* Full height of the viewport */
+    width: 70vw; /* Full width of the viewport */
+}
+
+.import-excel-modal .modal-header {
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+.import-excel-modal .modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.import-excel-modal .modal-body {
+    padding: 2rem;
+    height: calc(100% - 3.5rem); /* Adjust for modal header */
+}
+
+.import-excel-drop-area {
+    border: 2px dashed mediumpurple;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .import-excel-drop-area:hover {
+        background-color: #e9ecef;
+    }
+
+.import-excel-drop-text {
+    color: black;
+    font-size: 1rem;
+}
+
+.import-excel-browse-link {
+    color: rebeccapurple;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+    .import-excel-browse-link:hover {
+        color: #0056b3;
+    }
+
+.import-excel-submit-btn {
+    background-color: green;
+    border-color: green;
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
+    .import-excel-submit-btn:hover {
+        background-color: darkgreen;
+        border-color: darkgreen;
+    }
+
+.import-excel-alert {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.25rem;
+}
+
+    .import-excel-alert.alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+
+    .import-excel-alert.alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+
+    .import-excel-alert.alert-warning {
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+        color: #856404;
+    }
+
+.import-excel-image-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+    .import-excel-image-placeholder img {
+        max-width: 100%;
+        border-radius: 10px;
+    }
+
+.import-excel-invalid-feedback {
+    color: #dc3545;
+    font-size: 0.875rem;
 }

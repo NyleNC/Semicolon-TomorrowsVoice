@@ -30,11 +30,11 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Director
-        public async Task<IActionResult> Index( string ? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Director")
+        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Director")
         {
             var directors = _context.Directors
-                 .Where(d => d.IsArchived== archived)
-                .Include(d => d.Location) 
+                 .Where(d => d.IsArchived == archived)
+                .Include(d => d.Location)
                 .AsNoTracking();
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
@@ -59,7 +59,7 @@ namespace TomorrowsVoices.Controllers
             if (!String.IsNullOrEmpty(SearchString))
             {
                 directors = directors.Where(p => p.LastName != null && p.LastName.ToLower().Contains(SearchString.ToLower())
-                                                || p.FirstName!= null && p.FirstName.ToLower().Contains(SearchString.ToLower()));
+                                                || p.FirstName != null && p.FirstName.ToLower().Contains(SearchString.ToLower()));
 
                 numberFilters++;
             }
@@ -72,12 +72,12 @@ namespace TomorrowsVoices.Controllers
 
             if (!string.IsNullOrEmpty(SearchCity))
             {
-             
-                
-                    directors = directors
-                        .Where(p => p.Location.City != null && p.Location.City == SearchCity); 
-                    numberFilters++;
-               
+
+
+                directors = directors
+                    .Where(p => p.Location.City != null && p.Location.City == SearchCity);
+                numberFilters++;
+
             }
 
             // sorting functionality
@@ -147,7 +147,7 @@ namespace TomorrowsVoices.Controllers
 
             cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
 
-     
+
             ViewData["Cities"] = cityList;
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
@@ -168,8 +168,8 @@ namespace TomorrowsVoices.Controllers
             }
 
             var director = await _context.Directors
-                .Include(d=>d.Location)
-           
+                .Include(d => d.Location)
+
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (director == null)
             {
@@ -391,106 +391,150 @@ namespace TomorrowsVoices.Controllers
             ViewData["DirectorID"] = new SelectList(dQuery, "ID", "DirectorFullName", director?.ID);
         }
 
-        //ImportExcel 
+        //ImportExcel - Updated for Modal View
         [HttpPost]
         public async Task<IActionResult> InsertFromExcel(IFormFile theExcel)
         {
-            string feedBack = string.Empty;
-            string successMessage = string.Empty;
+            var response = new { success = false, message = "" };
+
             if (theExcel == null || theExcel.Length == 0)
             {
-                TempData["Feedback"] = "Error: No file uploaded. Please select an Excel file.";
-                return RedirectToAction("Index");
+                response = new { success = false, message = "❌ No file uploaded. Please select an Excel file." };
+                return Json(response);
             }
-            if (theExcel != null)
+
+            string feedbackMessage = "";
+            int successCount = 0, errorCount = 0;
+
+            try
             {
                 string mimeType = theExcel.ContentType;
-                long fileLength = theExcel.Length;
-
-                if (!(mimeType == "" || fileLength == 0)) // Looks like we have a file!!!
+                if (!mimeType.Contains("excel") && !mimeType.Contains("spreadsheet"))
                 {
-                    if (mimeType.Contains("excel") || mimeType.Contains("spreadsheet"))
-                    {
-                        ExcelPackage excel;
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await theExcel.CopyToAsync(memoryStream);
-                            excel = new ExcelPackage(memoryStream);
-                        }
+                    response = new { success = false, message = "⚠️ Invalid file format. Please upload a valid Excel file." };
+                    return Json(response);
+                }
 
-                        var workSheet = excel.Workbook.Worksheets[0];
+                using (var memoryStream = new MemoryStream())
+                {
+                    await theExcel.CopyToAsync(memoryStream);
+                    using (var package = new ExcelPackage(memoryStream))
+                    {
+                        var workSheet = package.Workbook.Worksheets[0];
                         var start = workSheet.Dimension.Start;
                         var end = workSheet.Dimension.End;
 
-                        int successCount = 0;
-                        int errorCount = 0;
-
-                        if (workSheet.Cells[1, 1].Text == "FirstName" && workSheet.Cells[1, 2].Text == "LastName" && workSheet.Cells[1, 3].Text == "City" && workSheet.Cells[1, 4].Text == "Email")
+                        // Validate headers
+                        if (workSheet.Cells[1, 1].Text != "FirstName" ||
+                            workSheet.Cells[1, 2].Text != "LastName" ||
+                            workSheet.Cells[1, 3].Text != "City" ||
+                            workSheet.Cells[1, 4].Text != "Email")
                         {
-                            for (int row = start.Row + 1; row <= end.Row; row++)
+                            response = new { success = false, message = "❌ Invalid Excel format. Please ensure the file has 'FirstName', 'LastName', 'City', and 'Email' headers." };
+                            return Json(response);
+                        }
+
+                        // Track duplicate emails within the file
+                        var emailSet = new HashSet<string>();
+
+                        for (int row = start.Row + 1; row <= end.Row; row++)
+                        {
+                            Director director = new Director();
+                            try
                             {
-                                Director director = new Director();
-                                try
-                                {
-                                    director.FirstName = workSheet.Cells[row, 1].Text;
-                                    director.LastName = workSheet.Cells[row, 2].Text;
-                                    string cityName = workSheet.Cells[row, 3].Text;
-                                    director.Email = workSheet.Cells[row, 4].Text;
+                                director.FirstName = workSheet.Cells[row, 1].Text;
+                                director.LastName = workSheet.Cells[row, 2].Text;
+                                string cityName = workSheet.Cells[row, 3].Text;
+                                director.Email = workSheet.Cells[row, 4].Text;
 
-                                    // Validate data before adding
-                                    if (string.IsNullOrEmpty(director.FirstName) || string.IsNullOrEmpty(director.LastName) || string.IsNullOrEmpty(director.Email))
-                                    {
-                                        errorCount++;
-                                        feedBack += $"Error: Row {row} has missing fields.<br />";
-                                        continue; // Skip invalid row
-                                    }
-
-                                    if (!_context.Directors.Any(d => d.Email == director.Email))
-                                    {
-                                       
-                                            var location = _context.Locations.FirstOrDefault(l => l.City == cityName);
-                                            if (location == null)
-                                            {
-                                                location = new Location { City = cityName };
-                                                _context.Locations.Add(location);
-                                                await _context.SaveChangesAsync();
-                                            }
-                                            director.Location = location;
-
-                                            _context.Directors.Add(director);
-                                            successCount++;
-                                        
-                                      
-                                    }
-                                    else
-                                    {
-                                        errorCount++;
-                                        feedBack += $"Error: Director with email {director.Email} already exists.<br />";
-                                    }
-                                }
-                                catch (Exception ex)
+                                // Validate required fields
+                                if (string.IsNullOrEmpty(director.FirstName) || string.IsNullOrEmpty(director.LastName) || string.IsNullOrEmpty(director.Email))
                                 {
                                     errorCount++;
-                                    feedBack += $"Error: Exception in row {row} - {ex.Message}<br />";
+                                    feedbackMessage += $"⚠️ Error: Row {row} has missing fields.<br>";
+                                    continue;
                                 }
-                            }
 
-                            await _context.SaveChangesAsync();
+                                // Check for duplicate emails within the file
+                                if (emailSet.Contains(director.Email))
+                                {
+                                    errorCount++;
+                                    feedbackMessage += $"⚠️ Error: Row {row} - Duplicate email '{director.Email}' found within the file.<br>";
+                                    continue;
+                                }
+
+                                // Check for duplicate emails in the database
+                                if (_context.Directors.Any(d => d.Email == director.Email))
+                                {
+                                    errorCount++;
+                                    feedbackMessage += $"⚠️ Error: Row {row} - Director with email '{director.Email}' already exists in the database.<br>";
+                                    continue;
+                                }
+
+                                // Add email to the set to track duplicates within the file
+                                emailSet.Add(director.Email);
+
+                                // Handle location
+                                var location = _context.Locations.FirstOrDefault(l => l.City == cityName);
+                                if (location == null)
+                                {
+                                    location = new Location { City = cityName };
+                                    _context.Locations.Add(location);
+                                    await _context.SaveChangesAsync();
+                                }
+                                director.Location = location;
+
+                                // Add director to the database
+                                _context.Directors.Add(director);
+                                successCount++;
+                            }
+                            catch (Exception ex)
+                            {
+                                errorCount++;
+                                feedbackMessage += $"⚠️ Error: Exception in row {row} - {ex.Message}<br>";
+                            }
+                        }
+
+                        // Save changes to the database
+                        await _context.SaveChangesAsync();
+
+                        // Prepare response
+                        if (successCount > 0)
+                        {
+                            response = new { success = true, message = $"✅ {successCount} directors added successfully.<br>{feedbackMessage}" };
                         }
                         else
                         {
-                            feedBack += "Error: Invalid Excel file format.<br />";
+                            response = new { success = false, message = $"❌ No directors were added.<br>{feedbackMessage}" };
                         }
-                        TempData["Success"] = $"{successCount} directors successfully added.";
-                        
                     }
-                 
-                    TempData["Feedback"] = feedBack;
-
                 }
             }
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                response = new { success = false, message = $"❌ An error occurred: {ex.Message}" };
+            }
+
+            return Json(response);
         }
+
+        // Excel Template Server
+        public IActionResult DownloadSampleExcel()
+        {
+            // Path to the sample Excel file in your project
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ExcelTemplates", "DirectorTemplate.xlsx");
+
+            // Check if the file exists
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+
+            // Serve the file for download
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "DirectorTemplate.xlsx");
+        }
+
         //Autocomplete for City
         public JsonResult CitySuggestions(string term)
         {
@@ -500,12 +544,12 @@ namespace TomorrowsVoices.Controllers
             }
 
             var suggestions = _context.Locations
-                .Where(c => c.City.ToLower().StartsWith(term.ToLower())) 
+                .Where(c => c.City.ToLower().StartsWith(term.ToLower()))
                 .Select(c => new { id = c.ID, text = c.City })
                 .ToList();
 
             return Json(suggestions);
-         }
+        }
         public JsonResult GetInitialCities()
         {
             var cities = _context.Locations
@@ -549,9 +593,9 @@ namespace TomorrowsVoices.Controllers
             director.IsArchived = true;
             await _context.SaveChangesAsync();
 
-       
 
-        TempData["SuccessMessage"] = "The Data has been archived successfully!";
+
+            TempData["SuccessMessage"] = "The Data has been archived successfully!";
             return RedirectToAction(nameof(Index));
 
         }
