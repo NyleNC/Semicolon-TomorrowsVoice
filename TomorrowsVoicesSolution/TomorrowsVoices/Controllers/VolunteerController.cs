@@ -303,7 +303,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> InsertSingersFromExcel(IFormFile theExcel)
+        public async Task<IActionResult> InsertFromExcel(IFormFile theExcel)
         {
             string feedback = string.Empty;
             string successMessage = string.Empty;

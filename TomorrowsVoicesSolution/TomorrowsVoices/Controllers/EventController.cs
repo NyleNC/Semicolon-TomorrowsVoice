@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using OfficeOpenXml;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
-
+using System.Globalization;
 namespace TomorrowsVoices.Controllers
 {
     public class EventController : Controller
@@ -246,6 +249,147 @@ namespace TomorrowsVoices.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //ImportExcel 
+        [HttpPost]
+        public async Task<IActionResult> InsertFromExcel(IFormFile theExcel)
+        {
+            string feedback = string.Empty;
+            string successMessage = string.Empty;
+
+            if (theExcel == null || theExcel.Length == 0)
+            {
+                TempData["Feedback"] = "Error: No file uploaded. Please select an Excel file.";
+                return RedirectToAction("Index");
+            }
+
+            if (theExcel != null)
+            {
+                string mimeType = theExcel.ContentType;
+                long fileLength = theExcel.Length;
+
+                if (!(mimeType == "" || fileLength == 0))
+                {
+                    if (mimeType.Contains("excel") || mimeType.Contains("spreadsheet"))
+                    {
+                        ExcelPackage excel;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await theExcel.CopyToAsync(memoryStream);
+                            excel = new ExcelPackage(memoryStream);
+                        }
+
+                        var workSheet = excel.Workbook.Worksheets[0];
+                        var start = workSheet.Dimension.Start;
+                        var end = workSheet.Dimension.End;
+
+                        int successCount = 0;
+                        int errorCount = 0;
+
+                        // Validate column headers
+                        if (workSheet.Cells[1, 1].Text.Trim() == "Name" &&
+                            workSheet.Cells[1, 2].Text.Trim() == "Location" &&
+                            workSheet.Cells[1, 3].Text.Trim() == "Date" &&
+                            workSheet.Cells[1, 4].Text.Trim() == "Start Time" &&
+                            workSheet.Cells[1, 5].Text.Trim() == "End Time")
+                        {
+                            for (int row = start.Row + 1; row <= end.Row; row++)
+                            {
+                                Event events = new Event();
+                                try
+                                {
+                                    events.Name = workSheet.Cells[row, 1].Text.Trim();
+                                    string cityName = workSheet.Cells[row, 2].Text.Trim();
+
+                                    // Parse Date
+                                    if (DateOnly.TryParse(workSheet.Cells[row, 3].Text.Trim(), out DateOnly date))
+                                    {
+                                        events.Date = date;
+                                    }
+                                    else
+                                    {
+                                        errorCount++;
+                                        feedback += $"Error: Invalid date format in row {row}.<br />";
+                                        continue;
+                                    }
+
+                                    // Parse Start Time
+                                    if (TimeOnly.TryParse(workSheet.Cells[row, 4].Text.Trim(), out TimeOnly startTime))
+                                    {
+                                        events.StartTime = startTime;
+                                    }
+                                    else
+                                    {
+                                        errorCount++;
+                                        feedback += $"Error: Invalid start time format in row {row}.<br />";
+                                        continue;
+                                    }
+
+                                    // Parse End Time
+                                    if (TimeOnly.TryParse(workSheet.Cells[row, 5].Text.Trim(), out TimeOnly endTime))
+                                    {
+                                        events.EndTime = endTime;
+                                    }
+                                    else
+                                    {
+                                        errorCount++;
+                                        feedback += $"Error: Invalid end time format in row {row}.<br />";
+                                        continue;
+                                    }
+
+                                    // Validate data before adding
+                                    if (string.IsNullOrEmpty(events.Name) ||
+                                        string.IsNullOrEmpty(cityName))
+                                    {
+                                        errorCount++;
+                                        feedback += $"Error: Row {row} has missing fields.<br />";
+                                        continue; // Skip invalid row
+                                    }
+
+                                    // Check if event with the same name, date, and location already exists
+                                    var location = _context.VolLocations.FirstOrDefault(l => l.City == cityName);
+
+                                    if (location == null)
+                                    {
+                                        // If location doesn't exist, create a new one
+                                        location = new VolLocation { City = cityName };
+                                        _context.VolLocations.Add(location);
+                                        await _context.SaveChangesAsync(); // Save the new location to get its ID
+                                    }
+
+                                    if (_context.Events.Any(e => e.Name == events.Name && e.Date == events.Date && e.VolLocationID == location.ID))
+                                    {
+                                        errorCount++;
+                                        feedback += $"Error: The event {events.Name} on {events.Date.ToShortDateString()} at {cityName} already exists.<br />";
+                                        continue;
+                                    }
+
+                                    events.VolLocationID = location.ID;
+                                    _context.Events.Add(events);
+                                    successCount++;
+                                }
+                                catch (Exception ex)
+                                {
+                                    errorCount++;
+                                    feedback += $"Error: Exception in row {row} - {ex.Message}<br />";
+                                }
+                            }
+
+                            await _context.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            feedback += "Error: Invalid Excel file format.<br />";
+                        }
+
+                        TempData["Success"] = $"<b>{successCount}</b> events successfully added.";
+                    }
+
+                    TempData["Feedback"] = feedback;
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
         private bool EventExists(int id)
         {
             return _context.Events.Any(e => e.ID == id);
