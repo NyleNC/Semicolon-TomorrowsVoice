@@ -234,12 +234,12 @@
                             }
                             else
                             {
-                                <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to unarchive this item?');" class="d-inline">
+                                <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
                                     <input type="hidden" name="id" value="@item.ID" />
-                                    <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
-                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                        Unarchive
-                                    </button>
+                                        <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#4CAF50 ;">
+                                            <img src="~/Images/unarchive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                            Restore
+                                        </button>
                                 </form>
                                 }
                             </div>
