@@ -1,5 +1,4 @@
-﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TomorrowsVoices.Models
 {
@@ -8,6 +7,17 @@ namespace TomorrowsVoices.Models
         #region Summary Properties
         [Display(Name = "Volunteer")]
         public string FullName => $"{FirstName} {LastName}";
+
+
+        //For lookup values.
+        [Display(Name = "Events Attended")]
+        public int EventsAttended => VolAttendances.Count(va => va.Status);
+
+        [Display(Name = "Total Hours")]
+        public double TotalHours => VolAttendances
+            .Where(va => va.ActualStartTime.HasValue && va.ActualEndTime.HasValue)
+            .Sum(va => (va.ActualEndTime.Value - va.ActualStartTime.Value).TotalHours);
+
         #endregion
 
         public int ID { get; set; }
@@ -28,11 +38,11 @@ namespace TomorrowsVoices.Models
         [DataType(DataType.PhoneNumber)]
         public string? Phone { get; set; }
 
-
         [StringLength(255)]
         [DataType(DataType.EmailAddress)]
         [Required(ErrorMessage = "You cannot leave the email blank.")]
         public string? Email { get; set; } = null;
+
 
         public int VolLocationID { get; set; }
 

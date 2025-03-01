@@ -1,4 +1,4 @@
- using System;
+﻿ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.IO;
@@ -309,120 +309,145 @@ namespace TomorrowsVoices.Controllers
         [HttpPost]
         public async Task<IActionResult> InsertSingersFromExcel(IFormFile theExcel)
         {
-            string feedback = string.Empty;
-            string successMessage = string.Empty;
+            var response = new { success = false, message = "" };
 
             if (theExcel == null || theExcel.Length == 0)
             {
-                TempData["Feedback"] = "Error: No file uploaded. Please select an Excel file.";
-                return RedirectToAction("Index");
+                response = new { success = false, message = "❌ No file uploaded. Please select an Excel file." };
+                return Json(response);
             }
 
-            if (theExcel != null)
+            string feedbackMessage = "";
+            int successCount = 0, errorCount = 0;
+
+            try
             {
                 string mimeType = theExcel.ContentType;
-                long fileLength = theExcel.Length;
-
-                if (!(mimeType == "" || fileLength == 0))
+                if (!mimeType.Contains("excel") && !mimeType.Contains("spreadsheet"))
                 {
-                    if (mimeType.Contains("excel") || mimeType.Contains("spreadsheet"))
-                    {
-                        ExcelPackage excel;
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await theExcel.CopyToAsync(memoryStream);
-                            excel = new ExcelPackage(memoryStream);
-                        }
+                    response = new { success = false, message = "⚠️ Invalid file format. Please upload a valid Excel file." };
+                    return Json(response);
+                }
 
-                        var workSheet = excel.Workbook.Worksheets[0];
+                using (var memoryStream = new MemoryStream())
+                {
+                    await theExcel.CopyToAsync(memoryStream);
+                    using (var package = new ExcelPackage(memoryStream))
+                    {
+                        var workSheet = package.Workbook.Worksheets[0];
                         var start = workSheet.Dimension.Start;
                         var end = workSheet.Dimension.End;
 
-                        int successCount = 0;
-                        int errorCount = 0;
-
-                        // Validate column headers
-                        if (workSheet.Cells[1, 1].Text.Trim() == "FirstName" &&
-                            workSheet.Cells[1, 2].Text.Trim() == "LastName" &&
-                            workSheet.Cells[1, 3].Text.Trim() == "City" &&
-                            workSheet.Cells[1, 4].Text.Trim() == "EmergencyContactName" &&
-                            workSheet.Cells[1, 5].Text.Trim() == "EmergencyContactNumber")
+                        // Validate headers
+                        if (workSheet.Cells[1, 1].Text.Trim() != "FirstName" ||
+                            workSheet.Cells[1, 2].Text.Trim() != "LastName" ||
+                            workSheet.Cells[1, 3].Text.Trim() != "City" ||
+                            workSheet.Cells[1, 4].Text.Trim() != "EmergencyContactName" ||
+                            workSheet.Cells[1, 5].Text.Trim() != "EmergencyContactNumber")
                         {
-                            for (int row = start.Row + 1; row <= end.Row; row++)
+                            response = new { success = false, message = "❌ Invalid Excel format. Please ensure the file has 'FirstName', 'LastName', 'City', 'EmergencyContactName', and 'EmergencyContactNumber' headers." };
+                            return Json(response);
+                        }
+
+                        for (int row = start.Row + 1; row <= end.Row; row++)
+                        {
+                            Singer singer = new Singer();
+                            try
                             {
-                                Singer singer = new Singer();
-                                try
-                                {
-                                    singer.FirstName = workSheet.Cells[row, 1].Text.Trim();
-                                    singer.LastName = workSheet.Cells[row, 2].Text.Trim();
-                                    string cityName = workSheet.Cells[row, 3].Text.Trim();
-                                    singer.EmergencyContactName = workSheet.Cells[row, 4].Text.Trim();
-                                    singer.EmergencyContactNumber = workSheet.Cells[row, 5].Text.Trim();
+                                singer.FirstName = workSheet.Cells[row, 1].Text.Trim();
+                                singer.LastName = workSheet.Cells[row, 2].Text.Trim();
+                                string cityName = workSheet.Cells[row, 3].Text.Trim();
+                                singer.EmergencyContactName = workSheet.Cells[row, 4].Text.Trim();
+                                singer.EmergencyContactNumber = workSheet.Cells[row, 5].Text.Trim();
 
-                                    // Validate data before adding
-                                    if (string.IsNullOrEmpty(singer.FirstName) ||
-                                        string.IsNullOrEmpty(singer.LastName) ||
-                                        string.IsNullOrEmpty(cityName) ||
-                                        string.IsNullOrEmpty(singer.EmergencyContactName) ||
-                                        string.IsNullOrEmpty(singer.EmergencyContactNumber))
-                                    {
-                                        errorCount++;
-                                        feedback += $"Error: Row {row} has missing fields.<br />";
-                                        continue; // Skip invalid row
-                                    }
-
-                                    if (!Regex.IsMatch(singer.EmergencyContactNumber, @"^\d{10}$"))
-                                    {
-                                        errorCount++;
-                                        feedback += $"Error: Invalid phone number in row {row}.<br />";
-                                        continue;
-                                    }
-
-                                    if (!_context.Singers.Any(s => s.FirstName == singer.FirstName && s.LastName == singer.LastName))
-                                    {
-                                        var location = _context.Locations.FirstOrDefault(l => l.City == cityName && l.DirectorID != null);
-                                        if (location == null)
-                                        {
-                                            errorCount++;
-                                            feedback += $"Error:<b>{singer.FullName}</b> is from <b>{cityName}</b>, but there is no <b>Director</b> assigned for this city.<br/>";
-                                            continue;
-                                        }
-                                        singer.Location = location;
-                                        _context.Singers.Add(singer);
-                                        successCount++;
-                                    }
-                                    else
-                                    {
-                                        errorCount++;
-                                        feedback += $"Error: Singer {singer.FullName} already exists.<br />";
-                                    }
-                                }
-                                catch (Exception ex)
+                                // Validate required fields
+                                if (string.IsNullOrEmpty(singer.FirstName) ||
+                                    string.IsNullOrEmpty(singer.LastName) ||
+                                    string.IsNullOrEmpty(cityName) ||
+                                    string.IsNullOrEmpty(singer.EmergencyContactName) ||
+                                    string.IsNullOrEmpty(singer.EmergencyContactNumber))
                                 {
                                     errorCount++;
-                                    feedback += $"Error: Exception in row {row} - {ex.Message}<br />";
+                                    feedbackMessage += $"⚠️ Error: Row {row} has missing fields.<br>";
+                                    continue;
                                 }
-                            }
 
-                            await _context.SaveChangesAsync();
+                                // Validate phone number format
+                                if (!Regex.IsMatch(singer.EmergencyContactNumber, @"^\d{10}$"))
+                                {
+                                    errorCount++;
+                                    feedbackMessage += $"⚠️ Error: Invalid phone number in row {row}.<br>";
+                                    continue;
+                                }
+
+                                // Check for duplicate singers in the database
+                                if (_context.Singers.Any(s => s.FirstName == singer.FirstName && s.LastName == singer.LastName))
+                                {
+                                    errorCount++;
+                                    feedbackMessage += $"⚠️ Error: Singer {singer.FullName} already exists.<br>";
+                                    continue;
+                                }
+
+                                // Handle location
+                                var location = _context.Locations.FirstOrDefault(l => l.City == cityName && l.DirectorID != null);
+                                if (location == null)
+                                {
+                                    errorCount++;
+                                    feedbackMessage += $"⚠️ Error: <b>{singer.FullName}</b> is from <b>{cityName}</b>, but there is no <b>Director</b> assigned for this city.<br>";
+                                    continue;
+                                }
+                                singer.Location = location;
+
+                                // Add singer to the database
+                                _context.Singers.Add(singer);
+                                successCount++;
+                            }
+                            catch (Exception ex)
+                            {
+                                errorCount++;
+                                feedbackMessage += $"⚠️ Error: Exception in row {row} - {ex.Message}<br>";
+                            }
+                        }
+
+                        // Save changes to the database
+                        await _context.SaveChangesAsync();
+
+                        // Prepare response
+                        if (successCount > 0)
+                        {
+                            response = new { success = true, message = $"✅ {successCount} singers added successfully.<br>{feedbackMessage}" };
                         }
                         else
                         {
-                            feedback += "Error: Invalid Excel file format.<br />";
+                            response = new { success = false, message = $"❌ No singers were added.<br>{feedbackMessage}" };
                         }
-
-                        TempData["Success"] = $"<b>{successCount}</b> singers successfully added.";
                     }
-
-                    TempData["Feedback"] = feedback;
                 }
             }
+            catch (Exception ex)
+            {
+                response = new { success = false, message = $"❌ An error occurred: {ex.Message}" };
+            }
 
-            return RedirectToAction("Index");
+            return Json(response);
         }
 
+        // Excel Template Server
+        public IActionResult DownloadSampleExcel()
+        {
+            // Path to the sample Excel file in your project
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ExcelTemplates", "SingerTemplate.xlsx");
 
+            // Check if the file exists
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
 
+            // Serve the file for download
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "SingerTemplate.xlsx");
+        }
 
 
         //added the autocomplete 

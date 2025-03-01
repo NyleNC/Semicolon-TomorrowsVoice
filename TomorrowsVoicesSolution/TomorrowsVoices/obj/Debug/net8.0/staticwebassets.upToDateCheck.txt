@@ -1,4 +1,6 @@
 wwwroot\css\site.css
+wwwroot\ExcelTemplates\DirectorTemplate.xlsx
+wwwroot\ExcelTemplates\SingerTemplate.xlsx
 wwwroot\favicon.ico
 wwwroot\Images\add-attendance.png
 wwwroot\Images\add-user.png
@@ -9,9 +11,12 @@ wwwroot\Images\details.png
 wwwroot\Images\edit-value.png
 wwwroot\Images\export-csv.png
 wwwroot\Images\filter-search.png
+wwwroot\Images\location-logo.png
+wwwroot\Images\modalBackDrop1.png
 wwwroot\Images\previous-page-icon.png
 wwwroot\Images\save-changes-icon.png
 wwwroot\Images\tv-logo.png
+wwwroot\Images\unarchive.png
 wwwroot\js\multiselect.js
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap.css
