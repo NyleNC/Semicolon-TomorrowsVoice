@@ -29,6 +29,11 @@
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="VolLocationID" class="control-label"></label>
                 <select asp-for="VolLocationID" class="form-control" asp-items="ViewBag.VolLocationID"></select>
                 <span asp-validation-for="VolLocationID" class="text-danger"></span>
