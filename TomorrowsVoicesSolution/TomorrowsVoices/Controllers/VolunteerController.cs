@@ -143,7 +143,27 @@ namespace TomorrowsVoices.Controllers
             return View(pagedData);
         }
 
+        // GET: Volunteer/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            var volunteer = await _context.Volunteers
+                .Include(v => v.VolLocation)
+                .Include(v => v.VolAttendances)
+                .ThenInclude(va => va.Event)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (volunteer == null)
+            {
+                return NotFound();
+            }
+
+            return View(volunteer);
+        }
         // GET: Volunteer/Create
         public IActionResult Create()
         {
@@ -290,6 +310,41 @@ namespace TomorrowsVoices.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        //archive and unarchiving
+        [HttpPost]
+        public async Task<IActionResult> Archive(int id)
+        {
+            var director = await _context.Volunteers.FindAsync(id);
+            if (director == null)
+            {
+                return NotFound();
+            }
+
+            director.IsArchived = true;
+            await _context.SaveChangesAsync();
+
+
+
+            TempData["SuccessMessage"] = "The Data has been archived successfully!";
+            return RedirectToAction(nameof(Index));
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> UnArchive(int id)
+        {
+            var director = await _context.Volunteers.FindAsync(id);
+            if (director == null)
+            {
+                return NotFound();
+            }
+
+            director.IsArchived = false;
+            _context.Update(director);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "This archive has been activated successfully!";
             return RedirectToAction(nameof(Index));
         }
 
