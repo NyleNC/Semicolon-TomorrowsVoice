@@ -14,14 +14,31 @@
     </li>
     <li class="nav-item">
         <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
-           asp-action="Index" asp-route-archived="true">Archived</a>
+           asp-action="Index" asp-route-archived="true">
+           Archived
+            @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
+            {
+                <span>(0)</span>
+            }
+            else
+            {
+                <span>(@ViewData["numberofArchive"])</span>
+            }
+        </a>
     </li>
 </ul>
+
+
 <div class="d-flex justify-content-between align-items-start mb-1">
-    <p class="mb-2">
-        <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-user.png" alt="add-director-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Director</a>
-    </p>
-    <div>
+    @if (ViewData["ActiveTab"]?.ToString() != "archived")
+    {
+        <p class="mb-2">
+            <a asp-action="Create" class="btn btn-primary">
+                <img src="~/Images/add-user.png" alt="add-director-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Director
+            </a>
+        </p>
+
+        <div>
         <div class="text-danger">@Html.Raw(TempData["Feedback"])</div>
         <form asp-action="InsertFromExcel" asp-controller="Director" method="post" enctype="multipart/form-data">
             <div class="card-body">
@@ -37,10 +54,16 @@
             </div>
         </form>
     </div>
+   
+
+    }
+ 
+   
 </div>
 <form asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success">
@@ -175,6 +198,7 @@
                 </th>
             </tr>
         </thead>
+
         <tbody>
             @foreach (var item in Model)
             {
@@ -189,33 +213,39 @@
                         @Html.DisplayFor(modelItem => item.Email)
                     </td>
                     <td>
+                        <!-- Desktop View (Buttons) -->
                         <div class="d-none d-lg-inline">
-                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a> |
-                            <div class="d-none d-lg-inline">
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
+                                <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
+                            </a> |
+                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
+                                <img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
+                            </a> |
+                            <div class="btn-group">
                             @if (!item.IsArchived)
                             {
-                                    <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
+                                <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
                                     <input type="hidden" name="id" value="@item.ID" />
-                                    <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger">
+                                    <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
                                         <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                         Archive
-                                        </button>
+                                    </button>
                                 </form>
                             }
                             else
                             {
-                                    <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to unarchive this item?');">
-                                       
+                                <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to unarchive this item?');" class="d-inline">
                                     <input type="hidden" name="id" value="@item.ID" />
-                                    <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger">
+                                    <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
                                         <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                        UnArchive
+                                        Unarchive
                                     </button>
                                 </form>
-                            }
+                                }
                             </div>
                         </div>
+
+                        <!-- Mobile View (Dropdown) -->
                         <div class="d-lg-none">
                             <div class="btn-group">
                                 <button class="btn btn-sm dropdown-toggle" style="background-color: #6423e7; color: white" data-bs-toggle="dropdown">
@@ -233,9 +263,24 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" asp-action="Archive" asp-route-id="@item.ID">
-                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
-                                        </a>
+                                        @if (!item.IsArchived)
+                                        {
+                                            <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
+                                                <input type="hidden" name="id" value="@item.ID" />
+                                                <button type="submit" class="dropdown-item">
+                                                    <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to unarchive this item?');">
+                                                <input type="hidden" name="id" value="@item.ID" />
+                                                <button type="submit" class="dropdown-item">
+                                                    <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Unarchive
+                                                </button>
+                                            </form>
+                                        }
                                     </li>
                                 </ul>
                             </div>

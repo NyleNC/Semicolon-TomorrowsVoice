@@ -38,10 +38,11 @@ namespace TomorrowsVoices.Controllers
                 .AsNoTracking();
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
+      
             string[] sortOptions = new[] { "Director", "City", "Email" };
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
-
+           
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
                 page = 1;//Reset page to start
@@ -134,6 +135,9 @@ namespace TomorrowsVoices.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["numberFilters"] = numberFilters;
+            int archivedCount = await _context.Directors.CountAsync(d => d.IsArchived == true);
+            ViewData["numberofArchive"] = archivedCount;
+
             var cityList = directors.AsEnumerable()
                 .Where(d => d.Location?.City != null)
                 .Select(d => d.Location.City)

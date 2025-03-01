@@ -119,7 +119,8 @@ namespace TomorrowsVoices.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["numberFilters"] = numberFilters;
-
+            int archivedCount = await _context.Singers.CountAsync(d => d.IsArchived == true);
+            ViewData["numberofArchive"] = archivedCount;
             var cityList = singers.AsEnumerable()
         .Where(d => d.Location?.City != null)
         .Select(d => d.Location.City)
