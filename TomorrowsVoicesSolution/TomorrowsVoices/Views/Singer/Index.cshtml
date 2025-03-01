@@ -30,18 +30,20 @@
     </li>
 </ul>
 <div class="d-flex justify-content-between align-items-start mb-3">
-    @if (ViewData["ActiveTab"]?.ToString() != "archived"){
-    <div class="text-center">
-        <a asp-action="Create" class="btn btn-primary">
-            <img src="~/Images/add-user.png" alt="add-singer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Singer
-        </a>
-    </p>
-    <!-- Modal Button -->
-    <p class="mb-2">
-        <button type="button" class="btn btn-primary btn-import-excel" data-bs-toggle="modal" data-bs-target="#importSingerExcelModal">
-            Import Excel
-        </button>
-    </p>
+    @if (ViewData["ActiveTab"]?.ToString() != "archived")
+    {
+        <div class="text-center">
+            <a asp-action="Create" class="btn btn-primary">
+                <img src="~/Images/add-user.png" alt="add-singer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Singer
+            </a>
+        </div>
+        <!-- Modal Button -->
+        <div class="mb-2">
+            <button type="button" class="btn btn-primary btn-import-excel" data-bs-toggle="modal" data-bs-target="#importSingerExcelModal">
+                Import Excel
+            </button>
+        </div>
+    }
 </div>
 
 <!-- Modal -->
