@@ -5,7 +5,7 @@
     bool isArchived = ViewData["IsArchived"] as bool? ?? false;
 }
 
-<h1>Index</h1>
+<h1>Events</h1>
 @* Archived tabs *@
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
@@ -14,118 +14,165 @@
     </li>
     <li class="nav-item">
         <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
-           asp-action="Index" asp-route-archived="true">Archived</a>
+           asp-action="Index" asp-route-archived="true">
+            Archived
+            @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
+            {
+                <span>(0)</span>
+            }
+            else
+            {
+                <span>(@ViewData["numberofArchive"])</span>
+            }
+        </a>
     </li>
 </ul>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Notes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VolLocation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Notes)
-            </td>
-            <td>
-				@Html.DisplayFor(modelItem => item.Date)
-            <td>
-                @Html.DisplayFor(modelItem => item.StartTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VolLocation.City)
-            </td>
-                <td>
-                    <div class="d-none d-lg-inline">
-                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning"><img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info"><img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details</a>
-                        <div class="d-none d-lg-inline">
-                            @if (!item.IsArchived)
-                            {
-                                <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
-                                    <input type="hidden" name="id" value="@item.ID" />
-                                    <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger" >
-                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                        Archive
-                                    </button>
-                                </form>
-                            }
-                            else
-                            {
-                                <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to unarchive this item?');">
-                                    <input type="hidden" name="id" value="@item.ID" />
-                                    <button type="submit" style="color:black; background-color:#fb606f" class="btn btn-sm btn-danger" >
-                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                        UnArchive
-                                    </button>
-                                </form>
-                            }
-                        </div>
-                    </div>
-                    <div class="d-lg-none">
-                        <div class="btn-group">
-                            <button class="btn btn-sm dropdown-toggle" style="background-color: #6423e7; color: white" data-bs-toggle="dropdown">
+@if (ViewData["ActiveTab"]?.ToString() != "archived")
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-attendance.png" alt="add-attendance-icon" style="height: 24px; width: auto; margin-right: 10px" />Create Event</a>
+    </p>
+}
+
+<div class="container" style=" margin: 0; padding: 0">
+    <div class="row" style="margin: 0; padding: 0">
+        <div class="col-12 table-responsive" style="margin: 0; padding: 0">
+            <table class="table table-striped table-hover table-custom">
+                <thead class="table-dark">
+                    <tr>
+                        <th>
+                            <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                            Title
+                            </button>
+                        </th>
+                        <th>
+                            <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                                Location
+                            </button>
+                        </th>
+                        <th>
+                            <button style="font-weight: 700;" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                                Date
+                            </button>
+                        </th>
+                        <th>
+                            <button style="font-weight: 700;" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                                Start Time
+                            </button>
+                        </th>
+                        <th>
+                            <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                                End Time
+                            </button>
+                        </th>
+                      
+                        <th>
+                            <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
                                 Actions
                             </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID">
-                                        <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID">
-                                        <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-action="Archive" asp-route-id="@item.ID">
-                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+            @foreach (var item in Model) {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                           <td>
+                            @Html.DisplayFor(modelItem => item.VolLocation.City)
+                        </td>
+                        <td>
+				            @Html.DisplayFor(modelItem => item.Date)
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EndTime)
+                        </td>
+
+                            <td>
+                                <!-- Desktop View (Buttons) -->
+                                <div class="d-none d-lg-inline">
+                                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
+                                        <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
+                                    </a> |
+                                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
+                                        <img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
+                                    </a> |
+                                    <div class="btn-group">
+                                            @if (!item.IsArchived)
+                                            {
+                                            <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
+                                                <input type="hidden" name="id" value="@item.ID" />
+                                                <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
+                                                    <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                                    Archive
+                                                </button>
+                                            </form>
+                                            }
+                                            else
+                                            {
+                                            <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
+                                                <input type="hidden" name="id" value="@item.ID" />
+                                                <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#4CAF50 ;">
+                                                    <img src="~/Images/unarchive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                                    Restore
+                                                </button>
+                                            </form>
+                                            }
+                                    </div>
+                                </div>
+
+                                <!-- Mobile View (Dropdown) -->
+                                <div class="d-lg-none">
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm dropdown-toggle" style="background-color: #6423e7; color: white" data-bs-toggle="dropdown">
+                                            Actions
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID">
+                                                    <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID">
+                                                    <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
+                                                </a>
+                                            </li>
+                                            <li>
+                                                    @if (!item.IsArchived)
+                                                    {
+                                                    <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
+                                                        <input type="hidden" name="id" value="@item.ID" />
+                                                        <button type="submit" class="dropdown-item">
+                                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
+                                                        </button>
+                                                    </form>
+                                                    }
+                                                    else
+                                                    {
+                                                    <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to unarchive this item?');">
+                                                        <input type="hidden" name="id" value="@item.ID" />
+                                                        <button type="submit" class="dropdown-item">
+                                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Unarchive
+                                                        </button>
+                                                    </form>
+                                                    }
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 @if (TempData["SuccessMessage"] != null)
 {
     <script>

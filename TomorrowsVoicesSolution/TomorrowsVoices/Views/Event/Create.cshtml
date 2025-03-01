@@ -8,52 +8,207 @@
 
 <h4>Event</h4>
 <hr />
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+       
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Notes" class="control-label"></label>
-                <input asp-for="Notes" class="form-control" />
-                <span asp-validation-for="Notes" class="text-danger"></span>
+                <label asp-for="VolLocationID" class="control-label"></label>
+                <select asp-for="VolLocationID" class="form-control" asp-items="ViewBag.VolLocationID"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" />
+                <input asp-for="Date" class="form-control" type="date" id="datePicker" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="StartTime" class="control-label"></label>
-                <input asp-for="StartTime" class="form-control" />
-                <span asp-validation-for="StartTime" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="StartTime" class="control-label"></label>
+                        <input asp-for="StartTime" class="form-control" type="time" />
+                        <span asp-validation-for="StartTime" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="EndTime" class="control-label"></label>
+                        <input asp-for="EndTime" class="form-control" type="time" />
+                        <span asp-validation-for="EndTime" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
+            
+       
+         
+    
+            
+
+    </div>
+    <div class="col-md-4">
             <div class="form-group">
-                <label asp-for="EndTime" class="control-label"></label>
-                <input asp-for="EndTime" class="form-control" />
-                <span asp-validation-for="EndTime" class="text-danger"></span>
+                <label asp-for="Notes" class="control-label"></label>
+                <textarea asp-for="Notes" class="form-control" style="min-height: 116px ;max-height: 116px;"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="VolLocationID" class="control-label"></label>
-                <select asp-for="VolLocationID" class ="form-control" asp-items="ViewBag.VolLocationID"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
     </div>
 </div>
+<div class="mt-4">
+        <div class="text-black mb-2" style="border-bottom: 3px solid gray">
+            <dt style="font-size: 18px">Schedules</dt>
+        </div>
+        <div class="container">
+            <div class="row">
+                @if (Model.VolAttendance.Any())
+                {
+                    var groupedSchedules = Model.VolAttendance
+                    .Where(a => a.ScheduledStartTime != null && a.ScheduledEndTime != null)
+                    .GroupBy(a => new { a.ScheduledStartTime, a.ScheduledEndTime });
 
-<div>
-    <a asp-action="Index">Back to List</a>
+                    @foreach (var schedule in groupedSchedules)
+                    {
+                        if (schedule.All(a => a.ScheduledStartTime == schedule.Key.ScheduledStartTime &&
+                        a.ScheduledEndTime == schedule.Key.ScheduledEndTime))
+                        {
+                            <div class="col-lg-3 col-md-4 col-sm-6 p-2">
+                                <div class="card" style="background-color: #e1ccfc">
+
+                                    <div class="card-body ">
+
+                                        <div class="card-title" style="font-size: 17px; font-weight: 700; ">
+                                            @schedule.Key.ScheduledStartTime.ToString("hh:mm tt") - @schedule.Key.ScheduledEndTime.ToString("hh:mm tt")
+                                        </div>
+                                        <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
+
+                                            @foreach (var attendance in schedule)
+                                            {
+                                                <li>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+                else
+                {
+                    <p style="margin: 0; padding: 0">No schedules available.</p>
+                }
+            </div>
+        </div>
+    </div>
+<div class="text-black mb-2 mt-4" style="border-bottom: 3px solid gray">
+        <dt style="font-size: 18px">Track Attendances</dt>
+    </div>
+<div class="row">
+        <div class="col-lg-6 col-md-10 col-sm-12 col-12">
+        @if (Model.VolAttendance.Any())
+        {
+            var groupedSchedules = Model.VolAttendance
+            .Where(a => a.ScheduledStartTime != null && a.ScheduledEndTime != null)
+            .GroupBy(a => new { a.ScheduledStartTime, a.ScheduledEndTime });
+
+                <div class="accordion" id="attendanceAccordion">
+                @foreach (var schedule in groupedSchedules)
+                {
+                    if (schedule.All(a => a.ScheduledStartTime == schedule.Key.ScheduledStartTime &&
+                    a.ScheduledEndTime == schedule.Key.ScheduledEndTime))
+                    {
+                                    <div class="accordion-item">
+                                        <div class="accordion-header" id="heading@(schedule.Key.ScheduledStartTime.ToString("HHmm"))">
+                                            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@(schedule.Key.ScheduledStartTime.ToString("HHmm"))" aria-expanded="true" aria-controls="collapse@(schedule.Key.ScheduledStartTime.ToString("HHmm"))">
+                                    @schedule.Key.ScheduledStartTime.ToString("hh:mm tt") - @schedule.Key.ScheduledEndTime.ToString("hh:mm tt")
+                                            </button>
+                                        </div>
+                                        <div id="collapse@(schedule.Key.ScheduledStartTime.ToString("HHmm"))" class="accordion-collapse collapse show" aria-labelledby="heading@(schedule.Key.ScheduledStartTime.ToString("HHmm"))" data-bs-parent="#attendanceAccordion">
+                                            <div class="accordion-body" style="max-height: 250px; padding: 0">
+                                                <ul class="list-unstyled" style="padding: 0; margin: 0;">
+                                        @foreach (var attendance in schedule)
+                                        {
+                                            var actualStartTime = attendance.ActualStartTime;
+                                            var actualEndTime = attendance.ActualEndTime;
+                                            var hoursWorked = actualStartTime.HasValue && actualEndTime.HasValue
+                                            ? (actualEndTime.Value - actualStartTime.Value).TotalHours
+                                            : (double?)null;
+
+                                            @if (actualStartTime.HasValue && actualEndTime.HasValue)
+                                            {
+                                                                <li class="d-flex flex-row justify-content-between present-volunteer">
+                                                                    <div>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</div>
+                                                                    <div>
+                                                                        <span>@actualStartTime.Value.ToString("hh:mm tt") - @actualEndTime.Value.ToString("hh:mm tt")</span>
+                                                                        <span> (@hoursWorked?.ToString("0.00") hrs)</span>
+                                                                    </div>
+                                                                </li>
+                                            }
+                                            else
+                                            {
+                                                                <li class=" d-flex flex-row justify-content-between absent-volunteer">
+                                                                    <div>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</div>
+                                                                    <div>
+                                                                        <span>No actual time recorded (Absent)</span>
+                                                                    </div>
+                                                                </li>
+                                            }
+                                        }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                    }
+                }
+                </div>
+        }
+        else
+        {
+        <p style="margin: 0; padding: 0">No schedules available.</p>
+        }
+    </div>
 </div>
+<div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4">
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                    Create
+                </button>
+            </div>
 
+            <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
+
+    </div>
+    </<div>
+</div>
+     
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+        document.getElementById("datePicker").value = today; // Set default value
+    });
+</script>
+
+
+
+<style>
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: lightgray; /* Light gray thumb */
+        border-radius: 6px;
+    }
+
+     ::-webkit-scrollbar-track {
+        background: transparent; /* Hide the track */
+    }
+</style>

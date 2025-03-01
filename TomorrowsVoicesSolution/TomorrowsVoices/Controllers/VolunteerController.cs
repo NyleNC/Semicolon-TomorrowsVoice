@@ -32,7 +32,7 @@ namespace TomorrowsVoices.Controllers
                 .Include(v => v.VolLocation)
                 .AsNoTracking();
             ViewData["ActiveTab"] = archived ? "archived" : "active";
-            string[] sortOptions = new[] { "Volunteer", "City", "Email" };
+            string[] sortOptions = new[] { "FullName", "Location", "Email" };
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
 
@@ -52,8 +52,9 @@ namespace TomorrowsVoices.Controllers
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                volunteers = volunteers.Where(v => v.LastName != null && v.LastName.ToLower().Contains(SearchString.ToLower())
-                                                || v.FirstName != null && v.FirstName.ToLower().Contains(SearchString.ToLower()));
+                volunteers = volunteers.Where(s => s.FirstName != null && s.FirstName.ToLower().Contains(SearchString.ToLower())
+                                            || s.LastName != null && s.LastName.ToLower().Contains(SearchString.ToLower()));
+
                 numberFilters++;
             }
             if (!String.IsNullOrEmpty(SearchEmail))
@@ -68,20 +69,20 @@ namespace TomorrowsVoices.Controllers
                 numberFilters++;
             }
 
-            // sorting functionality
-            if (sortField == "Volunteer")
+            // Sorting logic based on selected field and direction
+            if (sortField == "FullName")
             {
                 if (sortDirection == "asc")
                 {
                     volunteers = volunteers
-                        .OrderBy(v => v.FirstName)
-                        .ThenBy(v => v.LastName);
+                        .OrderBy(s => s.FirstName)
+                        .ThenBy(s => s.LastName);
                 }
                 else
                 {
                     volunteers = volunteers
-                        .OrderByDescending(v => v.FirstName)
-                        .ThenBy(v => v.LastName);
+                        .OrderByDescending(s => s.FirstName)
+                        .ThenByDescending(s => s.LastName);
                 }
             }
             else if (sortField == "Email")
@@ -97,8 +98,8 @@ namespace TomorrowsVoices.Controllers
                 {
                     volunteers = volunteers
                         .OrderByDescending(v => v.Email)
-                        .ThenBy(v => v.FirstName)
-                        .ThenBy(v => v.LastName);
+                        .ThenByDescending(v => v.FirstName)
+                        .ThenByDescending(v => v.LastName);
                 }
             }
             else if (sortField == "City")
@@ -114,15 +115,16 @@ namespace TomorrowsVoices.Controllers
                 {
                     volunteers = volunteers
                         .OrderByDescending(v => v.VolLocation.City)
-                        .ThenBy(v => v.FirstName)
-                        .ThenBy(v => v.LastName);
+                        .ThenByDescending(v => v.FirstName)
+                        .ThenByDescending(v => v.LastName);
                 }
             }
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["numberFilters"] = numberFilters;
-
+            int archivedCount = await _context.Volunteers.CountAsync(d => d.IsArchived == true);
+            ViewData["numberofArchive"] = archivedCount;
             var cityList = volunteers.AsEnumerable()
                 .Select(v => v.VolLocation?.City.ToString())
                 .Where(city => city != null)
@@ -156,6 +158,8 @@ namespace TomorrowsVoices.Controllers
 
             var volunteer = await _context.Volunteers
                 .Include(v => v.VolLocation)
+                .Include(v => v.VolAttendances)
+                .ThenInclude(va => va.Event)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (volunteer == null)

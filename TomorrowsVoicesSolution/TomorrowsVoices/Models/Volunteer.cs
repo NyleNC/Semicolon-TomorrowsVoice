@@ -4,6 +4,22 @@ namespace TomorrowsVoices.Models
 {
     public class Volunteer
     {
+        #region Summary Properties
+        [Display(Name = "Volunteer")]
+        public string FullName => $"{FirstName} {LastName}";
+
+
+        //For lookup values.
+        [Display(Name = "Events Attended")]
+        public int EventsAttended => VolAttendances.Count(va => va.Status);
+
+        [Display(Name = "Total Hours")]
+        public double TotalHours => VolAttendances
+            .Where(va => va.ActualStartTime.HasValue && va.ActualEndTime.HasValue)
+            .Sum(va => (va.ActualEndTime.Value - va.ActualStartTime.Value).TotalHours);
+
+        #endregion
+
         public int ID { get; set; }
 
         [Display(Name = "First Name")]
@@ -22,11 +38,11 @@ namespace TomorrowsVoices.Models
         [DataType(DataType.PhoneNumber)]
         public string? Phone { get; set; }
 
-
         [StringLength(255)]
         [DataType(DataType.EmailAddress)]
         [Required(ErrorMessage = "You cannot leave the email blank.")]
         public string? Email { get; set; } = null;
+
 
         public int VolLocationID { get; set; }
 
@@ -38,3 +54,7 @@ namespace TomorrowsVoices.Models
 
     }
 }
+
+//Now for my volunteer i want to come up with a look up value Volunteer likr for example (How many events showed up, 
+//How many hours spent in events, while capturing some model properties: fullname, age, location, email) 
+//Something like this or may be something helpful to have an idea of what and how volunteer is doing for each Events on one page.

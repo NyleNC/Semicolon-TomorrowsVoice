@@ -29,10 +29,11 @@ namespace TomorrowsVoices.Models
         [Display(Name = "End Time")]
         public TimeOnly EndTime { get; set; }
 
+        [Display(Name = "Location")]
         public int VolLocationID { get; set; }
 
 
-        [Display(Name = "Location")]
+
         public VolLocation? VolLocation { get; set; }
 
         public ICollection<VolAttendance> VolAttendance { get; set; } = new HashSet<VolAttendance>();

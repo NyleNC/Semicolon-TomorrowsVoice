@@ -176,7 +176,8 @@ namespace TomorrowsVoices.Controllers
 			ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["numberFilters"] = numberFilters;
-
+            int archivedCount = await _context.Sessions.CountAsync(d => d.IsArchived == true);
+            ViewData["numberofArchive"] = archivedCount;
             var cityList = sessions.AsEnumerable()
                 .Select(d => d.Location?.City.ToString())
                 .Where(city => city != null)
@@ -286,7 +287,7 @@ namespace TomorrowsVoices.Controllers
                     var totalSingersCount = session.Attendance.Count();
 
 
-                    TempData["SuccessMessage"] = $"{presentSingersCount} singers out of {totalSingersCount} attended ";
+                    TempData["SuccessMessage"] = $"{presentSingersCount} singers attended ";
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -364,7 +365,7 @@ namespace TomorrowsVoices.Controllers
                     var totalSingersCount = sessionToUpdate.Attendance.Count();
                     //_context.Update(sessionToUpdate);
                     await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = $"Changes saved. {presentSingersCount} singers out of {totalSingersCount} attended "; 
+                    TempData["SuccessMessage"] = $"Changes saved. {presentSingersCount} singers attended "; 
                     return RedirectToAction(nameof(Index));
                 }
                 catch (RetryLimitExceededException /* dex */)

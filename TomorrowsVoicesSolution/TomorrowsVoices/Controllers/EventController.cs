@@ -26,6 +26,8 @@ namespace TomorrowsVoices.Controllers
             var tomorrowsVoicesContext = _context.Events.Where(d => d.IsArchived == archived).Include(a => a.VolLocation);
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
+            int archivedCount = await _context.Events.CountAsync(d => d.IsArchived == true);
+            ViewData["numberofArchive"] = archivedCount;
             return View(await tomorrowsVoicesContext.ToListAsync());
         }
 
