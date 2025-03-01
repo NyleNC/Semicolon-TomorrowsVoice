@@ -1,4 +1,4 @@
-﻿@model TomorrowsVoices.Models.Volunteer
+﻿@* @model TomorrowsVoices.Models.Volunteer
 
 @{
     ViewData["Title"] = "Details";
@@ -39,4 +39,55 @@
     </div>
     <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 226px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Volunteers Page</a>
 
+</div> *@
+
+@model TomorrowsVoices.Models.Volunteer
+
+@{
+    ViewData["Title"] = "Volunteer Details";
+}
+
+<h1>Volunteer Details</h1>
+<hr />
+
+<div>
+    <h2>@Model.FullName</h2><br />
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Phone:</strong> @Model.Phone</p>
+    <p><strong>Location:</strong> @Model.VolLocation?.City</p>
+    <p><strong>Events Attended:</strong> @Model.EventsAttended</p>
+    <p><strong>Total Hours:</strong> @Model.TotalHours</p>
 </div>
+
+<h3>Event Details</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Event Name</th>
+            <th>Date</th>
+            <th>Hours Spent</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var attendance in Model.VolAttendances)
+        {
+            <tr>
+                <td>@attendance.Event?.Name</td>
+                <td>@attendance.Date.ToString("yyyy-MM-dd")</td>
+                <td>
+                    @(attendance.ActualEndTime.HasValue && attendance.ActualStartTime.HasValue
+                        ? (attendance.ActualEndTime.Value - attendance.ActualStartTime.Value).TotalHours
+                        : 0)
+                </td>
+                <td>@(attendance.Status ? "Attended" : "Absent")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</p>
+

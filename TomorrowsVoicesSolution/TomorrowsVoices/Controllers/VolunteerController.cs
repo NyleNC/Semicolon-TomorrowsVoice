@@ -158,6 +158,8 @@ namespace TomorrowsVoices.Controllers
 
             var volunteer = await _context.Volunteers
                 .Include(v => v.VolLocation)
+                .Include(v => v.VolAttendances)
+                .ThenInclude(va => va.Event)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (volunteer == null)
