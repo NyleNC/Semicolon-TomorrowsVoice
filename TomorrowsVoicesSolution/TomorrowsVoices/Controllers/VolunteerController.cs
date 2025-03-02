@@ -320,120 +320,143 @@ namespace TomorrowsVoices.Controllers
         [HttpPost]
         public async Task<IActionResult> InsertVolunteersFromExcel(IFormFile theExcel)
         {
-            string feedback = string.Empty;
-            string successMessage = string.Empty;
+            var response = new { success = false, message = "" };
 
             if (theExcel == null || theExcel.Length == 0)
             {
-                TempData["Feedback"] = "Error: No file uploaded. Please select an Excel file.";
-                return RedirectToAction("Index");
+                response = new { success = false, message = "❌ No file uploaded. Please select an Excel file." };
+                return Json(response);
             }
 
-            if (theExcel != null)
+            string feedbackMessage = "";
+            int successCount = 0, errorCount = 0;
+
+            try
             {
                 string mimeType = theExcel.ContentType;
-                long fileLength = theExcel.Length;
-
-                if (!(mimeType == "" || fileLength == 0))
+                if (!mimeType.Contains("excel") && !mimeType.Contains("spreadsheet"))
                 {
-                    if (mimeType.Contains("excel") || mimeType.Contains("spreadsheet"))
-                    {
-                        ExcelPackage excel;
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await theExcel.CopyToAsync(memoryStream);
-                            excel = new ExcelPackage(memoryStream);
-                        }
+                    response = new { success = false, message = "⚠️ Invalid file format. Please upload a valid Excel file." };
+                    return Json(response);
+                }
 
-                        var workSheet = excel.Workbook.Worksheets[0];
+                using (var memoryStream = new MemoryStream())
+                {
+                    await theExcel.CopyToAsync(memoryStream);
+                    using (var package = new ExcelPackage(memoryStream))
+                    {
+                        var workSheet = package.Workbook.Worksheets[0];
                         var start = workSheet.Dimension.Start;
                         var end = workSheet.Dimension.End;
 
-                        int successCount = 0;
-                        int errorCount = 0;
-
-                        // Validate column headers
-                        if (workSheet.Cells[1, 1].Text.Trim() == "FirstName" &&
-                            workSheet.Cells[1, 2].Text.Trim() == "LastName" &&
-                            workSheet.Cells[1, 3].Text.Trim() == "Phone" &&
-                            workSheet.Cells[1, 4].Text.Trim() == "Email" &&
-                            workSheet.Cells[1, 5].Text.Trim() == "City")
+                        // Validate headers
+                        if (workSheet.Cells[1, 1].Text != "FirstName" ||
+                            workSheet.Cells[1, 2].Text != "LastName" ||
+                            workSheet.Cells[1, 3].Text != "Phone" ||
+                            workSheet.Cells[1, 4].Text != "Email" ||
+                            workSheet.Cells[1, 5].Text != "City")
                         {
-                            for (int row = start.Row + 1; row <= end.Row; row++)
+                            response = new { success = false, message = "❌ Invalid Excel format. Please ensure the file has 'FirstName', 'LastName', 'Phone', 'Email', and 'City' headers." };
+                            return Json(response);
+                        }
+
+                        for (int row = start.Row + 1; row <= end.Row; row++)
+                        {
+                            Volunteer volunteer = new Volunteer();
+                            try
                             {
-                                Volunteer volunteer = new Volunteer();
-                                try
-                                {
-                                    volunteer.FirstName = workSheet.Cells[row, 1].Text.Trim();
-                                    volunteer.LastName = workSheet.Cells[row, 2].Text.Trim();
-                                    volunteer.Phone = workSheet.Cells[row, 3].Text.Trim();
-                                    volunteer.Email = workSheet.Cells[row, 4].Text.Trim();
-                                    string cityName = workSheet.Cells[row, 5].Text.Trim();
+                                volunteer.FirstName = workSheet.Cells[row, 1].Text.Trim();
+                                volunteer.LastName = workSheet.Cells[row, 2].Text.Trim();
+                                volunteer.Phone = workSheet.Cells[row, 3].Text.Trim();
+                                volunteer.Email = workSheet.Cells[row, 4].Text.Trim();
+                                string cityName = workSheet.Cells[row, 5].Text.Trim();
 
-                                    // Validate data before adding
-                                    if (string.IsNullOrEmpty(volunteer.FirstName) ||
-                                        string.IsNullOrEmpty(volunteer.LastName) ||
-                                        string.IsNullOrEmpty(volunteer.Phone) ||
-                                        string.IsNullOrEmpty(volunteer.Email) ||
-                                        string.IsNullOrEmpty(cityName))
-                                    {
-                                        errorCount++;
-                                        feedback += $"Error: Row {row} has missing fields.<br />";
-                                        continue; // Skip invalid row
-                                    }
-
-                                    if (!Regex.IsMatch(volunteer.Phone, @"^\d{10}$"))
-                                    {
-                                        errorCount++;
-                                        feedback += $"Error: Invalid phone number in row {row}.<br />";
-                                        continue;
-                                    }
-
-                                    if (!_context.Volunteers.Any(v => v.Email == volunteer.Email))
-                                    {
-                                        var location = _context.VolLocations.FirstOrDefault(l => l.City == cityName);
-                                        if (location == null)
-                                        {
-                                            location = new VolLocation { City = cityName };
-                                            _context.VolLocations.Add(location);
-                                            await _context.SaveChangesAsync();
-                                        }
-                                        volunteer.VolLocation = location;
-
-                                        _context.Volunteers.Add(volunteer);
-                                        successCount++;
-                                    }
-                                    else
-                                    {
-                                        errorCount++;
-                                        feedback += $"Error: Volunteer with email {volunteer.Email} already exists.<br />";
-                                    }
-                                }
-                                catch (Exception ex)
+                                // Validate data before adding
+                                if (string.IsNullOrEmpty(volunteer.FirstName) ||
+                                    string.IsNullOrEmpty(volunteer.LastName) ||
+                                    string.IsNullOrEmpty(volunteer.Phone) ||
+                                    string.IsNullOrEmpty(volunteer.Email) ||
+                                    string.IsNullOrEmpty(cityName))
                                 {
                                     errorCount++;
-                                    feedback += $"Error: Exception in row {row} - {ex.Message}<br />";
+                                    feedbackMessage += $"⚠️ Error: Row {row} has missing fields.<br>";
+                                    continue; // Skip invalid row
                                 }
-                            }
 
-                            await _context.SaveChangesAsync();
+                                if (!Regex.IsMatch(volunteer.Phone, @"^\d{10}$"))
+                                {
+                                    errorCount++;
+                                    feedbackMessage += $"⚠️ Error: Invalid phone number in row {row}.<br>";
+                                    continue;
+                                }
+
+                                // Check if volunteer with the same email already exists
+                                if (_context.Volunteers.Any(v => v.Email == volunteer.Email))
+                                {
+                                    errorCount++;
+                                    feedbackMessage += $"⚠️ Error: Volunteer with email {volunteer.Email} already exists.<br>";
+                                    continue;
+                                }
+
+                                // Check if the location exists, otherwise create it
+                                var location = _context.VolLocations.FirstOrDefault(l => l.City == cityName);
+                                if (location == null)
+                                {
+                                    location = new VolLocation { City = cityName };
+                                    _context.VolLocations.Add(location);
+                                    await _context.SaveChangesAsync(); // Save the new location to get its ID
+                                }
+
+                                volunteer.VolLocationID = location.ID;
+                                _context.Volunteers.Add(volunteer);
+                                successCount++;
+                            }
+                            catch (Exception ex)
+                            {
+                                errorCount++;
+                                feedbackMessage += $"⚠️ Error: Exception in row {row} - {ex.Message}<br>";
+                            }
+                        }
+
+                        // Save changes to the database
+                        await _context.SaveChangesAsync();
+
+                        // Prepare response
+                        if (successCount > 0)
+                        {
+                            response = new { success = true, message = $"✅ {successCount} volunteers added successfully.<br>{feedbackMessage}" };
                         }
                         else
                         {
-                            feedback += "Error: Invalid Excel file format.<br />";
+                            response = new { success = false, message = $"❌ No volunteers were added.<br>{feedbackMessage}" };
                         }
-
-                        TempData["Success"] = $"<b>{successCount}</b> volunteers successfully added.";
                     }
-
-                    TempData["Feedback"] = feedback;
                 }
             }
+            catch (Exception ex)
+            {
+                response = new { success = false, message = $"❌ An error occurred: {ex.Message}" };
+            }
 
-            return RedirectToAction("Index");
+            return Json(response);
         }
 
+        // Excel Template Server
+        public IActionResult DownloadSampleExcel()
+        {
+            // Path to the sample Excel file in your project
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ExcelTemplates", "VolunteerTemplate.xlsx");
 
+            // Check if the file exists
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+
+            // Serve the file for download
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "VolunteerTemplate.xlsx");
+        }
 
         // GET: Volunteer/ExportVolunteersToExcel
         [HttpGet]

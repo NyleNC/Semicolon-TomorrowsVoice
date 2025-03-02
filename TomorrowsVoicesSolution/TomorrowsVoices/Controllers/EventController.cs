@@ -437,6 +437,23 @@ namespace TomorrowsVoices.Controllers
             return Json(response);
         }
 
+        // Excel Template Server
+        public IActionResult DownloadSampleExcel()
+        {
+            // Path to the sample Excel file in your project
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ExcelTemplates", "EventTemplate.xlsx");
+
+            // Check if the file exists
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+
+            // Serve the file for download
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "EventTemplate.xlsx");
+        }
+
         // Calendar Fetching Action Method
         [HttpGet]
         public async Task<IActionResult> GetCalendarEvents()

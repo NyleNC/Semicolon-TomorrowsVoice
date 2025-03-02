@@ -696,6 +696,68 @@ namespace TomorrowsVoices.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //ViewData["AvailableSingers_" + s.Location.ID] as int? ?? 0;
+
+        // Calendar Fetching Action Method for Sessions
+        [HttpGet]
+        public async Task<IActionResult> GetCalendarSessions()
+        {
+            // Fetch all sessions with Location and Attendance
+            var sessions = await _context.Sessions
+                .Where(s => !s.IsArchived) // Exclude archived sessions
+                .Include(s => s.Location) // Include Location
+                .Include(s => s.Attendance) // Include Attendance to count attendees
+                .ToListAsync();
+
+            // Calculate the total singers available for each city
+            var availableSingersPerCity = await _context.Singers
+                .GroupBy(s => s.LocationID)
+                .ToDictionaryAsync(g => g.Key, g => g.Count());
+
+            // Prepare the response
+            var sessionData = sessions.Select(s => new
+            {
+                id = s.ID,
+                title = $"{s.Location?.City ?? "No Location"} ({s.Attendance.Count(s => s.Status)}/{availableSingersPerCity.GetValueOrDefault(s.Location?.ID ?? 0, 0)})", // Include Location and Attendance count over total singers
+                start = s.Date?.ToString("yyyy-MM-dd"), // Use the session date
+                allDay = true, // Sessions are all-day events
+                notes = s.Notes, // Include notes if needed
+                location = s.Location != null ? s.Location.City : "No Location" // Include location name
+            }).ToList();
+
+            return Json(sessionData);
+        }
+
+        // Get Session Details for Pop-up
+        [HttpGet]
+        public async Task<IActionResult> GetSessionDetails(int id)
+        {
+            var session = await _context.Sessions
+                .Include(s => s.Location) // Include location details
+                .FirstOrDefaultAsync(s => s.ID == id);
+
+            if (session == null)
+            {
+                return NotFound();
+            }
+
+            // Return session details as JSON
+            return Json(new
+            {
+                id = session.ID,
+                date = session.Date?.ToString("yyyy-MM-dd"), // Format date
+                notes = session.Notes,
+                location = session.Location?.City, // Include location name
+                isArchived = session.IsArchived
+            });
+        }
+
+        // For Calendar View
+        public IActionResult Calendar()
+        {
+            return View();
+        }
+
         private bool SessionExists(int id)
         {
             return _context.Sessions.Any(e => e.ID == id);

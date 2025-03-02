@@ -7,7 +7,17 @@
     bool isArchived = ViewData["IsArchived"] as bool? ?? false;
 }
 
-<h1>Sessions Attendance</h1>
+<div class="d-flex align-items-center mb-3">
+    <!-- Sessions Heading -->
+    <h1 class="mb-0 me-3">Sessions Attendance | </h1>
+
+    <!-- Buttons for Table and Calendar Views -->
+    <div class="d-flex align-items-center">
+        <a asp-action="Index" class="btn btn-primary btn-events-toggle">Table View</a>
+        <a asp-action="Calendar" class="btn btn-primary btn-events-toggle">Calendar View</a>
+    </div>
+</div>
+
 @* Archived tabs *@
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">

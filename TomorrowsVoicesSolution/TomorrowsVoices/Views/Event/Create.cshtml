@@ -14,95 +14,100 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+                <input asp-for="Name" class="form-control" id="eventName" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <input asp-for="Description" class="form-control" id="eventDescription" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="VolLocationID" class="control-label"></label>
-                <select asp-for="VolLocationID" class="form-control" asp-items="ViewBag.VolLocationID"></select>
+                <select asp-for="VolLocationID" class="form-control" asp-items="ViewBag.VolLocationID" id="eventLocation"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" type="date" id="datePicker" />
+                <input asp-for="Date" class="form-control" type="date" id="eventDate" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="StartTime" class="control-label"></label>
-                        <input asp-for="StartTime" class="form-control" type="time" />
+                        <input asp-for="StartTime" class="form-control" type="time" id="eventStartTime" />
                         <span asp-validation-for="StartTime" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="EndTime" class="control-label"></label>
-                        <input asp-for="EndTime" class="form-control" type="time" />
+                        <input asp-for="EndTime" class="form-control" type="time" id="eventEndTime" />
                         <span asp-validation-for="EndTime" class="text-danger"></span>
                     </div>
                 </div>
-            </div>        
-    </div>
-    <div class="col-md-4">
+            </div>
+        </div>
+        <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="Notes" class="control-label"></label>
-                <textarea asp-for="Notes" class="form-control" style="min-height: 116px ;max-height: 116px;"></textarea>
+                <textarea asp-for="Notes" class="form-control" style="min-height: 116px; max-height: 116px;" id="eventNotes"></textarea>
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
         </div>
     </div>
-</div>
-<div class="container mt-5">
-    <div class="schedules-header">
-        <h1 class="schedule-title">Schedules</h1>
-        <div style="display: flex; align-items: center;">
-            <button type="button" id="import-button" class="import-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                </svg>
-                import
-            </button>
-            <div class="loading" id="loading-indicator">Loading...</div>
-            <input type="file" id="file-input" accept=".xlsx, .xls, .csv" />
+    <div class="container mt-5">
+        <div class="schedules-header">
+            <h1 class="schedule-title">Schedules</h1>
+            <div style="display: flex; align-items: center;">
+                <button type="button" id="import-button" class="import-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                    </svg>
+                    import
+                </button>
+                <div class="loading" id="loading-indicator">Loading...</div>
+                <input type="file" id="file-input" accept=".xlsx, .xls, .csv" />
+            </div>
+        </div>
+
+        <!-- Debug info - can be removed in production -->
+        <div id="debug-info" class="d-none"></div>
+
+        <div id="schedule-container" class="row">
+            <!-- Schedule cards will be generated here -->
         </div>
     </div>
 
-    <!-- Debug info - can be removed in production -->
-    <div id="debug-info" class="d-none"></div>
-
-    <div id="schedule-container" class="row">
-        <!-- Schedule cards will be generated here -->
-    </div> 
-</div>
-
-<div id="attendance-container" style="display: none;">
-    <h2 class="attendance-header">Track Attendance</h2>
-    <div class="row">
-        <div class="col-lg-8 col-md-10 col-sm-12 col-12">
-            <div class="accordion" id="attendanceAccordion">
-                <!-- Attendance accordion items will be generated here -->
+    <div id="attendance-container" style="display: none;">
+        <h2 class="attendance-header">Track Attendance</h2>
+        <div class="row">
+            <div class="col-lg-8 col-md-10 col-sm-12 col-12">
+                <div class="accordion" id="attendanceAccordion">
+                    <!-- Attendance accordion items will be generated here -->
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="container mt-4">
+    <div class="container mt-4">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4 d-flex gap-2">
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">
                         <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
                         Create
                     </button>
                 </div>
-
-                <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
+                <div>
+                    <button type="button" id="fillPresetValues" class="btn btn-secondary" style="background-color: navy">
+                        <img src="~/Images/create-icon.png" alt="Preset icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                        Fill Preset Values
+                    </button>
+                </div>
             </div>
+
+            <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
         </div>
     </div>
 </form>
@@ -554,7 +559,7 @@
         background: transparent; /* Hide the track */
     }
 
-    #debug-info{
+    #debug-info {
         display: none;
     }
 
@@ -723,6 +728,23 @@
                 console.error('Error:', error);
                 alert('An error occurred while creating the event.');
             });
+        });
+    });
+</script>
+
+<!-- Script to handle the "Fill Preset Values" button -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add event listener to the "Fill Preset Values" button
+        document.getElementById('fillPresetValues').addEventListener('click', function () {
+            // Fill the form fields with preset values
+            document.getElementById('eventName').value = "Sample Event";
+            document.getElementById('eventDescription').value = "This is a sample event description.";
+            document.getElementById('eventLocation').value = "1"; // Assuming "1" is a valid location ID
+            document.getElementById('eventDate').value = new Date().toISOString().split('T')[0]; // Today's date
+            document.getElementById('eventStartTime').value = "09:00";
+            document.getElementById('eventEndTime').value = "17:00";
+            document.getElementById('eventNotes').value = "Sample notes for the event.";
         });
     });
 </script>

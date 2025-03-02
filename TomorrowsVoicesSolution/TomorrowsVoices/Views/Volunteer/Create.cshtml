@@ -13,37 +13,40 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label><span style="color: red">*</span>
-                <input asp-for="FirstName" class="form-control" />
+                <input asp-for="FirstName" class="form-control" id="FirstName" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastName" class="control-label"></label><span style="color: red">*</span>
-                <input asp-for="LastName" class="form-control" />
+                <input asp-for="LastName" class="form-control" id="LastName" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label><span style="color: red">*</span>
-                <input asp-for="Email" class="form-control" />
+                <input asp-for="Email" class="form-control" id="Email" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Phone" class="control-label"></label><span style="color: red">*</span>
-                <input asp-for="Phone" class="form-control" />
+                <input asp-for="Phone" class="form-control" id="Phone" />
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="VolLocationID" class="control-label">Location</label><span style="color: red">*</span>
-                <select asp-for="VolLocationID" class ="form-control" asp-items="ViewBag.VolLocationID"></select>
-            </div> 
-           
-                <div class="form-group">
-                    <button type="submit" id="btnSubmit" class="btn btn-primary">
-                        <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                        Create
-                    </button>
+                <select asp-for="VolLocationID" class="form-control" asp-items="ViewBag.VolLocationID" id="VolLocationID"></select>
+            </div>
 
+            <div class="form-group">
+                <button type="submit" id="btnSubmit" class="btn btn-primary">
+                    <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                    Create
+                </button>
+                <button type="button" id="btnPreset" class="btn btn-secondary" onclick="fillPresetValues()" style="background-color: navy;">
+                    <img src="~/Images/create-icon.png" alt="Preset icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                    Preset Fill Value
+                </button>
             </div>
 
             <div class="form-group">
@@ -53,3 +56,14 @@
     </div>
 </div>
 
+@section Scripts {
+    <script>
+        function fillPresetValues() {
+            document.getElementById('FirstName').value = 'Radin';
+            document.getElementById('LastName').value = 'Shahravan';
+            document.getElementById('Email').value = 'rshahravan@example.com';
+            document.getElementById('Phone').value = '1234567890';
+            document.getElementById('VolLocationID').value = '1'; // Set to the appropriate default location ID
+        }
+    </script>
+}
