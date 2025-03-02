@@ -6,7 +6,6 @@
     <title>@ViewData["Title"] - TomorrowsVoices</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-
     <link rel="stylesheet" href="~/TomorrowsVoices.styles.css" asp-append-version="true" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
@@ -20,6 +19,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
+    <!-- Links for Pop Up Modal-->
+    @* <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> *@
+
+    <!--FullCalendar scripts for Calendar-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+    @* <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> *@
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     @functions {
         string IsActive(string controller, string action)
         {
@@ -29,64 +42,113 @@
 
             return (routeController == controller && routeAction == action) ? "active" : "";
         }
-    }
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- 
+        string IsSubMenuActive(params string[] controllers)
+        {
+            var routeData = ViewContext.RouteData;
+            var routeController = routeData.Values["controller"]?.ToString();
 
+            return controllers.Contains(routeController) ? "show" : "";
+        }
+    }
 </head>
 <body>
-    <header>
-        @* added navigation buttons in a dropdown  *@
-        <nav class="navbar navbar-expand-lg bg-dark navbar-toggleable-sm navbar-light bg-black border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/tv-logo.png" alt="Tomorrow's Voices Logo" class="header-logo"></a>
-                <button class="navbar-toggler" style="background-color:white; border-color: white" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon "></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav bg-black flex-grow-1">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Management Menu
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <!-- Sidebar -->
+            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark sidebar">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <header class="w-100">
+                        <div class="container-fluid header-logo-container">
+                  
+                       
+                            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                                <img src="~/Images/tv-logo.png" alt="Tomorrow's Voices Logo" class="header-logo" >
                             </a>
-                            <ul class="dropdown-menu text-white" aria-labelledby="navbarDropdown">
-                                <li class="nav-item"><a class="dropdown-item text-white @(IsActive("Director","Index"))" asp-controller="Director" asp-action="Index">Director</a></li>
-                                <li class="nav-item"><a class="dropdown-item text-white @(IsActive("Singer","Index"))" asp-controller="Singer" asp-action="Index">Singer</a></li>
-                                
-                                <div class="dropdown-divider"></div>
-                                <li class="nav-item"><a class="dropdown-item text-white @(IsActive("Session","Index"))" asp-controller="Session" asp-action="Index">Attendance</a></li>
+                        </div>
+                    </header>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                        <li>
+                            <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                                <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Choir Administration</span>
+                            </a>
+                            <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("Director", "Singer", "Session"))" id="submenu1">
+                                <li class="w-100">
+                                    <a class="nav-link px-0 @(IsActive("Director","Index"))" asp-controller="Director" asp-action="Index">Director</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link px-0  @(IsActive("Singer","Index"))" asp-controller="Singer" asp-action="Index">Singer</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link px-0 @(IsActive("Session","Index"))" asp-controller="Session" asp-action="Index">Attendance</a>
+                                </li>
                             </ul>
                         </li>
-                      
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                               Volunteer Menu
+                        <li>
+                            <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                                <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Volunteer Administrator</span>
                             </a>
-                            <ul class="dropdown-menu text-white" aria-labelledby="navbarDropdown">
-                                <li class="nav-item"><a class="dropdown-item text-white @(IsActive("VolLocation","Index"))" asp-controller="VolLocation" asp-action="Index">Volunteer Location</a></li>
-                                <li class="nav-item"><a class="dropdown-item text-white @(IsActive("Volunteer","Index"))" asp-controller="Volunteer" asp-action="Index">Volunteer Management</a></li>
-                                <li class="nav-item"><a class="dropdown-item text-white @(IsActive("Event","Index"))" asp-controller="Event" asp-action="Index">Event Management</a></li>
+                            <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("VolLocation",  "Volunteer", "Event"))" id="submenu2">
+                                <li class="w-100">
+                                    <a class="nav-link px-0 @(IsActive("VolLocation","Index"))" asp-controller="VolLocation" asp-action="Index">Volunteer Location</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link px-0  @(IsActive("Volunteer","Index"))" asp-controller="Volunteer" asp-action="Index">Volunteer Management</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link px-0  @(IsActive("Event","Index"))" asp-controller="Event" asp-action="Index">Event Management</a>
+                                </li>
                             </ul>
                         </li>
                     </ul>
-
+                    <hr>
+                    <div class="dropdown pb-4">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="~/Images/person-circle.svg" alt="UserIcon" width="30" height="30" class="rounded-circle">
+                            <span class="d-none d-sm-inline mx-1">User</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Sign out</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container" style="display: block;">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+            <!-- Main Content -->
+            <div class="col py-3">
+                <div>
+                <button class="toggle-btn" id="btn">
+                    <i class="bi bi-list"></i> <!-- Bootstrap icon for hamburger menu -->
+                </button>
+                </div>
+                <br />
+                <div class="container" style="display: block;">
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
+                </div>
+            </div>
+        </div>
     </div>
-
-    
-
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let btn = document.querySelector('#btn');
+            let sidebar = document.querySelector('.sidebar');
+
+            if (btn && sidebar) {
+                btn.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

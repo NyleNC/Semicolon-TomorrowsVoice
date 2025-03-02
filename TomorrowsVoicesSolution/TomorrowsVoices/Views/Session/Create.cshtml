@@ -8,8 +8,6 @@
 </style>
 @{
     ViewData["Title"] = "Create";
-    // var presentSingersCount = ViewBag.PresentSingersCount ?? "0/0";
-    // var absentSingersCount = ViewBag.AbsentSingersCount ?? "0/0";
 }
 
 <h1>Create Attendance</h1>
@@ -99,8 +97,9 @@
     }
     <script>
         document.getElementById("fillPresetButton").addEventListener("click", function () {
+            // Preset Values
             let defaultValues = {
-                LocationID: $("#LocationDropDown option:first").val(),
+                LocationID: $("#LocationDropDown option:eq(1)").val(), // Select the first non-empty option
                 Date: new Date().toISOString().split('T')[0], // Today's date
                 Notes: "Session went well."
             };
@@ -109,67 +108,54 @@
             let locationDropdown = $("#LocationDropDown");
             if (!locationDropdown.val()) {
                 locationDropdown.val(defaultValues.LocationID).trigger('change');
-                updateDirectorName(defaultValues.LocationID);
+                updateDirectorAndSingers(defaultValues.LocationID); // Update director and singers
             }
 
-            // Set Date
-            let dateField = document.getElementById("Date");
+            // Set Date (only if empty)
+            let dateField = document.querySelector("input[name='Date']");
             if (!dateField.value) {
                 dateField.value = defaultValues.Date;
             }
 
-            // Set Notes
-            let notesField = document.getElementById("Notes");
+            // Set Notes (only if empty)
+            let notesField = document.querySelector("textarea[name='Notes']");
             if (!notesField.value) {
                 notesField.value = defaultValues.Notes;
             }
         });
 
         $(document).ready(function () {
+            // Initialize Select2 for the LocationID dropdown
             $('.city-dropdown').select2({
                 placeholder: "Select a city",
                 allowClear: true
             });
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
-            $("#City").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: '@Url.Action("CitySuggestions", "Director")',
-                        type: "GET",
-                        dataType: "json",
-                        data: { term: request.term },
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return { label: item, value: item };
-                            }));
-                        }
-                    });
-                },
-                minLength: 1,
-                messages: {
-                    noResults: "No cities found",
-                    results: function () { return ""; }
-                },
-                open: function () {
-                    var autocompleteList = $(".ui-autocomplete");
-                    autocompleteList.css({
-                        "max-height": "200px",
-                        "overflow-y": "auto",
-                        "overflow-x": "hidden"
-                    });
-                }
+
+            // Set initial state of the "Choose Singers" list
+            let availableSingers = $("#availOptions");
+            availableSingers.empty();
+            availableSingers.append(`<option disabled style="white-space: normal; word-wrap: break-word;">Select a City to see the corresponding list of Singers.</option>`);
+
+            // Call updateDirectorAndSingers on page load with the current value of the dropdown
+            let initialLocationId = $("#LocationDropDown").val();
+            if (initialLocationId) {
+                updateDirectorAndSingers(initialLocationId);
+            }
+
+            // Move selected options between list boxes
+            $("#btnLeft").click(function () {
+                $("#availOptions option:selected").each(function () {
+                    $("#selectedOptions").append($(this));
+                });
             });
-            $('.city-dropdown').select2({
-                placeholder: "Select a city",
-                allowClear: true
+
+            $("#btnRight").click(function () {
+                $("#selectedOptions option:selected").each(function () {
+                    $("#availOptions").append($(this));
+                });
             });
         });
-    </script>
-    <script src="~/js/multiselect.js"></script>
-    <script>
+
         function updateDirectorAndSingers(locationId) {
             let directorNameField = $("#DirectorName");
             let availableSingers = $("#availOptions");
@@ -198,36 +184,5 @@
                 })
                 .catch(error => console.error('Error fetching director and singers:', error));
         }
-
-        $(document).ready(function () {
-            $('.city-dropdown').select2({
-                placeholder: "Select a city",
-                allowClear: true
-            });
-
-            // Set initial state of the "Choose Singers" list
-            let availableSingers = $("#availOptions");
-            availableSingers.empty();
-            availableSingers.append(`<option disabled style="white-space: normal; word-wrap: break-word;">Select a City to see the corresponding list of Singers.</option>`);
-
-            // Call updateDirectorAndSingers on page load with the current value of the dropdown
-            let initialLocationId = $("#LocationDropDown").val();
-            if (initialLocationId) {
-                updateDirectorAndSingers(initialLocationId);
-            }
-
-            $("#btnLeft").click(function () {
-                $("#availOptions option:selected").each(function () {
-                    $("#selectedOptions").append($(this));
-                });
-            });
-
-            $("#btnRight").click(function () {
-                $("#selectedOptions option:selected").each(function () {
-                    $("#availOptions").append($(this));
-                });
-            });
-        });
     </script>
 }
-

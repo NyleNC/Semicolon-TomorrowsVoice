@@ -5,7 +5,18 @@
     bool isArchived = ViewData["IsArchived"] as bool? ?? false;
 }
 
-<h1>Events</h1>
+<div class="d-flex align-items-center mb-3">
+    <!-- Events Heading -->
+    <h1 class="mb-0 me-3">Events | </h1>
+
+    <!-- Buttons for Table and Calendar Views -->
+    <div class="d-flex align-items-center">
+        <a asp-action="Index" class="btn btn-primary btn-events-toggle">Table View</a>
+        <a asp-action="Calendar" class="btn btn-primary btn-events-toggle">Calendar View</a>
+    </div>
+</div>
+
+
 @* Archived tabs *@
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
@@ -27,150 +38,232 @@
         </a>
     </li>
 </ul>
-@if (ViewData["ActiveTab"]?.ToString() != "archived")
-{
-    <p>
-        <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-attendance.png" alt="add-attendance-icon" style="height: 24px; width: auto; margin-right: 10px" />Create Event</a>
-    </p>
-}
 
-<div class="container" style=" margin: 0; padding: 0">
-    <div class="row" style="margin: 0; padding: 0">
-        <div class="col-12 table-responsive" style="margin: 0; padding: 0">
-            <table class="table table-striped table-hover table-custom">
-                <thead class="table-dark">
-                    <tr>
-                        <th>
-                            <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
-                            Title
-                            </button>
-                        </th>
-                        <th>
-                            <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
-                                Location
-                            </button>
-                        </th>
-                        <th>
-                            <button style="font-weight: 700;" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
-                                Date
-                            </button>
-                        </th>
-                        <th>
-                            <button style="font-weight: 700;" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
-                                Start Time
-                            </button>
-                        </th>
-                        <th>
-                            <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
-                                End Time
-                            </button>
-                        </th>
-                      
-                        <th>
-                            <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
-                                Actions
-                            </button>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-            @foreach (var item in Model) {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                           <td>
-                            @Html.DisplayFor(modelItem => item.VolLocation.City)
-                        </td>
-                        <td>
-				            @Html.DisplayFor(modelItem => item.Date)
-                        <td>
-                            @Html.DisplayFor(modelItem => item.StartTime)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.EndTime)
-                        </td>
+<div class="d-flex justify-content-between align-items-start mb-1">
+    @if (ViewData["ActiveTab"]?.ToString() != "archived")
+    {
+        <p>
+            <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-attendance.png" alt="add-attendance-icon" style="height: 24px; width: auto; margin-right: 10px" />Create Event</a>
+        </p>
 
-                            <td>
-                                <!-- Desktop View (Buttons) -->
-                                <div class="d-none d-lg-inline">
-                                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
-                                        <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
-                                    </a> |
-                                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
-                                        <img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
-                                    </a> |
-                                    <div class="btn-group">
-                                            @if (!item.IsArchived)
-                                            {
-                                            <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
-                                                <input type="hidden" name="id" value="@item.ID" />
-                                                <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
-                                                    <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                                    Archive
-                                                </button>
-                                            </form>
-                                            }
-                                            else
-                                            {
-                                            <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
-                                                <input type="hidden" name="id" value="@item.ID" />
-                                                <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#4CAF50 ;">
-                                                    <img src="~/Images/unarchive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                                    Restore
-                                                </button>
-                                            </form>
-                                            }
-                                    </div>
+        <!-- Import Excel Button - Pop Up Modal Button -->
+        <p class="mb-2">
+            <button type="button" class="btn btn-primary btn-import-excel" data-bs-toggle="modal" data-bs-target="#importExcelModal">
+                Import Excel
+            </button>
+        </p>
+    }
+</div>
+
+<!-- Modal -->
+<!-- Import Excel Modal -->
+<div class="modal fade" id="importExcelModal" tabindex="-1" aria-labelledby="importExcelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered import-excel-modal">
+        <!-- Added custom class `import-excel-modal` -->
+        <div class="modal-content import-excel-modal-content">
+            <!-- Added custom class `import-excel-modal-content` -->
+            <div class="modal-header bg-primary text-white imprt-excl-modal-header">
+                <h5 class="modal-title" id="importExcelModalLabel">Import Excel File</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body h-100 import-excel-modal-body">
+                <!-- Added custom class `import-excel-modal-body` -->
+                <div class="row h-100">
+                    <!-- Left Partition: Upload and Text Information -->
+                    <div class="col-md-6 d-flex flex-column justify-content-between">
+                        <!-- Feedback Alert -->
+                        <div id="importAlert" class="alert @(TempData["Feedback"] != null ? "alert-success" : "d-none") import-excel-alert">
+                            <!-- Added custom class `import-excel-alert` -->
+                            @Html.Raw(TempData["Feedback"])
+                        </div>
+
+                        <!-- Prompt Above the Drag-and-Drop Area -->
+                        <div class="mb-3">
+                            <p>
+                                Make sure you're using the correct sample file. Don't have one?
+                                <a href="@Url.Action("DownloadSampleExcel", "Event")" download class="import-excel-download-link">Download</a> a sample Excel file.
+                            </p>
+                        </div>
+
+                        <!-- Form for Uploading Excel File -->
+                        <form asp-action="InsertFromExcel" asp-controller="Event" method="post" enctype="multipart/form-data" class="h-100 d-flex flex-column justify-content-between">
+                            <div class="mb-3 flex-grow-1 d-flex flex-column justify-content-center">
+                                <!-- Drag-and-Drop Area -->
+                                <div id="dropArea" class="drop-area import-excel-drop-area flex-grow-1 d-flex align-items-center justify-content-center">
+                                    <!-- Added custom class `import-excel-drop-area` -->
+                                    <span class="drop-text import-excel-drop-text">
+                                        <!-- Added custom class `import-excel-drop-text` -->
+                                        <a href="#" id="browseLink" class="import-excel-browse-link">Browse your files</a>, or drag and drop here. Must be a CSV, XLS, or XLSX file.
+                                    </span>
+                                    <input type="file" class="form-control visually-hidden" name="theExcel" id="theExcel" accept=".csv, .xls, .xlsx" required>
                                 </div>
+                                <div class="invalid-feedback import-excel-invalid-feedback">Please select a valid Excel file.</div>
+                                <!-- Added custom class `import-excel-invalid-feedback` -->
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary import-excel-submit-btn">Upload Data</button>
+                                <!-- Added custom class `import-excel-submit-btn` -->
+                            </div>
+                        </form>
+                    </div>
 
-                                <!-- Mobile View (Dropdown) -->
-                                <div class="d-lg-none">
-                                    <div class="btn-group">
-                                        <button class="btn btn-sm dropdown-toggle" style="background-color: #6423e7; color: white" data-bs-toggle="dropdown">
-                                            Actions
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID">
-                                                    <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID">
-                                                    <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
-                                                </a>
-                                            </li>
-                                            <li>
+                    <!-- Right Partition: Picture -->
+                    <div class="col-md-6 d-flex align-items-center justify-content-center">
+                        <div class="image-placeholder import-excel-image-placeholder h-100 w-100">
+                            <!-- Added custom class `import-excel-image-placeholder` -->
+                            <img src="~/Images/modalBackDrop1.png" alt="Placeholder Image" class="img-fluid h-100 w-100" style="object-fit: contain;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Table View -->
+<div id="tableView">
+    <form asp-action="Index" method="get">
+        <div class="container" style=" margin: 0; padding: 0">
+            <div class="row" style="margin: 0; padding: 0">
+                <div class="col-12 table-responsive" style="margin: 0; padding: 0">
+                    <table class="table table-striped table-hover table-custom">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>
+                                    <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                                        Title
+                                    </button>
+                                </th>
+                                <th>
+                                    <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                                        Location
+                                    </button>
+                                </th>
+                                <th>
+                                    <button style="font-weight: 700;" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                                        Date
+                                    </button>
+                                </th>
+                                <th>
+                                    <button style="font-weight: 700;" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                                        Start Time
+                                    </button>
+                                </th>
+                                <th>
+                                    <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                                        End Time
+                                    </button>
+                                </th>
+
+                                <th>
+                                    <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                                        Actions
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.VolLocation.City)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Date)
+                                    <td>
+                                            @Html.DisplayFor(modelItem => item.StartTime)
+                                    </td>
+                                    <td>
+                                            @Html.DisplayFor(modelItem => item.EndTime)
+                                    </td>
+
+                                    <td>
+                                        <!-- Desktop View (Buttons) -->
+                                        <div class="d-none d-lg-inline">
+                                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
+                                                <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
+                                            </a> |
+                                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
+                                                <img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
+                                            </a> |
+                                            <div class="btn-group">
                                                     @if (!item.IsArchived)
                                                     {
-                                                    <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
+                                                    <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
                                                         <input type="hidden" name="id" value="@item.ID" />
-                                                        <button type="submit" class="dropdown-item">
-                                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
+                                                        <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
+                                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                                            Archive
                                                         </button>
                                                     </form>
                                                     }
                                                     else
                                                     {
-                                                    <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to unarchive this item?');">
+                                                    <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
                                                         <input type="hidden" name="id" value="@item.ID" />
-                                                        <button type="submit" class="dropdown-item">
-                                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Unarchive
+                                                        <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#4CAF50 ;">
+                                                            <img src="~/Images/unarchive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                                            Restore
                                                         </button>
                                                     </form>
                                                     }
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                                            </div>
+                                        </div>
+
+                                        <!-- Mobile View (Dropdown) -->
+                                        <div class="d-lg-none">
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm dropdown-toggle" style="background-color: #6423e7; color: white" data-bs-toggle="dropdown">
+                                                    Actions
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID">
+                                                            <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID">
+                                                            <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                            @if (!item.IsArchived)
+                                                            {
+                                                            <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
+                                                                <input type="hidden" name="id" value="@item.ID" />
+                                                                <button type="submit" class="dropdown-item">
+                                                                    <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
+                                                                </button>
+                                                            </form>
+                                                            }
+                                                            else
+                                                            {
+                                                            <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to unarchive this item?');">
+                                                                <input type="hidden" name="id" value="@item.ID" />
+                                                                <button type="submit" class="dropdown-item">
+                                                                    <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Unarchive
+                                                                </button>
+                                                            </form>
+                                                            }
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
+        <partial name="_PagingNavBar" />
+    </form>
 </div>
 
 @if (TempData["SuccessMessage"] != null)
@@ -186,3 +279,100 @@
         });
     </script>
 }
+
+<!-- POP UP MODAL SCRIPT -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropArea = document.getElementById('dropArea'); // Drag-and-drop area
+        const fileInput = document.getElementById('theExcel'); // File input element
+        const browseLink = document.getElementById('browseLink'); // Browse link
+
+        // Make the entire drop area clickable
+        dropArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Drag and drop functionality
+        dropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropArea.classList.add('dragover'); // Add visual feedback for drag-over
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragover'); // Remove visual feedback when leaving
+        });
+
+        dropArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropArea.classList.remove('dragover'); // Remove visual feedback after drop
+            fileInput.files = event.dataTransfer.files; // Assign dropped files to the input
+            updateDropText(); // Update the drop area text
+        });
+
+        // Update drop area text when a file is selected
+        fileInput.addEventListener('change', () => {
+            updateDropText();
+        });
+
+        // Function to update the drop area text with the selected file name
+        function updateDropText() {
+            if (fileInput.files.length > 0) {
+                dropArea.querySelector('.import-excel-drop-text').textContent = fileInput.files[0].name;
+            }
+        }
+
+        // Handle form submission
+        const form = document.querySelector('form'); // Select the form element
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var alertDiv = document.getElementById('importAlert'); // Feedback alert div
+
+            // Validate if a file is selected
+            if (fileInput.files.length === 0) {
+                fileInput.classList.add("is-invalid"); // Show invalid feedback
+                alertDiv.classList.remove("d-none", "alert-success");
+                alertDiv.classList.add("alert-danger");
+                alertDiv.innerHTML = "Please select a valid Excel file.";
+                return;
+            } else {
+                fileInput.classList.remove("is-invalid"); // Remove invalid feedback
+            }
+
+            // Create FormData object for AJAX submission
+            var formData = new FormData(form);
+
+            // Submit the form via AJAX
+            $.ajax({
+                url: form.action, // Use the form's action URL
+                type: 'POST',
+                data: formData,
+                contentType: false, // Required for file uploads
+                processData: false, // Required for file uploads
+                success: function (response) {
+                    if (response.success) {
+                        // Show success alert in a separate pop-up window
+                        alert("Upload process completed successfully!");
+                        // Close the modal after successful upload
+                        $('#importExcelModal').modal('hide');
+                        // Optionally, reload the page or update the UI as needed
+                        setTimeout(() => location.reload(), 2000); // Reload page after success
+                    } else {
+                        // Keep the modal open and display the error message
+                        alertDiv.classList.remove("d-none", "alert-success");
+                        alertDiv.classList.add("alert-danger");
+                        alertDiv.innerHTML = response.message;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Keep the modal open and display the error message
+                    alertDiv.classList.remove("d-none", "alert-success");
+                    alertDiv.classList.add("alert-danger");
+                    alertDiv.innerHTML = "An error occurred while uploading the file: " + error;
+                }
+            });
+        });
+    });
+</script>

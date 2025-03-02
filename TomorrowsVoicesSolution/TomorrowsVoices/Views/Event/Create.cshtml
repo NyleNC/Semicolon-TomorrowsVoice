@@ -10,13 +10,17 @@
 <hr />
 <form asp-action="Create">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<div class="row">
-    <div class="col-md-4">
-       
+    <div class="row">
+        <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="VolLocationID" class="control-label"></label>
@@ -50,6 +54,7 @@
                 <textarea asp-for="Notes" class="form-control" style="min-height: 116px ;max-height: 116px;"></textarea>
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
+        </div>
     </div>
 </div>
 <div class="container mt-5">
@@ -89,19 +94,17 @@
 <div class="container mt-4">
         <div class="row">
             <div class="col-md-4">
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">
-                    <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                    Create
-                </button>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                        Create
+                    </button>
+                </div>
+
+                <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
             </div>
-
-            <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
-
+        </div>
     </div>
-    </<div>
-</div>
-     
 </form>
 
 <script>
@@ -547,7 +550,7 @@
         border-radius: 6px;
     }
 
-     ::-webkit-scrollbar-track {
+    ::-webkit-scrollbar-track {
         background: transparent; /* Hide the track */
     }
 
@@ -688,3 +691,38 @@
         color: red;
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle form submission
+        document.getElementById('createEventForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var formData = new FormData(this); // Get form data
+
+            // Submit the form via AJAX
+            fetch('/Event/Create', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            })
+            .then(response => response.json()) // Parse the JSON response
+            .then(data => {
+                if (data.success) {
+                    // If the event is created successfully, refetch events for the calendar
+                    calendar.refetchEvents(); // Refetch events from the server
+                    alert(data.message); // Show success message
+                } else {
+                    // If validation fails, show error messages
+                    alert(data.message + "\n" + data.errors.join("\n"));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while creating the event.');
+            });
+        });
+    });
+</script>

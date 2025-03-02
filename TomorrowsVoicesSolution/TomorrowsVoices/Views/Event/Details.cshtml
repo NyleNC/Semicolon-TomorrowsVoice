@@ -48,44 +48,76 @@
                         .Where(a => a.ScheduledStartTime != null && a.ScheduledEndTime != null)
                         .GroupBy(a => new { a.ScheduledStartTime, a.ScheduledEndTime });
 
-                        @foreach (var schedule in groupedSchedules)
-                        {
-                            if (schedule.All(a => a.ScheduledStartTime == schedule.Key.ScheduledStartTime &&
-                            a.ScheduledEndTime == schedule.Key.ScheduledEndTime))
-                            {
-                                <div class="col-lg-3 col-md-4 col-sm-6 p-2">
-                                <div class="card" style="background-color: #e1ccfc">
-
-                                        <div class="card-body ">
-
-                                        <div class="card-title" style="font-size: 17px; font-weight: 700; ">
-                                                @schedule.Key.ScheduledStartTime.ToString("hh:mm tt") - @schedule.Key.ScheduledEndTime.ToString("hh:mm tt")
-                                            </div>
-                                        <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
-                                         
-                                                @foreach (var attendance in schedule)
-                                                {
-                                                    <li>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</li>
-                                                }
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        }
-                    }
-                    else
-                    {
-                        <p>No schedules available.</p>
-                    }
-                </div>
-            </div>
-        </div>
-    <div class="text-black mb-4 mt-4" style="border-bottom: 3px solid gray">
-        <dt style="font-size: 18px">Track Attendances</dt>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.StartTime)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.StartTime)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.EndTime)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.EndTime)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.VolLocation)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.VolLocation.City)
+    </dd>
+</dl>
+<div class="mt-4">
+    <div class="text-black mb-2" style="border-bottom: 3px solid gray">
+        <dt style="font-size: 18px">Schedules</dt>
     </div>
-    <div class="row">
-        <div class="col-lg-6 col-md-10 col-sm-12 col-12"
+    <div class="container">
+        <div class="row">
+            @if (Model.VolAttendance.Any())
+            {
+                var groupedSchedules = Model.VolAttendance
+                .Where(a => a.ScheduledStartTime != null && a.ScheduledEndTime != null)
+                .GroupBy(a => new { a.ScheduledStartTime, a.ScheduledEndTime });
+
+                @foreach (var schedule in groupedSchedules)
+                {
+                    if (schedule.All(a => a.ScheduledStartTime == schedule.Key.ScheduledStartTime &&
+                    a.ScheduledEndTime == schedule.Key.ScheduledEndTime))
+                    {
+                        <div class="col-lg-3 col-md-4 col-sm-6 p-2">
+                            <div class="card" style="background-color: #e1ccfc">
+
+                                <div class="card-body ">
+
+                                    <div class="card-title" style="font-size: 17px; font-weight: 700; ">
+                                        @schedule.Key.ScheduledStartTime.ToString("hh:mm tt") - @schedule.Key.ScheduledEndTime.ToString("hh:mm tt")
+                                    </div>
+                                    <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
+
+                                        @foreach (var attendance in schedule)
+                                        {
+                                            <li>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+            else
+            {
+                <p>No schedules available.</p>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="text-black mb-4 mt-4" style="border-bottom: 3px solid gray">
+    <dt style="font-size: 18px">Track Attendances</dt>
+</div>
+<div class="row">
+    <div class="col-lg-6 col-md-10 col-sm-12 col-12">
         @if (Model.VolAttendance.Any())
         {
             var groupedSchedules = Model.VolAttendance
@@ -117,22 +149,22 @@
 
                                             @if (actualStartTime.HasValue && actualEndTime.HasValue)
                                             {
-                                            <li class="d-flex flex-row justify-content-between present-volunteer">
-                                                <div>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</div>
-                                                <div>
-                                                    <span>@actualStartTime.Value.ToString("hh:mm tt") - @actualEndTime.Value.ToString("hh:mm tt")</span>
-                                                    <span> (@hoursWorked?.ToString("0.00") hrs)</span>
-                                                </div>
-                                            </li>
+                                                <li class="d-flex flex-row justify-content-between present-volunteer">
+                                                    <div>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</div>
+                                                    <div>
+                                                        <span>@actualStartTime.Value.ToString("hh:mm tt") - @actualEndTime.Value.ToString("hh:mm tt")</span>
+                                                        <span> (@hoursWorked?.ToString("0.00") hrs)</span>
+                                                    </div>
+                                                </li>
                                             }
                                             else
                                             {
-                                            <li class=" d-flex flex-row justify-content-between absent-volunteer">
-                                                <div>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</div>
-                                                <div>
-                                                    <span>No actual time recorded (Absent)</span>
-                                                </div>
-                                            </li>
+                                                <li class="d-flex flex-row justify-content-between absent-volunteer">
+                                                    <div>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</div>
+                                                    <div>
+                                                        <span>No actual time recorded (Absent)</span>
+                                                    </div>
+                                                </li>
                                             }
                                         }
                                     </ul>
@@ -148,25 +180,23 @@
             <p>No schedules available.</p>
         }
     </div>
-    <dl class="row mt-4">
-        <dt class = "col-sm-2">
-			@Html.DisplayNameFor(model => model.Notes)
-		</dt>
-		<dd class = "col-sm-10">
-			@Html.DisplayFor(model => model.Notes)
-		</dd>
-     
-    </dl>
-
-            <div class="form-group">
-            <a asp-action="Edit" class="btn btn-warning" asp-route-id="@Model?.ID">
-                <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
-            </a>
-         </div>
-         <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
-
-
 </div>
+
+ <dl class="row mt-4">
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Notes)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Notes)
+</dd>
+</dl>
+
+<div class="form-group">
+    <a asp-action="Edit" class="btn btn-warning" asp-route-id="@Model?.ID">
+        <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
+    </a>
+</div>
+<a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
 
 
 <style>
@@ -189,15 +219,14 @@
         scrollbar-color: rgb(100, 79, 128) transparent;
     }
 
-
-    .present-volunteer{
+    .present-volunteer {
         background-color: lightgreen;
         border-top: 3px solid darkgreen;
         padding: 12px 20px;
     }
 
-    .absent-volunteer{
-        background-color:lightcoral;
+    .absent-volunteer {
+        background-color: lightcoral;
         border-top: 3px solid darkred;
         padding: 12px 20px;
     }

@@ -16,24 +16,24 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <input asp-for="FirstName" class="form-control" placeholder="Jon" />
+                <input asp-for="FirstName" class="form-control" placeholder="Jon" id="FirstName" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <input asp-for="LastName" class="form-control" placeholder="Snow" />
+                <input asp-for="LastName" class="form-control" placeholder="Snow" id="LastName" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LocationID" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <select asp-for="LocationID" class="form-control city-dropdown" asp-items="ViewBag.CityList">
+                <select asp-for="LocationID" class="form-control city-dropdown" asp-items="ViewBag.CityList" id="LocationID">
                     <option value="">Select a location</option>
                 </select>
                 <span asp-validation-for="LocationID" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="EmergencyContactName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <input asp-for="EmergencyContactName" class="form-control" placeholder="Lyanna Stark" />
+                <input asp-for="EmergencyContactName" class="form-control" placeholder="Lyanna Stark" id="EmergencyContactName" />
                 <span asp-validation-for="EmergencyContactName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -50,6 +50,7 @@
                     <button type="submit" class="btn btn-primary">
                         <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
                         Create
+                    </button>
                 </div>
                 <div class="form-group d-inline">
                     <button type="button" id="fillPresetButton" class="btn btn-secondary" style="background-color: navy;">Fill Preset Values</button>
@@ -66,122 +67,71 @@
     }
     <script>
         $(document).ready(function () {
-            $("#City").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: '@Url.Action("CitySuggestions", "Director")',
-                        type: "GET",
-                        dataType: "json",
-                        data: { term: request.term },
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return { label: item, value: item };
-                            }));
-                        }
-                    });
-                },
-                minLength: 1,
-                messages: {
-                    noResults: "No cities found",
-                    results: function () { return ""; }
-                },
-                open: function () {
-                    var autocompleteList = $(".ui-autocomplete");
-                    autocompleteList.css({
-                        "max-height": "200px",
-                        "overflow-y": "auto",
-                        "overflow-x": "hidden"
-                    });
-                }
-            });
-        });
-        $(document).ready(function () {
+            // Initialize Select2 for the LocationID dropdown
             $('.city-dropdown').select2({
                 placeholder: "Select a city",
                 allowClear: true
             });
+
+            // Fill Preset Values Button
+            document.getElementById("fillPresetButton").addEventListener("click", function () {
+                // Preset Values
+                let defaultValues = {
+                    FirstName: "Alex",
+                    LastName: "Moore",
+                    LocationID: "1", // Replace "1" with the actual value of the location you want to preselect
+                    EmergencyContactName: "John Doe",
+                    EmergencyContactNumber: "(123) 456-7890"
+                };
+
+                // Set fields only if they are empty
+                if (!document.getElementById("FirstName").value) {
+                    document.getElementById("FirstName").value = defaultValues.FirstName;
+                }
+                if (!document.getElementById("LastName").value) {
+                    document.getElementById("LastName").value = defaultValues.LastName;
+                }
+                if (!document.getElementById("EmergencyContactName").value) {
+                    document.getElementById("EmergencyContactName").value = defaultValues.EmergencyContactName;
+                }
+                if (!document.getElementById("EmergencyContactNumber").value) {
+                    document.getElementById("EmergencyContactNumber").value = defaultValues.EmergencyContactNumber;
+                }
+
+                // Set the LocationID dropdown using Select2
+                if (!$("#LocationID").val()) {
+                    $("#LocationID").val(defaultValues.LocationID).trigger('change');
+                }
+            });
+
+            // Phone Number Formatting
+            document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {
+                e.target.value = formatPhoneNumber(e.target.value);
+            });
+
+            function formatPhoneNumber(value) {
+                value = value.replace(/\D/g, ""); // Remove non-numeric characters
+                if (value.length > 10) {
+                    value = value.substring(0, 10); // Limit to 10 digits
+                }
+                let formattedValue = "";
+                if (value.length > 0) {
+                    formattedValue += "(" + value.substring(0, 3);
+                }
+                if (value.length >= 4) {
+                    formattedValue += ") " + value.substring(3, 6);
+                }
+                if (value.length >= 7) {
+                    formattedValue += "-" + value.substring(6, 10);
+                }
+                return formattedValue;
+            }
+
+            // Remove formatting before form submission
+            document.querySelector('form').addEventListener('submit', function (e) {
+                let emergencyContactNumber = document.getElementById('EmergencyContactNumber');
+                emergencyContactNumber.value = emergencyContactNumber.value.replace(/\D/g, ""); // Remove non-numeric characters
+            });
         });
     </script>
 }
-
-<script>
-    document.getElementById("fillPresetButton").addEventListener("click", function () {
-        // Preset Values
-        let defaultValues = {
-            FirstName: "Alex",
-            LastName: "Moore",
-            City: "Toronto",
-            IsAvailable: true
-        };
-
-        // Set fields only if they are empty
-        if (!document.getElementById("FirstName").value) {
-            document.getElementById("FirstName").value = defaultValues.FirstName;
-        }
-        if (!document.getElementById("LastName").value) {
-            document.getElementById("LastName").value = defaultValues.LastName;
-        }
-
-        // Check "IsAvailable"
-        document.getElementById("IsAvailable").checked = defaultValues.IsAvailable;
-    });
-
-
-    });
-</script>
-
-<script>
-    $(document).ready(function() {
-        $('.city-dropdown').select2({
-            placeholder: "Select a city",
-            allowClear: true,
-            dropdownParent: $('body') // This will make select2's dropdown overflow outside the container.
-        }).on('select2:open', function (e) {
-            const $dropdown = $(".select2-dropdown");
-            const $select2 = $(this).data('select2');
-            if ($select2 && $select2.options && $select2.options.options) {
-                $dropdown.css('z-index', 1051);
-            }
-        });
-    });
-
-
-//For Phone Number Formating.
-    // For emergency contact number format
-    document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {
-        let cursorPosition = e.target.selectionStart;
-        let value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-
-        if (value.length > 10) {
-            value = value.substring(0, 10); // Limit to 10 digits
-        }
-
-        let formattedValue = "";
-
-        if (value.length > 0) {
-            formattedValue += "(" + value.substring(0, 3);
-        }
-        if (value.length >= 4) {
-            formattedValue += ") " + value.substring(3, 6);
-        }
-        if (value.length >= 7) {
-            formattedValue += "-" + value.substring(6, 10);
-        }
-
-        e.target.value = formattedValue;
-    });
-
-    // Remove formatting before form submission
-    document.querySelector('form').addEventListener('submit', function (e) {
-        let emergencyContactNumber = document.getElementById('EmergencyContactNumber');
-        emergencyContactNumber.value = emergencyContactNumber.value.replace(/\D/g, ""); // Remove non-numeric characters
-    });
-//End
-
-
-    // Event listener for input field
-    document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {
-        e.target.value = formatPhoneNumber(e.target.value);
-    });
-</script>
-
