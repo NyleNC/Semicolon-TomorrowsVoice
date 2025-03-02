@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
+using TomorrowsVoices.Utilities;
 
 namespace TomorrowsVoices.Controllers
 {
@@ -21,14 +23,21 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Event
-        public async Task<IActionResult> Index(bool archived = false)
+        public async Task<IActionResult> Index(int? page, int? pageSizeID, bool archived = false)
         {
             var tomorrowsVoicesContext = _context.Events.Where(d => d.IsArchived == archived).Include(a => a.VolLocation);
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
             int archivedCount = await _context.Events.CountAsync(d => d.IsArchived == true);
             ViewData["numberofArchive"] = archivedCount;
-            return View(await tomorrowsVoicesContext.ToListAsync());
+
+            // Handle Paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+
+            var pagedData = await PaginatedList<Event>.CreateAsync(tomorrowsVoicesContext.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
         }
 
         // GET: Event/Details/5
