@@ -450,6 +450,7 @@ label.required:after {
 .header-logo {
     width: 120px;
     height: auto;
+ 
 }
 /* Hide sidebar by default on mobile */
 @media (max-width: 768px) {
@@ -498,5 +499,12 @@ label.required:after {
     color: #31afc6;
     font-size: 2rem;
     position: absolute;
-    left: 50%;
+   
+    margin-top:15px;
+
+}
+.header-logo-container {
+    margin-top: 20px;
+    margin-bottom:30px;
+
 }
