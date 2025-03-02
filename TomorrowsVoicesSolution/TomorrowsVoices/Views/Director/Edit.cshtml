@@ -7,35 +7,33 @@
 
 
 
-<h1>Edit</h1>
-
-<h4>Director</h4>
+<h1>Edit Director</h1>
 <hr />
 <form asp-action="Edit">
-    <p class="mb-4 " style="font-weight: 500">Fields marked <span style="color: red">*</span> are required.</p>
+    <p class="mb-4 " style="font-weight: 700">Fields marked <span style="color: red">*</span> are required.</p>
 <div class="row">
     <div class="col-md-4">
        
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label><span style="color: red">*</span>
+                <label asp-for="FirstName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                 <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label><span style="color: red">*</span>
+                <label asp-for="LastName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Location.City" class="control-label"></label><span style="color: red">*</span>
+                <label asp-for="Location.City" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                 <select asp-for="Location.City" class="form-control city-dropdown" asp-items="ViewBag.CityList"></select>
                 <span asp-validation-for="Location.City" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label><span style="color: red">*</span>
+                <label asp-for="Email" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>

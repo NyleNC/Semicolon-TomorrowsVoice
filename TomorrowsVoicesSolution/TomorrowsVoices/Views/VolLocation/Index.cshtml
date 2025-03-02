@@ -54,6 +54,7 @@
                             </th>
                         </tr>
                     </thead>
+</form>
                     <tbody style="overflow: visible">
                         @foreach (var item in Model)
                         {
@@ -128,6 +129,7 @@
                                                             <input type="hidden" name="id" value="@item.ID" />
                                                             <button type="submit" class="dropdown-item">
                                                                 <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Restore
+                                                                </button>
                                                         </form>
                                                     }
                                                 </li>
@@ -143,7 +145,7 @@
         </div>
     </div>
     <partial name="_PagingNavBar" />
-</form>
+
 
 @if (TempData["SuccessMessage"] != null)
 {

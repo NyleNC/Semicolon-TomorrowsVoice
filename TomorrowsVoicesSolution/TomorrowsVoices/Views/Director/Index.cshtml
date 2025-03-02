@@ -107,11 +107,11 @@
             </div>
         </div>
     </div>
-   
+
 
     }
- 
-   
+
+
 </div>
 <p></p>
 
@@ -253,7 +253,7 @@
                 </th>
             </tr>
         </thead>
-
+</form>
         <tbody>
             @foreach (var item in Model)
             {
@@ -277,25 +277,25 @@
                                 <img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
                             </a> |
                             <div class="btn-group">
-                            @if (!item.IsArchived)
-                            {
-                                <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
-                                    <input type="hidden" name="id" value="@item.ID" />
-                                    <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
-                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                        Archive
-                                    </button>
-                                </form>
-                            }
-                            else
-                            {
-                                <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
-                                    <input type="hidden" name="id" value="@item.ID" />
+                                @if (!item.IsArchived)
+                                {
+                                    <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
+                                        <input type="hidden" name="id" value="@item.ID" />
+                                        <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
+                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                            Archive
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
+                                        <input type="hidden" name="id" value="@item.ID" />
                                         <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#4CAF50 ;">
                                             <img src="~/Images/unarchive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                             Restore
                                         </button>
-                                </form>
+                                    </form>
                                 }
                             </div>
                         </div>
@@ -309,7 +309,7 @@
                                 <ul class="dropdown-menu">
                                     <li>
                                         <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID" style=" color: white">
-                                            <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px"/> Edit
+                                            <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
                                         </a>
                                     </li>
                                     <li>
@@ -321,7 +321,7 @@
                                         @if (!item.IsArchived)
                                         {
                                             <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?'); ">
-                                                <input type="hidden" name="id" value="@item.ID"  />
+                                                <input type="hidden" name="id" value="@item.ID" />
                                                 <button type="submit" class="dropdown-item" style=" color: white">
                                                     <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
                                                 </button>
@@ -345,11 +345,11 @@
         </tbody>
     </table>
     <partial name="_PagingNavBar" />
-</form>
+
 
 <script>
     function handleSort(event, field) {
-     
+
         event.preventDefault();
         const form = event.target.closest('form');
         const sortField = form.querySelector('input[name="sortField"]');

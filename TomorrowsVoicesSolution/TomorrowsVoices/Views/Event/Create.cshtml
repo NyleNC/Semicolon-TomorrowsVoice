@@ -4,9 +4,9 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create Event</h1>
 
-<h4>Event</h4>
+
 <hr />
 <form asp-action="Create">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -28,7 +28,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" type="date" id="eventDate" />
+                <input asp-for="Date" class="form-control" type="date" id="datePicker"/>
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="row">
@@ -56,7 +56,7 @@
             </div>
         </div>
     </div>
-    <div class="container mt-5">
+    <div class="container mt-5 ms-0 ps-0">
         <div class="schedules-header">
             <h1 class="schedule-title">Schedules</h1>
             <div style="display: flex; align-items: center;">
@@ -78,8 +78,14 @@
             <!-- Schedule cards will be generated here -->
         </div>
     </div>
+    <div id="future-message" class="alert alert-warning text-center mt-3 d-none" role="alert">
+        <h4 class="alert-heading">Attendance Not Available Yet</h4>
+        <p>You can track attendance when the event starts on the date specified.</p>
+    </div>
 
-    <div id="attendance-container" style="display: none;">
+    <!-- Attendance Container -->
+  
+    <div id="attendance-container" style="display: none; padding-left: 0">
         <h2 class="attendance-header">Track Attendance</h2>
         <div class="row">
             <div class="col-lg-8 col-md-10 col-sm-12 col-12">
@@ -89,8 +95,9 @@
             </div>
         </div>
     </div>
+   
 
-    <div class="container mt-4">
+    <div class="container mt-4 ps-0">
         <div class="row">
             <div class="col-md-4 d-flex gap-2">
                 <div class="form-group">
@@ -105,18 +112,85 @@
                         Fill Preset Values
                     </button>
                 </div>
+
             </div>
 
-            <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
+           
         </div>
     </div>
 </form>
+<a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         let today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
         document.getElementById("datePicker").value = today; // Set default value
     });
+    document.getElementById("datePicker").addEventListener("change", function () {
+        let selectedDate = new Date(this.value); // Get the selected date
+        let today = new Date(); // Get today's date
+        today.setHours(0, 0, 0, 0); // Remove time for accurate comparison
+
+        if (selectedDate > today) {
+            // If selected date is in the future, show the alert and hide attendance
+            document.getElementById("future-message").classList.remove("d-none");
+            document.getElementById("attendance-container").classList.add("d-none");
+        } else {
+            document.getElementById("future-message").classList.add("d-none");
+            document.getElementById("attendance-container").classList.remove("d-none");
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add event listener to the "Fill Preset Values" button
+        document.getElementById('fillPresetValues').addEventListener('click', function () {
+            // Fill the form fields with preset values
+            document.getElementById('eventName').value = "Sample Event";
+            document.getElementById('eventDescription').value = "This is a sample event description.";
+            document.getElementById('eventLocation').value = "1"; // Assuming "1" is a valid location ID
+            document.getElementById('eventDate').value = new Date().toISOString().split('T')[0]; // Today's date
+            document.getElementById('eventStartTime').value = "09:00";
+            document.getElementById('eventEndTime').value = "17:00";
+            document.getElementById('eventNotes').value = "Sample notes for the event.";
+        });
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle form submission
+        document.getElementById('createEventForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var formData = new FormData(this); // Get form data
+
+            // Submit the form via AJAX
+            fetch('/Event/Create', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            })
+                .then(response => response.json()) // Parse the JSON response
+                .then(data => {
+                    if (data.success) {
+                        // If the event is created successfully, refetch events for the calendar
+                        calendar.refetchEvents(); // Refetch events from the server
+                        alert(data.message); // Show success message
+                    } else {
+                        // If validation fails, show error messages
+                        alert(data.message + "\n" + data.errors.join("\n"));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while creating the event.');
+                });
+        });
+    });
+
+
+
 
     // Global variable to store the imported schedule data
     let scheduleData = [];
@@ -331,21 +405,21 @@
                 const formattedEndTime = formatTime(group.endTime);
 
                 const cardHtml = `
-                            <div class="col-lg-4 col-md-6 col-12 mb-4">
-                                <div class="schedule-card">
-                                    <div class="card-body">
-                                        <div class="schedule-card-header">
-                                            ${formattedStartTime} - ${formattedEndTime}
+                                <div class="col-lg-4 col-md-6 col-12 mb-4">
+                                    <div class="schedule-card">
+                                        <div class="card-body">
+                                            <div class="schedule-card-header">
+                                                ${formattedStartTime} - ${formattedEndTime}
+                                            </div>
+                                            <ul class="schedule-list">
+                                                ${group.volunteers.map(vol => `
+                                                    <li>${vol.firstName} ${vol.lastName}</li>
+                                                `).join('')}
+                                            </ul>
                                         </div>
-                                        <ul class="schedule-list">
-                                            ${group.volunteers.map(vol => `
-                                                <li>${vol.firstName} ${vol.lastName}</li>
-                                            `).join('')}
-                                        </ul>
                                     </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
 
                 container.innerHTML += cardHtml;
             });
@@ -414,15 +488,15 @@
                 const isFirstItem = groupIndex === 0;
 
                 accordionHeader.innerHTML = `
-                            <button class="accordion-button ${isFirstItem ? '' : 'collapsed'}"
-                                    type="button"
-                                    data-bs-toggle="collapse"
-                                    data-bs-target="#collapse-${timeSlotId}"
-                                    aria-expanded="${isFirstItem ? 'true' : 'false'}"
-                                    aria-controls="collapse-${timeSlotId}">
-                                ${formattedStartTime} - ${formattedEndTime}
-                            </button>
-                        `;
+                                <button class="accordion-button ${isFirstItem ? '' : 'collapsed'}"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapse-${timeSlotId}"
+                                        aria-expanded="${isFirstItem ? 'true' : 'false'}"
+                                        aria-controls="collapse-${timeSlotId}">
+                                    ${formattedStartTime} - ${formattedEndTime}
+                                </button>
+                            `;
 
                 // Create accordion body
                 const accordionCollapse = document.createElement('div');
@@ -473,22 +547,22 @@
         }
 
         li.innerHTML = `
-                    <div class="volunteer-info">
-                        <span class="attendance-toggle" onclick="toggleAttendance(${groupIndex}, ${volIndex})">
-                            ${volunteer.isPresent ?
+                        <div class="volunteer-info">
+                            <span class="attendance-toggle" onclick="toggleAttendance(${groupIndex}, ${volIndex})">
+                                ${volunteer.isPresent ?
                 '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill check-icon" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>' :
                 '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill x-icon" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/></svg>'
             }
-                        </span>
-                        <span>${volunteer.firstName} ${volunteer.lastName}</span>
-                    </div>
-                    <div class="time-info">
-                        ${volunteer.isPresent ?
+                            </span>
+                            <span>${volunteer.firstName} ${volunteer.lastName}</span>
+                        </div>
+                        <div class="time-info">
+                            ${volunteer.isPresent ?
                 `<span>${formattedStartTime} - ${formattedEndTime}</span>` :
                 '<span>Marked as Absent</span>'
             }
-                    </div>
-                `;
+                        </div>
+                    `;
 
         return li;
     }
@@ -520,22 +594,22 @@
                     }
 
                     li.innerHTML = `
-                                <div class="volunteer-info">
-                                    <span class="attendance-toggle" onclick="toggleAttendance(${groupIndex}, ${volIndex})">
-                                        ${volunteer.isPresent ?
+                                    <div class="volunteer-info">
+                                        <span class="attendance-toggle" onclick="toggleAttendance(${groupIndex}, ${volIndex})">
+                                            ${volunteer.isPresent ?
                             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill check-icon" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>' :
                             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill x-icon" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/></svg>'
                         }
-                                    </span>
-                                    <span>${volunteer.firstName} ${volunteer.lastName}</span>
-                                </div>
-                                <div class="time-info">
-                                    ${volunteer.isPresent ?
+                                        </span>
+                                        <span>${volunteer.firstName} ${volunteer.lastName}</span>
+                                    </div>
+                                    <div class="time-info">
+                                        ${volunteer.isPresent ?
                             `<span>${formattedStartTime} - ${formattedEndTime}</span>` :
                             '<span>Marked as Absent</span>'
                         }
-                                </div>
-                            `;
+                                    </div>
+                                `;
                 }
             }
         } catch (error) {
@@ -546,6 +620,15 @@
 
 
 <style>
+
+
+    .placeholder-text::before {
+        content: "Select a date";
+        color: #aaa; 
+        position: absolute;
+        pointer-events: none;
+    }
+
     ::-webkit-scrollbar {
         width: 6px;
     }
@@ -696,55 +779,3 @@
         color: red;
     }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Handle form submission
-        document.getElementById('createEventForm').addEventListener('submit', function (e) {
-            e.preventDefault(); // Prevent the default form submission
-
-            var formData = new FormData(this); // Get form data
-
-            // Submit the form via AJAX
-            fetch('/Event/Create', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                }
-            })
-            .then(response => response.json()) // Parse the JSON response
-            .then(data => {
-                if (data.success) {
-                    // If the event is created successfully, refetch events for the calendar
-                    calendar.refetchEvents(); // Refetch events from the server
-                    alert(data.message); // Show success message
-                } else {
-                    // If validation fails, show error messages
-                    alert(data.message + "\n" + data.errors.join("\n"));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while creating the event.');
-            });
-        });
-    });
-</script>
-
-<!-- Script to handle the "Fill Preset Values" button -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Add event listener to the "Fill Preset Values" button
-        document.getElementById('fillPresetValues').addEventListener('click', function () {
-            // Fill the form fields with preset values
-            document.getElementById('eventName').value = "Sample Event";
-            document.getElementById('eventDescription').value = "This is a sample event description.";
-            document.getElementById('eventLocation').value = "1"; // Assuming "1" is a valid location ID
-            document.getElementById('eventDate').value = new Date().toISOString().split('T')[0]; // Today's date
-            document.getElementById('eventStartTime').value = "09:00";
-            document.getElementById('eventEndTime').value = "17:00";
-            document.getElementById('eventNotes').value = "Sample notes for the event.";
-        });
-    });
-</script>
