@@ -104,12 +104,12 @@
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li>
-                                                    <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID">
+                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID" style=" color: white">
                                                         <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID">
+                                <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID" style=" color: white">
                                                         <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
                                                     </a>
                                                 </li>
@@ -118,7 +118,7 @@
                                                     {
                                                         <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
                                                             <input type="hidden" name="id" value="@item.ID" />
-                                                            <button type="submit" class="dropdown-item">
+                                        <button type="submit" class="dropdown-item" style=" color: white">
                                                                 <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
                                                             </button>
                                                         </form>
@@ -127,7 +127,7 @@
                                                     {
                                                         <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');">
                                                             <input type="hidden" name="id" value="@item.ID" />
-                                                            <button type="submit" class="dropdown-item">
+                                        <button type="submit" class="dropdown-item" style=" color: white">
                                                                 <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Restore
                                                                 </button>
                                                         </form>
