@@ -469,16 +469,16 @@ label.required:after {
         width:50px;
         margin-left:10px;
     }
-    .toggle-btn {
+    .toggle-btn  {
         display: block;
-        position: fixed;
-        top: 10px;
-        left: 10px;
+        position: absolute;
+        top:5px;
+        left: 5px;
         z-index: 1000;
         background-color: transparent;
-        color: darkgreen;
+      
         border: none;
-        padding: 5px;
+      
         cursor: pointer;
     }
 }
@@ -494,10 +494,9 @@ label.required:after {
     }
 }
 
-.toggle-btn .bi-list {
-    color: darkgreen; 
-    font-size: 1.5rem; 
-    position:absolute;
-    left:50%;
-  
+.toggle-btn .bi-grid {
+    color: #31afc6;
+    font-size: 2rem;
+    position: absolute;
+    left: 50%;
 }
