@@ -41,14 +41,11 @@ html {
         font-size: 16px;
     }
 }
-
-html {
-    position: relative;
-    min-height: 100%;
-}
-
-body {
-    margin-bottom: 60px;
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
 .form-group {
@@ -60,10 +57,6 @@ button.no-pointer-events {
     cursor: default; /* Prevent the hand cursor from appearing */
 }
 
-.header-logo {
-    max-width: 75px;
-    height: auto;
-}
 
 
 .footer-logo {
@@ -448,4 +441,63 @@ label.required:after {
     padding: 10px;
     background-color: white;
     border-radius: 0 0 4px 4px;
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.header-logo {
+    width: 120px;
+    height: auto;
+}
+/* Hide sidebar by default on mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+        .sidebar.active {
+            display: block;
+            position: fixed;
+            z-index: 1000;
+            width: 30%;
+            height:auto;
+            background-color: #343a40;
+        }
+    .sidebar.active .header-logo{
+        width:50px;
+        margin-left:10px;
+    }
+    .toggle-btn {
+        display: block;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1000;
+        background-color: transparent;
+        color: darkgreen;
+        border: none;
+        padding: 5px;
+        cursor: pointer;
+    }
+}
+
+/* Show sidebar by default on larger screens */
+@media (min-width: 769px) {
+    .sidebar {
+        display: block;
+    }
+
+    .toggle-btn {
+        display: none;
+    }
+}
+
+.toggle-btn .bi-list {
+    color: darkgreen; 
+    font-size: 1.5rem; 
+    position:absolute;
+    left:50%;
+  
 }
