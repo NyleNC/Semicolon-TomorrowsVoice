@@ -36,37 +36,6 @@
             @Html.DisplayFor(model => model.VolLocation.City)
         </dd>
     </dl>
-    <div class="mt-4">
-        <div class="text-black mb-2" style="border-bottom: 3px solid gray">
-            <dt style="font-size: 18px">Schedules</dt>
-        </div>
-        <div class="container">
-            <div class="row">
-                @if (Model.VolAttendance.Any())
-                    {
-                        var groupedSchedules = Model.VolAttendance
-                        .Where(a => a.ScheduledStartTime != null && a.ScheduledEndTime != null)
-                        .GroupBy(a => new { a.ScheduledStartTime, a.ScheduledEndTime });
-
-    <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.StartTime)
-    </dt>
-    <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.StartTime)
-    </dd>
-    <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.EndTime)
-    </dt>
-    <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.EndTime)
-    </dd>
-    <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.VolLocation)
-    </dt>
-    <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.VolLocation.City)
-    </dd>
-</dl>
 <div class="mt-4">
     <div class="text-black mb-2" style="border-bottom: 3px solid gray">
         <dt style="font-size: 18px">Schedules</dt>
@@ -230,5 +199,5 @@
         border-top: 3px solid darkred;
         padding: 12px 20px;
     }
-</style>
+                    </style>
 
