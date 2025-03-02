@@ -11,39 +11,40 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
+            <p class="mb-4 " style="font-weight: 700">Fields marked <span style="color: red">*</span> are required.</p>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <label asp-for="Name" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
+                <label asp-for="Description" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Notes" class="control-label"></label>
+                <label asp-for="Notes" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                 <input asp-for="Notes" class="form-control" />
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
             <div class="form-group">
-				<label asp-for="Date" class="control-label"></label>
+                <label asp-for="Date" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
 				<input asp-for="Date" class="form-control" />
 				<span asp-validation-for="Date" class="text-danger"></span>
             <div class="form-group">
-                <label asp-for="StartTime" class="control-label"></label>
+                    <label asp-for="StartTime" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                 <input asp-for="StartTime" class="form-control" />
                 <span asp-validation-for="StartTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="EndTime" class="control-label"></label>
+                    <label asp-for="EndTime" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                 <input asp-for="EndTime" class="form-control" />
                 <span asp-validation-for="EndTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="VolLocationID" class="control-label"></label>
+                    <label asp-for="VolLocationID" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
                 <select asp-for="VolLocationID" class="form-control" asp-items="ViewBag.VolLocationID"></select>
                 <span asp-validation-for="VolLocationID" class="text-danger"></span>
             </div>
