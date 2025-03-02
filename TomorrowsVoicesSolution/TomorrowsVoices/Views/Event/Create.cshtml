@@ -10,13 +10,17 @@
 <hr />
 <form asp-action="Create">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<div class="row">
-    <div class="col-md-4">
-       
+    <div class="row">
+        <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="VolLocationID" class="control-label"></label>
@@ -43,22 +47,16 @@
                     </div>
                 </div>
             </div>
-            
-       
-         
-    
-            
-
-    </div>
-    <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="Notes" class="control-label"></label>
                 <textarea asp-for="Notes" class="form-control" style="min-height: 116px ;max-height: 116px;"></textarea>
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
+        </div>
     </div>
-</div>
-<div class="mt-4">
+    <div class="mt-4">
         <div class="text-black mb-2" style="border-bottom: 3px solid gray">
             <dt style="font-size: 18px">Schedules</dt>
         </div>
@@ -103,90 +101,88 @@
             </div>
         </div>
     </div>
-<div class="text-black mb-2 mt-4" style="border-bottom: 3px solid gray">
+    <div class="text-black mb-2 mt-4" style="border-bottom: 3px solid gray">
         <dt style="font-size: 18px">Track Attendances</dt>
     </div>
-<div class="row">
+    <div class="row">
         <div class="col-lg-6 col-md-10 col-sm-12 col-12">
-        @if (Model.VolAttendance.Any())
-        {
-            var groupedSchedules = Model.VolAttendance
-            .Where(a => a.ScheduledStartTime != null && a.ScheduledEndTime != null)
-            .GroupBy(a => new { a.ScheduledStartTime, a.ScheduledEndTime });
+            @if (Model.VolAttendance.Any())
+            {
+                var groupedSchedules = Model.VolAttendance
+                .Where(a => a.ScheduledStartTime != null && a.ScheduledEndTime != null)
+                .GroupBy(a => new { a.ScheduledStartTime, a.ScheduledEndTime });
 
                 <div class="accordion" id="attendanceAccordion">
-                @foreach (var schedule in groupedSchedules)
-                {
-                    if (schedule.All(a => a.ScheduledStartTime == schedule.Key.ScheduledStartTime &&
-                    a.ScheduledEndTime == schedule.Key.ScheduledEndTime))
+                    @foreach (var schedule in groupedSchedules)
                     {
-                                    <div class="accordion-item">
-                                        <div class="accordion-header" id="heading@(schedule.Key.ScheduledStartTime.ToString("HHmm"))">
-                                            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@(schedule.Key.ScheduledStartTime.ToString("HHmm"))" aria-expanded="true" aria-controls="collapse@(schedule.Key.ScheduledStartTime.ToString("HHmm"))">
-                                    @schedule.Key.ScheduledStartTime.ToString("hh:mm tt") - @schedule.Key.ScheduledEndTime.ToString("hh:mm tt")
-                                            </button>
-                                        </div>
-                                        <div id="collapse@(schedule.Key.ScheduledStartTime.ToString("HHmm"))" class="accordion-collapse collapse show" aria-labelledby="heading@(schedule.Key.ScheduledStartTime.ToString("HHmm"))" data-bs-parent="#attendanceAccordion">
-                                            <div class="accordion-body" style="max-height: 250px; padding: 0">
-                                                <ul class="list-unstyled" style="padding: 0; margin: 0;">
-                                        @foreach (var attendance in schedule)
-                                        {
-                                            var actualStartTime = attendance.ActualStartTime;
-                                            var actualEndTime = attendance.ActualEndTime;
-                                            var hoursWorked = actualStartTime.HasValue && actualEndTime.HasValue
-                                            ? (actualEndTime.Value - actualStartTime.Value).TotalHours
-                                            : (double?)null;
+                        if (schedule.All(a => a.ScheduledStartTime == schedule.Key.ScheduledStartTime &&
+                        a.ScheduledEndTime == schedule.Key.ScheduledEndTime))
+                        {
+                            <div class="accordion-item">
+                                <div class="accordion-header" id="heading@(schedule.Key.ScheduledStartTime.ToString("HHmm"))">
+                                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@(schedule.Key.ScheduledStartTime.ToString("HHmm"))" aria-expanded="true" aria-controls="collapse@(schedule.Key.ScheduledStartTime.ToString("HHmm"))">
+                                        @schedule.Key.ScheduledStartTime.ToString("hh:mm tt") - @schedule.Key.ScheduledEndTime.ToString("hh:mm tt")
+                                    </button>
+                                </div>
+                                <div id="collapse@(schedule.Key.ScheduledStartTime.ToString("HHmm"))" class="accordion-collapse collapse show" aria-labelledby="heading@(schedule.Key.ScheduledStartTime.ToString("HHmm"))" data-bs-parent="#attendanceAccordion">
+                                    <div class="accordion-body" style="max-height: 250px; padding: 0">
+                                        <ul class="list-unstyled" style="padding: 0; margin: 0;">
+                                            @foreach (var attendance in schedule)
+                                            {
+                                                var actualStartTime = attendance.ActualStartTime;
+                                                var actualEndTime = attendance.ActualEndTime;
+                                                var hoursWorked = actualStartTime.HasValue && actualEndTime.HasValue
+                                                ? (actualEndTime.Value - actualStartTime.Value).TotalHours
+                                                : (double?)null;
 
-                                            @if (actualStartTime.HasValue && actualEndTime.HasValue)
-                                            {
-                                                                <li class="d-flex flex-row justify-content-between present-volunteer">
-                                                                    <div>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</div>
-                                                                    <div>
-                                                                        <span>@actualStartTime.Value.ToString("hh:mm tt") - @actualEndTime.Value.ToString("hh:mm tt")</span>
-                                                                        <span> (@hoursWorked?.ToString("0.00") hrs)</span>
-                                                                    </div>
-                                                                </li>
+                                                @if (actualStartTime.HasValue && actualEndTime.HasValue)
+                                                {
+                                                    <li class="d-flex flex-row justify-content-between present-volunteer">
+                                                        <div>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</div>
+                                                        <div>
+                                                            <span>@actualStartTime.Value.ToString("hh:mm tt") - @actualEndTime.Value.ToString("hh:mm tt")</span>
+                                                            <span> (@hoursWorked?.ToString("0.00") hrs)</span>
+                                                        </div>
+                                                    </li>
+                                                }
+                                                else
+                                                {
+                                                    <li class=" d-flex flex-row justify-content-between absent-volunteer">
+                                                        <div>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</div>
+                                                        <div>
+                                                            <span>No actual time recorded (Absent)</span>
+                                                        </div>
+                                                    </li>
+                                                }
                                             }
-                                            else
-                                            {
-                                                                <li class=" d-flex flex-row justify-content-between absent-volunteer">
-                                                                    <div>@attendance.Volunteer.FirstName @attendance.Volunteer.LastName</div>
-                                                                    <div>
-                                                                        <span>No actual time recorded (Absent)</span>
-                                                                    </div>
-                                                                </li>
-                                            }
-                                        }
-                                                </ul>
-                                            </div>
-                                        </div>
+                                        </ul>
                                     </div>
+                                </div>
+                            </div>
+                        }
                     }
-                }
                 </div>
-        }
-        else
-        {
-        <p style="margin: 0; padding: 0">No schedules available.</p>
-        }
+            }
+            else
+            {
+                <p style="margin: 0; padding: 0">No schedules available.</p>
+            }
+        </div>
     </div>
-</div>
-<div class="container mt-4">
+    <div class="container mt-4">
         <div class="row">
             <div class="col-md-4">
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">
-                    <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                    Create
-                </button>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                        Create
+                    </button>
+                </div>
+
+                <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
             </div>
-
-            <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
-
+        </div>
     </div>
-    </<div>
-</div>
-     
 </form>
 
 <script>
@@ -195,8 +191,6 @@
         document.getElementById("datePicker").value = today; // Set default value
     });
 </script>
-
-
 
 <style>
     ::-webkit-scrollbar {
@@ -208,7 +202,42 @@
         border-radius: 6px;
     }
 
-     ::-webkit-scrollbar-track {
+    ::-webkit-scrollbar-track {
         background: transparent; /* Hide the track */
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle form submission
+        document.getElementById('createEventForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var formData = new FormData(this); // Get form data
+
+            // Submit the form via AJAX
+            fetch('/Event/Create', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            })
+            .then(response => response.json()) // Parse the JSON response
+            .then(data => {
+                if (data.success) {
+                    // If the event is created successfully, refetch events for the calendar
+                    calendar.refetchEvents(); // Refetch events from the server
+                    alert(data.message); // Show success message
+                } else {
+                    // If validation fails, show error messages
+                    alert(data.message + "\n" + data.errors.join("\n"));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while creating the event.');
+            });
+        });
+    });
+</script>

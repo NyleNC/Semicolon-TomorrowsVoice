@@ -397,130 +397,152 @@ namespace TomorrowsVoices.Controllers
 
         //ImportExcel - Updated for Modal View
         [HttpPost]
-        public async Task<IActionResult> InsertFromExcel(IFormFile theExcel)
+public async Task<IActionResult> InsertFromExcel(IFormFile theExcel)
+{
+    var response = new { success = false, message = "" };
+
+    if (theExcel == null || theExcel.Length == 0)
+    {
+        response = new { success = false, message = "❌ No file uploaded. Please select an Excel file." };
+        return Json(response);
+    }
+
+    string feedbackMessage = "";
+    int successCount = 0, errorCount = 0;
+
+    try
+    {
+        string mimeType = theExcel.ContentType;
+        if (!mimeType.Contains("excel") && !mimeType.Contains("spreadsheet"))
         {
-            var response = new { success = false, message = "" };
+            response = new { success = false, message = "⚠️ Invalid file format. Please upload a valid Excel file." };
+            return Json(response);
+        }
 
-            if (theExcel == null || theExcel.Length == 0)
+        using (var memoryStream = new MemoryStream())
+        {
+            await theExcel.CopyToAsync(memoryStream);
+            using (var package = new ExcelPackage(memoryStream))
             {
-                response = new { success = false, message = "❌ No file uploaded. Please select an Excel file." };
-                return Json(response);
-            }
+                var workSheet = package.Workbook.Worksheets[0];
+                var start = workSheet.Dimension.Start;
+                var end = workSheet.Dimension.End;
 
-            string feedbackMessage = "";
-            int successCount = 0, errorCount = 0;
-
-            try
-            {
-                string mimeType = theExcel.ContentType;
-                if (!mimeType.Contains("excel") && !mimeType.Contains("spreadsheet"))
+                // Validate headers
+                if (workSheet.Cells[1, 1].Text != "Name" ||
+                    workSheet.Cells[1, 2].Text != "Location" ||
+                    workSheet.Cells[1, 3].Text != "Date" ||
+                    workSheet.Cells[1, 4].Text != "Start Time" ||
+                    workSheet.Cells[1, 5].Text != "End Time")
                 {
-                    response = new { success = false, message = "⚠️ Invalid file format. Please upload a valid Excel file." };
+                    response = new { success = false, message = "❌ Invalid Excel format. Please ensure the file has 'Name', 'Location', 'Date', 'Start Time', and 'End Time' headers." };
                     return Json(response);
                 }
 
-                using (var memoryStream = new MemoryStream())
+                for (int row = start.Row + 1; row <= end.Row; row++)
                 {
-                    await theExcel.CopyToAsync(memoryStream);
-                    using (var package = new ExcelPackage(memoryStream))
+                    Event events = new Event();
+                    try
                     {
-                        var workSheet = package.Workbook.Worksheets[0];
-                        var start = workSheet.Dimension.Start;
-                        var end = workSheet.Dimension.End;
+                        events.Name = workSheet.Cells[row, 1].Text.Trim();
+                        string cityName = workSheet.Cells[row, 2].Text.Trim();
 
-                        // Validate headers
-                        if (workSheet.Cells[1, 1].Text != "FirstName" ||
-                            workSheet.Cells[1, 2].Text != "LastName" ||
-                            workSheet.Cells[1, 3].Text != "City" ||
-                            workSheet.Cells[1, 4].Text != "Email")
+                        // Parse Date
+                        if (DateOnly.TryParse(workSheet.Cells[row, 3].Text.Trim(), out DateOnly date))
                         {
-                            response = new { success = false, message = "❌ Invalid Excel format. Please ensure the file has 'FirstName', 'LastName', 'City', and 'Email' headers." };
-                            return Json(response);
-                        }
-
-                        // Track duplicate emails within the file
-                        var emailSet = new HashSet<string>();
-
-                        for (int row = start.Row + 1; row <= end.Row; row++)
-                        {
-                            Director director = new Director();
-                            try
-                            {
-                                director.FirstName = workSheet.Cells[row, 1].Text;
-                                director.LastName = workSheet.Cells[row, 2].Text;
-                                string cityName = workSheet.Cells[row, 3].Text;
-                                director.Email = workSheet.Cells[row, 4].Text;
-
-                                // Validate required fields
-                                if (string.IsNullOrEmpty(director.FirstName) || string.IsNullOrEmpty(director.LastName) || string.IsNullOrEmpty(director.Email))
-                                {
-                                    errorCount++;
-                                    feedbackMessage += $"⚠️ Error: Row {row} has missing fields.<br>";
-                                    continue;
-                                }
-
-                                // Check for duplicate emails within the file
-                                if (emailSet.Contains(director.Email))
-                                {
-                                    errorCount++;
-                                    feedbackMessage += $"⚠️ Error: Row {row} - Duplicate email '{director.Email}' found within the file.<br>";
-                                    continue;
-                                }
-
-                                // Check for duplicate emails in the database
-                                if (_context.Directors.Any(d => d.Email == director.Email))
-                                {
-                                    errorCount++;
-                                    feedbackMessage += $"⚠️ Error: Row {row} - Director with email '{director.Email}' already exists in the database.<br>";
-                                    continue;
-                                }
-
-                                // Add email to the set to track duplicates within the file
-                                emailSet.Add(director.Email);
-
-                                // Handle location
-                                var location = _context.Locations.FirstOrDefault(l => l.City == cityName);
-                                if (location == null)
-                                {
-                                    location = new Location { City = cityName };
-                                    _context.Locations.Add(location);
-                                    await _context.SaveChangesAsync();
-                                }
-                                director.Location = location;
-
-                                // Add director to the database
-                                _context.Directors.Add(director);
-                                successCount++;
-                            }
-                            catch (Exception ex)
-                            {
-                                errorCount++;
-                                feedbackMessage += $"⚠️ Error: Exception in row {row} - {ex.Message}<br>";
-                            }
-                        }
-
-                        // Save changes to the database
-                        await _context.SaveChangesAsync();
-
-                        // Prepare response
-                        if (successCount > 0)
-                        {
-                            response = new { success = true, message = $"✅ {successCount} directors added successfully.<br>{feedbackMessage}" };
+                            events.Date = date;
                         }
                         else
                         {
-                            response = new { success = false, message = $"❌ No directors were added.<br>{feedbackMessage}" };
+                            errorCount++;
+                            feedbackMessage += $"⚠️ Error: Invalid date format in row {row}.<br>";
+                            continue;
                         }
+
+                        // Parse Start Time
+                        if (TimeOnly.TryParse(workSheet.Cells[row, 4].Text.Trim(), out TimeOnly startTime))
+                        {
+                            events.StartTime = startTime;
+                        }
+                        else
+                        {
+                            errorCount++;
+                            feedbackMessage += $"⚠️ Error: Invalid start time format in row {row}.<br>";
+                            continue;
+                        }
+
+                        // Parse End Time
+                        if (TimeOnly.TryParse(workSheet.Cells[row, 5].Text.Trim(), out TimeOnly endTime))
+                        {
+                            events.EndTime = endTime;
+                        }
+                        else
+                        {
+                            errorCount++;
+                            feedbackMessage += $"⚠️ Error: Invalid end time format in row {row}.<br>";
+                            continue;
+                        }
+
+                        // Validate data before adding
+                        if (string.IsNullOrEmpty(events.Name) ||
+                            string.IsNullOrEmpty(cityName))
+                        {
+                            errorCount++;
+                            feedbackMessage += $"⚠️ Error: Row {row} has missing fields.<br>";
+                            continue; // Skip invalid row
+                        }
+
+                        // Check if event with the same name, date, and location already exists
+                        var location = _context.VolLocations.FirstOrDefault(l => l.City == cityName);
+
+                        if (location == null)
+                        {
+                            // If location doesn't exist, create a new one
+                            location = new VolLocation { City = cityName };
+                            _context.VolLocations.Add(location);
+                            await _context.SaveChangesAsync(); // Save the new location to get its ID
+                        }
+
+                        if (_context.Events.Any(e => e.Name == events.Name && e.Date == events.Date && e.VolLocationID == location.ID))
+                        {
+                            errorCount++;
+                            feedbackMessage += $"⚠️ Error: The event {events.Name} on {events.Date.ToShortDateString()} at {cityName} already exists.<br>";
+                            continue;
+                        }
+
+                        events.VolLocationID = location.ID;
+                        _context.Events.Add(events);
+                        successCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        errorCount++;
+                        feedbackMessage += $"⚠️ Error: Exception in row {row} - {ex.Message}<br>";
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                response = new { success = false, message = $"❌ An error occurred: {ex.Message}" };
-            }
 
-            return Json(response);
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+
+                // Prepare response
+                if (successCount > 0)
+                {
+                    response = new { success = true, message = $"✅ {successCount} events added successfully.<br>{feedbackMessage}" };
+                }
+                else
+                {
+                    response = new { success = false, message = $"❌ No events were added.<br>{feedbackMessage}" };
+                }
+            }
         }
+    }
+    catch (Exception ex)
+    {
+        response = new { success = false, message = $"❌ An error occurred: {ex.Message}" };
+    }
+
+    return Json(response);
+}
 
         // Excel Template Server
         public IActionResult DownloadSampleExcel()
