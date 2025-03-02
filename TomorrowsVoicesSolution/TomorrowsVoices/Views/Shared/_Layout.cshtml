@@ -59,43 +59,41 @@
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
                     <header class="w-100">
                         <div class="container-fluid header-logo-container">
-                  
-                       
                             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                                <img src="~/Images/tv-logo.png" alt="Tomorrow's Voices Logo" class="header-logo" >
+                                <img src="~/Images/TV-Logo.png" alt="Tomorrow's Voices Logo" class="header-logo">
                             </a>
                         </div>
                     </header>
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                         <li>
                             <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Choir Administration</span>
+                                <img src="~/Images/choir.png" alt="choir icon" width="30px"> <span class="ms-1 d-none d-sm-inline" style="color: #cc9bff">Choir Administration</span>
                             </a>
                             <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("Director", "Singer", "Session"))" id="submenu1">
                                 <li class="w-100">
-                                    <a class="nav-link px-0 @(IsActive("Director","Index"))" asp-controller="Director" asp-action="Index">Director</a>
+                                    <a class="nav-link px-0 text-white @(IsActive("Director","Index"))" asp-controller="Director" asp-action="Index">Director</a>
                                 </li>
                                 <li>
-                                    <a class="nav-link px-0  @(IsActive("Singer","Index"))" asp-controller="Singer" asp-action="Index">Singer</a>
+                                    <a class="nav-link px-0 text-white @(IsActive("Singer","Index"))" asp-controller="Singer" asp-action="Index">Singer</a>
                                 </li>
                                 <li>
-                                    <a class="nav-link px-0 @(IsActive("Session","Index"))" asp-controller="Session" asp-action="Index">Attendance</a>
+                                    <a class="nav-link px-0 text-white @(IsActive("Session","Index"))" asp-controller="Session" asp-action="Index">Attendance</a>
                                 </li>
                             </ul>
                         </li>
                         <li>
                             <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Volunteer Administrator</span>
+                                <img src="~/Images/volunteer.png" alt="choir icon" width="30px"> <span class="ms-1 d-none d-sm-inline" style="color: #cc9bff  ">Volunteer Management</span>
                             </a>
-                            <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("VolLocation",  "Volunteer", "Event"))" id="submenu2">
+                            <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("VolLocation", "Volunteer", "Event"))" id="submenu2">
                                 <li class="w-100">
-                                    <a class="nav-link px-0 @(IsActive("VolLocation","Index"))" asp-controller="VolLocation" asp-action="Index">Volunteer Location</a>
+                                    <a class="nav-link px-0 text-white @(IsActive("VolLocation","Index"))" asp-controller="VolLocation" asp-action="Index">Location</a>
                                 </li>
                                 <li>
-                                    <a class="nav-link px-0  @(IsActive("Volunteer","Index"))" asp-controller="Volunteer" asp-action="Index">Volunteer Management</a>
+                                    <a class="nav-link px-0 text-white @(IsActive("Volunteer","Index"))" asp-controller="Volunteer" asp-action="Index">Volunteer</a>
                                 </li>
                                 <li>
-                                    <a class="nav-link px-0  @(IsActive("Event","Index"))" asp-controller="Event" asp-action="Index">Event Management</a>
+                                    <a class="nav-link px-0 text-white @(IsActive("Event","Index"))" asp-controller="Event" asp-action="Index">Event</a>
                                 </li>
                             </ul>
                         </li>
