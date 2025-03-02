@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "Calendar View";
+}
+
+<div class="d-flex align-items-center mb-3">
+    <!-- Sessions Heading -->
+    <h1 class="mb-0 me-3">Sessions Attendance | </h1>
+
+    <!-- Buttons for Table and Calendar Views -->
+    <div class="d-flex align-items-center">
+        <a asp-action="Index" class="btn btn-primary btn-events-toggle">Table View</a>
+        <a asp-action="Calendar" class="btn btn-primary btn-events-toggle">Calendar View</a>
+    </div>
+</div>
+
+<!-- FullCalendar Container -->
+<div id="calendar"></div>
+
+<!-- Session Details Modal -->
+<div class="modal fade" id="sessionDetailsModal" tabindex="-1" aria-labelledby="sessionDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sessionDetailsModalLabel">Session Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Date:</strong> <span id="sessionDate"></span></p>
+                <p><strong>Notes:</strong> <span id="sessionNotes"></span></p>
+                <p><strong>Location:</strong> <span id="sessionLocation"></span></p>
+                <p><strong>Is Archived:</strong> <span id="sessionIsArchived"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include FullCalendar CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" />
+
+<!-- Include FullCalendar JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+
+<!-- Calendar Initialization Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: '/Session/GetCalendarSessions', // Update the endpoint to fetch sessions
+            dateClick: function (info) {
+                alert('Date clicked: ' + info.dateStr);
+            },
+            eventClick: function (info) {
+                // Fetch session details from the server
+                fetch(`/Session/GetSessionDetails/${info.event.id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Populate the modal with session details
+                        document.getElementById('sessionDate').textContent = data.date;
+                        document.getElementById('sessionNotes').textContent = data.notes;
+                        document.getElementById('sessionLocation').textContent = data.location;
+                        document.getElementById('sessionIsArchived').textContent = data.isArchived ? 'Yes' : 'No';
+
+                        // Show the modal
+                        var modal = new bootstrap.Modal(document.getElementById('sessionDetailsModal'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching session details:', error);
+                        alert('An error occurred while fetching session details.');
+                    });
+            }
+        });
+        calendar.render();
+    });
+</script>
