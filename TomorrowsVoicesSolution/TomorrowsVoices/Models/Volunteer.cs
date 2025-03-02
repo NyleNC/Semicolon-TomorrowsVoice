@@ -7,7 +7,7 @@ namespace TomorrowsVoices.Models
     {
         #region Summary Properties
         [Display(Name = "Volunteer")]
-        public string FullName => $"{FirstName} {LastName}";
+        public string? FullName => $"{FirstName} {LastName}";
         #endregion
 
         public int ID { get; set; }

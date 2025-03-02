@@ -25,7 +25,7 @@ namespace TomorrowsVoices.Models
         [Display(Name = "Actual End Time")]
         public TimeOnly? ActualEndTime { get; set; }
 
-        public int? VolunteerID { get; set; }
+        public int VolunteerID { get; set; }
 
         public Volunteer? Volunteer { get; set; }
 
