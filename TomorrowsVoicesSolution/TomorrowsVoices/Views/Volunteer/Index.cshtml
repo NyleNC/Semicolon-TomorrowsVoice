@@ -42,8 +42,11 @@
         </button>
     </p>
     <p>
-        @* <a asp-action="ExportVolunteersToExcel" class="btn btn-success"<img src="~/Images/export-csv.png" alt="export-csv-icon" style="height: 24px; width: auto; margin-right: 10px" />Export to Excel</a> *@
-        <a href="@Url.Action("ExportVolunteersToExcel", "Session")" class="btn btn-success"><img src="~/Images/export-csv.png" alt="export-csv-icon" style="height: 24px; width: auto; margin-right: 10px" />Export to Excel</a>
+        <a asp-action="ExportVolunteersToExcel" class="btn btn-success">
+            <img src="~/Images/export-csv.png" alt="export-csv-icon" style="height: 24px; width: auto; margin-right: 10px" />
+            Export to Excel
+        </a>
+        @* <a href="@Url.Action("ExportVolunteersToExcel", "Session")" class="btn btn-success"><img src="~/Images/export-csv.png" alt="export-csv-icon" style="height: 24px; width: auto; margin-right: 10px" />Export to Excel</a> *@
     </p>
 </div>
 
