@@ -215,17 +215,7 @@ namespace TomorrowsVoices.Controllers
                             return View(director);
                         }
 
-                        // Check if a director is already assigned to this city
-                        var existingDirector = await _context.Directors
-                            .Include(d => d.Location)
-                            .FirstOrDefaultAsync(d => d.LocationID == director.LocationID);
-
-                        if (existingDirector != null)
-                        {
-                            ModelState.AddModelError("LocationID", $"Someone is already assigned to this City: {location.City}");
-                            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
-                            return View(director);
-                        }
+                    
 
                         director.Location = location;
                     }
@@ -291,7 +281,7 @@ namespace TomorrowsVoices.Controllers
                 try
                 {
                     var directorToUpdate = await _context.Directors
-                        .Include(d => d.Location)
+                        .Include(d => d.Location) // Ensure we have the related Location
                         .FirstOrDefaultAsync(d => d.ID == id);
 
                     if (directorToUpdate == null)
@@ -299,12 +289,11 @@ namespace TomorrowsVoices.Controllers
                         return NotFound();
                     }
 
-                    if (await TryUpdateModelAsync<Director>(
-                        directorToUpdate,
-                        "",
+                    // Update properties
+                    if (await TryUpdateModelAsync(directorToUpdate, "",
                         d => d.FirstName, d => d.LastName, d => d.Email, d => d.LocationID))
                     {
-                        var location = await _context.Locations.FindAsync(directorToUpdate.LocationID);
+                        var location = await _context.Locations.FindAsync(director.LocationID);
                         if (location == null)
                         {
                             ModelState.AddModelError("LocationID", "Invalid city selected.");
@@ -312,12 +301,11 @@ namespace TomorrowsVoices.Controllers
                             return View(directorToUpdate);
                         }
 
-                        directorToUpdate.Location = location;
+                        directorToUpdate.Location = location; // Update navigation property
 
-                        _context.Update(directorToUpdate);
                         await _context.SaveChangesAsync();
 
-                        TempData["SuccessMessage"] = $"{directorToUpdate.DirectorFullName} has been edited and saved";
+                        TempData["SuccessMessage"] = $"{directorToUpdate.FirstName} {directorToUpdate.LastName} has been edited and saved.";
                         return RedirectToAction(nameof(Index));
                     }
                 }
@@ -334,7 +322,7 @@ namespace TomorrowsVoices.Controllers
                 }
                 catch (DbUpdateException)
                 {
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, contact support.");
                 }
             }
 

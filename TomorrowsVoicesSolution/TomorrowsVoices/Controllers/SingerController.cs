@@ -206,6 +206,7 @@ namespace TomorrowsVoices.Controllers
 
             _context.Add(singer);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = $"The singer {singer.FullName} has been added";
             return RedirectToAction(nameof(Index));
         }
 
@@ -214,16 +215,13 @@ namespace TomorrowsVoices.Controllers
         {
             if (id == null) return NotFound();
 
-            var singer = await _context.Singers.FindAsync(id);
+            var singer = await _context.Singers
+                .Include(s => s.Location) // Ensure the Location is included
+                .FirstOrDefaultAsync(s => s.ID == id);
+
             if (singer == null) return NotFound();
 
-            // Build the filtered city list from Directors.
-            var cityList = _context.Directors
-                .Where(d => d.Location != null)
-                .Select(d => d.Location.City.ToString())
-                .Distinct()
-                .ToList();
-
+            // Populate the city list
             ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
 
             return View(singer);
@@ -231,7 +229,7 @@ namespace TomorrowsVoices.Controllers
         // POST: Singer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Location,IsAvailable,EmergencyContactName,EmergencyContactNumber")] Singer singer)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,LocationID,IsAvailable,EmergencyContactName,EmergencyContactNumber")] Singer singer)
         {
             if (id != singer.ID) return NotFound();
 
@@ -239,12 +237,12 @@ namespace TomorrowsVoices.Controllers
             {
                 try
                 {
-                    var existingSinger = await _context.Singers.FindAsync(id);
+                    var existingSinger = await _context.Singers.Include(s => s.Location).FirstOrDefaultAsync(s => s.ID == id);
                     if (existingSinger == null) return NotFound();
 
                     existingSinger.FirstName = singer.FirstName;
                     existingSinger.LastName = singer.LastName;
-                    existingSinger.Location = singer.Location;
+                    existingSinger.LocationID = singer.LocationID; // Ensure proper assignment
                     existingSinger.IsAvailable = singer.IsAvailable;
                     existingSinger.EmergencyContactName = singer.EmergencyContactName;
                     existingSinger.EmergencyContactNumber = singer.EmergencyContactNumber;
@@ -256,14 +254,16 @@ namespace TomorrowsVoices.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SingerExists(singer.ID)) return NotFound();
+                    if (!_context.Singers.Any(s => s.ID == singer.ID)) return NotFound();
                     throw;
                 }
             }
-            
+
+            // Repopulate CityList in case of validation errors
+            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", singer.LocationID);
+
             return View(singer);
         }
-
         // GET: Singer/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
