@@ -84,7 +84,8 @@ namespace TomorrowsVoices.Controllers
             if (!String.IsNullOrEmpty(SearchString))
             {
                 sessions = sessions.Where(p => p.Location.Director.LastName != null && p.Location.Director.LastName.ToLower().Contains(SearchString.ToLower())
-                                                || p.Location.Director.FirstName != null && p.Location.Director.FirstName.ToLower().Contains(SearchString.ToLower()));
+                                                || p.Location.Director.FirstName != null && p.Location.Director.FirstName.ToLower().Contains(SearchString.ToLower())
+                                                 || ((p.Location.Director.FirstName + " " + p.Location.Director.LastName).ToLower().Contains(SearchString.ToLower())));
 
                 numberFilters++;
             }

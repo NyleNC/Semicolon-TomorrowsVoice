@@ -56,12 +56,11 @@ namespace TomorrowsVoices.Controllers
                     sortField = actionButton; //Sort by the button clicked
                 }
             }
-
             if (!String.IsNullOrEmpty(SearchString))
             {
-                directors = directors.Where(p => p.LastName != null && p.LastName.ToLower().Contains(SearchString.ToLower())
-                                                || p.FirstName != null && p.FirstName.ToLower().Contains(SearchString.ToLower()));
-
+                directors = directors.Where(p => (p.LastName != null && p.LastName.ToLower().Contains(SearchString.ToLower()))
+                                     || (p.FirstName != null && p.FirstName.ToLower().Contains(SearchString.ToLower()))
+                                     || ((p.FirstName + " " + p.LastName).ToLower().Contains(SearchString.ToLower())));
                 numberFilters++;
             }
             if (!String.IsNullOrEmpty(SearchEmail))

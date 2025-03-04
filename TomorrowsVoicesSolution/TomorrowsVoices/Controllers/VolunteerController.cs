@@ -50,7 +50,8 @@ namespace TomorrowsVoices.Controllers
             if (!String.IsNullOrEmpty(SearchString))
             {
                 volunteers = volunteers.Where(s => s.FirstName != null && s.FirstName.ToLower().Contains(SearchString.ToLower())
-                                            || s.LastName != null && s.LastName.ToLower().Contains(SearchString.ToLower()));
+                                            || s.LastName != null && s.LastName.ToLower().Contains(SearchString.ToLower())
+                                             || ((s.FirstName + " " + s.LastName).ToLower().Contains(SearchString.ToLower())));
 
                 numberFilters++;
             }

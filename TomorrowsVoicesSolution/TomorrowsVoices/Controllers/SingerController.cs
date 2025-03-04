@@ -53,9 +53,9 @@ namespace TomorrowsVoices.Controllers
             }
             if (!String.IsNullOrEmpty(SearchString))
             {
-                singers = singers.Where(s => s.FirstName != null && s.FirstName.ToLower().Contains(SearchString.ToLower())
-                                            || s.LastName != null && s.LastName.ToLower().Contains(SearchString.ToLower()));
-
+                singers = singers.Where(p => (p.LastName != null && p.LastName.ToLower().Contains(SearchString.ToLower()))
+                                     || (p.FirstName != null && p.FirstName.ToLower().Contains(SearchString.ToLower()))
+                                     || ((p.FirstName + " " + p.LastName).ToLower().Contains(SearchString.ToLower())));
                 numberFilters++;
             }
 
