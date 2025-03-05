@@ -9,8 +9,6 @@
 
 <h1>Volunteers</h1>
 
-
-
 @* Archived tabs *@
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
@@ -33,21 +31,88 @@
     </li>
 </ul>
 <div class="d-flex justify-content-between align-items-start mb-1">
-    
+    <div class="d-flex flex-column">
+        @if (ViewData["ActiveTab"]?.ToString() != "archived")
+        {
+            <p class="mb-2">
+                <a asp-action="Create" class="btn btn-primary uniform-button">
+                    <img src="~/Images/add-user.png" alt="add-volunteer-icon" style="height: 24px; width: auto; margin-right: 10px; padding-bottom:5px;" />
+                    Add Volunteer
+                </a>
+            </p>
+        }
+        <form asp-action="Index" method="get">
+            <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+            <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+            <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
 
-    <!-- Import Excel Button - Pop Up Modal Button -->
-    <p>
-        <button type="button" class="btn btn-primary btn-import-excel" data-bs-toggle="modal" data-bs-target="#importVolunteersExcelModal">
-            Import from Excel
-        </button>
-    </p>
-    <p>
-        <a asp-action="ExportVolunteersToExcel" class="btn btn-success">
-            <img src="~/Images/export-csv.png" alt="export-csv-icon" style="height: 24px; width: auto; margin-right: 10px" />
-            Export to Excel
-        </a>
-        @* <a href="@Url.Action("ExportVolunteersToExcel", "Session")" class="btn btn-success"><img src="~/Images/export-csv.png" alt="export-csv-icon" style="height: 24px; width: auto; margin-right: 10px" />Export to Excel</a> *@
-    </p>
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @Html.Raw(TempData["Success"])
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-10">
+                    <button class="btn uniform-button mb-3" type="button" id="filterToggle"
+                            style="background-color: #6423e7; color: white">
+                        <img src="~/Images/filter-search.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
+                        Filter/Search (@ViewData["numberFilters"])
+                    </button>
+
+                    @if (ViewData["numberFilters"] is int numberOfFilters && numberOfFilters > 0)
+                    {
+                        <a asp-action="Index" class="mb-3 btn btn-danger text-white uniform-button">
+                            <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                            Clear
+                        </a>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="d-flex flex-column align-items-end">
+        <p class="mb-2">
+            <button type="button" class="btn btn-primary uniform-button" data-bs-toggle="modal" data-bs-target="#importVolunteersExcelModal">
+                Import from Excel
+            </button>
+        </p>
+        <p>
+            <a asp-action="ExportVolunteersToExcel" class="btn btn-success uniform-button">
+                <img src="~/Images/export-csv.png" alt="export-csv-icon" style="height: 24px; width: auto; margin-right: 10px" />
+                Export to Excel
+            </a>
+        </p>
+    </div>
+</div>
+
+<!-- Filter/Search Popup -->
+<div class="filter-popup @ViewData["ShowFilter"]" id="collapseFilter">
+    <div class="card card-body" style="background-color:#100527">
+        <form asp-action="Index" method="get">
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label class="control-label text-white fw-bold">Search by Volunteer Name:</label>
+                    @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label text-white fw-bold">Filter by City:</label>
+                        @Html.DropDownList("SearchCity", ViewData["Cities"] as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>(), new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label text-white text fw-bold">Search by Email:</label>
+                    @Html.TextBox("SearchEmail", null, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group col-md-2 align-self-start">
+                <input type="submit" name="actionButton" value="Filter"
+                       class="btn text-white uniform-button" style="background-color: #6423e7" />
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Modal -->
@@ -112,66 +177,15 @@
     </div>
 </div>
 
-@if (ViewData["ActiveTab"]?.ToString() != "archived")
-{
-    <p class="mb-2">
-        <a asp-action="Create" class="btn btn-primary"><img src="~/Images/add-user.png" alt="add-volunteer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Volunteer</a>
-    </p>
-}
-<form asp-action="Index" method="get">
-    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
-    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
-    <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">
-            @Html.Raw(TempData["Success"])
-        </div>
-    }
-    <div class="row">
-        <div class="col-10">
-            <button class="btn mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
-                    data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="background-color: #6423e7; color: white">
-                <img src="~/Images/filter-search.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
-                Filter/Search (@ViewData["numberFilters"])
-            </button>
 
-            @if (ViewData["numberFilters"] is int numberOfFilters && numberOfFilters > 0)
-            {
-                <a asp-action="Index" class="mb-3 btn btn-danger text-white">
-                    <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                    Clear
-                </a>
-            }
-        </div>
-    </div>
-    <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
-        <div class="card card-body" style="background-color:lightgray">
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Search by Volunteer Name:</label>
-                    @Html.TextBox("SearchString", null, new { @class = "form-control" })
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label class="control-label">Filter by City:</label>
-                        @Html.DropDownList("SearchCity", ViewData["Cities"] as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>(), new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="form-group col-md-3">
-                    <label class="control-label">Search by Email:</label>
-                    @Html.TextBox("SearchEmail", null, new { @class = "form-control" })
-                </div>
-            </div>
-            <div class="form-group col-md-2 align-self-start">
-                <input type="submit" name="actionButton" value="Filter"
-                       class="btn text-white" style="background-color: #6423e7" />
-            </div>
-        </div>
-    </div>
-    <div class="table-responsive" style="margin: 0; padding: 0">
-        <table class="table table-striped table-hover table-custom">
-            <thead class="table-dark ">
+    <div class="table-responsive" style="margin: 0; padding: 0; border-radius:8px;">
+        <form asp-action="Index" method="get">
+            <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+            <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+            <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
+
+            <table class="table table-striped table-hover table-custom">
+                <thead class="table-dark">
                 <tr>
                     <th>
                         <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'FullName')">
@@ -201,7 +215,7 @@
                     </th>
 
                     <th>
-                        <button style="font-weight: 700" type="submit" name="actionButton" value="Email" class="btn btn-toolbar text-white d-inline" onclick="handleSort('Email')">
+                        <button style="font-weight: 700" type="submit" name="actionButton" value="Email" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Email')">
                             Email
                             @if (ViewData["sortField"]?.ToString() == "Email")
                             {
@@ -252,115 +266,115 @@
                             }
                         </button>
                     </th>
-                    <th>
-                        <button style="font-weight: 700" type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white">Actions</button>
+
+                    <th class="align-middle">
+                        <span style="font-weight: 700" class="text-white">Actions</span>
                     </th>
                 </tr>
-            </thead>
-</form>
-            <tbody>
+                </thead>
+                <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>
+                        <td style="padding-left: 10px;">
                             @Html.DisplayFor(modelItem => item.FullName)
                         </td>
 
-                        <td>
+                        <td style="padding-left: 10px;">
                             @Html.DisplayFor(modelItem => item.Email)
                         </td>
-                        <td>
+                        <td style="padding-left: 10px;">
                             @Html.DisplayFor(modelItem => item.VolLocation.City)
                         </td>
                         <td>
-                <!-- Desktop View (Buttons) -->
-                <div class="d-none d-lg-inline">
-                    @if (!item.IsArchived)
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
-                            <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
-                        </a>
-                    }
-                    else
-                    {
-                        <button class="btn btn-sm btn-warning" disabled title="Archived directors cannot be edited.">
-                            <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
-                        </button>
-                    }
-                    |
-                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
-                        <img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
-                    </a> |
-                    <div class="btn-group">
-                        @if (!item.IsArchived)
-                        {
-                            <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
-                                <input type="hidden" name="id" value="@item.ID" />
-                                <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
-                                    <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                    Archive
-                                </button>
-                            </form>
-                        }
-                        else
-                        {
-                            <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
-                                <input type="hidden" name="id" value="@item.ID" />
-                                <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#4CAF50 ;">
-                                    <img src="~/Images/unarchive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                    Restore
-                                </button>
-                            </form>
-                        }
-                    </div>
-                </div>
+                            <!-- Desktop View (Buttons) -->
+                            <div class="d-none d-lg-inline">
+                                @if (!item.IsArchived)
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
+                                        <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-sm btn-warning" disabled title="Archived directors cannot be edited.">
+                                        <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
+                                    </button>
+                                }
+                                |
+                                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
+                                    <img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
+                                </a> |
+                                <div class="btn-group">
+                                    @if (!item.IsArchived)
+                                    {
+                                        <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.ID" />
+                                            <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
+                                                <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                                Archive
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.ID" />
+                                            <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#4CAF50 ;">
+                                                <img src="~/Images/unarchive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                                Restore
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
 
-            
-                <!-- Mobile View (Dropdown) -->
-                <div class="d-lg-none">
-                    <div class="btn-group">
-                        <button class="btn btn-sm dropdown-toggle" style="background-color: #6423e7; color: white" data-bs-toggle="dropdown">
-                            Actions
-                        </button>
-                        <ul class="dropdown-menu " style="background-color:white">
-                            <li>
-                                <a class="dropdown-item text-black" asp-action="Edit" asp-route-id="@item.ID">
-                                    <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item text-black" asp-action="Details" asp-route-id="@item.ID">
-                                    <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
-                                </a>
-                            </li>
-                            <li>
-                        @if (!item.IsArchived)
-                        {
-                                    <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
-                                        <input type="hidden" name="id" value="@item.ID" />
-                                        <button type="submit" class="dropdown-item text-black">
-                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
-                                        </button>
-                                    </form>
-                        }
-                        else
-                        {
-                                    <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');">
-                                        <input type="hidden" name="id" value="@item.ID" />
-                                        <button type="submit" class="dropdown-item text-black">
-                                            <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Restore
-                                        </button>
-                                    </form>
-                        }
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                            <!-- Mobile View (Dropdown) -->
+                            <div class="d-lg-none">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm dropdown-toggle" style="background-color: #6423e7; color: white" data-bs-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu " style="background-color:white">
+                                        <li>
+                                            <a class="dropdown-item text-black" asp-action="Edit" asp-route-id="@item.ID">
+                                                <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item text-black" asp-action="Details" asp-route-id="@item.ID">
+                                                <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
+                                            </a>
+                                        </li>
+                                        <li>
+                                            @if (!item.IsArchived)
+                                            {
+                                                <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
+                                                    <input type="hidden" name="id" value="@item.ID" />
+                                                    <button type="submit" class="dropdown-item text-black">
+                                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');">
+                                                    <input type="hidden" name="id" value="@item.ID" />
+                                                    <button type="submit" class="dropdown-item text-black">
+                                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Restore
+                                                    </button>
+                                                </form>
+                                            }
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </form>
     </div>
 
 <partial name="_PagingNavBar" />
@@ -378,6 +392,23 @@
         });
     </script>
 }
+
+
+
+<!-- JavaScript for Filter/Search Toggle -->
+<script>
+    document.getElementById("filterToggle").addEventListener("click", function () {
+        var filterDiv = document.getElementById("collapseFilter");
+        if (filterDiv.classList.contains("show")) {
+            filterDiv.classList.remove("show"); // Hide popup
+        } else {
+            filterDiv.classList.add("show"); // Show popup
+        }
+    });
+</script>
+
+
+
 
 <!-- Sorting and JS Script -->
 <script>
