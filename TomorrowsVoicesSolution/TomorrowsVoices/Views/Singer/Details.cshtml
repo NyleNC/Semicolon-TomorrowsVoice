@@ -65,10 +65,19 @@
     </dl>
 </div>
 <div class="mb-3">
-    <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning">
-        <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
-    </a>
+    @if (!Model.IsArchived)
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning">
+            <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
+        </a>
+    }
+    else
+    {
+        <button class="btn btn-warning" disabled title="Archived Directors cannot be edited.">
+            <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
+        </button>
+    }
 </div>
 <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 140px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Singer Page</a>
 
-</div>
+
