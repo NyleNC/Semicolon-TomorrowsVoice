@@ -34,6 +34,8 @@ namespace TomorrowsVoices.Controllers
             ViewData["ActiveTab"] = archived ? "archived" : "active";
             int archivedCount = await _context.Events.CountAsync(d => d.IsArchived == true);
             ViewData["numberofArchive"] = archivedCount;
+            int activeCount = await _context.Events.CountAsync(d => d.IsArchived == false);
+            ViewData["numberofActive"] = activeCount;
 
             // Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);

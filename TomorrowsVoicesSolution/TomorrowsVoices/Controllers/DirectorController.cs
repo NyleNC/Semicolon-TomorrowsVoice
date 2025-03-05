@@ -136,6 +136,8 @@ namespace TomorrowsVoices.Controllers
             ViewData["numberFilters"] = numberFilters;
             int archivedCount = await _context.Directors.CountAsync(d => d.IsArchived == true);
             ViewData["numberofArchive"] = archivedCount;
+            int activeCount = await _context.Directors.CountAsync(d => d.IsArchived == false);
+            ViewData["numberofActive"] = activeCount;
 
             var cityList = directors.AsEnumerable()
                 .Where(d => d.Location?.City != null)

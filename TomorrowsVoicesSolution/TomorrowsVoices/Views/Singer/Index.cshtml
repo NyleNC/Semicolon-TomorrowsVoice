@@ -7,44 +7,58 @@
     bool isArchived = ViewData["IsArchived"] as bool? ?? false;
 }
 
-<h1>Singers</h1>
-@* Archived tabs *@
-<ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-        <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
-           asp-action="Index" asp-route-archived="false">Active</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
-           asp-action="Index" asp-route-archived="true">
-            Archived
-            @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
-            {
-                <span>(0)</span>
-            }
-            else
-            {
-                <span>(@ViewData["numberofArchive"])</span>
-            }
+<div class="d-flex align-items-center justify-content-between mb-2 g-2">
+    <!-- Sessions Heading -->
+    <div class="d-flex mt-0">
+
+        <h1 class="mb-0">Singers</h1>
+
+        <!-- Buttons for Table and Calendar Views -->
+        @*  <div class="d-flex align-items-center">
+            <a asp-action="Index" class="btn btn-primary btn-events-toggle">Table View</a>
+            <a asp-action="Calendar" class="btn btn-primary btn-events-toggle">Calendar View</a>
+        </div> *@
+
+    </div>
+    <div>
+        <button type="button" class="btn btn-primary btn-import-excel" data-bs-toggle="modal" data-bs-target="#importSingerExcelModal">
+            Import Excel
+        </button>
+        <a asp-action="Create" class="btn btn-primary">
+            <img src="~/Images/add-user.png" alt="add-singer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Singer
         </a>
-    </li>
-</ul>
-<div class="d-flex justify-content-between align-items-start mb-3">
-    @if (ViewData["ActiveTab"]?.ToString() != "archived")
-    {
-        <div class="text-center">
-            <a asp-action="Create" class="btn btn-primary">
-                <img src="~/Images/add-user.png" alt="add-singer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Singer
-            </a>
-        </div>
-        <!-- Modal Button -->
-        <div class="mb-2">
-            <button type="button" class="btn btn-primary btn-import-excel" data-bs-toggle="modal" data-bs-target="#importSingerExcelModal">
-                Import Excel
-            </button>
-        </div>
-    }
+    </div>
 </div>
+<p>View your Singers records.</p>
+@* Container for all tabs *@
+<div class="nav-container mb-3">
+    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
+       asp-action="Index" asp-route-archived="false">
+        Active
+        @if (ViewData["numberofActive"] != null && (int)ViewData["numberofActive"] == 0)
+        {
+            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">0</span>
+        }
+        else
+        {
+            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">@ViewData["numberofActive"]</span>
+        }
+    </a>
+    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
+       asp-action="Index" asp-route-archived="true">
+        Archive
+        @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
+        {
+            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">0</span>
+        }
+        else
+        {
+            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">@ViewData["numberofArchive"]</span>
+        }
+    </a>
+</div>
+
+
 
 <!-- Modal -->
 <!-- Import Excel Modal for Singers -->
@@ -140,27 +154,29 @@
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
-
     <div class="row">
-        <div class="col-10">
-            <button class="btn mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
-                    data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="background-color: #6423e7; color: white">
-                <img src="~/Images/filter-search.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
-                Filter/Search (@ViewData["numberFilters"])
-            </button>
+        <div class="col-12">
+            <div class="float-end">
 
-            <!-- Conditionally render the "Clear" button -->
-            @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
-            {
-                <a asp-action="Index" class="mb-3 btn btn-danger text-white">
-                    <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                    Clear
-                </a>
-            }
+                <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
+                        data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                    <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
+                    Filter (@ViewData["numberFilters"])
+                </button>
+                <!-- Conditionally render the "Clear" button -->
+                @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+                {
+                    <a asp-action="Index" class="mb-3 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px">
+                        <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                        Clear
+                    </a>
+                }
+            </div>
+
         </div>
     </div>
     <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
-        <div class="card card-body" style="background-color:lightgray">
+        <div class="card card-body">
             <div class="row">
                 <div class="form-group col-md-3">
                     <label class="control-label">Search by Singers Name:</label>
@@ -191,12 +207,12 @@
 
 
 
-
-    <table class="table table-striped table-hover table-custom">
-        <thead class="table-dark">
+    <div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
+        <table class="table table-custom p-0 m-0">
+        <thead>
             <tr>
                 <th>
-                    <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'FullName')">
+                    <button  type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'FullName')">
                         Full Name
                         @if (ViewData["sortField"]?.ToString() == "FullName")
                         {
@@ -225,7 +241,7 @@
                 </th>
                 
                 <th>
-                    <button style="font-weight: 700" type="button" name="actionButton" value="City" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Location')">
+                    <button  type="button" name="actionButton" value="City" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Location')">
                         City
                         @if (ViewData["sortField"]?.ToString() == "Location")
                         {
@@ -275,7 +291,7 @@
 
 
                 <th>
-                    <button style="font-weight: 700" type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white">Actions</button>
+                    <button  type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white">Actions</button>
                 </th>
             </tr>
         </thead>
@@ -297,29 +313,31 @@
                     <td>
                 <!-- Desktop View (Buttons) -->
                 <div class="d-none d-lg-inline">
-                    @if (!item.IsArchived)
+                    @if (item.IsArchived)
                     {
-                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
-                            <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
-                        </a>
+
                     }
                     else
                     {
-                        <button class="btn btn-sm btn-warning" disabled title="Archived directors cannot be edited.">
-                            <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
-                        </button>
+                        <div class="d-inline-flex align-items-center m-0 p-0">
+
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
+                                <img src="~/Images/icons8-edit-48 (1).png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
+                            </a>
+                            <div style="margin-left: 3px"> | </div>
+                        </div>
                     }
-                    |
+
                     <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
-                        <img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
+                        <img src="~/Images/icons8-document-48.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
                     </a> |
                     <div class="btn-group">
                         @if (!item.IsArchived)
                         {
                             <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
                                 <input type="hidden" name="id" value="@item.ID" />
-                                <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
-                                    <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <img src="~/Images/icons8-box-48.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                     Archive
                                 </button>
                             </form>
@@ -328,16 +346,15 @@
                         {
                             <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
                                 <input type="hidden" name="id" value="@item.ID" />
-                                <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#4CAF50 ;">
+                                <button type="submit" class="btn btn-sm btn-danger">
                                     <img src="~/Images/unarchive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                     Restore
                                 </button>
                             </form>
                         }
                     </div>
-              
-
                 </div>
+            
                 <!-- Mobile View (Dropdown) -->
                 <div class="d-lg-none">
                     <div class="btn-group">
@@ -386,7 +403,7 @@
 
     <partial name="_PagingNavBar" />
 
-
+</div>
 
 <!-- #JS Scripts -->
 
