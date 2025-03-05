@@ -710,3 +710,22 @@ label.required:after {
     bottom: 0;
     width: 100%; /* Ensures it spans the width of the sidebar */
 }
+
+
+/* For Filter/Search popup */
+.uniform-button {
+    width: 200px; /* Adjust width as needed */
+    text-align: center;
+}
+.filter-popup {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+}
+
+.filter-popup.show {
+    max-height: 500px; /* Adjust based on content size */
+    opacity: 1;
+    padding-bottom: 20px;
+}

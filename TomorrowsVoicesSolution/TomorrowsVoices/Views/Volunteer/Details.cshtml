@@ -54,7 +54,7 @@
     <h2>@Model.FullName</h2><br />
     <p><strong>Email:</strong> @Model.Email</p>
     <p><strong>Phone:</strong> @Model.Phone</p>
-    <p><strong>Location:</strong> @Model.VolLocation?.City</p>
+    <p><strong>City:</strong> @Model.VolLocation?.City</p>
     <p><strong>Events Attended:</strong> @Model.EventsAttended</p>
     <p><strong>Total Hours:</strong> @Model.TotalHours</p>
 </div>
@@ -63,10 +63,10 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Event Name</th>
-            <th>Date</th>
-            <th>Hours Spent</th>
-            <th>Status</th>
+            <th><strong>Event Name</strong></th>
+            <th><strong>Date</strong></th>
+            <th><strong>Hours Spent</strong></th>
+            <th><strong>Status</strong></th>
         </tr>
     </thead>
     <tbody>
@@ -90,8 +90,8 @@
     <div class="mb-3">
         @if (!Model.IsArchived)
         {
-            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning">
-                <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
+            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning uniform-button">
+                <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: inherit; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
             </a>
         }
         else
@@ -100,7 +100,8 @@
                 <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
             </button>
         }
-    </div> |
-    <a asp-action="Index">Back to List</a>
+    </div>
+    <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: inherit; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Volunteer</a>
+    @* <a asp-action="Index">Back to List</a> *@
 </p>
 

@@ -491,33 +491,53 @@ namespace TomorrowsVoices.Controllers
                 int row = 2;
                 foreach (var volunteer in volunteers)
                 {
-                    foreach (var attendance in volunteer.VolAttendances)
+                    // If no attendances, still export volunteer details
+                    if (volunteer.VolAttendances == null || !volunteer.VolAttendances.Any())
                     {
                         worksheet.Cells[row, 1].Value = volunteer.FirstName;
                         worksheet.Cells[row, 2].Value = volunteer.LastName;
                         worksheet.Cells[row, 3].Value = volunteer.Phone;
                         worksheet.Cells[row, 4].Value = volunteer.Email;
                         worksheet.Cells[row, 5].Value = volunteer.VolLocation?.City;
-                        worksheet.Cells[row, 6].Value = attendance.Event?.Name;
-                        worksheet.Cells[row, 7].Value = attendance.Date.ToString("yyyy-MM-dd");
-                        worksheet.Cells[row, 8].Value = attendance.ScheduledStartTime.ToString();
-                        worksheet.Cells[row, 9].Value = attendance.ScheduledEndTime.ToString();
-                        worksheet.Cells[row, 10].Value = attendance.ActualStartTime?.ToString();
-                        worksheet.Cells[row, 11].Value = attendance.ActualEndTime?.ToString();
-                        worksheet.Cells[row, 12].Value = attendance.ActualEndTime.HasValue && attendance.ActualStartTime.HasValue
-                            ? (attendance.ActualEndTime.Value - attendance.ActualStartTime.Value).TotalHours
-                            : 0;
-                        worksheet.Cells[row, 13].Value = attendance.Status ? "Attended" : "Absent";
+
+                        // Highlight the lack of attendance
+                        worksheet.Cells[row, 6].Value = "No Attendance Records";
+                        worksheet.Cells[row, 6].Style.Font.Color.SetColor(System.Drawing.Color.Red);
+                        worksheet.Cells[row, 6].Style.Font.Italic = true;
 
                         row++;
                     }
+                    else
+                    {
+                        foreach (var attendance in volunteer.VolAttendances)
+                        {
+                            worksheet.Cells[row, 1].Value = volunteer.FirstName;
+                            worksheet.Cells[row, 2].Value = volunteer.LastName;
+                            worksheet.Cells[row, 3].Value = volunteer.Phone;
+                            worksheet.Cells[row, 4].Value = volunteer.Email;
+                            worksheet.Cells[row, 5].Value = volunteer.VolLocation?.City;
+                            worksheet.Cells[row, 6].Value = attendance.Event?.Name;
+                            worksheet.Cells[row, 7].Value = attendance.Date.ToString("yyyy-MM-dd");
+                            worksheet.Cells[row, 8].Value = attendance.ScheduledStartTime.ToString();
+                            worksheet.Cells[row, 9].Value = attendance.ScheduledEndTime.ToString();
+                            worksheet.Cells[row, 10].Value = attendance.ActualStartTime?.ToString();
+                            worksheet.Cells[row, 11].Value = attendance.ActualEndTime?.ToString();
+                            worksheet.Cells[row, 12].Value = attendance.ActualEndTime.HasValue && attendance.ActualStartTime.HasValue
+                                ? (attendance.ActualEndTime.Value - attendance.ActualStartTime.Value).TotalHours
+                                : 0;
+                            worksheet.Cells[row, 13].Value = attendance.Status ? "Attended" : "Absent";
+                            row++;
+                        }
+                    }
                 }
+
+                // Auto-fit columns for better readability
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 
                 var stream = new MemoryStream();
                 package.SaveAs(stream);
                 stream.Position = 0;
-
-                string excelName = $"Volunteers-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                string excelName = $"Volunteer_Attendance_{DateTime.Now:MMMM_yyyy}.xlsx";
                 return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
             }
         }
