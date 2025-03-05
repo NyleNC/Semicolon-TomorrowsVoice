@@ -530,13 +530,43 @@ namespace TomorrowsVoices.Controllers
 
         //Autocomplete for City
         public JsonResult CitySuggestions(string term)
-        {
-            var cities = _context.Locations
-                .Where(c => c.City.Contains(term)) // Filter based on input
-                .Select(c => new { id = c.ID, text = c.City })
-                .ToList();
 
-            return Json(cities);
+        {
+
+            if (string.IsNullOrWhiteSpace(term))
+
+            {
+
+                var allCities = _context.Locations
+
+                    .Select(c => new { id = c.ID, text = c.City })
+
+                    .ToList();
+
+
+
+                return Json(allCities);
+
+            }
+
+            else
+
+            {
+
+                var filteredCities = _context.Locations
+
+                    .Where(c => c.City.ToLower().Contains(term.ToLower()))
+
+                    .Select(c => new { id = c.ID, text = c.City })
+
+                    .ToList();
+
+
+
+                return Json(filteredCities);
+
+            }
+
         }
 
         public JsonResult GetInitialCities()

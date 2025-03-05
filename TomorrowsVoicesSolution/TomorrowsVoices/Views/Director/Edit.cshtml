@@ -25,11 +25,11 @@
 
             <!-- Select2 Dropdown for Location.City -->
             <div class="form-group">
-                <label asp-for="Location.City" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+                <label asp-for="LocationID" class="control-label" style="font-weight: 700">City</label><span style="color: red">*</span>
                 <select asp-for="LocationID" class="form-control city-dropdown" asp-items="ViewBag.CityList">
-                    <option> Select the city you want to change it with</option>
+                    <option>Find the City or add a new one</option>
                 </select>
-                <span asp-validation-for="Location.City" class="text-danger"></span>
+                <span asp-validation-for="LocationID" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -56,18 +56,82 @@
 }
 <script>
     $(document).ready(function () {
-        // Initialize Select2 on the dropdown
-        $('.city-dropdown').select2({
-            placeholder: "Select a city",
-            allowClear: true
+        // Initialize the select2 dropdown with AJAX search
+        $(".city-dropdown").select2({
+            placeholder: "Find the City or add a new one",
+            allowClear: true,
+            minimumInputLength: 0,  // Start searching after typing 1 character
+            ajax: {
+                url: '@Url.Action("CitySuggestions", "Director")',  // Your CitySuggestions action
+                dataType: "json",
+                delay: 250,
+                data: function (params) {
+                    return { term: params.term }; // Pass the search term
+                },
+                    processResults: function (data, params) {
+                    var results = $.map(data, function (item) {
+                        return { id: item.id, text: item.text };
+                    });
+                    if (params.term && results.length === 0) {
+                        results.push({
+                            id: "add_new_city",
+                            text: `Add new City: "${params.term}"`,
+                            newCityName: params.term
+
+                        });
+
+                    }
+                    return { results: results };
+                }
+            }
         });
 
-        // Set the initial selected value for Select2
-        var initialCityId = "@Model.LocationID";
-        if (initialCityId) {
-            $('.city-dropdown').val(initialCityId).trigger('change');
+
+        // Handle selecting or typing a new city
+        $(".city-dropdown").on("select2:select", function (e) {
+            var newCityName = e.params.data.newCityName;
+
+            // If "Add new City" was selected, add it
+            if (e.params.data.id === "add_new_city" && newCityName) {
+                addNewCity(newCityName);
+            }
+        }).on("select2:open", function () {
+            var searchInput = $(".select2-search__field");
+            searchInput.off("keydown").on("keydown", function (e) {
+                if (e.key === "Enter") {
+                    var currentValue = $(this).val();
+                    if (currentValue) {
+                        addNewCity(currentValue);
+                    }
+                }
+            });
+        });
+
+        // Function to add a new city
+        function addNewCity(cityName) {
+            $.ajax({
+                url: '@Url.Action("AddCity", "Director")',
+                type: "POST",
+                data: { cityName: cityName },
+                success: function (response) {
+                    if (response.success) {
+                        alert(`${cityName} has been added to the list!`);
+
+                        // Append the new city to the dropdown list
+                        var cityDropdown = $(".city-dropdown");
+                        var newOption = new Option(cityName, response.cityId, true, true);
+                        cityDropdown.append(newOption).trigger("change"); // Append and trigger change event
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while adding the city.");
+                }
+            });
         }
     });
+
 </script>
 
 @if (TempData["SuccessMessage"] != null)
