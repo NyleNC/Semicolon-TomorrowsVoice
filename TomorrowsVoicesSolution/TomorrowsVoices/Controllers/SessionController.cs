@@ -29,7 +29,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Session
-        public async Task<IActionResult> Index( string? SearchString, int? minPresentSinger, int? maxPresentSinger,DateTime StartDate, DateTime EndDate, string? SearchCity, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Session")
+        public async Task<IActionResult> Index( string? SearchString, int? minPresentSinger, int? maxPresentSinger,DateTime StartDate, DateTime EndDate, string? SearchCity, int? page, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Session", int? pageSizeID = 10)
         {
           
             string[] sortOptions = new[] { "City", "Date", "Attendance","Director" };
@@ -179,6 +179,9 @@ namespace TomorrowsVoices.Controllers
             ViewData["numberFilters"] = numberFilters;
             int archivedCount = await _context.Sessions.CountAsync(d => d.IsArchived == true);
             ViewData["numberofArchive"] = archivedCount;
+            int activeCount = await _context.Sessions.CountAsync(d => d.IsArchived == false);
+            ViewData["numberofActive"] = activeCount;
+
             var cityList = sessions.AsEnumerable()
                 .Select(d => d.Location?.City.ToString())
                 .Where(city => city != null)

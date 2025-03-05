@@ -1,6 +1,212 @@
 html {
-    font-size: 14px;
+font-size: 14px;
 }
+
+/* Custom primary button color */
+.btn-primary {
+background-color: #6D28E3;
+border-color: #6D28E3;
+border-radius: 10px;
+padding: 10px 15px;
+font-size: 1rem
+}
+
+/* Hover state - slightly darker shade */
+.btn-primary:hover {
+    background-color: #5B1FC7;
+    border-color: #5B1FC7;
+}
+
+/* Active state - even darker shade */
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary.active {
+    background-color: #4A1A9E;
+    border-color: #4A1A9E;
+    box-shadow: 0 0 0 0.25rem rgba(109, 40, 227, 0.5); /* Optional: Add a focus shadow */
+}
+
+/* Disabled state */
+.btn-primary:disabled {
+    background-color: #A78BFA; /* Lighter shade for disabled state */
+    border-color: #A78BFA;
+}
+
+
+.btn-white {
+background-color: #FFFFFF;
+ 
+}
+
+/* Base button style */
+.btn-white {
+background-color: #fff; /* White background */
+color: black; /* Text color */
+border: 2px solid #919191; /* Border color */
+transition: all 0.3s ease; /* Smooth transition for hover effects */
+border-radius: 10px;
+padding: 10px 15px;
+font-size: 1rem
+}
+
+/* Hover state - light hint of #6D28E3 */
+.btn-white:hover {
+    background-color: rgba(109, 40, 227, 0.1); /* Light hint of #6D28E3 */
+    border-color: #6D28E3; /* Keep the border color consistent */
+    color: black; /* Text color */
+}
+
+/* Active state - slightly stronger hint */
+.btn-white:active,
+.btn-white:focus {
+    background-color: rgba(109, 40, 227, 0.2); /* Slightly stronger hint */
+    border-color: #6D28E3;
+    color: #6D28E3;
+    box-shadow: 0 0 0 0.25rem rgba(109, 40, 227, 0.3); /* Optional: Add a focus shadow */
+}
+
+/* Disabled state */
+.btn-white:disabled {
+    background-color: #fff;
+    border-color: #ccc; /* Light gray border for disabled state */
+    color: #ccc; /* Light gray text for disabled state */
+}
+
+/* Edit Button - btn-warning (Blue) */
+.btn-warning {
+background-color: #E6F2FF; /* bg-blue-50 */
+border-color: #E6F2FF;
+color: #1D4ED8; /* text-blue-700 */
+}
+
+.btn-warning:hover {
+    background-color: #DBEAFE; /* hover:bg-blue-100 */
+    border-color: #DBEAFE;
+    color: #1D4ED8; /* text-blue-700 */
+    font-weight: 500
+}
+
+.btn-warning:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #93C5FD; /* focus:ring-blue-300 */
+}
+
+/* Details Button - btn-info (Green) */
+.btn-info {
+background-color: #F0FDF4; /* bg-green-50 */
+border-color: #F0FDF4;
+color: #166534; /* text-green-700 */
+}
+
+.btn-info:hover {
+    background-color: #DCFCE7; /* hover:bg-green-100 */
+    border-color: #DCFCE7;
+    color: #166534; /* text-green-700 */
+    font-weight: 500
+}
+
+.btn-info:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #6EE7B7; /* focus:ring-green-300 */
+}
+
+/* Archive Button - btn-danger (Red) */
+.btn-danger {
+background-color: #FEF2F2; /* bg-red-50 */
+border-color: #FEF2F2;
+color: #B91C1C; /* text-red-700 */
+}
+
+.btn-danger:hover {
+    background-color: #FEE2E2; /* hover:bg-red-100 */
+    border-color: #FEE2E2;
+    color: #B91C1C; /* text-red-700 */
+    font-weight: 500
+}
+
+.btn-danger:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #FCA5A5; /* focus:ring-red-300 */
+}
+
+.nav-container {
+display: flex;
+border-bottom: 2px solid #e4e4e4
+}
+
+.nav-tab {
+padding: 15px 20px;
+text-align: center;
+color: #333;
+cursor: pointer;
+position: relative;
+transition: all 0.3s ease;
+text-decoration: none;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: normal;
+}
+
+.nav-tab:hover {
+background-color: #f1f1f1;
+}
+
+.nav-tab.active {
+color: #6558F5;
+font-weight: 500;
+transition: all 0.3s ease;
+}
+
+.nav-tab.active::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+width: 100%;
+height: 4px;
+background-color: #6558F5;
+transition: all 0.3s ease;
+}
+
+
+
+.table-custom thead tr * {
+    background-color: #100527
+}
+
+.table-custom tbody tr {
+    vertical-align: middle;
+}
+
+
+.table-custom thead tr th button{
+    color: white
+}
+
+    .table-custom thead tr th button:hover {
+        color: #e9ddff
+    }
+
+.table-custom tbody tr:hover {
+    background-color: #faf8ff
+}
+
+
+.nav-tab-count {
+    background-color: #E7E7E7;
+    color: #333;
+    border-radius: 12px;
+    padding: 2px 8px;
+    margin-left: 12px;
+    font-size: 0.8em;
+}
+
+    .nav-tab-count.active {
+        color: #6558F5;
+        font-weight: 500;
+    }
+
 
 /* Font family CSS */
 * {
@@ -71,11 +277,6 @@ label.required:after {
 }
 
 
-.table-custom {
-    border-radius: 10px;
-    overflow: visible;
-    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .3);
-}
 
 .page-link-custom {
     background-color: #343a40 !important;
@@ -105,10 +306,6 @@ label.required:after {
         font-size: 11px;
     }
 
-    .table-custom {
-        border-radius: 10px;
-        overflow: visible;
-    }
 }
 
 .d-lg-none, .d-none {
