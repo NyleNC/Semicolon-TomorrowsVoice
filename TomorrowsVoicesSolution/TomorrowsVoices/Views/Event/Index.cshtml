@@ -226,6 +226,7 @@
                     </div>
 
                     <!-- Mobile View (Dropdown) -->
+                    <!-- Mobile View (Dropdown) -->
                     <div class="d-lg-none">
                         <div class="btn-group">
                             <button class="btn btn-sm dropdown-toggle" style="background-color: #6423e7; color: white" data-bs-toggle="dropdown">
@@ -235,19 +236,19 @@
                                 <li>
                                         @if (!item.IsArchived)
                                         {
-                                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.ID" style=" color: white">
+                                        <a class="dropdown-item text-black" asp-action="Edit" asp-route-id="@item.ID">
                                             <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
                                         </a>
                                         }
                                         else
                                         {
-                                        <button class="dropdown-item" disabled style=" color: white" title="Archived directors cannot be edited.">
+                                        <button class="dropdown-item text-black" disabled title="Archived directors cannot be edited.">
                                             <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
                                         </button>
                                         }
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID" style=" color: white">
+                                    <a class="dropdown-item text-black" asp-action="Details" asp-route-id="@item.ID" style=" color: white">
                                         <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
                                     </a>
                                 </li>
@@ -256,7 +257,7 @@
                                         {
                                         <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?'); ">
                                             <input type="hidden" name="id" value="@item.ID" />
-                                            <button type="submit" class="dropdown-item" style=" color: white">
+                                            <button type="submit" class="dropdown-item text-black" style=" color: white">
                                                 <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
                                             </button>
                                         </form>
@@ -265,7 +266,7 @@
                                         {
                                         <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');">
                                             <input type="hidden" name="id" value="@item.ID" style=" color: white" />
-                                            <button type="submit" class="dropdown-item">
+                                            <button type="submit" class="dropdown-item text-black">
                                                 <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Restore
                                             </button>
                                         </form>
