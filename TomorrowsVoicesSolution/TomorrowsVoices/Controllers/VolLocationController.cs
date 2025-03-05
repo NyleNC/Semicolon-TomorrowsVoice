@@ -180,7 +180,7 @@ namespace TomorrowsVoices.Controllers
 
 
 
-            TempData["SuccessMessage"] = "The Data has been archived successfully!";
+            TempData["SuccessMessage"] = "The Data has been archived successfully! Pre-existing data wont be affected";
             return RedirectToAction(nameof(Index));
 
         }

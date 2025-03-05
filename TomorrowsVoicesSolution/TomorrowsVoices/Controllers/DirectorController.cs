@@ -529,18 +529,14 @@ namespace TomorrowsVoices.Controllers
         //Autocomplete for City
         public JsonResult CitySuggestions(string term)
         {
-            if (string.IsNullOrWhiteSpace(term))
-            {
-                return Json(new List<object>());
-            }
-
-            var suggestions = _context.Locations
-                .Where(c => c.City.ToLower().StartsWith(term.ToLower()))
+            var cities = _context.Locations
+                .Where(c => c.City.Contains(term)) // Filter based on input
                 .Select(c => new { id = c.ID, text = c.City })
                 .ToList();
 
-            return Json(suggestions);
+            return Json(cities);
         }
+
         public JsonResult GetInitialCities()
         {
             var cities = _context.Locations
@@ -586,7 +582,7 @@ namespace TomorrowsVoices.Controllers
 
 
 
-            TempData["SuccessMessage"] = "The Data has been archived successfully!";
+            TempData["SuccessMessage"] = "The Data has been archived successfully! ";
             return RedirectToAction(nameof(Index));
 
         }
