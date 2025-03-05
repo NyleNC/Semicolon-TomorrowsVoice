@@ -87,7 +87,20 @@
 </table>
 
 <p>
-    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <div class="mb-3">
+        @if (!Model.IsArchived)
+        {
+            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning">
+                <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
+            </a>
+        }
+        else
+        {
+            <button class="btn btn-warning" disabled title="Archived Directors cannot be edited.">
+                <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
+            </button>
+        }
+    </div> |
     <a asp-action="Index">Back to List</a>
 </p>
 
