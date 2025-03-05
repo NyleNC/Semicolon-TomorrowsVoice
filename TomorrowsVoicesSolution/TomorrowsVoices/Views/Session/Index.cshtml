@@ -9,7 +9,7 @@
 
 <div class="d-flex align-items-center justify-content-between mb-2 g-2">
     <!-- Sessions Heading -->
-    <div class="d-flex">
+    <div class="d-flex mt-0">
 
         <h1 class="mb-0">Sessions</h1>
 
@@ -277,9 +277,21 @@
                         <td>
                             <!-- Desktop View (Buttons) -->
                             <div class="d-none d-lg-inline">
-                                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
-                                    <img src="~/Images/icons8-edit-48 (1).png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
-                                </a> |
+                                @if (item.IsArchived)
+                                {
+                              
+                                }
+                                else
+                                {
+                                    <div class="d-inline-flex align-items-center m-0 p-0">
+
+                                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
+                                        <img src="~/Images/icons8-edit-48 (1).png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit 
+                                    </a> 
+                                    <div style="margin-left: 3px"> | </div>
+                                    </div>
+                                }
+
                                 <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
                                     <img src="~/Images/icons8-document-48.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
                                 </a> |
@@ -319,6 +331,7 @@
                                                 <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
                                             </a>
                                         </li>
+                                        
                                         <li>
                                             <a class="dropdown-item" asp-action="Details" asp-route-id="@item.ID" style=" color: white">
                                                 <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details

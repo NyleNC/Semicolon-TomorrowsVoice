@@ -2,6 +2,44 @@ html {
 font-size: 14px;
 }
 
+nav {
+    background-color: #100527
+}
+
+.sidebar {
+    width: 250px; /* Default width for expanded state */
+    transition: width 0.3s;
+    overflow-x: hidden;
+}
+
+    .sidebar.collapsed {
+        width: 60px; /* Width for collapsed state */
+    }
+
+        .sidebar.collapsed .nav-link span {
+            display: none; /* Hide text when collapsed */
+        }
+
+        .sidebar.collapsed .nav-link img {
+            margin-right: 0; /* Remove margin for icons when collapsed */
+        }
+
+.toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+}
+
+    .nav-link img {
+        margin-right: 10px; /* Space between icon and text */
+    }
 /* Custom primary button color */
 .btn-primary {
 background-color: #6D28E3;
@@ -645,9 +683,9 @@ label.required:after {
 }
 
 .header-logo {
-    width: 120px;
-    height: auto;
- 
+    width: auto;
+    height: 50px;
+    filter: grayscale(100%) brightness(1000%) contrast(100%);
 }
 /* Hide sidebar by default on mobile */
 @media (max-width: 768px) {
