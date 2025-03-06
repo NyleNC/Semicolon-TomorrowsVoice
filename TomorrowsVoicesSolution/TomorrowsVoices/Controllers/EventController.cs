@@ -56,7 +56,7 @@ namespace TomorrowsVoices.Controllers
 
             var @event = await _context.Events
                 .Include(Index => Index.VolLocation)
-                .Include(Index => Index.VolAttendance).ThenInclude(Index => Index.Volunteer)
+                .Include(Index => Index.VolSchedules).ThenInclude(Index => Index.VolAttendances).ThenInclude(Index => Index.Volunteer)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (@event == null)
@@ -147,8 +147,7 @@ namespace TomorrowsVoices.Controllers
 
             var @event = await _context.Events
                 .Include(Index => Index.VolLocation)
-                .Include(Index => Index.VolAttendance).ThenInclude(Index => Index.Volunteer)
-                .FirstOrDefaultAsync(Index => Index.ID == id);
+                .Include(Index => Index.VolSchedules).ThenInclude(Index => Index.VolAttendances).ThenInclude(Index => Index.Volunteer).FirstOrDefaultAsync(Index => Index.ID == id);
             if (@event == null)
             {
                 return NotFound();
@@ -175,8 +174,7 @@ namespace TomorrowsVoices.Controllers
                 {
                     var eventToUpdate = await _context.Events
                         .Include(Index => Index.VolLocation)
-                        .Include(Index => Index.VolAttendance)
-                        .ThenInclude(Index => Index.Volunteer)
+                         .Include(Index => Index.VolSchedules).ThenInclude(Index => Index.VolAttendances).ThenInclude(Index => Index.Volunteer)
                         .FirstOrDefaultAsync(Index => Index.ID == id);
 
                     if (eventToUpdate == null)
@@ -186,13 +184,13 @@ namespace TomorrowsVoices.Controllers
 
                     if (await TryUpdateModelAsync<Event>(
                      eventToUpdate, "",
-                   Index => Index.Name, Index => Index.Description, Index => Index.Notes, Index => Index.Date, Index => Index.StartTime, Index => Index.EndTime ,Index => Index.VolLocationID))
+                   Index => Index.Name, Index => Index.Location, Index => Index.Notes, Index => Index.Start, Index => Index.End ,Index => Index.VolLocationID))
                     {
                         var attendance = await _context.VolAttendances
                             .Include(Index => Index.Volunteer)
-                            .Where(Index => Index.EventID == id)
+                            .Where(Index => Index.VolSchedule.EventID == id)
                             .ToListAsync(); 
-                        eventToUpdate.VolAttendance = attendance;
+                        eventToUpdate. = attendance;
                         _context.Update(eventToUpdate);
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));
@@ -291,153 +289,140 @@ namespace TomorrowsVoices.Controllers
         }
 
         //ImportExcel 
-        [HttpPost]
-        public async Task<IActionResult> InsertFromExcel(IFormFile theExcel)
-        {
-            var response = new { success = false, message = "" };
+        //[HttpPost]
+        //public async Task<IActionResult> InsertFromExcel(IFormFile theExcel)
+        //{
+        //    var response = new { success = false, message = "" };
 
-            if (theExcel == null || theExcel.Length == 0)
-            {
-                response = new { success = false, message = "❌ No file uploaded. Please select an Excel file." };
-                return Json(response);
-            }
+        //    if (theExcel == null || theExcel.Length == 0)
+        //    {
+        //        response = new { success = false, message = "❌ No file uploaded. Please select an Excel file." };
+        //        return Json(response);
+        //    }
 
-            string feedbackMessage = "";
-            int successCount = 0, errorCount = 0;
+        //    string feedbackMessage = "";
+        //    int successCount = 0, errorCount = 0;
 
-            try
-            {
-                string mimeType = theExcel.ContentType;
-                if (!mimeType.Contains("excel") && !mimeType.Contains("spreadsheet"))
-                {
-                    response = new { success = false, message = "⚠️ Invalid file format. Please upload a valid Excel file." };
-                    return Json(response);
-                }
+        //    try
+        //    {
+        //        string mimeType = theExcel.ContentType;
+        //        if (!mimeType.Contains("excel") && !mimeType.Contains("spreadsheet"))
+        //        {
+        //            response = new { success = false, message = "⚠️ Invalid file format. Please upload a valid Excel file." };
+        //            return Json(response);
+        //        }
 
-                using (var memoryStream = new MemoryStream())
-                {
-                    await theExcel.CopyToAsync(memoryStream);
-                    using (var package = new ExcelPackage(memoryStream))
-                    {
-                        var workSheet = package.Workbook.Worksheets[0];
-                        var start = workSheet.Dimension.Start;
-                        var end = workSheet.Dimension.End;
+        //        using (var memoryStream = new MemoryStream())
+        //        {
+        //            await theExcel.CopyToAsync(memoryStream);
+        //            using (var package = new ExcelPackage(memoryStream))
+        //            {
+        //                var workSheet = package.Workbook.Worksheets[0];
+        //                var start = workSheet.Dimension.Start;
+        //                var end = workSheet.Dimension.End;
 
-                        // Validate headers
-                        if (workSheet.Cells[1, 1].Text != "Name" ||
-                            workSheet.Cells[1, 2].Text != "Location" ||
-                            workSheet.Cells[1, 3].Text != "Date" ||
-                            workSheet.Cells[1, 4].Text != "Start Time" ||
-                            workSheet.Cells[1, 5].Text != "End Time")
-                        {
-                            response = new { success = false, message = "❌ Invalid Excel format. Please ensure the file has 'Name', 'Location', 'Date', 'Start Time', and 'End Time' headers." };
-                            return Json(response);
-                        }
+        //                // Validate headers
+        //                if (workSheet.Cells[1, 1].Text != "Name" ||
+        //                    workSheet.Cells[1, 2].Text != "Location" ||
+        //                    workSheet.Cells[1, 3].Text != "Start" ||
+        //                    workSheet.Cells[1, 4].Text != "End")
+        //                {
+        //                    response = new { success = false, message = "❌ Invalid Excel format. Please ensure the file has 'Name', 'Location', 'Date', 'Start Time', and 'End Time' headers." };
+        //                    return Json(response);
+        //                }
 
-                        for (int row = start.Row + 1; row <= end.Row; row++)
-                        {
-                            Event events = new Event();
-                            try
-                            {
-                                events.Name = workSheet.Cells[row, 1].Text.Trim();
-                                string cityName = workSheet.Cells[row, 2].Text.Trim();
+        //                for (int row = start.Row + 1; row <= end.Row; row++)
+        //                {
+        //                    Event events = new Event();
+        //                    try
+        //                    {
+        //                        events.Name = workSheet.Cells[row, 1].Text.Trim();
+        //                        string cityName = workSheet.Cells[row, 2].Text.Trim();
 
-                                // Parse Date
-                                if (DateOnly.TryParse(workSheet.Cells[row, 3].Text.Trim(), out DateOnly date))
-                                {
-                                    events.Date = date;
-                                }
-                                else
-                                {
-                                    errorCount++;
-                                    feedbackMessage += $"⚠️ Error: Invalid date format in row {row}.<br>";
-                                    continue;
-                                }
+        //                        // Parse Date
+        //                        if (DateTime.TryParse(workSheet.Cells[row, 3].Text.Trim(), out DateTime eventStart))
+        //                        {
+        //                            events.Start = eventStart;
+        //                        }
+        //                        else
+        //                        {
+        //                            errorCount++;
+        //                            feedbackMessage += $"⚠️ Error: Invalid date format in row {row}.<br>";
+        //                            continue;
+        //                        }
 
-                                // Parse Start Time
-                                if (TimeOnly.TryParse(workSheet.Cells[row, 4].Text.Trim(), out TimeOnly startTime))
-                                {
-                                    events.StartTime = startTime;
-                                }
-                                else
-                                {
-                                    errorCount++;
-                                    feedbackMessage += $"⚠️ Error: Invalid start time format in row {row}.<br>";
-                                    continue;
-                                }
+        //                        // Parse Start Time
+        //                        if (DateTime.TryParse(workSheet.Cells[row, 4].Text.Trim(), out DateTime eventEnd))
+        //                        {
+        //                            events.End = eventEnd;
+        //                        }
+        //                        else
+        //                        {
+        //                            errorCount++;
+        //                            feedbackMessage += $"⚠️ Error: Invalid start time format in row {row}.<br>";
+        //                            continue;
+        //                        }
 
-                                // Parse End Time
-                                if (TimeOnly.TryParse(workSheet.Cells[row, 5].Text.Trim(), out TimeOnly endTime))
-                                {
-                                    events.EndTime = endTime;
-                                }
-                                else
-                                {
-                                    errorCount++;
-                                    feedbackMessage += $"⚠️ Error: Invalid end time format in row {row}.<br>";
-                                    continue;
-                                }
+        //                        // Validate data before adding
+        //                        if (string.IsNullOrEmpty(events.Name) ||
+        //                            string.IsNullOrEmpty(cityName))
+        //                        {
+        //                            errorCount++;
+        //                            feedbackMessage += $"⚠️ Error: Row {row} has missing fields.<br>";
+        //                            continue; // Skip invalid row
+        //                        }
 
-                                // Validate data before adding
-                                if (string.IsNullOrEmpty(events.Name) ||
-                                    string.IsNullOrEmpty(cityName))
-                                {
-                                    errorCount++;
-                                    feedbackMessage += $"⚠️ Error: Row {row} has missing fields.<br>";
-                                    continue; // Skip invalid row
-                                }
+        //                        // Check if event with the same name, date, and location already exists
+        //                        var location = _context.VolLocations.FirstOrDefault(l => l.City == cityName);
 
-                                // Check if event with the same name, date, and location already exists
-                                var location = _context.VolLocations.FirstOrDefault(l => l.City == cityName);
+        //                        if (location == null)
+        //                        {
+        //                            // If location doesn't exist, create a new one
+        //                            location = new VolLocation { City = cityName };
+        //                            _context.VolLocations.Add(location);
+        //                            await _context.SaveChangesAsync(); // Save the new location to get its ID
+        //                        }
 
-                                if (location == null)
-                                {
-                                    // If location doesn't exist, create a new one
-                                    location = new VolLocation { City = cityName };
-                                    _context.VolLocations.Add(location);
-                                    await _context.SaveChangesAsync(); // Save the new location to get its ID
-                                }
+        //                        if (_context.Events.Any(e => e.Name == events.Name && e.Location == events.Location && e.VolLocationID == location.ID))
+        //                        {
+        //                            errorCount++;
+        //                            feedbackMessage += $"⚠️ Error: The event {events.Name} on {events.Date.ToShortDateString()} at {cityName} already exists.<br>";
+        //                            continue;
+        //                        }
 
-                                if (_context.Events.Any(e => e.Name == events.Name && e.Date == events.Date && e.VolLocationID == location.ID))
-                                {
-                                    errorCount++;
-                                    feedbackMessage += $"⚠️ Error: The event {events.Name} on {events.Date.ToShortDateString()} at {cityName} already exists.<br>";
-                                    continue;
-                                }
-
-                                events.VolLocationID = location.ID;
-                                _context.Events.Add(events);
-                                successCount++;
-                            }
-                            catch (Exception ex)
-                            {
-                                errorCount++;
-                                feedbackMessage += $"⚠️ Error: Exception in row {row} - {ex.Message}<br>";
-                            }
-                        }
+        //                        events.VolLocationID = location.ID;
+        //                        _context.Events.Add(events);
+        //                        successCount++;
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        errorCount++;
+        //                        feedbackMessage += $"⚠️ Error: Exception in row {row} - {ex.Message}<br>";
+        //                    }
+        //                }
 
                         // Save changes to the database
-                        await _context.SaveChangesAsync();
+        //                await _context.SaveChangesAsync();
 
-                        // Prepare response
-                        if (successCount > 0)
-                        {
-                            response = new { success = true, message = $"✅ {successCount} events added successfully.<br>{feedbackMessage}" };
-                        }
-                        else
-                        {
-                            response = new { success = false, message = $"❌ No events were added.<br>{feedbackMessage}" };
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                response = new { success = false, message = $"❌ An error occurred: {ex.Message}" };
-            }
+        //                // Prepare response
+        //                if (successCount > 0)
+        //                {
+        //                    response = new { success = true, message = $"✅ {successCount} events added successfully.<br>{feedbackMessage}" };
+        //                }
+        //                else
+        //                {
+        //                    response = new { success = false, message = $"❌ No events were added.<br>{feedbackMessage}" };
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response = new { success = false, message = $"❌ An error occurred: {ex.Message}" };
+        //    }
 
-            return Json(response);
-        }
+        //    return Json(response);
+        //}
 
         // Excel Template Server
         public IActionResult DownloadSampleExcel()
@@ -466,9 +451,9 @@ namespace TomorrowsVoices.Controllers
                 {
                     id = e.ID,
                     title = e.Name,
-                    start = e.Date.ToDateTime(e.StartTime), // Combine Date and StartTime
-                    end = e.Date.ToDateTime(e.EndTime), // Combine Date and EndTime
-                    description = e.Description,
+                    description = e.Location,
+                    start = e.Start, // Combine Date and StartTime
+                    end = e.End, // Combine Date and EndTime
                     location = e.VolLocation.City // Include location if needed
                 })
                 .ToListAsync();
@@ -494,10 +479,9 @@ namespace TomorrowsVoices.Controllers
             {
                 id = @event.ID,
                 name = @event.Name,
-                description = @event.Description,
-                date = @event.Date.ToShortDateString(),
-                startTime = @event.StartTime.ToString(),
-                endTime = @event.EndTime.ToString(),
+                description = @event.Location,
+                start = @event.Start.ToString(),         
+                end = @event.End.ToString(),
                 location = @event.VolLocation?.City // Include location name
             });
         }
