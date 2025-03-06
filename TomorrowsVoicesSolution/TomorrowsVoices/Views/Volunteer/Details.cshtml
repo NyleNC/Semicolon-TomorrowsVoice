@@ -47,17 +47,17 @@
     ViewData["Title"] = "Volunteer Details";
 }
 
-<h1>Volunteer Details</h1>
+<h1 class="pt-5">Volunteer Details</h1>
 <hr />
-
 <div>
-    <h2>@Model.FullName</h2><br />
-    <p><strong>Email:</strong> @Model.Email</p>
-    <p><strong>Phone:</strong> @Model.Phone</p>
-    <p><strong>City:</strong> @Model.VolLocation?.City</p>
-    <p><strong>Events Attended:</strong> @Model.EventsAttended</p>
-    <p><strong>Total Hours:</strong> @Model.TotalHours</p>
+    <h2>@Model.FullName</h2>
+    <p class="compact-paragraph"><strong>Email:</strong> @Model.Email</p>
+    <p class="compact-paragraph"><strong>Phone:</strong> @Model.FormattedPhone</p>
+    <p class="compact-paragraph"><strong>City:</strong> @Model.VolLocation?.City</p>
+    <p class="compact-paragraph"><strong>Events Attended:</strong> @Model.EventsAttended</p>
+    <p class="compact-paragraph"><strong>Total Hours:</strong> @Model.TotalHours</p>
 </div>
+<br />
 
 <h3>Event Details</h3>
 <table class="table">
@@ -86,22 +86,25 @@
     </tbody>
 </table>
 
-<p>
-    <div class="mb-3">
-        @if (!Model.IsArchived)
-        {
-            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning uniform-button">
-                <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: inherit; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
-            </a>
-        }
-        else
-        {
-            <button class="btn btn-warning" disabled title="Archived Directors cannot be edited.">
-                <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
-            </button>
-        }
-    </div>
-    <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: inherit; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Volunteer</a>
-    @* <a asp-action="Index">Back to List</a> *@
-</p>
+
+    <p>
+       <div class="mb-3">
+           @if (!Model.IsArchived)
+           {
+               <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning" style="width: 188px;">
+                   <img src="~/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
+               </a>
+           }
+           else
+           {
+               <button class="btn btn-warning" disabled title="Archived Directors cannot be edited." style="width: auto;">
+                   <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
+               </button>
+           }
+       </div>
+       <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px; width: auto;">
+           <img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: inherit; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Volunteer
+       </a>
+    </p>
+
 

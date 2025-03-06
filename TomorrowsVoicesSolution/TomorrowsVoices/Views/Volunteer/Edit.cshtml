@@ -39,13 +39,16 @@
                 <span asp-validation-for="VolLocationID" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-success">
+                <button type="submit" class="btn btn-success btn text-white" style="padding: 11px; border-radius: 10px; width: 200px">
                     <img src="~/Images/save-changes-icon.png" alt="Save changes" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
                     Save
                 </button>
             </div>
-            <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Volunteers Page</a>
-
+            <a asp-action="Index" class="btn btn-secondary mb-3 btn text-white" style="margin-bottom: 100px; padding: 11px; border-radius: 10px; width: 200px">
+                <img src="~/Images/previous-page-icon.png" alt="go to previous page icon"
+                     style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px"/>
+                     Back to Volunteers
+            </a>
         </form>
     </div>
 </div>
