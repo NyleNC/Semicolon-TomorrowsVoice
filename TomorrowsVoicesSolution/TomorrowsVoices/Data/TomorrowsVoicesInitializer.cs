@@ -1522,117 +1522,117 @@ namespace TomorrowsVoices.Data
 
         private static void SeedVolLocation(TomorrowsVoicesContext context)
         {
-            //if (!context.VolLocations.Any())
-            //{
-            //    context.VolLocations.AddRange(
-            //        new VolLocation { City = "Toronto" },
-            //        new VolLocation { City = "Niagara Falls" }
-            //    );
-            //    context.SaveChanges();
-            //}
+            if (!context.VolLocations.Any())
+            {
+                context.VolLocations.AddRange(
+                    new VolLocation { City = "Toronto" },
+                    new VolLocation { City = "Niagara Falls" }
+                );
+                context.SaveChanges();
+            }
         }
 
 
         private static void SeedVolunteers(TomorrowsVoicesContext context)
         {
-            //if (!context.Volunteers.Any())
-            //{
-            //    context.Volunteers.AddRange(
-            //        new Volunteer { FirstName = "John", LastName = "Doe", Phone = "1234567890", Email = "john.doe@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Jane", LastName = "Smith", Phone = "2345678901", Email = "jane.smith@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Alice", LastName = "Johnson", Phone = "3456789012", Email = "alice.johnson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Bob", LastName = "Brown", Phone = "4567890123", Email = "bob.brown@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Charlie", LastName = "Davis", Phone = "5678901234", Email = "charlie.davis@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "David", LastName = "Miller", Phone = "6789012345", Email = "david.miller@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Eve", LastName = "Wilson", Phone = "7890123456", Email = "eve.wilson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Frank", LastName = "Moore", Phone = "8901234567", Email = "frank.moore@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Grace", LastName = "Taylor", Phone = "9012345678", Email = "grace.taylor@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Hank", LastName = "Anderson", Phone = "0123456789", Email = "hank.anderson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Ivy", LastName = "Thomas", Phone = "1234567890", Email = "ivy.thomas@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Jack", LastName = "Jackson", Phone = "2345678901", Email = "jack.jackson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Karen", LastName = "White", Phone = "3456789012", Email = "karen.white@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Leo", LastName = "Harris", Phone = "4567890123", Email = "leo.harris@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Mia", LastName = "Martin", Phone = "5678901234", Email = "mia.martin@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Nina", LastName = "Thompson", Phone = "6789012345", Email = "nina.thompson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Oscar", LastName = "Garcia", Phone = "7890123456", Email = "oscar.garcia@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Paul", LastName = "Martinez", Phone = "8901234567", Email = "paul.martinez@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Quinn", LastName = "Robinson", Phone = "9012345678", Email = "quinn.robinson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Rose", LastName = "Clark", Phone = "0123456789", Email = "rose.clark@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Sam", LastName = "Rodriguez", Phone = "1234567890", Email = "sam.rodriguez@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Tina", LastName = "Lewis", Phone = "2345678901", Email = "tina.lewis@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Uma", LastName = "Lee", Phone = "3456789012", Email = "uma.lee@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Vince", LastName = "Walker", Phone = "4567890123", Email = "vince.walker@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
-            //        new Volunteer { FirstName = "Wendy", LastName = "Hall", Phone = "5678901234", Email = "wendy.hall@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 }
-            //    );
-            //    context.SaveChanges();
-            //}
+            if (!context.Volunteers.Any())
+            {
+                context.Volunteers.AddRange(
+                    new Volunteer { FirstName = "John", LastName = "Doe", Phone = "1234567890", Email = "john.doe@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Jane", LastName = "Smith", Phone = "2345678901", Email = "jane.smith@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Alice", LastName = "Johnson", Phone = "3456789012", Email = "alice.johnson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Bob", LastName = "Brown", Phone = "4567890123", Email = "bob.brown@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Charlie", LastName = "Davis", Phone = "5678901234", Email = "charlie.davis@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "David", LastName = "Miller", Phone = "6789012345", Email = "david.miller@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Eve", LastName = "Wilson", Phone = "7890123456", Email = "eve.wilson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Frank", LastName = "Moore", Phone = "8901234567", Email = "frank.moore@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Grace", LastName = "Taylor", Phone = "9012345678", Email = "grace.taylor@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Hank", LastName = "Anderson", Phone = "0123456789", Email = "hank.anderson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Ivy", LastName = "Thomas", Phone = "1234567890", Email = "ivy.thomas@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Jack", LastName = "Jackson", Phone = "2345678901", Email = "jack.jackson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Karen", LastName = "White", Phone = "3456789012", Email = "karen.white@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Leo", LastName = "Harris", Phone = "4567890123", Email = "leo.harris@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Mia", LastName = "Martin", Phone = "5678901234", Email = "mia.martin@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Nina", LastName = "Thompson", Phone = "6789012345", Email = "nina.thompson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Oscar", LastName = "Garcia", Phone = "7890123456", Email = "oscar.garcia@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Paul", LastName = "Martinez", Phone = "8901234567", Email = "paul.martinez@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Quinn", LastName = "Robinson", Phone = "9012345678", Email = "quinn.robinson@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Rose", LastName = "Clark", Phone = "0123456789", Email = "rose.clark@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Sam", LastName = "Rodriguez", Phone = "1234567890", Email = "sam.rodriguez@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Tina", LastName = "Lewis", Phone = "2345678901", Email = "tina.lewis@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Uma", LastName = "Lee", Phone = "3456789012", Email = "uma.lee@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Vince", LastName = "Walker", Phone = "4567890123", Email = "vince.walker@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 },
+                    new Volunteer { FirstName = "Wendy", LastName = "Hall", Phone = "5678901234", Email = "wendy.hall@tv.com", VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls")?.ID ?? 0 }
+                );
+                context.SaveChanges();
+            }
         }
 
 
         private static void SeedEvents(TomorrowsVoicesContext context)
         {
-        //    if (!context.Events.Any())
-        //    {
-        //        context.Events.AddRange(
-        //            new Event
-        //            {
-        //                Name = "Community Cleanup",
-        //                Description = "A community cleanup event.",
-        //                Date = DateOnly.Parse("2024-02-20"),
-        //                StartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
-        //                EndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
-        //                VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
-        //                Notes = "20 volunteers showed up and the event was successful."
-        //            },
-        //            new Event
-        //            {
-        //                Name = "Food Drive",
-        //                Description = "A food drive for the local food bank.",       
-        //                Date = DateOnly.Parse("2024-03-10"),
-        //                StartTime = TimeOnly.ParseExact("10:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
-        //                EndTime = TimeOnly.ParseExact("02:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
-        //                VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
-        //                Notes = "15 volunteers participated and collected 200 food items."
-        //            },
-        //            new Event
-        //            {
-        //                Name = "Blood Donation Camp",
-        //                Description = "A blood donation camp.",
-        //                Date = DateOnly.Parse("2024-04-05"),
-        //                StartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
-        //                EndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture),
-        //                VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls").ID,
-        //                Notes = "25 volunteers assisted and 50 units of blood were collected."
-        //            }
-        //        );
-        //        context.SaveChanges();
-        //    }
+            if (!context.Events.Any())
+            {
+                context.Events.AddRange(
+                    new Event
+                    {
+                        Name = "Community Cleanup",
+                        Description = "A community cleanup event.",
+                        Date = DateOnly.Parse("2024-02-20"),
+                        StartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        EndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
+                        Notes = "20 volunteers showed up and the event was successful."
+                    },
+                    new Event
+                    {
+                        Name = "Food Drive",
+                        Description = "A food drive for the local food bank.",       
+                        Date = DateOnly.Parse("2024-03-10"),
+                        StartTime = TimeOnly.ParseExact("10:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        EndTime = TimeOnly.ParseExact("02:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
+                        Notes = "15 volunteers participated and collected 200 food items."
+                    },
+                    new Event
+                    {
+                        Name = "Blood Donation Camp",
+                        Description = "A blood donation camp.",
+                        Date = DateOnly.Parse("2024-04-05"),
+                        StartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        EndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls").ID,
+                        Notes = "25 volunteers assisted and 50 units of blood were collected."
+                    }
+                );
+                context.SaveChanges();
+            }
         }
 
         private static void SeedVolAttendances(TomorrowsVoicesContext context)
         {
-            //if (!context.VolAttendances.Any())
-            //{
-            //    context.VolAttendances.AddRange(
-            //        new VolAttendance { Date = DateOnly.ParseExact("2024-02-20", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "John" && v.LastName == "Doe").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
-            //        new VolAttendance { Date = DateOnly.ParseExact("2024-02-20", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("09:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Jane" && v.LastName == "Smith").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
-            //        new VolAttendance { Date = DateOnly.ParseExact("2024-02-20", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Alice" && v.LastName == "Johnson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
+            if (!context.VolAttendances.Any())
+            {
+                context.VolAttendances.AddRange(
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-02-20", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "John" && v.LastName == "Doe").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-02-20", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("09:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Jane" && v.LastName == "Smith").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-02-20", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Alice" && v.LastName == "Johnson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
 
 
 
 
-            //        new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Bob" && v.LastName == "Brown").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-            //        new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("08:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Charlie" && v.LastName == "Davis").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Bob" && v.LastName == "Brown").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("08:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Charlie" && v.LastName == "Davis").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
 
-            //        new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "David" && v.LastName == "Miller").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-            //        new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Eve" && v.LastName == "Wilson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-            //        new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Frank" && v.LastName == "Moore").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "David" && v.LastName == "Miller").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Eve" && v.LastName == "Wilson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("11:30 AM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Frank" && v.LastName == "Moore").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
 
-            //        new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Grace" && v.LastName == "Taylor").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-            //        new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Hank" && v.LastName == "Anderson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID }
-            //    );
-            //    context.SaveChanges();
-            //}
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Grace" && v.LastName == "Taylor").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+                    new VolAttendance { Date = DateOnly.ParseExact("2024-04-05", "yyyy-MM-dd", CultureInfo.InvariantCulture), ScheduledStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ScheduledEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualStartTime = TimeOnly.ParseExact("03:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), ActualEndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Hank" && v.LastName == "Anderson").ID, EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID }
+                );
+                context.SaveChanges();
+            }
         }
     }
 }

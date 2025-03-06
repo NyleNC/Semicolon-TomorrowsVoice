@@ -36,8 +36,6 @@ namespace TomorrowsVoices.Models
         [Display(Name = "Location")]
         public int? LocationID { get; set; }
         public Location? Location { get; set; }
-
-        [Display(Name = "Is Archived")]
         public bool IsArchived { get; set; }
     }
 }

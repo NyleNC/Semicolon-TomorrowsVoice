@@ -10,30 +10,33 @@ namespace TomorrowsVoices.Models
         [Display(Name = "Title")]
         [Required(ErrorMessage = "You cannot leave the Event Title blank.")]
         [StringLength(30, ErrorMessage = "Event Title cannot be more than 30 characters long.")]
-        public string  Name { get; set; }
+        public string? Name { get; set; }
 
-        [Display(Name = "Location")]
-        [StringLength(200, ErrorMessage = "Location cannot be more than 200 characters long.")]
-        [Required(ErrorMessage = "Event Location is required and cannot be blank.")]
-        public string Location { get; set; }
+        [Display(Name = "Description")]
+        [StringLength(1000, ErrorMessage = "Description cannot be more than 1000 characters long.")]
+        public string? Description { get; set; }
 
         [StringLength(2000, ErrorMessage = "Limit of 2000 characters for notes.")]
         public string? Notes { get; set; }
 
-        [Display(Name = "Event Start")]
-        public DateTime Start { get; set; }
+        [Display(Name = "Date")]
+        public DateOnly Date { get; set; }
 
-        [Display(Name = "Event End")]
-        public DateTime End { get; set; }
 
-        [Display(Name = "City")]
+        [Display(Name = "Start Time")]
+        public TimeOnly StartTime { get; set; }
+
+        [Display(Name = "End Time")]
+        public TimeOnly EndTime { get; set; }
+
+        [Display(Name = "Location")]
         public int VolLocationID { get; set; }
+
+
 
         public VolLocation? VolLocation { get; set; }
 
-        public ICollection<VolSchedule> VolSchedules { get; set; } = new HashSet<VolSchedule>();
-
-        [Display(Name = "Is Archived")]
+        public ICollection<VolAttendance> VolAttendance { get; set; } = new HashSet<VolAttendance>();
         public bool IsArchived { get; set; }
     }
 }

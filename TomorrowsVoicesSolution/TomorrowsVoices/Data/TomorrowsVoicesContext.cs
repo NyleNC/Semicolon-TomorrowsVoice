@@ -15,6 +15,7 @@ namespace TomorrowsVoices.Data
         public DbSet<Director> Directors { get; set; }
         public DbSet<Attendance>Attendances { get; set; }
          public DbSet<Location> Locations { get; set; }
+        public DbSet<Note> Notes { get; set; }
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Singer> Singers { get; set; }
 
@@ -24,8 +25,6 @@ namespace TomorrowsVoices.Data
         public DbSet<Volunteer> Volunteers { get; set; }
         public DbSet<VolAttendance> VolAttendances { get; set; }
         public DbSet<VolLocation> VolLocations { get; set; }
-
-        public DbSet<VolSchedule> VolSchedules { get; set;  }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -59,7 +58,7 @@ namespace TomorrowsVoices.Data
 
             // PREVENT CASCADE Delete FROM Event TO Attendance
             modelBuilder.Entity<Event>()
-             .HasMany(l => l.VolSchedules)
+             .HasMany(l => l.VolAttendance)
              .WithOne(d => d.Event)
              .HasForeignKey(d => d.EventID)
              .OnDelete(DeleteBehavior.Restrict);

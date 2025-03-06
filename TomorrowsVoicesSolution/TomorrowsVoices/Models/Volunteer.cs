@@ -15,8 +15,8 @@ namespace TomorrowsVoices.Models
 
         [Display(Name = "Total Hours")]
         public double TotalHours => VolAttendances
-            .Where(va => va.ActualStart.HasValue && va.ActualEnd.HasValue)
-            .Sum(va => (va.ActualEnd.Value - va.ActualStart.Value).TotalHours);
+            .Where(va => va.ActualStartTime.HasValue && va.ActualEndTime.HasValue)
+            .Sum(va => (va.ActualEndTime.Value - va.ActualStartTime.Value).TotalHours);
 
         #endregion
 
@@ -43,15 +43,13 @@ namespace TomorrowsVoices.Models
         [Required(ErrorMessage = "You cannot leave the email blank.")]
         public string? Email { get; set; } = null;
 
-        [Display(Name = "City")]
+
         public int VolLocationID { get; set; }
 
-        
+        [Display(Name = "Location")]
         public VolLocation? VolLocation { get; set; }
 
         public ICollection<VolAttendance> VolAttendances { get; set; } = new HashSet<VolAttendance>();
-
-        [Display(Name = "Is Archived")]
         public bool IsArchived { get; set; }
 
     }

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.Contracts;
 
 namespace TomorrowsVoices.Models
 {
@@ -7,26 +6,32 @@ namespace TomorrowsVoices.Models
     {
         public int ID { get; set; }
 
-        [Display(Name = "Actual Start")]
-        public DateTime? ActualStart { get; set; }
+        [Display(Name = "Date")]
+        public DateOnly Date { get; set; }
 
-        [Display(Name = "Actual End")]
-        public DateTime? ActualEnd { get; set; }
+        [Display(Name = "Scheduled Start Time")]
+        public TimeOnly ScheduledStartTime { get; set; }
+
+        [Display(Name = "Scheduled End Time")]
+        public TimeOnly ScheduledEndTime { get; set; }
 
         [Required(ErrorMessage = "You must select the status of the volunteer.")]
-        public bool Status { get; set; } = true;
+        public bool Status { get; set; }
 
-        [Display(Name = "Volunteer")]
+
+        [Display(Name = "Actual Start Time")]
+        public TimeOnly? ActualStartTime { get; set; }
+
+        [Display(Name = "Actual End Time")]
+        public TimeOnly? ActualEndTime { get; set; }
+
         public int VolunteerID { get; set; }
 
         public Volunteer? Volunteer { get; set; }
 
-        [Display(Name = "Schedule")]
-        public int VolScheduleID { get; set; }   
+        public int EventID { get; set; }   
 
-        public VolSchedule? VolSchedule { get; set; }
-
-        [Display(Name = "Is Archived")]
+        public Event? Event { get; set; }
         public bool IsArchived { get; set; }
     }
 }
