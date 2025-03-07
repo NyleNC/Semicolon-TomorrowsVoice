@@ -69,55 +69,55 @@
 
         <div class="row flex-nowrap">
             <!-- Sidebar -->
-
             <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar text-black" style="border-right: 3px solid #f3f3f3; background-color: #f9f9f9">
-
-                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"> 
-                    <!-- Menu -->          
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <!-- Menu -->
                     <button class="toggle-btn" id="btn">
                         <i class="bi bi-grid"></i>
                     </button>
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                         <li>
-                            <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle" >
-                                <img src="~/Images/choirmainicon.png" alt="choir icon" width="30px"> <span class="ms-1 d-none d-sm-inline" style="color:  #6d27e7">Choir Administration</span>
+                            <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle" style="background-color: #e0e0e0;" aria-expanded="@(IsSubMenuActive("Director", "Singer", "Session") == "show" ? "true" : "false")">
+                                <img src="~/Images/NewChoirIcon.png" class="ms-2" alt="choir icon" width="40px"> <span class="ms-1 me-1 d-none d-sm-inline" style="color:  #1d2e79">Choir Administration</span>
+                                <i class="bi bi-chevron-down ms-1 me-2"></i>
                             </a>
                             <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("Director", "Singer", "Session"))" id="submenu1">
                                 <li class="w-100">
-                                    <a class="nav-link px-0 text-black @(IsActive("Director","Index"))" asp-controller="Director" asp-action="Index">
-                                        <img src="~/Images/icons8-administrator-male-48.png" alt="director icon" width="30px"> <span class="ms-1">Director</span>
+                                    <a class="nav-link px-0 text-black @(IsActive("Director","Index")) sub-menu-item" asp-controller="Director" asp-action="Index">
+                                        <img src="~/Images/icons8-administrator-male-48.png" alt="director icon" width="20px" class="ms-3"> <span class="ms-1">Director</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="nav-link px-0 text-black @(IsActive("Singer","Index")) " asp-controller="Singer" asp-action="Index">
-                                        <img src="~/Images/icons8-group-48 (1).png" alt="singer icon" width="30px"> <span class="ms-1">Singer</span>
+                                    <a class="nav-link px-0 text-black @(IsActive("Singer","Index")) sub-menu-item" asp-controller="Singer" asp-action="Index">
+                                        <img src="~/Images/icons8-group-48 (1).png" alt="singer icon" width="20px" class="ms-3"> <span class="ms-1">Singer</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="nav-link px-0 text-black @(IsActive("Session","Index"))" asp-controller="Session" asp-action="Index">
-                                        <img src="~/Images/icons8-raise-a-hand-to-answer-48.png" alt="attendance icon" width="30px"> <span class="ms-1">Attendance</span>
+                                    <a class="nav-link px-0 text-black @(IsActive("Session","Index")) sub-menu-item" asp-controller="Session" asp-action="Index">
+                                        <img src="~/Images/icons8-raise-a-hand-to-answer-48.png" alt="attendance icon" width="20px" class="ms-3"> <span class="ms-1">Attendance</span>
                                     </a>
                                 </li>
                             </ul>
                         </li>
                         <li>
-                            <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                <img src="~/Images/volunteerIcon.png" alt="volunteer icon" width="30px">  <span class="ms-1 d-none d-sm-inline" style=" color: #6d27e7">Volunteer Management</span>
+                            <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle" style="background-color: #e0e0e0;" aria-expanded="@(IsSubMenuActive("VolLocation", "Volunteer", "Event") == "show" ? "true" : "false")">
+                                <img src="~/Images/NewVolunteerIcon.png" class="ms-2" alt="volunteer icon" width="40px">  <span class="ms-1 d-none d-sm-inline" style=" color: #1d2e79">Volunteer Management</span>
+                                <i class="bi bi-chevron-down ms-1 me-2"></i>
                             </a>
                             <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("VolLocation", "Volunteer", "Event"))" id="submenu2">
                                 <li class="w-100">
-                                    <a class="nav-link px-0 text-black @(IsActive("VolLocation","Index"))" asp-controller="VolLocation" asp-action="Index">
-                                        <img src="~/Images/icons8-location-48.png" alt="location icon" width="30px"> <span class="ms-1">Location</span>
+                                    <a class="nav-link px-0 text-black @(IsActive("VolLocation","Index")) sub-menu-item" asp-controller="VolLocation" asp-action="Index">
+                                        <img src="~/Images/icons8-location-48.png" alt="location icon" width="20px" class="ms-3"> <span class="ms-1">Location</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="nav-link px-0 text-black @(IsActive("Volunteer","Index"))" asp-controller="Volunteer" asp-action="Index">
-                                        <img src="~/Images/icons8-group-48 (1).png" alt="volunteer icon" width="30px"> <span class="ms-1">Volunteer</span>
+                                    <a class="nav-link px-0 text-black @(IsActive("Volunteer","Index")) sub-menu-item" asp-controller="Volunteer" asp-action="Index">
+                                        <img src="~/Images/icons8-group-48 (1).png" alt="volunteer icon" width="20px" class="ms-3"> <span class="ms-1">Volunteer</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="nav-link px-0 text-black @(IsActive("Event","Index"))" asp-controller="Event" asp-action="Index">
-                                        <img src="~/Images/icons8-event-48.png" alt="event icon" width="30px"> <span class="ms-1">Event</span>
+                                    <a class="nav-link px-0 text-black @(IsActive("Event","Index")) sub-menu-item" asp-controller="Event" asp-action="Index">
+                                        <img src="~/Images/icons8-event-48.png" alt="event icon" width="20px" class="ms-3"> <span class="ms-1">Event</span>
                                     </a>
                                 </li>
                             </ul>
@@ -155,6 +155,7 @@
         </div>
     </div>
 
+    <!-- Your existing scripts -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
@@ -172,6 +173,18 @@
                 const spans = sidebar.querySelectorAll('.nav-link span');
                 spans.forEach(span => {
                     span.style.display = sidebar.classList.contains('collapsed') ? 'none' : 'inline';
+                });
+            });
+
+            // Track submenu state changes for arrow rotation
+            const submenus = document.querySelectorAll('[data-bs-toggle="collapse"]');
+            submenus.forEach(menu => {
+                menu.addEventListener('click', function() {
+                    // Update aria-expanded attribute after a short delay to catch the toggle
+                    setTimeout(() => {
+                        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                        this.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+                    }, 50);
                 });
             });
         });
