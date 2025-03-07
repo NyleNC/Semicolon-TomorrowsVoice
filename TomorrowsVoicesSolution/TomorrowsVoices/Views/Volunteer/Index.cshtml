@@ -8,114 +8,112 @@
 }
 
 <h1>Volunteers</h1>
-<p>View your Volunteers records.</p>
 
 @* Archived tabs *@
-<div class="nav-container mb-3">
-    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
-       asp-action="Index" asp-route-archived="false">
-        Active
-        @if (ViewData["numberofActive"] != null && (int)ViewData["numberofActive"] == 0)
-        {
-            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">0</span>
-        }
-        else
-        {
-            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">@ViewData["numberofActive"]</span>
-        }
-    </a>
-    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
-       asp-action="Index" asp-route-archived="true">
-        Archived
-        @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
-        {
-            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">0</span>
-        }
-        else
-        {
-            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">@ViewData["numberofArchive"]</span>
-        }
-    </a>
-</div>
-
-
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
+           asp-action="Index" asp-route-archived="false">Active</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
+           asp-action="Index" asp-route-archived="true">
+            Archived
+            @if (ViewData["numberofArchive"] is int numberOfArchive && numberOfArchive == 0)
+            {
+                <span>(0)</span>
+            }
+            else
+            {
+                <span>(@ViewData["numberofArchive"])</span>
+            }
+        </a>
+    </li>
+</ul>
 <div class="d-flex justify-content-between align-items-start mb-1">
     <div class="d-flex flex-column">
         @if (ViewData["ActiveTab"]?.ToString() != "archived")
         {
             <p class="mb-2">
-                <a asp-action="Create" class="btn btn-primary btn-block uniform-button adaptive-button respon">
-                    <img src="~/Images/add-user.png" alt="add-volunteer-icon" class="adaptive-icon" />
+                <a asp-action="Create" class="btn btn-primary uniform-button">
+                    <img src="~/Images/add-user.png" alt="add-volunteer-icon" style="height: 24px; width: auto; margin-right: 10px; padding-bottom:5px;" />
                     Add Volunteer
                 </a>
             </p>
         }
-        <div class="row">
+        <form asp-action="Index" method="get">
+            <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+            <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+            <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
 
-            <form asp-action="Index" method="get">
-                <button class="btn btn-white mb-3 uniform-button adaptive-button @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
-                        data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
-                    <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" class="adaptive-icon" style="height: 24px; width: auto; margin-right: 10px" />
-                    Filter (@ViewData["numberFilters"])
-                </button>
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @Html.Raw(TempData["Success"])
+                </div>
+            }
 
-                <!-- Conditionally render the "Clear" button -->
-                @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
-                {
-                    <a asp-action="Index" class="mb-3 btn text-white adaptive-button" style="background-color: indianred; padding: 11px; border-radius: 10px">
-                        <img src="~/Images/clear-icon.png" alt="Clear filters icon" class="adaptive-icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                        Clear
-                    </a>
-                }
-            </form>
-        </div>
+            <div class="row">
+                <div class="col-10">
+                    <button class="btn uniform-button mb-3" type="button" id="filterToggle"
+                            style="background-color: #6423e7; color: white">
+                        <img src="~/Images/filter-search.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
+                        Filter/Search (@ViewData["numberFilters"])
+                    </button>
+
+                    @if (ViewData["numberFilters"] is int numberOfFilters && numberOfFilters > 0)
+                    {
+                        <a asp-action="Index" class="mb-3 btn btn-danger text-white uniform-button">
+                            <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                            Clear
+                        </a>
+                    }
+                </div>
+            </div>
+        </form>
     </div>
-    @if (ViewData["ActiveTab"]?.ToString() != "archived")
-    {
-        <div class="d-flex flex-column align-items-end">
-            <p class="mb-2">
-                <button type="button" class="btn btn-primary btn btn-primary uniform-button" style="background-color: #006400;" data-bs-toggle="modal" data-bs-target="#importVolunteersExcelModal">
-                    Import from Excel
-                </button>
-            </p>
-            <p>
-                <a asp-action="ExportVolunteersToExcel" class="btn btn-success uniform-button" style="padding: 11px; border-radius: 10px">
-                    <img src="~/Images/export-csv.png" alt="export-csv-icon" style="height: 24px; width: auto; margin-right: 10px" />
-                    Export to Excel
-                </a>
-            </p>
-        </div>
-    }
+    <div class="d-flex flex-column align-items-end">
+        <p class="mb-2">
+            <button type="button" class="btn btn-primary uniform-button" data-bs-toggle="modal" data-bs-target="#importVolunteersExcelModal">
+                Import from Excel
+            </button>
+        </p>
+        <p>
+            <a asp-action="ExportVolunteersToExcel" class="btn btn-success uniform-button">
+                <img src="~/Images/export-csv.png" alt="export-csv-icon" style="height: 24px; width: auto; margin-right: 10px" />
+                Export to Excel
+            </a>
+        </p>
+    </div>
 </div>
 
 <!-- Filter/Search Popup -->
 <div class="filter-popup @ViewData["ShowFilter"]" id="collapseFilter">
-    <div class="card card-body" style="background-color:#f9f9f9">
+    <div class="card card-body" style="background-color:#100527">
         <form asp-action="Index" method="get">
             <div class="row">
                 <div class="form-group col-md-3">
-                    <label class="control-label fw-bold">Search by Name:</label>
+                    <label class="control-label text-white fw-bold">Search by Volunteer Name:</label>
                     @Html.TextBox("SearchString", null, new { @class = "form-control" })
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="control-label fw-bold">Filter by City:</label>
+                        <label class="control-label text-white fw-bold">Filter by City:</label>
                         @Html.DropDownList("SearchCity", ViewData["Cities"] as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>(), new { @class = "form-control" })
                     </div>
                 </div>
                 <div class="form-group col-md-3">
-                    <label class="control-label text fw-bold">Search by Email:</label>
+                    <label class="control-label text-white text fw-bold">Search by Email:</label>
                     @Html.TextBox("SearchEmail", null, new { @class = "form-control" })
                 </div>
             </div>
             <div class="form-group col-md-2 align-self-start">
                 <input type="submit" name="actionButton" value="Filter"
-                       class="btn text-white uniform-button" style="background-color: #6423e7; padding: 11px; border-radius: 10px" />
+                       class="btn text-white uniform-button" style="background-color: #6423e7" />
             </div>
         </form>
     </div>
 </div>
-
 
 <!-- Modal -->
 <!-- Import Volunteers Excel Modal -->
@@ -179,15 +177,15 @@
     </div>
 </div>
 
-<!-- Table for Volunteers -->
-<div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
-    <form asp-action="Index" method="get" id="sortForm">
-        <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" id="sortDirection" />
-        <input type="hidden" name="sortField" value="@ViewData["sortField"]" id="sortField" />
-        <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
 
-        <table class="table table-custom p-0 m-0">
-            <thead>
+    <div class="table-responsive" style="margin: 0; padding: 0; border-radius:8px;">
+        <form asp-action="Index" method="get">
+            <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+            <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+            <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
+
+            <table class="table table-striped table-hover table-custom">
+                <thead class="table-dark">
                 <tr>
                     <th>
                         <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'FullName')">
@@ -217,7 +215,7 @@
                     </th>
 
                     <th>
-                        <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Email')">
+                        <button style="font-weight: 700" type="submit" name="actionButton" value="Email" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Email')">
                             Email
                             @if (ViewData["sortField"]?.ToString() == "Email")
                             {
@@ -243,7 +241,7 @@
                         </button>
                     </th>
                     <th>
-                        <button style="font-weight: 700" type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                        <button style="font-weight: 700" type="submit" name="actionButton" value="City" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
                             City
                             @if (ViewData["sortField"]?.ToString() == "City")
                             {
@@ -273,8 +271,8 @@
                         <span style="font-weight: 700" class="text-white">Actions</span>
                     </th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
@@ -291,44 +289,42 @@
                         <td>
                             <!-- Desktop View (Buttons) -->
                             <div class="d-none d-lg-inline">
-                                @if (item.IsArchived)
+                                @if (!item.IsArchived)
                                 {
-
+                                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
+                                        <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
+                                    </a>
                                 }
                                 else
                                 {
-                                    <div class="d-inline-flex align-items-center m-0 p-0">
-
-                                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
-                                            <img src="~/Images/icons8-edit-48 (1).png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
-                                        </a>
-                                        <div style="margin-left: 3px"> | </div>
-                                    </div>
+                                    <button class="btn btn-sm btn-warning" disabled title="Archived directors cannot be edited.">
+                                        <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
+                                    </button>
                                 }
-
+                                |
                                 <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
-                                    <img src="~/Images/icons8-document-48.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
+                                    <img src="~/Images/details.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
                                 </a> |
                                 <div class="btn-group">
                                     @if (!item.IsArchived)
                                     {
-                                        <!-- Changed to use JavaScript instead of nested form -->
-                                        <button type="button" class="btn btn-sm btn-danger archive-btn"
-                                                data-id="@item.ID"
-                                                onclick="archiveItem(@item.ID)">
-                                            <img src="~/Images/icons8-box-48.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                            Archive
-                                        </button>
+                                        <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.ID" />
+                                            <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#fb606f;">
+                                                <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                                Archive
+                                            </button>
+                                        </form>
                                     }
                                     else
                                     {
-                                        <!-- Changed to use JavaScript instead of nested form -->
-                                        <button type="button" class="btn btn-sm btn-danger unarchive-btn"
-                                                data-id="@item.ID"
-                                                onclick="unarchiveItem(@item.ID)">
-                                            <img src="~/Images/unarchive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
-                                            Restore
-                                        </button>
+                                        <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.ID" />
+                                            <button type="submit" class="btn btn-sm btn-danger" style="color:black; background-color:#4CAF50 ;">
+                                                <img src="~/Images/unarchive.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                                Restore
+                                            </button>
+                                        </form>
                                     }
                                 </div>
                             </div>
@@ -353,17 +349,21 @@
                                         <li>
                                             @if (!item.IsArchived)
                                             {
-                                                <!-- Changed to use JavaScript instead of nested form -->
-                                                <button type="button" class="dropdown-item text-black" onclick="archiveItem(@item.ID)">
-                                                    <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
-                                                </button>
+                                                <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
+                                                    <input type="hidden" name="id" value="@item.ID" />
+                                                    <button type="submit" class="dropdown-item text-black">
+                                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
+                                                    </button>
+                                                </form>
                                             }
                                             else
                                             {
-                                                <!-- Changed to use JavaScript instead of nested form -->
-                                                <button type="button" class="dropdown-item text-black" onclick="unarchiveItem(@item.ID)">
-                                                    <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Restore
-                                                </button>
+                                                <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');">
+                                                    <input type="hidden" name="id" value="@item.ID" />
+                                                    <button type="submit" class="dropdown-item text-black">
+                                                        <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Restore
+                                                    </button>
+                                                </form>
                                             }
                                         </li>
                                     </ul>
@@ -372,22 +372,12 @@
                         </td>
                     </tr>
                 }
-            </tbody>
-        </table>
-        <partial name="_PagingNavBar" />
-    </form>
-</div>
+                </tbody>
+            </table>
+        </form>
+    </div>
 
-
-
-<!-- Hidden forms for archive/unarchive actions -->
-<form id="archiveForm" asp-action="Archive" method="post" style="display:none;">
-    <input type="hidden" name="id" id="archiveId" value="" />
-</form>
-
-<form id="unarchiveForm" asp-action="Unarchive" method="post" style="display:none;">
-    <input type="hidden" name="id" id="unarchiveId" value="" />
-</form>
+<partial name="_PagingNavBar" />
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -404,12 +394,29 @@
 }
 
 
+
+<!-- JavaScript for Filter/Search Toggle -->
+<script>
+    document.getElementById("filterToggle").addEventListener("click", function () {
+        var filterDiv = document.getElementById("collapseFilter");
+        if (filterDiv.classList.contains("show")) {
+            filterDiv.classList.remove("show"); // Hide popup
+        } else {
+            filterDiv.classList.add("show"); // Show popup
+        }
+    });
+</script>
+
+
+
+
 <!-- Sorting and JS Script -->
 <script>
     function handleSort(event, field) {
         event.preventDefault();
-        const sortField = document.getElementById('sortField');
-        const sortDirection = document.getElementById('sortDirection');
+        const form = event.target.closest('form');
+        const sortField = form.querySelector('input[name="sortField"]');
+        const sortDirection = form.querySelector('input[name="sortDirection"]');
 
         if (sortField.value === field) {
             // Toggle sort direction
@@ -421,26 +428,9 @@
         }
 
         // Submit the form
-        document.getElementById('sortForm').submit();
-    }
-
-    // Function to archive an item
-    function archiveItem(id) {
-        if (confirm('Are you sure you want to archive this item?')) {
-            document.getElementById('archiveId').value = id;
-            document.getElementById('archiveForm').submit();
-        }
-    }
-
-    // Function to unarchive an item
-    function unarchiveItem(id) {
-        if (confirm('Are you sure you want to restore this item?')) {
-            document.getElementById('unarchiveId').value = id;
-            document.getElementById('unarchiveForm').submit();
-        }
+        form.submit();
     }
 </script>
-
 
 <!-- POP UP MODAL SCRIPT -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

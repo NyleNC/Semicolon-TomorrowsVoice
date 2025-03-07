@@ -223,7 +223,11 @@
                                             End Time
                                         </button>
                                     </th>
-
+                        <th>
+                            <button type="button" class="btn btn-toolbar d-inline">
+                               Schedule 
+                            </button>
+                        </th>
                                     <th>
                                         <button  type="button" class="btn btn-toolbar d-inline">
                                             Actions
@@ -250,7 +254,25 @@
                                     <td>
                                             @Html.DisplayFor(modelItem => item.EndTime)
                                     </td>
-
+                <td>
+                        @if (item.Schedules != null && item.Schedules.Any())
+                        {
+                        <ul>
+                                @foreach (var schedule in item.Schedules)
+                                {
+                                <li>
+                                        @schedule.ShiftStart.ToString("hh\\:mm") - @schedule.ShiftEnd.ToString("hh\\:mm"):@schedule.Volunteer?.FullName
+                                      
+                                </li>
+                                }
+                        </ul>
+                        }
+                        else
+                        {
+                        <span>No schedules</span>
+                        }
+                </td>
+              
                 <td>
                     <!-- Desktop View (Buttons) -->
                     <div class="d-none d-lg-inline">

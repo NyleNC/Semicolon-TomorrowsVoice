@@ -33,7 +33,7 @@ namespace TomorrowsVoices.Models
         public int VolLocationID { get; set; }
 
 
-
+        public ICollection<Schedule>? Schedules { get; set; }
         public VolLocation? VolLocation { get; set; }
 
         public ICollection<VolAttendance> VolAttendance { get; set; } = new HashSet<VolAttendance>();

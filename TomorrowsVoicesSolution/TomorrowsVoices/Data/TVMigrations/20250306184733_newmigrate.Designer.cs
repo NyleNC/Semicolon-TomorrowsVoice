@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TomorrowsVoices.Data;
 
@@ -10,9 +11,11 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    partial class TomorrowsVoicesContextModelSnapshot : ModelSnapshot
+    [Migration("20250306184733_newmigrate")]
+    partial class newmigrate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -175,13 +178,10 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsPresent")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeOnly>("ShiftEnd")
+                    b.Property<DateTime>("ShiftEnd")
                         .HasColumnType("TEXT");
 
-                    b.Property<TimeOnly>("ShiftStart")
+                    b.Property<DateTime>("ShiftStart")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("VolLocationID")

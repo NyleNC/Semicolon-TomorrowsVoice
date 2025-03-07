@@ -1,0 +1,47 @@
+﻿@model TomorrowsVoices.Models.Schedule
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Schedule</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ShiftStart" class="control-label"></label>
+                <input asp-for="ShiftStart" class="form-control" />
+                <span asp-validation-for="ShiftStart" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ShiftEnd" class="control-label"></label>
+                <input asp-for="ShiftEnd" class="form-control" />
+                <span asp-validation-for="ShiftEnd" class="text-danger"></span>
+            </div>
+   
+            <div class="form-group">
+                <label asp-for="eventID" class="control-label">Event</label>
+                <select asp-for="eventID" class="form-control" asp-items="ViewBag.eventID">
+                    <option value="">Select an Event</option>
+                </select>
+                <span asp-validation-for="eventID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="volunteerID" class="control-label"></label>
+                <select asp-for="volunteerID" class ="form-control" asp-items="ViewBag.volunteerID"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

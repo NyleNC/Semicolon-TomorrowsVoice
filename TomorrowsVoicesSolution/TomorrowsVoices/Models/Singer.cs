@@ -49,11 +49,9 @@ namespace TomorrowsVoices.Models
 
         [Display(Name = "Parent/Guardian Contact Number")]
         [Required(ErrorMessage = "Phone number is required.")]
-        [RegularExpression("^\\d{10}$", ErrorMessage = "Please enter a valid 10-digit phone number (no space).")]
-        [DisplayFormat(DataFormatString = "{0:(###) ###-####}")]
+        //[RegularExpression("^\\d{10}$", ErrorMessage = "Please enter a valid 10-digit phone number.")]
         [DataType(DataType.PhoneNumber)]
-        [MaxLength(10)]
-        
+        //[MaxLength(10)]
         public string? EmergencyContactNumber { get; set; }
 
 

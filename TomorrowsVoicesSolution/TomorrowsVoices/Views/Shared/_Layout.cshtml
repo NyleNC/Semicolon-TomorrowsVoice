@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TomorrowsVoices</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
     <link rel="stylesheet" href="~/TomorrowsVoices.styles.css" asp-append-version="true" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
@@ -118,6 +118,12 @@
                                 <li>
                                     <a class="nav-link px-0 text-black @(IsActive("Event","Index"))" asp-controller="Event" asp-action="Index">
                                         <img src="~/Images/icons8-event-48.png" alt="event icon" width="30px"> <span class="ms-1">Event</span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="nav-link px-0 text-black @(IsActive("Schedule","Index"))" asp-controller="Schedule" asp-action="Index">
+                                        <img src="~/Images/icons8-event-48.png" alt="event icon" width="30px"> <span class="ms-1">Schedule</span>
                                     </a>
                                 </li>
                             </ul>

@@ -1,4 +1,5 @@
-﻿@model TomorrowsVoices.Models.Event
+﻿@using TomorrowsVoices.ViewModels
+@model TomorrowsVoices.Models.Event
 
 @{
     ViewData["Title"] = "Edit";
@@ -6,7 +7,8 @@
 
 <h1>Edit Event</h1>
 <hr />
- <div class="row">
+<form asp-action="Edit" method="post">
+    <div class="row">
         <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="Name" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
@@ -55,37 +57,119 @@
     <div class="container mt-5 ps-0">
         <div class="schedules-header">
             <h1 class="schedule-title"  style="font-weight: 700">Schedules<span style="color: red">*</span></h1>
-            <div style="display: flex; align-items: center;">
-                <button type="button" id="import-button" class="import-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                    </svg>
-                    import
-                </button>
-                <div class="loading" id="loading-indicator">Loading...</div>
-                <input type="file" id="file-input" accept=".xlsx, .xls, .csv" />
-            </div>
         </div>
-
-        <!-- Debug info - can be removed in production -->
-        <div id="debug-info" class="d-none"></div>
-
         <div id="schedule-container" class="row">
             <!-- Schedule cards will be generated here -->
+            <div class="row">
+                @if (ViewBag.ScheduleViewModel != null)
+                {
+                    var scheduleViewModel = ViewBag.ScheduleViewModel as ScheduleViewModel;
+
+                    <!-- Morning Shift -->
+                    <div class="col-lg-4 col-md-6 col-sm-12 p-2">
+                        <div class="card" style="background-color: #e1ccfc">
+                            <div class="card-body">
+                                <div class="card-title" style="font-size: 17px; font-weight: 700;">
+                                    Morning Shift
+                                </div>
+                                <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
+                                    @foreach (var schedule in scheduleViewModel.MorningShifts)
+                                    {
+                                        <li>@schedule.Volunteer?.FullName</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Afternoon Shift -->
+                    <div class="col-lg-4 col-md-6 col-sm-12 p-2">
+                        <div class="card" style="background-color: #e1ccfc">
+                            <div class="card-body">
+                                <div class="card-title" style="font-size: 17px; font-weight: 700;">
+                                    Afternoon Shift
+                                </div>
+                                <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
+                                    @foreach (var schedule in scheduleViewModel.AfternoonShifts)
+                                    {
+                                        <li>@schedule.Volunteer?.FullName</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evening Shift -->
+                    <div class="col-lg-4 col-md-6 col-sm-12 p-2">
+                        <div class="card" style="background-color: #e1ccfc">
+                            <div class="card-body">
+                                <div class="card-title" style="font-size: 17px; font-weight: 700;">
+                                    Evening Shift
+                                </div>
+                                <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
+                                    @foreach (var schedule in scheduleViewModel.EveningShifts)
+                                    {
+                                        <li>@schedule.Volunteer?.FullName</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p>No scheduled volunteers available.</p>
+                }
+            </div>
         </div>
     </div>
 
-    <div id="attendance-container" style="display: none; padding-left: 0">
+
+    <div id="attendance-container" style="padding-left: 0">
         <h2 class="attendance-header">Track Attendance</h2>
         <div class="row">
             <div class="col-lg-8 col-md-10 col-sm-12 col-12">
                 <div class="accordion" id="attendanceAccordion">
-                    <!-- Attendance accordion items will be generated here -->
-                </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Volunteer</th>
+                                <th>Attendance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.ScheduleViewModel != null)
+                            {
+                                var scheduleViewModel = ViewBag.ScheduleViewModel as ScheduleViewModel;
+                                var allShifts = scheduleViewModel.MorningShifts
+                                .Concat(scheduleViewModel.AfternoonShifts)
+                                .Concat(scheduleViewModel.EveningShifts);
+
+                                foreach (var shift in allShifts)
+                                {
+                                    <tr>
+                                        <td class="@(shift.IsPresent ? "present-row" : "absent-row")">@shift.Volunteer?.FullName</td>
+                                        <td>
+                                            <span class="attendance-icon" data-volunteer-id="@shift.Volunteer?.ID" data-is-present="@shift.IsPresent.ToString().ToLower()">
+                                                <span class="present-icon" style="display: @(shift.IsPresent ? "inline" : "none");">✔</span>
+                                                <span class="absent-icon" style="display: @(shift.IsPresent ? "none" : "inline");">✖</span>
+                                            </span>
+                                            <input type="hidden" name="schedules[@shift.ID].ID" value="@shift.ID" />
+                                            <input type="hidden" name="schedules[@shift.ID].IsPresent" value="@shift.IsPresent.ToString().ToLower()" />
+                                         
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <span>No records found</span>
+                            }
+                        </tbody>
+                </table>
             </div>
         </div>
     </div>
-
+</div>
     <div class="container mt-4 ps-0">
         <div class="row">
             <div class="col-md-4 d-flex gap-2">
@@ -102,619 +186,70 @@
     </div>
 
 <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
+</form>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Handle form submission
-        document.getElementById('createEventForm').addEventListener('submit', function (e) {
-            e.preventDefault(); // Prevent the default form submission
+  @section Scripts {
+    <script>
+              document.addEventListener('DOMContentLoaded', function () {
+            const attendanceIcons = document.querySelectorAll('.attendance-icon');
 
-            var formData = new FormData(this); // Get form data
+            attendanceIcons.forEach(icon => {
+                icon.addEventListener('click', function (event) {
+                    event.stopPropagation(); // Prevent bubbling issues
 
-            // Submit the form via AJAX
-            fetch('/Event/Create', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                }
-            })
-                .then(response => response.json()) // Parse the JSON response
-                .then(data => {
-                    if (data.success) {
-                        // If the event is created successfully, refetch events for the calendar
-                        calendar.refetchEvents(); // Refetch events from the server
-                        alert(data.message); // Show success message
+                    const volunteerId = this.getAttribute('data-volunteer-id');
+                    let isPresent = this.getAttribute('data-is-present') === 'true';
+                    const presentIcon = this.querySelector('.present-icon');
+                    const absentIcon = this.querySelector('.absent-icon');
+
+                    // Toggle attendance status
+                    isPresent = !isPresent;
+                    this.setAttribute('data-is-present', isPresent.toString());
+
+                    // Update icons
+                    if (isPresent) {
+                        presentIcon.style.display = 'inline';
+                        absentIcon.style.display = 'none';
                     } else {
-                        // If validation fails, show error messages
-                        alert(data.message + "\n" + data.errors.join("\n"));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while creating the event.');
-                });
-        });
-    });
-
-
-
-
-    // Global variable to store the imported schedule data
-    let scheduleData = [];
-
-    // Add debug logging to track file processing
-    function logDebug(message) {
-        const debugContainer = document.getElementById('debug-info');
-        debugContainer.style.display = 'block';
-        debugContainer.innerHTML += `<p>${message}</p>`;
-        console.log(message);
-    }
-
-    // Initialize event handlers when the document is loaded
-    document.addEventListener('DOMContentLoaded', function () {
-        // Set up the import button click handler
-        document.getElementById('import-button').addEventListener('click', function (e) {
-            e.preventDefault();
-            try {
-                document.getElementById('file-input').click();
-            } catch (error) {
-                logDebug(`Error triggering file input: ${error.message}`);
-            }
-        });
-
-        // Set up the file input change handler
-        document.getElementById('file-input').addEventListener('change', function () {
-            const loadingIndicator = document.getElementById('loading-indicator');
-            loadingIndicator.style.display = 'block';
-
-            try {
-                // Direct access to this element instead of relying on event.target
-                const fileInput = document.getElementById('file-input');
-                if (!fileInput.files || fileInput.files.length === 0) {
-                    loadingIndicator.style.display = 'none';
-                    logDebug("No file selected");
-                    return;
-                }
-
-                const file = fileInput.files[0];
-                logDebug(`File selected: ${file.name}`);
-                handleFileUpload(file);
-
-            } catch (error) {
-                loadingIndicator.style.display = 'none';
-                logDebug(`Error in file change handler: ${error.message}`);
-            }
-        });
-    });
-
-    function handleFileUpload(file) {
-        try {
-            logDebug("Starting file upload process");
-
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                try {
-                    logDebug("File loaded into memory");
-                    const data = new Uint8Array(e.target.result);
-                    processExcel(data);
-                } catch (error) {
-                    logDebug(`Error in reader.onload: ${error.message}`);
-                    document.getElementById('loading-indicator').style.display = 'none';
-                }
-            };
-
-            reader.onerror = function (e) {
-                logDebug(`FileReader error: ${reader.error}`);
-                document.getElementById('loading-indicator').style.display = 'none';
-            };
-
-            reader.readAsArrayBuffer(file);
-            logDebug("Called readAsArrayBuffer");
-
-        } catch (error) {
-            logDebug(`Error in handleFileUpload: ${error.message}`);
-            document.getElementById('loading-indicator').style.display = 'none';
-        }
-    }
-
-    function processExcel(data) {
-        try {
-            logDebug("Processing Excel data");
-
-            // Check if XLSX is available
-            if (typeof XLSX === 'undefined') {
-                logDebug("XLSX library not loaded");
-                document.getElementById('loading-indicator').style.display = 'none';
-                return;
-            }
-
-            const workbook = XLSX.read(data, { type: 'array' });
-            logDebug(`Workbook loaded. Sheet names: ${workbook.SheetNames.join(', ')}`);
-
-            const firstSheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[firstSheetName];
-
-            // Convert to JSON with header mapping
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false });
-            logDebug(`Data converted to JSON. Row count: ${jsonData.length}`);
-
-            if (jsonData.length === 0) {
-                logDebug("No data found in spreadsheet");
-                document.getElementById('loading-indicator').style.display = 'none';
-                return;
-            }
-
-            // Log column names from first row to help with debugging
-            logDebug(`Available columns: ${Object.keys(jsonData[0]).join(', ')}`);
-
-            // Group volunteers by start and end times
-            const scheduleGroups = groupVolunteersBySchedule(jsonData);
-            logDebug(`Groups created: ${scheduleGroups.length}`);
-
-            // Store the schedule data globally
-            scheduleData = scheduleGroups;
-
-            // Display the grouped schedules
-            displaySchedules(scheduleGroups);
-
-            // Generate attendance tracking section
-            generateAttendanceSection(scheduleGroups);
-
-            // Show the attendance container
-            document.getElementById('attendance-container').style.display = 'block';
-
-        } catch (error) {
-            logDebug(`Error in processExcel: ${error.message}`);
-        } finally {
-            document.getElementById('loading-indicator').style.display = 'none';
-        }
-    }
-
-    function groupVolunteersBySchedule(volunteers) {
-        try {
-            logDebug("Grouping volunteers by schedule");
-            const scheduleGroups = {};
-
-            // Determine column names (handle different possible column names)
-            const sampleVolunteer = volunteers[0];
-            const firstNameKey = determineColumnName(sampleVolunteer, ['FirstName', 'First Name', 'firstname', 'first_name', 'Firstname']);
-            const lastNameKey = determineColumnName(sampleVolunteer, ['LastName', 'Last Name', 'lastname', 'last_name', 'Lastname']);
-            const startTimeKey = determineColumnName(sampleVolunteer, ['ScheduledStartTime', 'Start Time', 'starttime', 'start_time', 'Start']);
-            const endTimeKey = determineColumnName(sampleVolunteer, ['ScheduledEndTime', 'End Time', 'endtime', 'end_time', 'End', 'Scheduled End Time']);
-
-            logDebug(`Using column names: ${firstNameKey}, ${lastNameKey}, ${startTimeKey}, ${endTimeKey}`);
-
-            if (!firstNameKey || !lastNameKey || !startTimeKey || !endTimeKey) {
-                logDebug("Could not find required columns in the data");
-                return [];
-            }
-
-            volunteers.forEach((volunteer, index) => {
-                // Skip rows without necessary data
-                if (!volunteer[firstNameKey] || !volunteer[lastNameKey] ||
-                    !volunteer[startTimeKey] || !volunteer[endTimeKey]) {
-                    logDebug(`Skipping row ${index} due to missing data`);
-                    return;
-                }
-
-                const key = `${volunteer[startTimeKey]}-${volunteer[endTimeKey]}`;
-
-                if (!scheduleGroups[key]) {
-                    scheduleGroups[key] = {
-                        startTime: volunteer[startTimeKey],
-                        endTime: volunteer[endTimeKey],
-                        volunteers: []
-                    };
-                }
-
-                scheduleGroups[key].volunteers.push({
-                    firstName: volunteer[firstNameKey],
-                    lastName: volunteer[lastNameKey],
-                    // Initialize attendance data
-                    isPresent: true,
-                    actualStartTime: volunteer[startTimeKey],
-                    actualEndTime: volunteer[endTimeKey]
-                });
-            });
-
-            return Object.values(scheduleGroups);
-        } catch (error) {
-            logDebug(`Error in groupVolunteersBySchedule: ${error.message}`);
-            return [];
-        }
-    }
-
-    // Helper function to find column names regardless of exact format
-    function determineColumnName(obj, possibleNames) {
-        for (const name of possibleNames) {
-            if (obj.hasOwnProperty(name)) {
-                return name;
-            }
-        }
-        return null;
-    }
-
-    function displaySchedules(scheduleGroups) {
-        try {
-            logDebug("Displaying schedules");
-            const container = document.getElementById('schedule-container');
-            container.innerHTML = '';
-
-            if (scheduleGroups.length === 0) {
-                container.innerHTML = '<div class="col-12"><p>No schedule data found or could not process the file.</p></div>';
-                return;
-            }
-
-            scheduleGroups.forEach(group => {
-                // Format the time for display
-                const formattedStartTime = formatTime(group.startTime);
-                const formattedEndTime = formatTime(group.endTime);
-
-                const cardHtml = `
-                                <div class="col-lg-4 col-md-6 col-12 mb-4">
-                                    <div class="schedule-card">
-                                        <div class="card-body">
-                                            <div class="schedule-card-header">
-                                                ${formattedStartTime} - ${formattedEndTime}
-                                            </div>
-                                            <ul class="schedule-list">
-                                                ${group.volunteers.map(vol => `
-                                                    <li>${vol.firstName} ${vol.lastName}</li>
-                                                `).join('')}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-
-                container.innerHTML += cardHtml;
-            });
-
-            logDebug("Schedule display completed");
-        } catch (error) {
-            logDebug(`Error in displaySchedules: ${error.message}`);
-        }
-    }
-
-    function formatTime(timeStr) {
-        try {
-            // Handle potential formatting issues
-            if (!timeStr) return "Unknown time";
-
-            // Try to standardize common time formats
-            // Convert "9:00 AM" or "9:00AM" to "9:00am" format
-            let formatted = timeStr.toString().trim().toLowerCase();
-
-            // Add some formatting if needed (e.g., if it's just "9:00")
-            if (!/am|pm/.test(formatted)) {
-                // Try to determine if it's AM or PM based on 24-hour format
-                const hourMatch = formatted.match(/^(\d+):/);
-                if (hourMatch) {
-                    const hour = parseInt(hourMatch[1]);
-                    if (hour >= 12) {
-                        formatted = formatted + " pm";
-                    } else {
-                        formatted = formatted + " am";
-                    }
-                }
-            }
-
-            return formatted;
-        } catch (error) {
-            logDebug(`Error in formatTime: ${error.message}`);
-            return timeStr || "Unknown time";
-        }
-    }
-
-    // Function to generate attendance tracking section
-    function generateAttendanceSection(scheduleGroups) {
-        try {
-            logDebug("Generating attendance section");
-            const attendanceAccordion = document.getElementById('attendanceAccordion');
-            attendanceAccordion.innerHTML = '';
-
-            if (scheduleGroups.length === 0) {
-                attendanceAccordion.innerHTML = '<div class="p-3">No schedule data available.</div>';
-                return;
-            }
-
-            scheduleGroups.forEach((group, groupIndex) => {
-                const formattedStartTime = formatTime(group.startTime);
-                const formattedEndTime = formatTime(group.endTime);
-                const timeSlotId = `timeSlot-${groupIndex}`;
-
-                const accordionItem = document.createElement('div');
-                accordionItem.className = 'accordion-item';
-
-                // Create accordion header
-                const accordionHeader = document.createElement('h2');
-                accordionHeader.className = 'accordion-header';
-                accordionHeader.id = `heading-${timeSlotId}`;
-
-                const isFirstItem = groupIndex === 0;
-
-                accordionHeader.innerHTML = `
-                                <button class="accordion-button ${isFirstItem ? '' : 'collapsed'}"
-                                        type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#collapse-${timeSlotId}"
-                                        aria-expanded="${isFirstItem ? 'true' : 'false'}"
-                                        aria-controls="collapse-${timeSlotId}">
-                                    ${formattedStartTime} - ${formattedEndTime}
-                                </button>
-                            `;
-
-                // Create accordion body
-                const accordionCollapse = document.createElement('div');
-                accordionCollapse.id = `collapse-${timeSlotId}`;
-                accordionCollapse.className = `accordion-collapse collapse ${isFirstItem ? 'show' : ''}`;
-                accordionCollapse.setAttribute('aria-labelledby', `heading-${timeSlotId}`);
-                accordionCollapse.setAttribute('data-bs-parent', '#attendanceAccordion');
-
-                const accordionBody = document.createElement('div');
-                accordionBody.className = 'accordion-body p-0';
-
-                // Create attendance list
-                const attendanceList = document.createElement('ul');
-                attendanceList.className = 'attendance-list';
-                attendanceList.id = `attendance-list-${timeSlotId}`;
-
-                group.volunteers.forEach((volunteer, volIndex) => {
-                    const volunteerAttendanceItem = createVolunteerAttendanceItem(volunteer, groupIndex, volIndex, formattedStartTime, formattedEndTime);
-                    attendanceList.appendChild(volunteerAttendanceItem);
-                });
-
-                accordionBody.appendChild(attendanceList);
-                accordionCollapse.appendChild(accordionBody);
-
-                accordionItem.appendChild(accordionHeader);
-                accordionItem.appendChild(accordionCollapse);
-                attendanceAccordion.appendChild(accordionItem);
-            });
-
-            logDebug("Attendance section generated");
-        } catch (error) {
-            logDebug(`Error in generateAttendanceSection: ${error.message}`);
-        }
-    }
-
-    // Function to create a volunteer attendance list item
-    function createVolunteerAttendanceItem(volunteer, groupIndex, volIndex, formattedStartTime, formattedEndTime) {
-        const li = document.createElement('li');
-        li.id = `volunteer-${groupIndex}-${volIndex}`;
-        li.className = volunteer.isPresent ? 'present-volunteer' : 'absent-volunteer';
-
-        // Calculate hours worked if present
-        let hoursWorked = "";
-        if (volunteer.isPresent && volunteer.actualStartTime && volunteer.actualEndTime) {
-            // This is a simplified calculation - in a real app, you'd parse the times properly
-            const hours = 4; // Example fixed hours for display
-            hoursWorked = `${hours}hrs`;
-        }
-
-        li.innerHTML = `
-                        <div class="volunteer-info">
-                            <span class="attendance-toggle" onclick="toggleAttendance(${groupIndex}, ${volIndex})">
-                                ${volunteer.isPresent ?
-                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill check-icon" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>' :
-                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill x-icon" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/></svg>'
-            }
-                            </span>
-                            <span>${volunteer.firstName} ${volunteer.lastName}</span>
-                        </div>
-                        <div class="time-info">
-                            ${volunteer.isPresent ?
-                `<span>${formattedStartTime} - ${formattedEndTime}</span>` :
-                '<span>Marked as Absent</span>'
-            }
-                        </div>
-                    `;
-
-        return li;
-    }
-
-    // Function to toggle volunteer attendance status
-    function toggleAttendance(groupIndex, volIndex) {
-        try {
-            // Update the data
-            if (scheduleData[groupIndex] && scheduleData[groupIndex].volunteers[volIndex]) {
-                const volunteer = scheduleData[groupIndex].volunteers[volIndex];
-                volunteer.isPresent = !volunteer.isPresent;
-
-                // Update the UI
-                const li = document.getElementById(`volunteer-${groupIndex}-${volIndex}`);
-                if (li) {
-                    // Toggle the class
-                    li.className = volunteer.isPresent ? 'present-volunteer' : 'absent-volunteer';
-
-                    // Update the content
-                    const formattedStartTime = formatTime(scheduleData[groupIndex].startTime);
-                    const formattedEndTime = formatTime(scheduleData[groupIndex].endTime);
-
-                    // Calculate hours worked if present
-                    let hoursWorked = "";
-                    if (volunteer.isPresent && volunteer.actualStartTime && volunteer.actualEndTime) {
-                        // This is a simplified calculation - in a real app, you'd parse the times properly
-                        const hours = 4; // Example fixed hours for display
-                        hoursWorked = `${hours}hrs`;
+                        presentIcon.style.display = 'none';
+                        absentIcon.style.display = 'inline';
                     }
 
-                    li.innerHTML = `
-                                    <div class="volunteer-info">
-                                        <span class="attendance-toggle" onclick="toggleAttendance(${groupIndex}, ${volIndex})">
-                                            ${volunteer.isPresent ?
-                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill check-icon" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>' :
-                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill x-icon" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/></svg>'
-                        }
-                                        </span>
-                                        <span>${volunteer.firstName} ${volunteer.lastName}</span>
-                                    </div>
-                                    <div class="time-info">
-                                        ${volunteer.isPresent ?
-                            `<span>${formattedStartTime} - ${formattedEndTime}</span>` :
-                            '<span>Marked as Absent</span>'
-                        }
-                                    </div>
-                                `;
-                }
-            }
-        } catch (error) {
-            logDebug(`Error in toggleAttendance: ${error.message}`);
-        }
-    }
-</script>
+                    // Update the hidden input field
+                    const hiddenInput = this.parentElement.querySelector('input[name="schedules[' + volunteerId + '].IsPresent"]');
+                    if (hiddenInput) {
+                        hiddenInput.value = isPresent.toString().toLowerCase();
+                    }
+
+                    // Display message
+                    const message = isPresent ? 'The volunteer has attended' : 'The volunteer has been marked absent';
+                    alert(message);
+                });
+            });
+        });
+    </script>
+}
 
 
 <style>
-    ::-webkit-scrollbar {
-        width: 6px;
-    }
+     .present-row {
+         background-color: lightgreen;
+     }
 
-    ::-webkit-scrollbar-thumb {
-        background: lightgray; /* Light gray thumb */
-        border-radius: 6px;
-    }
+     .absent-row {
+         background-color: lightcoral;
+     }
 
-    ::-webkit-scrollbar-track {
-        background: transparent; /* Hide the track */
-    }
+     .attendance-icon {
+         font-size: 1.2em;
+         cursor: pointer;
+     }
 
-    #debug-info {
-        display: none;
-    }
+     .present-icon {
+         color: darkgreen;
+     }
 
-    .schedules-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 2px solid #dee2e6;
-        padding-bottom: 0.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .schedule-title {
-        font-size: 1.75rem;
-        font-weight: 500;
-        margin: 0;
-    }
-
-    .import-btn {
-        background-color: #6c7dff;
-        color: white;
-        border: none;
-        border-radius: 20px;
-        padding: 0.375rem 1.5rem;
-        font-size: 1rem;
-        cursor: pointer;
-    }
-
-    .schedule-card {
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        margin-bottom: 1rem;
-        height: 100%;
-    }
-
-    .schedule-card-header {
-        font-size: 1.1rem;
-        font-weight: 600;
-        padding-bottom: 0.5rem;
-    }
-
-    .schedule-list {
-        min-height: 130px;
-        max-height: 130px;
-        overflow-y: auto;
-        padding-left: 0;
-        list-style: none;
-    }
-
-        .schedule-list li {
-            margin-bottom: 0.25rem;
-        }
-
-    #file-input {
-        display: none;
-    }
-
-    /* Adding a loading indicator */
-    .loading {
-        display: none;
-        margin-left: 10px;
-    }
-
-    /* Debug container */
-    #debug-info {
-        margin-top: 20px;
-        padding: 10px;
-        background-color: indianred;
-        border-radius: 5px;
-        display: none;
-    }
-
-    /* Attendance section styles */
-    .attendance-header {
-        font-size: 1.75rem;
-        font-weight: 500;
-        border-bottom: 3px solid gray;
-        margin-top: 2rem;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-    }
-
-    .accordion-button {
-        font-weight: bold;
-        font-size: 1.1rem;
-    }
-
-    .attendance-list {
-        padding: 0;
-        margin: 0;
-        list-style: none;
-    }
-
-        .attendance-list li {
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-            .attendance-list li:last-child {
-                border-bottom: none;
-            }
-
-    .present-volunteer {
-        background-color: #d4edda;
-    }
-
-    .absent-volunteer {
-        background-color: #f8d7da;
-    }
-
-    .volunteer-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .attendance-toggle {
-        cursor: pointer;
-    }
-
-    .time-info {
-        text-align: right;
-    }
-
-    .check-icon {
-        color: green;
-    }
-
-    .x-icon {
-        color: red;
-    }
+     .absent-icon {
+         color: darkred;
+     }
 </style>

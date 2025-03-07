@@ -103,36 +103,34 @@
                 }
             });
 
-
-
             // Phone Number Formatting
-            // document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {
-            //     e.target.value = formatPhoneNumber(e.target.value);
-            // });
+            document.getElementById('EmergencyContactNumber').addEventListener('input', function (e) {
+                e.target.value = formatPhoneNumber(e.target.value);
+            });
 
-            // function formatPhoneNumber(value) {
-            //     value = value.replace(/\D/g, ""); // Remove non-numeric characters
-            //     if (value.length > 10) {
-            //         value = value.substring(0, 10); // Limit to 10 digits
-            //     }
-            //     let formattedValue = "";
-            //     if (value.length > 0) {
-            //         formattedValue += "(" + value.substring(0, 3);
-            //     }
-            //     if (value.length >= 4) {
-            //         formattedValue += ") " + value.substring(3, 6);
-            //     }
-            //     if (value.length >= 7) {
-            //         formattedValue += "-" + value.substring(6, 10);
-            //     }
-            //     return formattedValue;
-            // }
+            function formatPhoneNumber(value) {
+                value = value.replace(/\D/g, ""); // Remove non-numeric characters
+                if (value.length > 10) {
+                    value = value.substring(0, 10); // Limit to 10 digits
+                }
+                let formattedValue = "";
+                if (value.length > 0) {
+                    formattedValue += "(" + value.substring(0, 3);
+                }
+                if (value.length >= 4) {
+                    formattedValue += ") " + value.substring(3, 6);
+                }
+                if (value.length >= 7) {
+                    formattedValue += "-" + value.substring(6, 10);
+                }
+                return formattedValue;
+            }
 
-            // // Remove formatting before form submission
-            // document.querySelector('form').addEventListener('submit', function (e) {
-            //     let emergencyContactNumber = document.getElementById('EmergencyContactNumber');
-            //     emergencyContactNumber.value = emergencyContactNumber.value.replace(/\D/g, ""); // Remove non-numeric characters
-            // });
+            // Remove formatting before form submission
+            document.querySelector('form').addEventListener('submit', function (e) {
+                let emergencyContactNumber = document.getElementById('EmergencyContactNumber');
+                emergencyContactNumber.value = emergencyContactNumber.value.replace(/\D/g, ""); // Remove non-numeric characters
+            });
         });
     </script>
 }

@@ -25,6 +25,7 @@ namespace TomorrowsVoices.Data
         public DbSet<Volunteer> Volunteers { get; set; }
         public DbSet<VolAttendance> VolAttendances { get; set; }
         public DbSet<VolLocation> VolLocations { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -91,6 +92,37 @@ namespace TomorrowsVoices.Data
                 .WithMany(Location => Location.Session)
                 .HasForeignKey(Session => Session.LocationID)
              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Schedule>()
+         .HasOne(s => s.Event)
+         .WithMany(e => e.Schedules)
+         .HasForeignKey(s => s.eventID);
+
+            modelBuilder.Entity<Schedule>()
+                .HasOne(s => s.Volunteer)
+                .WithMany(v => v.Schedules)
+                .HasForeignKey(s => s.volunteerID);
+
+            // Configure the Event -> Location relationship
+            modelBuilder.Entity<Event>()
+                .HasOne(e => e.VolLocation)
+                .WithMany(l => l.Events)
+                .HasForeignKey(e => e.VolLocationID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure the VolAttendance -> Event relationship
+            modelBuilder.Entity<VolAttendance>()
+                .HasOne(va => va.Event)
+                .WithMany(e => e.VolAttendance)
+                .HasForeignKey(va => va.EventID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure the VolAttendance -> Volunteer relationship
+            modelBuilder.Entity<VolAttendance>()
+                .HasOne(va => va.Volunteer)
+                .WithMany(v => v.VolAttendances)
+                .HasForeignKey(va => va.VolunteerID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // is unique for email
             modelBuilder.Entity<Director>()

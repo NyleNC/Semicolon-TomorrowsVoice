@@ -14,7 +14,8 @@ using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
 using TomorrowsVoices.Utilities;
 
-using System.Globalization;
+
+using TomorrowsVoices.ViewModels;
 namespace TomorrowsVoices.Controllers
 {
     public class EventController : Controller
@@ -29,7 +30,7 @@ namespace TomorrowsVoices.Controllers
         // GET: Event
         public async Task<IActionResult> Index(int? page, int? pageSizeID, bool archived = false)
         {
-            var tomorrowsVoicesContext = _context.Events.Where(d => d.IsArchived == archived).Include(a => a.VolLocation);
+            var tomorrowsVoicesContext = _context.Events.Where(d => d.IsArchived == archived).Include(a => a.VolLocation).Include(s=>s.Schedules);
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
             int archivedCount = await _context.Events.CountAsync(d => d.IsArchived == true);
@@ -47,6 +48,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Event/Details/5
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -55,14 +57,60 @@ namespace TomorrowsVoices.Controllers
             }
 
             var @event = await _context.Events
-                .Include(Index => Index.VolLocation)
-                .Include(Index => Index.VolAttendance).ThenInclude(Index => Index.Volunteer)
-                .AsNoTracking()
+                .Include(e => e.VolLocation)
+                .Include(e => e.VolAttendance)
+                    .ThenInclude(a => a.Volunteer)
                 .FirstOrDefaultAsync(m => m.ID == id);
+
             if (@event == null)
             {
                 return NotFound();
             }
+
+            // Fetch schedules for the event
+            var schedules = await _context.Schedules
+                .Include(s => s.Volunteer)
+                .Include(s => s.Event)
+                    .ThenInclude(e => e.VolLocation) // Correct Include
+                .Where(s => s.Event.ID == id)
+                .ToListAsync();
+
+            // Create a ScheduleViewModel for the event
+            var scheduleViewModel = new ScheduleViewModel
+            {
+                // Use TimeOnly for shift filtering
+                MorningShifts = schedules
+                    .Where(s => s.ShiftStart >= new TimeOnly(8, 0) &&
+                                s.ShiftStart < new TimeOnly(12, 0))
+                    .ToList(),
+                AfternoonShifts = schedules
+                    .Where(s => s.ShiftStart >= new TimeOnly(12, 0) &&
+                                s.ShiftStart < new TimeOnly(17, 0))
+                    .ToList(),
+                EveningShifts = schedules
+                    .Where(s => s.ShiftStart >= new TimeOnly(17, 0))
+                    .ToList(),
+            };
+
+            // Calculate total hours for each volunteer
+            foreach (var shift in schedules)
+            {
+                if (shift.IsPresent)
+                {
+                    var hours = (shift.ShiftEnd - shift.ShiftStart).TotalHours;
+                    if (scheduleViewModel.VolunteerTotalHours.ContainsKey(shift.Volunteer.FullName))
+                    {
+                        scheduleViewModel.VolunteerTotalHours[shift.Volunteer.FullName] += hours;
+                    }
+                    else
+                    {
+                        scheduleViewModel.VolunteerTotalHours[shift.Volunteer.FullName] = hours;
+                    }
+                }
+            }
+
+            // Pass the ScheduleViewModel to the view using ViewBag or ViewData
+            ViewBag.ScheduleViewModel = scheduleViewModel;
 
             return View(@event);
         }
@@ -72,8 +120,8 @@ namespace TomorrowsVoices.Controllers
         {
             Event @event = new Event();
 
-             
-
+            ViewBag.Events = _context.Events.ToList();
+            ViewBag.Volunteers= _context.Volunteers.ToList();
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City");
             return View(@event);
         }
@@ -83,53 +131,33 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Description,Notes,Date,StartTime,EndTime,VolLocationID")] Event @event)
+        public async Task<IActionResult> Create([Bind("ID,Name,Description,Notes,Date,StartTime,EndTime,VolLocationID")] Event @event, List<Schedule> Schedules)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                try
                 {
+                    // Add the event to the database
                     _context.Add(@event);
                     await _context.SaveChangesAsync();
 
-                    // Check if the request is an AJAX request
-                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    // Add schedules to the event
+                    if (Schedules != null)
                     {
-                        // Return a JSON response indicating success
-                        return Json(new { success = true, message = "Event created successfully!" });
+                        foreach (var schedule in Schedules)
+                        {
+                            schedule.eventID = @event.ID; // Link the schedule to the event
+                            _context.Add(schedule);
+                        }
+                        await _context.SaveChangesAsync();
                     }
-                    else
-                    {
-                        // Redirect to the Index action for non-AJAX requests
-                        return RedirectToAction(nameof(Index));
-                    }
-                }
 
-                // If the model state is invalid, handle accordingly
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    // Return validation errors for AJAX requests
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-
-                    return Json(new { success = false, message = "Validation failed.", errors = errors });
+                    return RedirectToAction(nameof(Index));
                 }
-                else
+                catch (DbUpdateException)
                 {
-                    // For non-AJAX requests, return to the view with validation errors
-                    ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", @event.VolLocationID);
-                    return View(@event);
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
-            }
-            catch (RetryLimitExceededException /* dex */)
-            {
-                ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
-            }
-            catch (DbUpdateException)
-            {
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
             // If we got this far, something failed; redisplay form
@@ -146,23 +174,57 @@ namespace TomorrowsVoices.Controllers
             }
 
             var @event = await _context.Events
-                .Include(Index => Index.VolLocation)
-                .Include(Index => Index.VolAttendance).ThenInclude(Index => Index.Volunteer)
-                .FirstOrDefaultAsync(Index => Index.ID == id);
+                .Include(e => e.VolLocation)
+                .Include(e => e.VolAttendance).ThenInclude(va => va.Volunteer)
+                .Include(e => e.Schedules)
+                .FirstOrDefaultAsync(e => e.ID == id);
+
             if (@event == null)
             {
                 return NotFound();
             }
+
+
+            var schedules = await _context.Schedules
+                .Include(s => s.Volunteer)
+                .Include(s => s.Event)
+                    .ThenInclude(e => e.VolLocation)
+                .Where(s => s.Event.ID == id)
+                .ToListAsync();
+
+            
+            @event.Schedules = schedules;
+
+         
+            var scheduleViewModel = new ScheduleViewModel
+            {
+               
+                MorningShifts = schedules
+                    .Where(s => s.ShiftStart != null && s.ShiftStart >= new TimeOnly(8, 0) && s.ShiftStart < new TimeOnly(12, 0))
+                    .ToList(),
+                AfternoonShifts = schedules
+                    .Where(s => s.ShiftStart != null && s.ShiftStart >= new TimeOnly(12, 0) && s.ShiftStart < new TimeOnly(17, 0))
+                    .ToList(),
+                EveningShifts = schedules
+                    .Where(s => s.ShiftStart != null && s.ShiftStart >= new TimeOnly(17, 0))
+                    .ToList(),
+                VolunteerTotalHours = schedules
+                    .Where(s => s.Volunteer != null && s.ShiftStart != null && s.ShiftEnd != null) 
+                    .GroupBy(s => s.Volunteer.FullName)
+                    .ToDictionary(g => g.Key, g => g.Sum(s => (s.ShiftEnd - s.ShiftStart).TotalHours))
+            };
+
+         
+            ViewBag.ScheduleViewModel = scheduleViewModel;
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", @event.VolLocationID);
             return View(@event);
         }
-
         // POST: Event/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Notes,Date,StartTime,EndTime,VolLocationID")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Notes,Date,StartTime,EndTime,VolLocationID")] Event @event, List<Schedule> schedules)
         {
             if (id != @event.ID)
             {
@@ -174,30 +236,37 @@ namespace TomorrowsVoices.Controllers
                 try
                 {
                     var eventToUpdate = await _context.Events
-                        .Include(Index => Index.VolLocation)
-                        .Include(Index => Index.VolAttendance)
-                        .ThenInclude(Index => Index.Volunteer)
-                        .FirstOrDefaultAsync(Index => Index.ID == id);
+                        .Include(e => e.VolLocation)
+                        .Include(e => e.VolAttendance).ThenInclude(va => va.Volunteer)
+                        .Include(e => e.Schedules) // Include schedules
+                        .FirstOrDefaultAsync(e => e.ID == id);
 
                     if (eventToUpdate == null)
                     {
                         return NotFound();
                     }
 
-                    if (await TryUpdateModelAsync<Event>(
-                     eventToUpdate, "",
-                   Index => Index.Name, Index => Index.Description, Index => Index.Notes, Index => Index.Date, Index => Index.StartTime, Index => Index.EndTime ,Index => Index.VolLocationID))
+                    // Update the event properties
+                    if (await TryUpdateModelAsync(
+                        eventToUpdate,
+                        "",
+                        e => e.Name, e => e.Description, e => e.Notes,
+                        e => e.Date, e => e.StartTime, e => e.EndTime, e => e.VolLocationID))
                     {
-                        var attendance = await _context.VolAttendances
-                            .Include(Index => Index.Volunteer)
-                            .Where(Index => Index.EventID == id)
-                            .ToListAsync(); 
-                        eventToUpdate.VolAttendance = attendance;
+                        // Update the schedules' attendance status
+                        foreach (var schedule in schedules)
+                        {
+                            var existingSchedule = eventToUpdate.Schedules.FirstOrDefault(s => s.ID == schedule.ID);
+                            if (existingSchedule != null)
+                            {
+                                existingSchedule.IsPresent = schedule.IsPresent;
+                            }
+                        }
+
                         _context.Update(eventToUpdate);
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));
                     }
-
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -214,13 +283,11 @@ namespace TomorrowsVoices.Controllers
                 {
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
-
-                return RedirectToAction(nameof(Index));
             }
+
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", @event.VolLocationID);
             return View(@event);
         }
-
         // GET: Event/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -288,6 +355,32 @@ namespace TomorrowsVoices.Controllers
 
             TempData["SuccessMessage"] = "This archive has been activated successfully!";
             return RedirectToAction(nameof(Index));
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateMultiple(List<Schedule> schedules)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Schedules.AddRange(schedules); // Add multiple schedules
+                    await _context.SaveChangesAsync();
+                    return Json(new { success = true });
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception (optional)
+                    return Json(new { success = false, message = ex.Message });
+                }
+            }
+
+            // If the model state is invalid, return validation errors
+            var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return Json(new { success = false, message = "Validation errors: " + string.Join(", ", errors) });
         }
 
         //ImportExcel 
@@ -512,5 +605,10 @@ namespace TomorrowsVoices.Controllers
         {
             return _context.Events.Any(e => e.ID == id);
         }
+
+
+  
     }
+
+
 }

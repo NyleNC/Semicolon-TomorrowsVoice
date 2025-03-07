@@ -9,10 +9,11 @@ namespace TomorrowsVoices.Models
         [Required(ErrorMessage = "You cannot leave the City blank.")]
         [StringLength(250, ErrorMessage = "City cannot be more than 250 characters long.")]
         public string? City { get; set; } = "";
-
+        public string? Venue { get; set; } = "";
         public ICollection<Volunteer> Volunteers { get; set; } = new HashSet<Volunteer>();   
 
         public ICollection<Event> Events { get; set; } = new HashSet<Event>();
+        public ICollection<Schedule> Schedules { get; set; } = new HashSet<Schedule>();
         public bool IsArchived { get; set; }
     }
 }

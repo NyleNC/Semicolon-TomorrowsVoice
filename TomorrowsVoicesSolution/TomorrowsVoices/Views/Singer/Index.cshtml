@@ -46,7 +46,7 @@
     </a>
     <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
        asp-action="Index" asp-route-archived="true">
-        Archived
+        Archive
         @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
         {
             <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">0</span>
@@ -179,7 +179,7 @@
         <div class="card card-body">
             <div class="row">
                 <div class="form-group col-md-3">
-                    <label class="control-label">Search by Name:</label>
+                    <label class="control-label">Search by Singers Name:</label>
                     @Html.TextBox("SearchString", null, new { @class = "form-control" })
                 </div>
                 <div class="col-md-4">
