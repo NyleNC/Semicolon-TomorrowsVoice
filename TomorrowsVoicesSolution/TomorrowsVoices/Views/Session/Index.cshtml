@@ -55,12 +55,12 @@
         <div class="row">
             <div class="col-12">
                 <div class="float-end">
-                <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px"/>Calendar View</a>
                 <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
                         data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                     <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
                     Filter (@ViewData["numberFilters"])
                 </button>
+                <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px"/>Calendar View</a>
                 <!-- Conditionally render the "Clear" button -->
                 @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
                 {
@@ -243,7 +243,7 @@
                         </button>
                     </th>
                     <th>
-                        <button type="button" name="actionButton" value="Actions" class="btn btn-toolbar no-pointer-events">Actions</button>
+                        <button style="cursor: default;" type="button" name="actionButton" value="Actions" class="btn btn-toolbar no-pointer-events">Actions</button>
                     </th>
                 </tr>
             </thead>
