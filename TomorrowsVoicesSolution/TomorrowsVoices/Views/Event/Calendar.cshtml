@@ -1,17 +1,19 @@
 ﻿@{
     ViewData["Title"] = "Calendar View";
+    bool isArchived = ViewData["IsArchived"] as bool? ?? false;
 }
 
-<div class="d-flex align-items-center mb-3">
-    <!-- Events Heading -->
-    <h1 class="mb-0 me-3">Events | </h1>
-
-    <!-- Buttons for Table and Calendar Views -->
-    <div class="d-flex align-items-center">
-        <a asp-action="Index" class="btn btn-primary btn-events-toggle">Table View</a>
-        <a asp-action="Calendar" class="btn btn-primary btn-events-toggle">Calendar View</a>
+<div class="d-flex align-items-center justify-content-between mb-2 g-2 mt-2">
+    <!-- Sessions Heading -->
+    <div class="d-flex mt-0">
+        <h1 class="mb-0">Events</h1>
+    </div>
+    <div>
+        <a asp-action="Index" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px;" />Table View</a>
     </div>
 </div>
+
+<p>View your Event and Attendance records.</p>
 
 <!-- FullCalendar Container -->
 <div id="calendar"></div>
@@ -33,6 +35,7 @@
                 <p><strong>Location:</strong> <span id="eventLocation"></span></p>
             </div>
             <div class="modal-footer">
+                <a id="goToDetailsButton" class="btn btn-primary" href="#">Go to Details</a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -72,6 +75,10 @@
                         document.getElementById('eventStartTime').textContent = data.startTime;
                         document.getElementById('eventEndTime').textContent = data.endTime;
                         document.getElementById('eventLocation').textContent = data.location;
+
+                        // Set the URL for the "Go to Details" button
+                        var detailsUrl = `/Event/Details/${info.event.id}`; // Update the URL to match your routing
+                        document.getElementById('goToDetailsButton').setAttribute('href', detailsUrl);
 
                         // Show the modal
                         var modal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));

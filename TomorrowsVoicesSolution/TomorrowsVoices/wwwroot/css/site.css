@@ -1,10 +1,11 @@
 html {
-font-size: 14px;
+    font-size: 14px;
 }
 
 nav {
-    background-color: #100527
+    background-color: #100527;
 }
+
 .nav-link.active {
     color: #0400fa !important; /* Use the default text color */
     background-color: transparent !important; /* Remove background color */
@@ -12,53 +13,122 @@ nav {
 
 /* Remove blue color from hovered links */
 .nav-link:hover {
-    color:#6D28E3 !important; /* Use the default text color */
+    color: #6D28E3 !important; /* Use the default text color */
     background-color: transparent !important; /* Remove background color */
 }
+
 .sidebar {
     width: 250px; /* Default width for expanded state */
     transition: width 0.3s;
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
     background-color: #FFFFFF;
-    overflow:hidden;
-
+    overflow: hidden;
 }
+
+.sidebar.collapsed {
+    width: 80px; /* Width for collapsed state */
+}
+
+.sidebar.collapsed .nav-link span {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.sidebar.collapsed .nav-link img {
+    margin-right: 0;
+    width: 40px; /* Remove margin for icons when collapsed */
+}
+
+
+
+/* New submenu styling */
+#menu .sub-menu-item {
+    background-color: #f0f0f0;
+    border-left: 3px solid #100527;
+    margin-bottom: 2px;
+    transition: all 0.2s ease;
+}
+
+    #menu .sub-menu-item:hover {
+        background-color: #e5e5e5;
+    }
+
+    #menu .sub-menu-item.active {
+        background-color: #e8dbff;
+    }
+
+/* Rotate chevron when submenu is open */
+.nav-link[aria-expanded="true"] .bi-chevron-down {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+.nav-link .bi-chevron-down {
+    transition: transform 0.3s ease;
+}
+
+/* Main menu item styling */
+#menu > li > a {
+    border-radius: 8px;
+    margin-bottom: 5px;
+    transition: all 0.2s ease;
+}
+
+#menu > li > a:hover {
+    background-color: #d8d8d8;
+}
+
+/* Mobile view adjustments SideBar Nav*/
+@media (max-width: 768px) {
+    
     .sidebar.collapsed {
         width: 80px; /* Width for collapsed state */
     }
 
-        .sidebar.collapsed .nav-link span {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .sidebar.collapsed .nav-link img {
-            margin-right: 0;
-            width: 40px /* Remove margin for icons when collapsed */
-        }
-@media (max-width: 768px) 
-{
-    .sidebar.collapsed {
-        width: 80px; /* Width for collapsed state */
+    .sidebar.collapsed .nav-link span {
+        opacity: 0;
+        visibility: hidden;
     }
 
-        .sidebar.collapsed .nav-link span {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .sidebar.collapsed .nav-link img {
-            margin-right: 0;
-            width: 40px /* Remove margin for icons when collapsed */
-        }
+    .sidebar.collapsed .nav-link img {
+        margin-right: 0;
+        width: 40px; /* Remove margin for icons when collapsed */
+    }
 
     #submenu1 #submenu2 img {
-        width: 90px;
+        width: 20px; /* Adjust icon size for submenu items */
         margin-right: 10px;
     }
 
+    .sidebar .nav-link img {
+        width: 20px; /* Adjust icon size for mobile */
+    }
+
+    .sidebar .nav-link span {
+        font-size: 14px; /* Adjust text size for mobile */
+    }
+
+    .sidebar .nav-link {
+        padding: 10px 15px; /* Adjust padding for mobile */
+    }
+
+    .sidebar .nav-link.active {
+        background-color: #dcdcdc; /* Highlight active sub-menu item */
+        color: #1d2e79; /* Text color for active item */
+    }
+
+    .sidebar .nav-link.active img {
+        filter: brightness(0.8); /* Slightly darken the icon for active item */
+    }
+
+    .nav-link[aria-expanded="true"] {
+        pointer-events: none; /* Prevent menu items from expanding */
+    }
 }
+
+
+
 
     .toggle-btn {
         background: none;

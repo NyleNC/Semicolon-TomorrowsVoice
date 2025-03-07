@@ -12,11 +12,11 @@
         <h1 class="mb-0">Events</h1>
     </div>
     <div class="float-end">
-@*         <a href="@Url.Action("AttendanceReportExport", "Session")" class="btn btn-white me-2"><img src="~/Images/dark-export-icon.png" alt="export-icon" style="height: 24px; width: auto; margin-right: 10px" />Export</a>
+        @*         <a href="@Url.Action("AttendanceReportExport", "Session")" class="btn btn-white me-2"><img src="~/Images/dark-export-icon.png" alt="export-icon" style="height: 24px; width: auto; margin-right: 10px" />Export</a>
  *@        <a asp-action="Create" class="btn btn-primary "><img src="~/Images/create-icon.png" alt="add-event-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New</a>
-            <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#importExcelModal">
-                Import Excel
-            </button>
+        <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#importExcelModal">
+            Import Excel
+        </button>
     </div>
 </div>
 <p>View your Event and Attendance records.</p>
@@ -123,12 +123,12 @@
         <div class="row">
             <div class="col-12">
                 <div class="float-end">
-                    <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px" />Calendar View</a>
                     <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
                             data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                         <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
                         Filter (@ViewData["numberFilters"])
                     </button>
+                    <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px" />Calendar View</a>
                     <!-- Conditionally render the "Clear" button -->
                     @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
                     {
@@ -141,7 +141,7 @@
 
             </div>
         </div>
-       @*  <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
+        @*  <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
             <div class="card card-body">
                 <div class="container">
                     <div class="row">
@@ -360,11 +360,11 @@
                         </div>
                     </div>
                 </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-        <partial name="_PagingNavBar" />
+            </tr>
+        }
+    </tbody>
+    </table>
+    <partial name="_PagingNavBar" />
 </div>
 
 @if (TempData["SuccessMessage"] != null)
