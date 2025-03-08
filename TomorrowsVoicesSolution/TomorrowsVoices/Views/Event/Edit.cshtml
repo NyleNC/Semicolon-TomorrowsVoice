@@ -76,6 +76,9 @@
                                     @foreach (var schedule in scheduleViewModel.MorningShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
+                                     <div>
+                                            <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm">Edit</a>
+                                        </div>
                                     }
                                 </ul>
                             </div>
@@ -93,6 +96,9 @@
                                     @foreach (var schedule in scheduleViewModel.AfternoonShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
+                                        <div>
+                                            <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm">Edit</a>
+                                        </div>
                                     }
                                 </ul>
                             </div>
@@ -110,6 +116,9 @@
                                     @foreach (var schedule in scheduleViewModel.EveningShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
+                                        <div>
+                                            <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm">Edit</a>
+                                        </div>
                                     }
                                 </ul>
                             </div>

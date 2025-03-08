@@ -100,11 +100,11 @@
                             </ul>
                         </li>
                         <li>
-                            <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle" style="background-color: #e0e0e0;" aria-expanded="@(IsSubMenuActive("VolLocation", "Volunteer", "Event") == "show" ? "true" : "false")">
+                            <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle" style="background-color: #e0e0e0;" aria-expanded="@(IsSubMenuActive("VolLocation", "Volunteer", "Event","Schedule") == "show" ? "true" : "false")">
                                 <img src="~/Images/NewVolunteerIcon.png" class="ms-2" alt="volunteer icon" width="40px">  <span class="ms-1 d-none d-sm-inline" style=" color: #1d2e79">Volunteer Management</span>
                                 <i class="bi bi-chevron-down ms-1 me-2"></i>
                             </a>
-                            <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("VolLocation", "Volunteer", "Event"))" id="submenu2">
+                            <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("VolLocation", "Volunteer", "Event","Schedule"))" id="submenu2">
                                 <li class="w-100">
                                     <a class="nav-link px-0 text-black @(IsActive("VolLocation","Index")) sub-menu-item" asp-controller="VolLocation" asp-action="Index">
                                         <img src="~/Images/icons8-location-48.png" alt="location icon" width="20px" class="ms-3"> <span class="ms-1">Location</span>
@@ -122,8 +122,8 @@
                                 </li>
 
                                 <li>
-                                    <a class="nav-link px-0 text-black @(IsActive("Schedule","Index"))" asp-controller="Schedule" asp-action="Index">
-                                        <img src="~/Images/icons8-event-48.png" alt="event icon" width="30px"> <span class="ms-1">Schedule</span>
+                                    <a class="nav-link px-0 text-black @(IsActive("Schedule","Index")) sub-menu-item" asp-controller="Schedule" asp-action="Index">
+                                        <img src="~/Images/schedule.png" alt="event icon" width="20px" class="ms-3"> <span class="ms-1">Schedule</span>
                                     </a>
                                 </li>
                             </ul>
