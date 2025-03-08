@@ -57,6 +57,7 @@ namespace TomorrowsVoices.Models
 
         public ICollection<VolAttendance> VolAttendances { get; set; } = new HashSet<VolAttendance>();
         public bool IsArchived { get; set; }
+        public ICollection<Schedule> Schedules { get; set; } = new HashSet<Schedule>();
 
     }
 }
