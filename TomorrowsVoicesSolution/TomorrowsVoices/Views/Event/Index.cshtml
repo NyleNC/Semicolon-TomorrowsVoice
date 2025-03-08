@@ -4,19 +4,28 @@
     ViewData["Title"] = "Index";
     bool isArchived = ViewData["IsArchived"] as bool? ?? false;
 }
-
-
 <div class="d-flex align-items-center justify-content-between mb-2 g-2 mt-2">
     <!-- Sessions Heading -->
     <div class="d-flex mt-0">
         <h1 class="mb-0">Events</h1>
     </div>
     <div class="float-end">
-        @*         <a href="@Url.Action("AttendanceReportExport", "Session")" class="btn btn-white me-2"><img src="~/Images/dark-export-icon.png" alt="export-icon" style="height: 24px; width: auto; margin-right: 10px" />Export</a>
- *@        <a asp-action="Create" class="btn btn-primary "><img src="~/Images/create-icon.png" alt="add-event-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New</a>
-        <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#importExcelModal">
-            Import Excel
-        </button>
+        <div class="btn-group">
+            <a asp-action="Create" class="btn btn-primary">
+                <img src="~/Images/create-icon.png" alt="add-event-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New
+            </a>
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu" style="border-radius: 10px">
+            <li style="margin-right: 18px">
+                <button type="button" class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#importExcelModal">
+                    <img src="~/Images/import.png" alt="import icon" style="height: 24px; width: auto; margin-right: 8px" />
+                    Import Excel
+                </button>
+            </li>
+            </ul>
+        </div>
     </div>
 </div>
 <p>View your Event and Attendance records.</p>
@@ -123,12 +132,13 @@
         <div class="row">
             <div class="col-12">
                 <div class="float-end">
+         
+                    <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px" />Calendar View</a>
                     <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
                             data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                         <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
                         Filter (@ViewData["numberFilters"])
                     </button>
-                    <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px" />Calendar View</a>
                     <!-- Conditionally render the "Clear" button -->
                     @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
                     {
@@ -309,8 +319,8 @@
                                 {
                                 <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
                                     <input type="hidden" name="id" value="@item.ID" />
-                                    <button type="submit" class="btn btn-sm btn-success">
-                                        <img src="~/Images/unarchive-value.png" alt="Restore-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                    <button type="submit" class="btn btn-sm btn-restore">
+                                        <img src="~/Images/unarchive-value.png" alt="Unarchive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                         Restore
                                     </button>
                                 </form>

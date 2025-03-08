@@ -6,27 +6,28 @@
     ViewData["Title"] = "Singers";
     bool isArchived = ViewData["IsArchived"] as bool? ?? false;
 }
-
-<div class="d-flex align-items-center justify-content-between mb-2 g-2">
+<div class="d-flex align-items-center justify-content-between mb-2 g-2 mt-2">
     <!-- Sessions Heading -->
     <div class="d-flex mt-0">
-
         <h1 class="mb-0">Singers</h1>
-
-        <!-- Buttons for Table and Calendar Views -->
-        @*  <div class="d-flex align-items-center">
-            <a asp-action="Index" class="btn btn-primary btn-events-toggle">Table View</a>
-            <a asp-action="Calendar" class="btn btn-primary btn-events-toggle">Calendar View</a>
-        </div> *@
-
     </div>
-    <div>
-        <button type="button" class="btn btn-primary btn-import-excel" data-bs-toggle="modal" data-bs-target="#importSingerExcelModal">
-            Import Excel
-        </button>
-        <a asp-action="Create" class="btn btn-primary">
-            <img src="~/Images/add-user.png" alt="add-singer-icon" style="height: 24px; width: auto; margin-right: 10px" />Add Singer
-        </a>
+    <div class="float-end">
+        <div class="btn-group">
+            <a asp-action="Create" class="btn btn-primary">
+                <img src="~/Images/create-icon.png" alt="add-event-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New
+            </a>
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu" style="border-radius: 10px">
+                <li style="margin-right: 18px">
+                    <button type="button" class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#importExcelModal">
+                        <img src="~/Images/import.png" alt="import icon" style="height: 24px; width: auto; margin-right: 8px" />
+                        Import Excel
+                    </button>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 <p>View your Singers records.</p>
@@ -346,8 +347,8 @@
                         {
                             <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
                                 <input type="hidden" name="id" value="@item.ID" />
-                                <button type="submit" class="btn btn-sm btn-success">
-                                    <img src="~/Images/unarchive-value.png" alt="Restore-icon" style="height: 24px; width: auto; margin-right: 10px;" />
+                                <button type="submit" class="btn btn-sm btn-restore">
+                                    <img src="~/Images/unarchive-value.png" alt="Unarchive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                     Restore
                                 </button>
                             </form>
