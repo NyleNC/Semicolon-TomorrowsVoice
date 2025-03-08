@@ -40,26 +40,7 @@ nav {
             width: 25px /* Remove margin for icons when collapsed */
         }
 
-@media (max-width: 768px) {
-    .sidebar.collapsed {
-        width: 80px; /* Width for collapsed state */
-    }
 
-        .sidebar.collapsed .nav-link span {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .sidebar.collapsed .nav-link img {
-            margin-right: 0;
-            width: 25px /* Remove margin for icons when collapsed */
-        }
-
-    #submenu1 #submenu2 img {
-        width: 90px;
-        margin-right: 10px;
-    }
-}
 
 .toggle-btn {
     background: none;
@@ -108,6 +89,7 @@ nav {
     }
 
 
+
 .btn-white {
     background-color: #FFFFFF;
 }
@@ -149,7 +131,7 @@ nav {
 /* Edit Button - btn-warning (Blue) */
 .btn-warning {
     background-color: #E6F2FF; /* bg-blue-50 */
-    border-color: #E6F2FF;
+    border-color: #1D4ED8;
     color: #1D4ED8; /* text-blue-700 */
 }
 
@@ -168,7 +150,7 @@ nav {
 /* Details Button - btn-info (Green) */
 .btn-info {
     background-color: #F0FDF4; /* bg-green-50 */
-    border-color: #F0FDF4;
+    border-color: #166534;
     color: #166534; /* text-green-700 */
 }
 
@@ -187,7 +169,7 @@ nav {
 /* Archive Button - btn-danger (Red) */
 .btn-danger {
     background-color: #FEF2F2; /* bg-red-50 */
-    border-color: #FEF2F2;
+    border-color: #B91C1C;
     color: #B91C1C; /* text-red-700 */
 }
 
@@ -202,6 +184,26 @@ nav {
         outline: none;
         box-shadow: 0 0 0 3px #FCA5A5; /* focus:ring-red-300 */
     }
+
+
+.btn-restore {
+    background-color: #FFFBEB; /* bg-yellow-50 */
+    border-color: #DEA700;
+    color: #DEA700; /* text-yellow-700 */
+}
+
+    .btn-restore:hover {
+        background-color: #FEF3C7; /* hover:bg-yellow-100 */
+        border-color: #FEF3C7;
+        color: #DEA700; /* text-yellow-700 */
+        font-weight: 500;
+    }
+
+    .btn-restore:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px #FDE68A; /* focus:ring-yellow-300 */
+    }
+
 
 .nav-container {
     display: flex;
@@ -835,5 +837,27 @@ label.required:after {
     .adaptive-icon {
         height: 20px;
         margin-right: 5px;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .sidebar.collapsed {
+        width: 80px; /* Width for collapsed state */
+    }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .sidebar.collapsed .nav-link img {
+            margin-right: 0;
+            width: 25px /* Remove margin for icons when collapsed */
+        }
+
+    #submenu1 #submenu2 img {
+        width: 90px;
+        margin-right: 10px;
     }
 }
