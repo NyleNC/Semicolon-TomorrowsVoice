@@ -34,43 +34,43 @@ namespace TomorrowsVoices.Data
 
             //one to one relationship between location and director
             modelBuilder.Entity<Location>()
-               .HasOne(l => l.Director)
-               .WithOne(d => d.Location)
-               .HasForeignKey<Location>(l => l.DirectorID)
-               .IsRequired(false)
-               .OnDelete(DeleteBehavior.SetNull);
+                .HasOne(l => l.Director)
+                .WithOne(d => d.Location)
+                .HasForeignKey<Location>(l => l.DirectorID)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // PREVENT CASCADE Delete FROM VOLUNTEER LOCATION TO VOLUNTEER
             modelBuilder.Entity<VolLocation>()
-              .HasMany(l => l.Volunteers)
-              .WithOne(d => d.VolLocation)
-              .HasForeignKey(d => d.VolLocationID)
-              .OnDelete(DeleteBehavior.Restrict);
+                .HasMany(l => l.Volunteers)
+                .WithOne(d => d.VolLocation)
+                .HasForeignKey(d => d.VolLocationID)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             // PREVENT CASCADE Delete FROM VOLUNTEER LOCATION TO EVENT
             modelBuilder.Entity<VolLocation>()
-              .HasMany(l => l.Events)
-              .WithOne(d => d.VolLocation)
-              .HasForeignKey(d => d.VolLocationID)
-              .OnDelete(DeleteBehavior.Restrict);
+                .HasMany(l => l.Events)
+                .WithOne(d => d.VolLocation)
+                .HasForeignKey(d => d.VolLocationID)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
 
             // PREVENT CASCADE Delete FROM Event TO Attendance
             modelBuilder.Entity<Event>()
-             .HasMany(l => l.VolAttendance)
-             .WithOne(d => d.Event)
-             .HasForeignKey(d => d.EventID)
-             .OnDelete(DeleteBehavior.Restrict);
+                .HasMany(l => l.VolAttendance)
+                .WithOne(d => d.Event)
+                .HasForeignKey(d => d.EventID)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             // PREVENT CASCADE Delete FROM Volunteer TO Attendance
             modelBuilder.Entity<Volunteer>()
-             .HasMany(l => l.VolAttendances)
-             .WithOne(d => d.Volunteer)
-             .HasForeignKey(d => d.VolunteerID)
-             .OnDelete(DeleteBehavior.Restrict);
+                .HasMany(l => l.VolAttendances)
+                .WithOne(d => d.Volunteer)
+                .HasForeignKey(d => d.VolunteerID)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             // One-to-Many: Location -> Singers
@@ -85,18 +85,18 @@ namespace TomorrowsVoices.Data
                 .HasOne(a => a.Singer)
                 .WithMany(s => s.Attendance)
                 .HasForeignKey(a => a.SingerID)
-                  .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Session>()
                 .HasOne(Session => Session.Location)
                 .WithMany(Location => Location.Session)
                 .HasForeignKey(Session => Session.LocationID)
-             .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Schedule>()
-         .HasOne(s => s.Event)
-         .WithMany(e => e.Schedules)
-         .HasForeignKey(s => s.eventID);
+                .HasOne(s => s.Event)
+                .WithMany(e => e.Schedules)
+                .HasForeignKey(s => s.eventID);
 
             modelBuilder.Entity<Schedule>()
                 .HasOne(s => s.Volunteer)
@@ -129,9 +129,6 @@ namespace TomorrowsVoices.Data
 
                 .HasIndex(d => d.Email)
                 .IsUnique();
-
-
-
         }
     }
 }
