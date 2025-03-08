@@ -37,7 +37,7 @@ nav {
 
         .sidebar.collapsed .nav-link img {
             margin-right: 0;
-            width: 40px /* Remove margin for icons when collapsed */
+            width: 25px /* Remove margin for icons when collapsed */
         }
 
 @media (max-width: 768px) {
@@ -52,7 +52,7 @@ nav {
 
         .sidebar.collapsed .nav-link img {
             margin-right: 0;
-            width: 40px /* Remove margin for icons when collapsed */
+            width: 25px /* Remove margin for icons when collapsed */
         }
 
     #submenu1 #submenu2 img {
