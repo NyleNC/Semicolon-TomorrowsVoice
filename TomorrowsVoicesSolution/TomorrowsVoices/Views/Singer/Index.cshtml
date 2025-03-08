@@ -46,7 +46,7 @@
     </a>
     <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
        asp-action="Index" asp-route-archived="true">
-        Archive
+        Archived
         @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
         {
             <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">0</span>
@@ -179,7 +179,7 @@
         <div class="card card-body">
             <div class="row">
                 <div class="form-group col-md-3">
-                    <label class="control-label">Search by Singers Name:</label>
+                    <label class="control-label">Search by Name:</label>
                     @Html.TextBox("SearchString", null, new { @class = "form-control" })
                 </div>
                 <div class="col-md-4">
@@ -188,7 +188,7 @@
                         @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Location"], new { @class = "form-control" })
                     </div>
                 </div>
-          @*       <div class="col-md-2">
+                @*       <div class="col-md-2">
                     <label class="control-label">Search by Availability:</label>
                     <select class="form-control" name="searchIsAvailable">
                         <option value="">Availability (All)</option>
@@ -209,68 +209,68 @@
 
     <div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
         <table class="table table-custom p-0 m-0">
-        <thead>
-            <tr>
-                <th>
-                    <button  type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'FullName')">
-                        Full Name
-                        @if (ViewData["sortField"]?.ToString() == "FullName")
-                        {
-                            if (ViewData["sortDirection"]?.ToString() == "asc")
+            <thead>
+                <tr>
+                    <th>
+                        <button type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'FullName')">
+                            Full Name
+                            @if (ViewData["sortField"]?.ToString() == "FullName")
                             {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
+                                if (ViewData["sortDirection"]?.ToString() == "asc")
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
 
+                                }
+                                else
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+
+                                }
                             }
                             else
                             {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
-
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
                             }
-                        }
-                        else
-                        {
-                            <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
-                        }
-                    </button>
-                </th>
-                
-                <th>
-                    <button  type="button" name="actionButton" value="City" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Location')">
-                        City
-                        @if (ViewData["sortField"]?.ToString() == "Location")
-                        {
-                            if (ViewData["sortDirection"]?.ToString() == "asc")
-                            {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
+                        </button>
+                    </th>
 
+                    <th>
+                        <button type="button" name="actionButton" value="City" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Location')">
+                            City
+                            @if (ViewData["sortField"]?.ToString() == "Location")
+                            {
+                                if (ViewData["sortDirection"]?.ToString() == "asc")
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+
+                                }
                             }
                             else
                             {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
-
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
                             }
-                        }
-                        else
-                        {
-                            <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
-                        }
-                        
-                    </button>
-                </th>
 
-           @*    
+                        </button>
+                    </th>
+
+                    @*    
                 <th>
                     <button style="font-weight: 700" type="button" name="actionButton" value="Availability" class="btn btn-toolbar text-white" onclick="handleSort(event, 'IsAvailable')">
                         Availability
@@ -290,27 +290,27 @@
 
 
 
-                <th>
-                        <button style="cursor: default;" type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white">Actions</button>
-                </th>
-            </tr>
-        </thead>
+                    <th>
+                        <button type="button" name="actionButton" value="Actions" class="btn btn-toolbar text-white">Actions</button>
+                    </th>
+                </tr>
+            </thead>
 
 </form>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => item.FullName)</td>
-                    <td>@(item.Location != null ? item.Location.City : "Not Set")</td>
-                 @*    <td>
+<tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+            <td>@(item.Location != null ? item.Location.City : "Not Set")</td>
+            @*    <td>
                         <button type="button" class="toggle-btn btn @(item.IsAvailable ? "btn-success" : "btn-danger")"
                                 data-id="@item.ID">
                             <i class="bi @(item.IsAvailable ? "bi-check-circle" : "bi-x-circle")"></i>
                             @(item.IsAvailable ? "Available" : "Unavailable")
                         </button>
                     </td> *@
-                    <td>
+            <td>
                 <!-- Desktop View (Buttons) -->
                 <div class="d-none d-lg-inline">
                     @if (item.IsArchived)
@@ -354,7 +354,7 @@
                         }
                     </div>
                 </div>
-            
+
                 <!-- Mobile View (Dropdown) -->
                 <div class="d-lg-none">
                     <div class="btn-group">
@@ -373,40 +373,39 @@
                                 </a>
                             </li>
                             <li>
-                        @if (!item.IsArchived)
-                        {
+                                @if (!item.IsArchived)
+                                {
                                     <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
                                         <input type="hidden" name="id" value="@item.ID" />
                                         <button type="submit" class="dropdown-item text-black">
                                             <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
                                         </button>
                                     </form>
-                        }
-                        else
-                        {
+                                }
+                                else
+                                {
                                     <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');">
                                         <input type="hidden" name="id" value="@item.ID" />
                                         <button type="submit" class="dropdown-item text-black">
                                             <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Restore
                                         </button>
                                     </form>
-                        }
+                                }
                             </li>
                         </ul>
                     </div>
                 </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
+            </td>
+        </tr>
+    }
+</tbody>
     </table>
 
-    <partial name="_PagingNavBar" />
+<partial name="_PagingNavBar" />
 
 </div>
 
 <!-- #JS Scripts -->
-
 <!-- Sorting and JS Script -->
 <script>
     function handleSort(event, field) {

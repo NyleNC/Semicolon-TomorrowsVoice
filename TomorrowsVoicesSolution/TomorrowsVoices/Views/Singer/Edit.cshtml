@@ -5,7 +5,6 @@
     ViewData["Title"] = "Edit";
 }
 <div>
-
 </div>
 
 <h1>Edit Singer</h1>
@@ -36,7 +35,7 @@
                 </select>
                 <span asp-validation-for="LocationID" class="text-danger"></span>
             </div>
-        @*     <div class="form-group">
+            @*     <div class="form-group">
                 <label asp-for="IsAvailable" class="control-label"></label>
                 <input asp-for="IsAvailable" type="checkbox" class="form-check-input" />
                 <span asp-validation-for="IsAvailable" class="text-danger"></span>
@@ -53,10 +52,6 @@
                 <span asp-validation-for="EmergencyContactNumber" class="text-danger"></span>
             </div>
 
-
-
-
-
             <div class="form-group">
                 <label asp-for="CreatedOn" class="control-label" style="font-weight: 700"></label>
                 <p class="form-control-plaintext">@Model.CreatedOn.ToString("MMM/dd/yyyy | hh:mm:ss tt")</p>
@@ -69,11 +64,10 @@
                 </p>
             </div>
 
-
             <div class="form-group">
                 <button type="submit" class="btn btn-success">
-                <img src="~/Images/save-changes-icon.png" alt="Save changes" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                Save
+                    <img src="~/Images/save-changes-icon.png" alt="Save changes" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                    Save
                 </button>
             </div>
             <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 160px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Singer Page</a>
@@ -126,6 +120,13 @@
                      allowClear: true
                  });
              });
+
+             //  $('.phone-number').on('input', function() {
+             //     var number = $(this).val().replace(/[^\d]/g, '');
+             //     if (number.length == 10) {
+             //         $(this).val(number.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'));
+             //     }
+             // });
     </script>
 }
 @if (TempData["SuccessMessage"] != null)

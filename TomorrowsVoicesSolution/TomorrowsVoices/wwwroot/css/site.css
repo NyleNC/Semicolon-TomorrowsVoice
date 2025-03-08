@@ -3,7 +3,7 @@ html {
 }
 
 nav {
-    background-color: #100527;
+    background-color: #100527
 }
 
 .nav-link.active {
@@ -26,773 +26,704 @@ nav {
     overflow: hidden;
 }
 
-.sidebar.collapsed {
-    width: 80px; /* Width for collapsed state */
-}
-
-.sidebar.collapsed .nav-link span {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.sidebar.collapsed .nav-link img {
-    margin-right: 0;
-    width: 25px; /* Remove margin for icons when collapsed */
-}
-
-
-
-/* New submenu styling */
-#menu .sub-menu-item {
-    background-color: #f0f0f0;
-    border-left: 3px solid #100527;
-    margin-bottom: 2px;
-    transition: all 0.2s ease;
-}
-
-    #menu .sub-menu-item:hover {
-        background-color: #e5e5e5;
-    }
-
-    #menu .sub-menu-item.active {
-        background-color: #e8dbff;
-    }
-
-/* Rotate chevron when submenu is open */
-.nav-link[aria-expanded="true"] .bi-chevron-down {
-    transform: rotate(180deg);
-    transition: transform 0.3s ease;
-}
-
-.nav-link .bi-chevron-down {
-    transition: transform 0.3s ease;
-}
-
-/* Main menu item styling */
-#menu > li > a {
-    border-radius: 8px;
-    margin-bottom: 5px;
-    transition: all 0.2s ease;
-}
-
-#menu > li > a:hover {
-    background-color: #d8d8d8;
-}
-
-/* Mobile view adjustments SideBar Nav*/
-@media (max-width: 768px) {
-    
     .sidebar.collapsed {
         width: 80px; /* Width for collapsed state */
     }
 
-    .sidebar.collapsed .nav-link span {
-        opacity: 0;
-        visibility: hidden;
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .sidebar.collapsed .nav-link img {
+            margin-right: 0;
+            width: 40px /* Remove margin for icons when collapsed */
+        }
+
+@media (max-width: 768px) {
+    .sidebar.collapsed {
+        width: 80px; /* Width for collapsed state */
     }
 
-    .sidebar.collapsed .nav-link img {
-        margin-right: 0;
-        width: 25px; /* Remove margin for icons when collapsed */
-    }
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .sidebar.collapsed .nav-link img {
+            margin-right: 0;
+            width: 40px /* Remove margin for icons when collapsed */
+        }
 
     #submenu1 #submenu2 img {
-        width: 20px; /* Adjust icon size for submenu items */
+        width: 90px;
         margin-right: 10px;
-    }
-
-    .sidebar .nav-link img {
-        width: 20px; /* Adjust icon size for mobile */
-    }
-
-    .sidebar .nav-link span {
-        font-size: 14px; /* Adjust text size for mobile */
-    }
-
-    .sidebar .nav-link {
-        padding: 10px 15px; /* Adjust padding for mobile */
-    }
-
-    .sidebar .nav-link.active {
-        background-color: #dcdcdc; /* Highlight active sub-menu item */
-        color: #1d2e79; /* Text color for active item */
-    }
-
-    .sidebar .nav-link.active img {
-        filter: brightness(0.8); /* Slightly darken the icon for active item */
-    }
-
-    .nav-link[aria-expanded="true"] {
-        pointer-events: none; /* Prevent menu items from expanding */
     }
 }
 
+.toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
 
-
-
-    .toggle-btn {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        margin-bottom: 10px;
-    }
-
-    .nav-link {
-        display: flex;
-        align-items: center;
-    }
+.nav-link {
+    display: flex;
+    align-items: center;
+}
 
     .nav-link img {
         margin-right: 10px; /* Space between icon and text */
     }
-    /* Custom primary button color */
-    .btn-primary {
-        background-color: #6D28E3;
-        border-color: #6D28E3;
-        border-radius: 10px;
-        padding: 10px 15px;
-        font-size: 1rem
+/* Custom primary button color */
+.btn-primary {
+    background-color: #6D28E3;
+    border-color: #6D28E3;
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 1rem
+}
+
+    /* Hover state - slightly darker shade */
+    .btn-primary:hover {
+        background-color: #5B1FC7;
+        border-color: #5B1FC7;
     }
 
-        /* Hover state - slightly darker shade */
-        .btn-primary:hover {
-            background-color: #5B1FC7;
-            border-color: #5B1FC7;
-        }
-
-        /* Active state - even darker shade */
-        .btn-primary:active,
-        .btn-primary:focus,
-        .btn-primary.active {
-            background-color: #4A1A9E;
-            border-color: #4A1A9E;
-            box-shadow: 0 0 0 0.25rem rgba(109, 40, 227, 0.5); /* Optional: Add a focus shadow */
-        }
-
-        /* Disabled state */
-        .btn-primary:disabled {
-            background-color: #A78BFA; /* Lighter shade for disabled state */
-            border-color: #A78BFA;
-        }
-
-
-    .btn-white {
-        background-color: #FFFFFF;
+    /* Active state - even darker shade */
+    .btn-primary:active,
+    .btn-primary:focus,
+    .btn-primary.active {
+        background-color: #4A1A9E;
+        border-color: #4A1A9E;
+        box-shadow: 0 0 0 0.25rem rgba(109, 40, 227, 0.5); /* Optional: Add a focus shadow */
     }
 
-    /* Base button style */
-    .btn-white {
-        background-color: #fff; /* White background */
+    /* Disabled state */
+    .btn-primary:disabled {
+        background-color: #A78BFA; /* Lighter shade for disabled state */
+        border-color: #A78BFA;
+    }
+
+
+.btn-white {
+    background-color: #FFFFFF;
+}
+
+/* Base button style */
+.btn-white {
+    background-color: #fff; /* White background */
+    color: black; /* Text color */
+    border: 2px solid #919191; /* Border color */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 1rem
+}
+
+    /* Hover state - light hint of #6D28E3 */
+    .btn-white:hover {
+        background-color: rgba(109, 40, 227, 0.1); /* Light hint of #6D28E3 */
+        border-color: #6D28E3; /* Keep the border color consistent */
         color: black; /* Text color */
-        border: 2px solid #919191; /* Border color */
-        transition: all 0.3s ease; /* Smooth transition for hover effects */
-        border-radius: 10px;
-        padding: 10px 15px;
-        font-size: 1rem
     }
 
-        /* Hover state - light hint of #6D28E3 */
-        .btn-white:hover {
-            background-color: rgba(109, 40, 227, 0.1); /* Light hint of #6D28E3 */
-            border-color: #6D28E3; /* Keep the border color consistent */
-            color: black; /* Text color */
-        }
+    /* Active state - slightly stronger hint */
+    .btn-white:active,
+    .btn-white:focus {
+        background-color: rgba(109, 40, 227, 0.2); /* Slightly stronger hint */
+        border-color: #6D28E3;
+        color: #6D28E3;
+        box-shadow: 0 0 0 0.25rem rgba(109, 40, 227, 0.3); /* Optional: Add a focus shadow */
+    }
 
-        /* Active state - slightly stronger hint */
-        .btn-white:active,
-        .btn-white:focus {
-            background-color: rgba(109, 40, 227, 0.2); /* Slightly stronger hint */
-            border-color: #6D28E3;
-            color: #6D28E3;
-            box-shadow: 0 0 0 0.25rem rgba(109, 40, 227, 0.3); /* Optional: Add a focus shadow */
-        }
+    /* Disabled state */
+    .btn-white:disabled {
+        background-color: #fff;
+        border-color: #ccc; /* Light gray border for disabled state */
+        color: #ccc; /* Light gray text for disabled state */
+    }
 
-        /* Disabled state */
-        .btn-white:disabled {
-            background-color: #fff;
-            border-color: #ccc; /* Light gray border for disabled state */
-            color: #ccc; /* Light gray text for disabled state */
-        }
+/* Edit Button - btn-warning (Blue) */
+.btn-warning {
+    background-color: #E6F2FF; /* bg-blue-50 */
+    border-color: #E6F2FF;
+    color: #1D4ED8; /* text-blue-700 */
+}
 
-    /* Edit Button - btn-warning (Blue) */
-    .btn-warning {
-        background-color: #E6F2FF; /* bg-blue-50 */
-        border-color: #E6F2FF;
+    .btn-warning:hover {
+        background-color: #DBEAFE; /* hover:bg-blue-100 */
+        border-color: #DBEAFE;
         color: #1D4ED8; /* text-blue-700 */
+        font-weight: 500
     }
 
-        .btn-warning:hover {
-            background-color: #DBEAFE; /* hover:bg-blue-100 */
-            border-color: #DBEAFE;
-            color: #1D4ED8; /* text-blue-700 */
-            font-weight: 500
-        }
+    .btn-warning:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px #93C5FD; /* focus:ring-blue-300 */
+    }
 
-        .btn-warning:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px #93C5FD; /* focus:ring-blue-300 */
-        }
+/* Details Button - btn-info (Green) */
+.btn-info {
+    background-color: #F0FDF4; /* bg-green-50 */
+    border-color: #F0FDF4;
+    color: #166534; /* text-green-700 */
+}
 
-    /* Details Button - btn-info (Green) */
-    .btn-info {
-        background-color: #F0FDF4; /* bg-green-50 */
-        border-color: #F0FDF4;
+    .btn-info:hover {
+        background-color: #DCFCE7; /* hover:bg-green-100 */
+        border-color: #DCFCE7;
         color: #166534; /* text-green-700 */
+        font-weight: 500
     }
 
-        .btn-info:hover {
-            background-color: #DCFCE7; /* hover:bg-green-100 */
-            border-color: #DCFCE7;
-            color: #166534; /* text-green-700 */
-            font-weight: 500
-        }
+    .btn-info:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px #6EE7B7; /* focus:ring-green-300 */
+    }
 
-        .btn-info:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px #6EE7B7; /* focus:ring-green-300 */
-        }
+/* Archive Button - btn-danger (Red) */
+.btn-danger {
+    background-color: #FEF2F2; /* bg-red-50 */
+    border-color: #FEF2F2;
+    color: #B91C1C; /* text-red-700 */
+}
 
-    /* Archive Button - btn-danger (Red) */
-    .btn-danger {
-        background-color: #FEF2F2; /* bg-red-50 */
-        border-color: #FEF2F2;
+    .btn-danger:hover {
+        background-color: #FEE2E2; /* hover:bg-red-100 */
+        border-color: #FEE2E2;
         color: #B91C1C; /* text-red-700 */
+        font-weight: 500
     }
 
-        .btn-danger:hover {
-            background-color: #FEE2E2; /* hover:bg-red-100 */
-            border-color: #FEE2E2;
-            color: #B91C1C; /* text-red-700 */
-            font-weight: 500
-        }
-
-        .btn-danger:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px #FCA5A5; /* focus:ring-red-300 */
-        }
-
-    .nav-container {
-        display: flex;
-        border-bottom: 2px solid #e4e4e4
+    .btn-danger:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px #FCA5A5; /* focus:ring-red-300 */
     }
 
-    .nav-tab {
-        padding: 15px 20px;
-        text-align: center;
-        color: #333;
-        cursor: pointer;
-        position: relative;
+.nav-container {
+    display: flex;
+    border-bottom: 2px solid #e4e4e4
+}
+
+.nav-tab {
+    padding: 15px 20px;
+    text-align: center;
+    color: #333;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: normal;
+}
+
+    .nav-tab:hover {
+        background-color: #f1f1f1;
+    }
+
+    .nav-tab.active {
+        color: #6558F5;
+        font-weight: 500;
         transition: all 0.3s ease;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: normal;
     }
 
-        .nav-tab:hover {
-            background-color: #f1f1f1;
-        }
-
-        .nav-tab.active {
-            color: #6558F5;
-            font-weight: 500;
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: #6558F5;
             transition: all 0.3s ease;
         }
 
-            .nav-tab.active::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                height: 4px;
-                background-color: #6558F5;
-                transition: all 0.3s ease;
-            }
 
 
+.table-custom thead tr * {
+    background-color: #100527
+}
 
-    .table-custom thead tr * {
-        background-color: #100527
+.table-custom tbody tr {
+    vertical-align: middle;
+}
+
+
+.table-custom thead tr th button {
+    color: white
+}
+
+    .table-custom thead tr th button:hover {
+        color: #e9ddff
     }
 
-    .table-custom tbody tr {
-        vertical-align: middle;
+.table-custom tbody tr:hover {
+    background-color: #faf8ff
+}
+
+
+.nav-tab-count {
+    background-color: #E7E7E7;
+    color: #333;
+    border-radius: 12px;
+    padding: 2px 8px;
+    margin-left: 12px;
+    font-size: 0.8em;
+}
+
+    .nav-tab-count.active {
+        color: #6558F5;
+        font-weight: 500;
     }
 
 
-    .table-custom thead tr th button {
-        color: white
+/* Font family CSS */
+* {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.btn-events-toggle {
+    background: none;
+    border: none;
+    color: #007bff;
+    padding: 0;
+    font-size: 16px;
+    font-weight: normal;
+    text-decoration: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+    .btn-events-toggle:hover {
+        color: lightblue;
+        text-decoration: none;
     }
 
-        .table-custom thead tr th button:hover {
-            color: #e9ddff
-        }
-
-    .table-custom tbody tr:hover {
-        background-color: #faf8ff
+    .btn-events-toggle:focus {
+        outline: none;
+        box-shadow: none;
     }
 
-
-    .nav-tab-count {
-        background-color: #E7E7E7;
-        color: #333;
-        border-radius: 12px;
-        padding: 2px 8px;
-        margin-left: 12px;
-        font-size: 0.8em;
+    .btn-events-toggle.active {
+        font-weight: bold;
+        color: black;
     }
 
-        .nav-tab-count.active {
-            color: #6558F5;
-            font-weight: 500;
-        }
-
-
-    /* Font family CSS */
-    * {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 400;
-        font-style: normal;
-    }
-
-    .btn-events-toggle {
-        background: none;
-        border: none;
-        color: #007bff;
-        padding: 0;
+@media (min-width: 768px) {
+    html {
         font-size: 16px;
-        font-weight: normal;
-        text-decoration: none;
-        cursor: pointer;
-        margin-right: 10px;
+    }
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+button.no-pointer-events {
+    pointer-events: none; /* Prevent the button from being clickable or hovered */
+    cursor: default; /* Prevent the hand cursor from appearing */
+}
+
+
+
+.footer-logo {
+    max-width: 60px;
+    height: auto;
+}
+
+
+label.required:after {
+    content: " *";
+    color: red;
+}
+
+
+
+.page-link-custom {
+    background-color: #343a40 !important;
+    color: #ffffff !important;
+    border: none
+}
+
+.table-custom thead tr th button {
+    padding-left: 0
+}
+
+
+@media (max-width: 991.99px) {
+    .d-lg-inline {
+        display: none !important;
     }
 
-        .btn-events-toggle:hover {
-            color: lightblue;
-            text-decoration: none;
-        }
-
-        .btn-events-toggle:focus {
-            outline: none;
-            box-shadow: none;
-        }
-
-        .btn-events-toggle.active {
-            font-weight: bold;
-            color: black;
-        }
-
-    @media (min-width: 768px) {
-        html {
-            font-size: 16px;
-        }
+    .d-lg-none {
+        display: block !important;
     }
 
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
+    .table-custom button {
+        font-size: 10px;
     }
 
-    .form-group {
-        margin-bottom: 1rem;
+    .table-custom tbody td {
+        font-size: 11px;
+    }
+}
+
+.d-lg-none, .d-none {
+    transition: opacity 0.3s ease-in-out;
+}
+
+
+@media (min-width: 992px) {
+    .d-lg-inline {
+        display: inline-block !important;
     }
 
-    button.no-pointer-events {
-        pointer-events: none; /* Prevent the button from being clickable or hovered */
-        cursor: default; /* Prevent the hand cursor from appearing */
+    .d-lg-none {
+        display: none !important;
     }
+}
 
 
-
-    .footer-logo {
-        max-width: 60px;
-        height: auto;
-    }
-
-
-    label.required:after {
-        content: " *";
-        color: red;
-    }
-
-
-
-    .page-link-custom {
-        background-color: #343a40 !important;
-        color: #ffffff !important;
-        border: none
-    }
-
-    .table-custom thead tr th button {
-        padding-left: 0
-    }
-
-
-    @media (max-width: 991.99px) {
-        .d-lg-inline {
-            display: none !important;
-        }
-
-        .d-lg-none {
-            display: block !important;
-        }
-
-        .table-custom button {
-            font-size: 10px;
-        }
-
-        .table-custom tbody td {
-            font-size: 11px;
-        }
-    }
-
-    .d-lg-none, .d-none {
-        transition: opacity 0.3s ease-in-out;
-    }
-
-
-    @media (min-width: 992px) {
-        .d-lg-inline {
-            display: inline-block !important;
-        }
-
-        .d-lg-none {
-            display: none !important;
-        }
-    }
-
-
-    .select2-selection {
-        height: 40px !important; /* Adjust as needed /
+.select2-selection {
+    height: 40px !important; /* Adjust as needed /
     line-height: 35px !important; / Ensure text aligns properly */
-        padding-top: 5px !important;
-        width: auto;
-        display: block;
+    padding-top: 5px !important;
+    width: auto;
+    display: block;
+}
+
+.select2-container--default .select2-dropdown {
+    position: absolute !important;
+    border: 1px solid #aaa;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1051; /*Ensure it's above other elements*/
+}
+
+.dropdown-divider {
+    border-top: 1px solid #000000
+}
+
+.dropdown-item.active {
+    background-color: transparent !important;
+    color: #ffc107 !important;
+    font-weight: bold;
+    text-decoration: underline;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: transparent !important;
+    color: #a8a8ca !important;
+    text-decoration: underline;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.navbar-nav {
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+}
+
+.nav-item {
+    margin-right: 10px; /* Adjust as needed */
+}
+
+.dropdown-menu {
+    background-color: #333; /* Change to your desired background color */
+    border: 1px solid #444; /* Optional: Change border color */
+}
+
+.dropdown-divider {
+    border-top: 1px solid #444; /* Change divider color */
+}
+
+/* POP UP MODAL CSS */
+/* Custom styles for the modal */
+.btn-import-excel {
+    background-color: green;
+    border-color: green;
+}
+
+    .btn-import-excel:hover {
+        background-color: darkgreen;
+        border-color: darkgreen;
     }
 
-    .select2-container--default .select2-dropdown {
-        position: absolute !important;
-        border: 1px solid #aaa;
-        background-color: white;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        z-index: 1051; /*Ensure it's above other elements*/
+.imprt-excl-modal-header {
+    background-color: green !important;
+}
+
+.import-excel-download-link {
+    color: rebeccapurple;
+}
+
+.import-excel-modal .modal-content {
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    height: 90vh; /* Full height of the viewport */
+    width: 70vw; /* Full width of the viewport */
+}
+
+.import-excel-modal .modal-header {
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+.import-excel-modal .modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.import-excel-modal .modal-body {
+    padding: 2rem;
+    height: calc(100% - 3.5rem); /* Adjust for modal header */
+}
+
+.import-excel-drop-area {
+    border: 2px dashed mediumpurple;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .import-excel-drop-area:hover {
+        background-color: #e9ecef;
     }
 
-    .dropdown-divider {
-        border-top: 1px solid #000000
+.import-excel-drop-text {
+    color: black;
+    font-size: 1rem;
+}
+
+.import-excel-browse-link {
+    color: rebeccapurple;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+    .import-excel-browse-link:hover {
+        color: #0056b3;
     }
 
-    .dropdown-item.active {
-        background-color: transparent !important;
-        color: #ffc107 !important;
-        font-weight: bold;
-        text-decoration: underline;
-        border: none !important;
-        box-shadow: none !important;
+.import-excel-submit-btn {
+    background-color: green;
+    border-color: green;
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
+    .import-excel-submit-btn:hover {
+        background-color: darkgreen;
+        border-color: darkgreen;
     }
 
-    .dropdown-item:hover, .dropdown-item:focus {
-        background-color: transparent !important;
-        color: #a8a8ca !important;
-        text-decoration: underline;
-        border: none !important;
-        box-shadow: none !important;
+.import-excel-alert {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.25rem;
+}
+
+    .import-excel-alert.alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
     }
 
-    .navbar-nav {
-        justify-content: flex-start !important;
-        align-items: flex-start !important;
+    .import-excel-alert.alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
     }
 
-    .nav-item {
-        margin-right: 10px; /* Adjust as needed */
+    .import-excel-alert.alert-warning {
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+        color: #856404;
     }
 
-    .dropdown-menu {
-        background-color: #333; /* Change to your desired background color */
-        border: 1px solid #444; /* Optional: Change border color */
-    }
+.import-excel-image-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
 
-    .dropdown-divider {
-        border-top: 1px solid #444; /* Change divider color */
-    }
-
-    /* POP UP MODAL CSS */
-    /* Custom styles for the modal */
-    .btn-import-excel {
-        background-color: green;
-        border-color: green;
-    }
-
-        .btn-import-excel:hover {
-            background-color: darkgreen;
-            border-color: darkgreen;
-        }
-
-    .imprt-excl-modal-header {
-        background-color: green !important;
-    }
-
-    .import-excel-download-link {
-        color: rebeccapurple;
-    }
-
-    .import-excel-modal .modal-content {
-        border-radius: 5px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        height: 90vh; /* Full height of the viewport */
-        width: 70vw; /* Full width of the viewport */
-    }
-
-    .import-excel-modal .modal-header {
-        border-bottom: none;
-        padding: 1.5rem;
-    }
-
-    .import-excel-modal .modal-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
-
-    .import-excel-modal .modal-body {
-        padding: 2rem;
-        height: calc(100% - 3.5rem); /* Adjust for modal header */
-    }
-
-    .import-excel-drop-area {
-        border: 2px dashed mediumpurple;
-        border-radius: 10px;
-        padding: 2rem;
-        text-align: center;
-        cursor: pointer;
-        background-color: #f9f9f9;
-        transition: background-color 0.3s ease;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-        .import-excel-drop-area:hover {
-            background-color: #e9ecef;
-        }
-
-    .import-excel-drop-text {
-        color: black;
-        font-size: 1rem;
-    }
-
-    .import-excel-browse-link {
-        color: rebeccapurple;
-        text-decoration: underline;
-        cursor: pointer;
-    }
-
-        .import-excel-browse-link:hover {
-            color: #0056b3;
-        }
-
-    .import-excel-submit-btn {
-        background-color: green;
-        border-color: green;
-        padding: 0.5rem 1.5rem;
-        font-size: 1rem;
-        border-radius: 5px;
-    }
-
-        .import-excel-submit-btn:hover {
-            background-color: darkgreen;
-            border-color: darkgreen;
-        }
-
-    .import-excel-alert {
-        margin-bottom: 1rem;
-        padding: 0.75rem 1.25rem;
-        border-radius: 0.25rem;
-    }
-
-        .import-excel-alert.alert-success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
-        }
-
-        .import-excel-alert.alert-danger {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
-        }
-
-        .import-excel-alert.alert-warning {
-            background-color: #fff3cd;
-            border-color: #ffeeba;
-            color: #856404;
-        }
-
-    .import-excel-image-placeholder {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        width: 100%;
-    }
-
-        .import-excel-image-placeholder img {
-            max-width: 100%;
-            border-radius: 10px;
-        }
-
-    .import-excel-invalid-feedback {
-        color: #dc3545;
-        font-size: 0.875rem;
-    }
-
-    /* Calendar CSS */
-    /* FullCalendar Container */
-    #calendar {
-        font-family: Arial, sans-serif;
-        font-size: 16px; /* Increase font size */
+    .import-excel-image-placeholder img {
         max-width: 100%;
-        margin: 0 auto;
-        padding: 20px;
-        margin-top: 3em;
-        background-color: #f0fafc; /* Light background */
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        border-radius: 10px;
     }
 
-    /* Calendar Header */
-    .fc-header-toolbar {
-        margin-bottom: 20px;
-        font-size: 18px; /* Larger font for header */
-    }
+.import-excel-invalid-feedback {
+    color: #dc3545;
+    font-size: 0.875rem;
+}
 
-        .fc-header-toolbar .fc-toolbar-title {
-            font-weight: bold; /* Bold title */
-            color: #333; /* Darker text */
-        }
+/* Calendar CSS */
+/* FullCalendar Container */
+#calendar {
+    font-family: Arial, sans-serif;
+    font-size: 16px; /* Increase font size */
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    margin-top: 3em;
+    background-color: #f0fafc; /* Light background */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
 
-        .fc-header-toolbar button {
-            font-size: 14px;
-            font-weight: bold; /* Bold buttons */
-            background-color: #007bff; /* Blue background */
-            color: white; /* White text */
-            border: none;
-            border-radius: 4px;
-            padding: 8px 12px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+/* Calendar Header */
+.fc-header-toolbar {
+    margin-bottom: 20px;
+    font-size: 18px; /* Larger font for header */
+}
 
-            .fc-header-toolbar button:hover {
-                background-color: #0056b3; /* Darker blue on hover */
-            }
-
-    /* Calendar Table */
-    .fc .fc-col-header-cell-cushion {
-        text-decoration: none;
-        font-weight: bold;
-        color: black;
-    }
-
-    .fc .fc-daygrid-day-number {
-        text-decoration: none;
-        font-weight: 400;
-        color: purple;
-        font-size: 1.2em;
-    }
-
-    .fc table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .fc th {
-        font-weight: bold; /* Bold column headers */
-        font-size: 16px; /* Larger font for headers */
+    .fc-header-toolbar .fc-toolbar-title {
+        font-weight: bold; /* Bold title */
         color: #333; /* Darker text */
-        padding: 10px;
-        border-bottom: 2px solid #ddd; /* Subtle border */
-        text-align: center;
     }
 
-    .fc td {
-        padding: 10px;
-        border: 1px solid #ddd; /* Light borders */
-        text-align: center;
-    }
-
-    /* Remove underlines from rows and columns */
-    .fc th,
-    .fc td {
-        text-decoration: none !important;
-    }
-
-    /* Event Titles */
-    .fc-event {
-        font-size: 14px; /* Larger font for events */
-        font-weight: bold; /* Bold event titles */
+    .fc-header-toolbar button {
+        font-size: 14px;
+        font-weight: bold; /* Bold buttons */
         background-color: #007bff; /* Blue background */
         color: white; /* White text */
         border: none;
         border-radius: 4px;
-        padding: 5px 8px;
+        padding: 8px 12px;
         cursor: pointer;
         transition: background-color 0.3s ease;
     }
 
-        .fc-event:hover {
+        .fc-header-toolbar button:hover {
             background-color: #0056b3; /* Darker blue on hover */
         }
 
-    /* Today's Date */
-    .fc-day-today {
-        background-color: #e6f7ff !important; /* Light blue background for today */
+/* Calendar Table */
+.fc .fc-col-header-cell-cushion {
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}
+
+.fc .fc-daygrid-day-number {
+    text-decoration: none;
+    font-weight: 400;
+    color: purple;
+    font-size: 1.2em;
+}
+
+.fc table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.fc th {
+    font-weight: bold; /* Bold column headers */
+    font-size: 16px; /* Larger font for headers */
+    color: #333; /* Darker text */
+    padding: 10px;
+    border-bottom: 2px solid #ddd; /* Subtle border */
+    text-align: center;
+}
+
+.fc td {
+    padding: 10px;
+    border: 1px solid #ddd; /* Light borders */
+    text-align: center;
+}
+
+/* Remove underlines from rows and columns */
+.fc th,
+.fc td {
+    text-decoration: none !important;
+}
+
+/* Event Titles */
+.fc-event {
+    font-size: 14px; /* Larger font for events */
+    font-weight: bold; /* Bold event titles */
+    background-color: #007bff; /* Blue background */
+    color: white; /* White text */
+    border: none;
+    border-radius: 4px;
+    padding: 5px 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .fc-event:hover {
+        background-color: #0056b3; /* Darker blue on hover */
     }
 
-    /* Hover Effect on Cells */
-    .fc-daygrid-day:hover {
-        background-color: #f0f0f0; /* Light gray on hover */
-    }
+/* Today's Date */
+.fc-day-today {
+    background-color: #e6f7ff !important; /* Light blue background for today */
+}
 
-    /* Event Popover (if used) */
-    .fc-popover {
-        font-size: 14px;
-        border-radius: 4px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+/* Hover Effect on Cells */
+.fc-daygrid-day:hover {
+    background-color: #f0f0f0; /* Light gray on hover */
+}
 
-    .fc-popover-header {
-        font-weight: bold;
-        background-color: #007bff;
-        color: white;
-        border-radius: 4px 4px 0 0;
-        padding: 10px;
-    }
+/* Event Popover (if used) */
+.fc-popover {
+    font-size: 14px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-    .fc-popover-body {
-        padding: 10px;
-        background-color: white;
-        border-radius: 0 0 4px 4px;
-    }
+.fc-popover-header {
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px 4px 0 0;
+    padding: 10px;
+}
 
-    .nav-link:hover {
-        background-color: #8a8988;
-    }
+.fc-popover-body {
+    padding: 10px;
+    background-color: white;
+    border-radius: 0 0 4px 4px;
+}
 
-    .header-logo {
-        width: auto;
-        height: 50px;
-        filter: grayscale(100%) brightness(1000%) contrast(100%);
-    }
-    /* Hide sidebar by default on mobile 
+.nav-link:hover {
+    background-color: #8a8988;
+}
+
+.header-logo {
+    width: auto;
+    height: 50px;
+    filter: grayscale(100%) brightness(1000%) contrast(100%);
+}
+/* Hide sidebar by default on mobile 
 */ /*@media (max-width: 768px) {
     .sidebar {
         display: none;
@@ -824,8 +755,8 @@ nav {
     }
 }*/
 
-    /* Show sidebar by default on larger screens */
-    /*@media (min-width: 769px) {
+/* Show sidebar by default on larger screens */
+/*@media (min-width: 769px) {
     .sidebar {
         display: block;
     }
@@ -855,22 +786,54 @@ nav {
     width: 100%; /* Ensures it spans the width of the sidebar */
 
 
-    /* For Filter/Search popup */
-    .uniform-button {
-        width: 200px; /* Adjust width as needed */
-        text-align: center;
+
+/* For Filter/Search popup */
+.uniform-button {
+    width: 200px; /* Adjust width as needed */
+    text-align: center;
+}
+
+.filter-popup {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+}
+
+    .filter-popup.show {
+        max-height: 500px; /* Adjust based on content size */
+        opacity: 1;
+        padding-bottom: 20px;
     }
 
-    .filter-popup {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
-        opacity: 0;
+/*For Details View of Vol*/
+.compact-paragraph {
+    margin: 0;
+    padding: 0;
+}
+
+
+.adaptive-button {
+    padding: 11px;
+    border-radius: 10px;
+}
+
+.adaptive-icon {
+    height: 24px;
+    width: auto;
+    margin-right: 10px;
+    padding-bottom: 5px;
+}
+
+@media (max-width: 576px) {
+    .adaptive-button {
+        padding: 8px;
+        width: auto;
+        font-size: 12px;
     }
 
-        .filter-popup.show {
-            max-height: 500px; /* Adjust based on content size */
-            opacity: 1;
-            padding-bottom: 20px;
-        }
-
+    .adaptive-icon {
+        height: 20px;
+        margin-right: 5px;
+    }
+}

@@ -8,6 +8,10 @@ namespace TomorrowsVoices.Models
         [Display(Name = "Volunteer")]
         public string FullName => $"{FirstName} {LastName}";
 
+        [Display(Name = "Emergency Contact Number")]
+        public string FormattedPhone => "(" + Phone.Substring(0, 3) + ") "
+        + Phone.Substring(3, 3) + "-" + Phone[6..];
+
 
         //For lookup values.
         [Display(Name = "Events Attended")]
@@ -35,7 +39,9 @@ namespace TomorrowsVoices.Models
         [Display(Name = "Phone Number")]
         [Required(ErrorMessage = "Phone number is required.")]
         [RegularExpression("^\\d{10}$", ErrorMessage = "Please enter a valid 10-digit phone number (no spaces).")]
+        [DisplayFormat(DataFormatString = "{0:(###) ###-####}")]
         [DataType(DataType.PhoneNumber)]
+        [MaxLength(10)]
         public string? Phone { get; set; }
 
         [StringLength(255)]
@@ -52,7 +58,6 @@ namespace TomorrowsVoices.Models
         public ICollection<VolAttendance> VolAttendances { get; set; } = new HashSet<VolAttendance>();
         public bool IsArchived { get; set; }
 
-        public ICollection<Schedule>? Schedules { get; set; }
     }
 }
 
