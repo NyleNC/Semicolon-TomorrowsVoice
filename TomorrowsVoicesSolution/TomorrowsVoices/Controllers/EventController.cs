@@ -71,21 +71,18 @@ namespace TomorrowsVoices.Controllers
             var schedules = await _context.Schedules
                 .Include(s => s.Volunteer)
                 .Include(s => s.Event)
-                    .ThenInclude(e => e.VolLocation) // Correct Include
+                    .ThenInclude(e => e.VolLocation)
                 .Where(s => s.Event.ID == id)
                 .ToListAsync();
 
-            // Create a ScheduleViewModel for the event
+            // Create and populate the ScheduleViewModel
             var scheduleViewModel = new ScheduleViewModel
             {
-                // Use TimeOnly for shift filtering
                 MorningShifts = schedules
-                    .Where(s => s.ShiftStart >= new TimeOnly(8, 0) &&
-                                s.ShiftStart < new TimeOnly(12, 0))
+                    .Where(s => s.ShiftStart >= new TimeOnly(8, 0) && s.ShiftStart < new TimeOnly(12, 0))
                     .ToList(),
                 AfternoonShifts = schedules
-                    .Where(s => s.ShiftStart >= new TimeOnly(12, 0) &&
-                                s.ShiftStart < new TimeOnly(17, 0))
+                    .Where(s => s.ShiftStart >= new TimeOnly(12, 0) && s.ShiftStart < new TimeOnly(17, 0))
                     .ToList(),
                 EveningShifts = schedules
                     .Where(s => s.ShiftStart >= new TimeOnly(17, 0))
@@ -93,23 +90,25 @@ namespace TomorrowsVoices.Controllers
             };
 
             // Calculate total hours for each volunteer
-            foreach (var shift in schedules)
+            foreach (var schedule in schedules)
             {
-                if (shift.IsPresent)
+                if (schedule.Volunteer != null && schedule.ShiftStart != null && schedule.ShiftEnd != null)
                 {
-                    var hours = (shift.ShiftEnd - shift.ShiftStart).TotalHours;
-                    if (scheduleViewModel.VolunteerTotalHours.ContainsKey(shift.Volunteer.FullName))
+                    var shiftDuration = (schedule.ShiftEnd - schedule.ShiftStart).TotalHours;
+                    var volunteerName = schedule.Volunteer.FullName;
+
+                    if (scheduleViewModel.VolunteerTotalHours.ContainsKey(volunteerName))
                     {
-                        scheduleViewModel.VolunteerTotalHours[shift.Volunteer.FullName] += hours;
+                        scheduleViewModel.VolunteerTotalHours[volunteerName] += shiftDuration;
                     }
                     else
                     {
-                        scheduleViewModel.VolunteerTotalHours[shift.Volunteer.FullName] = hours;
+                        scheduleViewModel.VolunteerTotalHours[volunteerName] = shiftDuration;
                     }
                 }
             }
 
-            // Pass the ScheduleViewModel to the view using ViewBag or ViewData
+            // Pass the ScheduleViewModel to the view
             ViewBag.ScheduleViewModel = scheduleViewModel;
 
             return View(@event);
