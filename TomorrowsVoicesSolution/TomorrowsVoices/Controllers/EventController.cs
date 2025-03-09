@@ -231,12 +231,14 @@ namespace TomorrowsVoices.Controllers
             ViewBag.Volunteers = _context.Volunteers.ToList();
             return View(@event);
         }
+
+
         // POST: Event/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Notes,Date,StartTime,EndTime,VolLocationID")] Event @event, List<Schedule> schedules)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Notes,Date,StartTime,EndTime,VolLocationID")] Event @event, string allScheduleIds, string[] presentSchedules)
         {
             if (id != @event.ID)
             {
@@ -250,7 +252,7 @@ namespace TomorrowsVoices.Controllers
                     var eventToUpdate = await _context.Events
                         .Include(e => e.VolLocation)
                         .Include(e => e.VolAttendance).ThenInclude(va => va.Volunteer)
-                        .Include(e => e.Schedules) // Include schedules
+                        .Include(e => e.Schedules)
                         .FirstOrDefaultAsync(e => e.ID == id);
 
                     if (eventToUpdate == null)
@@ -265,17 +267,36 @@ namespace TomorrowsVoices.Controllers
                         e => e.Name, e => e.Description, e => e.Notes,
                         e => e.Date, e => e.StartTime, e => e.EndTime, e => e.VolLocationID))
                     {
-                        // Update the schedules' attendance status
-                        foreach (var schedule in schedules)
+                        // Process all schedule IDs
+                        if (!string.IsNullOrEmpty(allScheduleIds))
                         {
-                            var existingSchedule = eventToUpdate.Schedules.FirstOrDefault(s => s.ID == schedule.ID);
-                            if (existingSchedule != null)
+                            // Convert comma-separated IDs to an array of integers
+                            int[] scheduleIds = allScheduleIds.Split(',').Select(int.Parse).ToArray();
+
+                            // Convert presentSchedules to a HashSet for faster lookups
+                            HashSet<int> presentScheduleIds = presentSchedules != null
+                                ? new HashSet<int>(presentSchedules.Select(int.Parse))
+                                : new HashSet<int>();
+
+                            // Update all schedules
+                            foreach (int scheduleId in scheduleIds)
                             {
-                                existingSchedule.IsPresent = schedule.IsPresent;
+                                var existingSchedule = await _context.Schedules.FindAsync(scheduleId);
+                                if (existingSchedule != null)
+                                {
+                                    // Check if the schedule ID is in the presentSchedules array
+                                    bool isPresent = presentScheduleIds.Contains(scheduleId);
+
+                                    // Only update if the value is different
+                                    if (existingSchedule.IsPresent != isPresent)
+                                    {
+                                        existingSchedule.IsPresent = isPresent;
+                                        _context.Entry(existingSchedule).Property(s => s.IsPresent).IsModified = true;
+                                    }
+                                }
                             }
                         }
 
-                        _context.Update(eventToUpdate);
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));
                     }
@@ -291,17 +312,53 @@ namespace TomorrowsVoices.Controllers
                         throw;
                     }
                 }
-                catch (DbUpdateException)
+                catch (DbUpdateException ex)
                 {
+                    // Log the exception for debugging
+                    Console.WriteLine(ex.ToString());
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
             }
 
+            // If we got this far, something failed, redisplay form
+            var scheduleViewModel = await PrepareScheduleViewModelAsync(id);
+            ViewBag.ScheduleViewModel = scheduleViewModel;
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", @event.VolLocationID);
             ViewBag.Events = _context.Events.ToList();
             ViewBag.Volunteers = _context.Volunteers.ToList();
             return View(@event);
         }
+
+        // Helper method to prepare schedule view model
+        private async Task<ScheduleViewModel> PrepareScheduleViewModelAsync(int eventId)
+        {
+            var schedules = await _context.Schedules
+                .Include(s => s.Volunteer)
+                .Include(s => s.Event)
+                    .ThenInclude(e => e.VolLocation)
+                .Where(s => s.Event.ID == eventId)
+                .ToListAsync();
+
+            return new ScheduleViewModel
+            {
+                MorningShifts = schedules
+                    .Where(s => s.ShiftStart != null && s.ShiftStart >= new TimeOnly(8, 0) && s.ShiftStart < new TimeOnly(12, 0))
+                    .ToList(),
+                AfternoonShifts = schedules
+                    .Where(s => s.ShiftStart != null && s.ShiftStart >= new TimeOnly(12, 0) && s.ShiftStart < new TimeOnly(17, 0))
+                    .ToList(),
+                EveningShifts = schedules
+                    .Where(s => s.ShiftStart != null && s.ShiftStart >= new TimeOnly(17, 0))
+                    .ToList(),
+                VolunteerTotalHours = schedules
+                    .Where(s => s.Volunteer != null && s.ShiftStart != null && s.ShiftEnd != null)
+                    .GroupBy(s => s.Volunteer.FullName)
+                    .ToDictionary(g => g.Key, g => g.Sum(s => (s.ShiftEnd - s.ShiftStart).TotalHours))
+            };
+        }
+
+
+
         // GET: Event/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
