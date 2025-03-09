@@ -13,9 +13,10 @@ using OfficeOpenXml;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
 using TomorrowsVoices.Utilities;
-
-
 using TomorrowsVoices.ViewModels;
+
+
+
 namespace TomorrowsVoices.Controllers
 {
     public class EventController : Controller
@@ -603,6 +604,64 @@ namespace TomorrowsVoices.Controllers
 
             return Json(response);
         }
+
+
+
+        // GET: Event/ExportEventsToExcel
+        [HttpGet]
+        public async Task<IActionResult> ExportEventsToExcel()
+        {
+            var events = await _context.Events
+                .Include(e => e.VolLocation)
+                .Include(e => e.Schedules!)
+                .ThenInclude(s => s.Volunteer)
+                .ToListAsync();
+
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Events");
+
+                // Add headers
+                worksheet.Cells[1, 1].Value = "Event Name";
+                worksheet.Cells[1, 2].Value = "Description";
+                worksheet.Cells[1, 3].Value = "Date";
+                worksheet.Cells[1, 4].Value = "Start Time";
+                worksheet.Cells[1, 5].Value = "End Time";
+                worksheet.Cells[1, 6].Value = "Location";
+                int row = 2;
+                foreach (var eventItem in events)
+                {
+                    if (eventItem.Schedules != null)
+                    {
+                        foreach (var schedule in eventItem.Schedules)
+                        {
+                            worksheet.Cells[row, 1].Value = eventItem.Name;
+                            worksheet.Cells[row, 2].Value = eventItem.Description;
+                            worksheet.Cells[row, 3].Value = eventItem.Date.ToString("yyyy-MM-dd");
+                            worksheet.Cells[row, 4].Value = eventItem.StartTime.ToString("hh\\:mm tt");
+                            worksheet.Cells[row, 5].Value = eventItem.EndTime.ToString("hh\\:mm tt");
+                            row++;
+                        }
+                    }
+                }
+
+                // Auto-fit columns for better readability
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                var stream = new MemoryStream();
+                package.SaveAs(stream);
+                stream.Position = 0;
+                string excelName = $"Event_Report_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+            }
+        }
+
+
+
+
+
+
+
 
         // Excel Template Server
         public IActionResult DownloadSampleExcel()

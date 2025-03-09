@@ -159,8 +159,8 @@ namespace TomorrowsVoices.Controllers
 
             var volunteer = await _context.Volunteers
                 .Include(v => v.VolLocation)
-                .Include(v => v.VolAttendances)
-                .ThenInclude(va => va.Event)
+                .Include(v => v.Schedules)
+                .ThenInclude(s => s.Event)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (volunteer == null)
@@ -444,6 +444,7 @@ namespace TomorrowsVoices.Controllers
 
             return Json(response);
         }
+        /**/
 
         // Excel Template Server
         public IActionResult DownloadSampleExcel()
@@ -468,7 +469,7 @@ namespace TomorrowsVoices.Controllers
         {
             var volunteers = await _context.Volunteers
                 .Include(v => v.VolLocation)
-                .Include(v => v.VolAttendances)
+                .Include(v => v.Schedules)
                 .ThenInclude(va => va.Event)
                 .ToListAsync();
 
@@ -544,7 +545,7 @@ namespace TomorrowsVoices.Controllers
                 return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
             }
         }
-
+        /**/
 
 
 

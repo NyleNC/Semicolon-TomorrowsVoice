@@ -1618,6 +1618,8 @@ namespace TomorrowsVoices.Data
                     {
                         ShiftStart = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
                         ShiftEnd = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualStartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualEndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         volunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Jane").ID,
                         eventID = context.Events.FirstOrDefault(e => e.Name == "Food Drive").ID,
 
@@ -1626,6 +1628,8 @@ namespace TomorrowsVoices.Data
                     {
                         ShiftStart = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         ShiftEnd = TimeOnly.ParseExact("04:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualStartTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualEndTime = TimeOnly.ParseExact("04:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         volunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "John").ID,
                         eventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID,
 
@@ -1634,6 +1638,8 @@ namespace TomorrowsVoices.Data
                     {
                         ShiftStart = TimeOnly.ParseExact("05:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         ShiftEnd = TimeOnly.ParseExact("08:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualStartTime = TimeOnly.ParseExact("05:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualEndTime = TimeOnly.ParseExact("08:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),  
                         volunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Karen").ID,
                         eventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID,
 
@@ -1642,6 +1648,8 @@ namespace TomorrowsVoices.Data
                     {
                         ShiftStart = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
                         ShiftEnd = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualStartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualEndTime = TimeOnly.ParseExact("01:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         volunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Alice").ID,
                         eventID = context.Events.FirstOrDefault(e => e.Name == "Food Drive").ID,
 
@@ -1650,6 +1658,8 @@ namespace TomorrowsVoices.Data
                     {
                         ShiftStart = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         ShiftEnd = TimeOnly.ParseExact("04:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualStartTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualEndTime = TimeOnly.ParseExact("06:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         volunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Leo").ID,
                         eventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID,
 
@@ -1658,6 +1668,8 @@ namespace TomorrowsVoices.Data
                     {
                         ShiftStart = TimeOnly.ParseExact("05:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         ShiftEnd = TimeOnly.ParseExact("08:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualStartTime = TimeOnly.ParseExact("03:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
+                        ActualEndTime = TimeOnly.ParseExact("09:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         volunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Mia").ID,
                         eventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID,
 
