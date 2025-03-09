@@ -55,21 +55,50 @@
 </head>
 <body>
     <div class="container-fluid p-0">
+  
         <!-- Horizontal Navbar -->
         <nav class="navbar navbar-expand-lg px-3">
-            <div class="container-fluid px-3 m-0">
+            <div class="container-fluid px-3 m-0 d-flex justify-content-between align-items-center">
+
                 <!-- Tomorrow's Voices Logo -->
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/Images/TV-Logo.png" alt="Tomorrow's Voices Logo" class="header-logo">
                 </a>
 
-                <!-- Optional: Add other navbar items here -->
+                <!-- Mobile Menu Button (Floated to the Right) -->
+                <button class="toggle-btn" id="btnMobile" data-bs-toggle="modal" data-bs-target="#menuModal"
+                        style="filter: invert(1) brightness(2); margin-top: 12px;">
+                    <i class="bi bi-grid"></i>
+                </button>
+
             </div>
         </nav>
 
+        <div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm ms-auto me-0">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="menuModalLabel">Navigation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 class="fw-bold">Choir Administration</h6>
+                        <a class="nav-link" asp-controller="Director" asp-action="Index">Director</a>
+                        <a class="nav-link" asp-controller="Singer" asp-action="Index">Singer</a>
+                        <a class="nav-link" asp-controller="Session" asp-action="Index">Session</a>
+                        <hr>
+                        <h6 class="fw-bold">Volunteer Management</h6>
+                        <a class="nav-link" asp-controller="VolLocation" asp-action="Index">Location</a>
+                        <a class="nav-link" asp-controller="Volunteer" asp-action="Index">Volunteer</a>
+                        <a class="nav-link" asp-controller="Event" asp-action="Index">Event</a>
+                        <a class="nav-link" asp-controller="Schedule" asp-action="Index">Schedule</a>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row flex-nowrap">
             <!-- Sidebar -->
-            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar text-black" style="border-right: 3px solid #f3f3f3; background-color: #f9f9f9">
+            <div id="desktopSidebar" class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar text-black" style="border-right: 3px solid #f3f3f3; background-color: #f9f9f9">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
                     <!-- Menu -->
                     <button class="toggle-btn" id="btn">
@@ -164,10 +193,22 @@
     <!-- Your existing scripts -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 
-    <script>
+    <script>    
         document.addEventListener('DOMContentLoaded', function () {
+
+            // Get current path
+            let currentPath = window.location.pathname.toLowerCase();
+
+            // Find matching link and add 'active-page' class
+            document.querySelectorAll(".nav-link").forEach(link => {
+                let linkPath = link.getAttribute("href")?.toLowerCase();
+                if (linkPath && currentPath.includes(linkPath)) {
+                    link.classList.add("active-page");
+                }
+            });
             const sidebar = document.querySelector('.sidebar');
             const toggleBtn = document.getElementById('btn');
 
@@ -194,6 +235,6 @@
                 });
             });
         });
-    </script>
+    </script> 
 </body>
 </html>

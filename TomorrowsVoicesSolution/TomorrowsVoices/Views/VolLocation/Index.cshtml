@@ -60,7 +60,7 @@
 <form asp-action="Index" method="get">
     <div class="container" style=" margin: 0; padding: 0">
         <div class="row" style="margin: 0; padding: 0">
-            <div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
+            <div  style="border: 3px solid #F1F1F1; border-radius: 12px; margin: 0; padding: 0">
                 <table class="table table-custom p-0 m-0">
                     <thead>
                         <tr>
@@ -151,7 +151,7 @@
                                             {
                                                 <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
                                                     <input type="hidden" name="id" value="@item.ID" />
-                                                    <button type="submit" class="dropdown-item text-black">
+                                        <button type="submit" class="dropdown-item" style=" font-size: 1rem">
                                                         <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
                                                     </button>
                                                 </form>
@@ -160,7 +160,7 @@
                                             {
                                                 <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');">
                                                     <input type="hidden" name="id" value="@item.ID" />
-                                                    <button type="submit" class="dropdown-item text-black">
+                                        <button type="submit" class="dropdown-item" style=" font-size: 1rem">
                                                         <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Restore
                                                     </button>
                                                 </form>
