@@ -86,11 +86,19 @@
                         <div class="schedule-row border p-3 mb-3">
                             <div class="form-group">
                                 <label>Shift Start</label>
-                                <input type="time" class="form-control" name="Schedules[0].StartTime" required>
+                                <input type="time" class="form-control" name="Schedules[0].ShiftTime" required>
                             </div>
                             <div class="form-group">
                                 <label>Shift End</label>
-                                <input type="time" class="form-control" name="Schedules[0].EndTime" required>
+                                <input type="time" class="form-control" name="Schedules[0].ShiftEnd" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Shift Start</label>
+                                <input type="time" class="form-control" name="Schedules[0].ActualStartime" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Shift End</label>
+                                <input type="time" class="form-control" name="Schedules[0].ActualEndTime" required>
                             </div>
                     
                             <div class="form-group">
@@ -140,6 +148,14 @@
                 <div class="form-group">
                     <label>Shift End</label>
                     <input type="time" name="Schedules[${scheduleIndex}].EndTime" class="form-control" required />
+                </div>
+                    <div class="form-group">
+                    <label>Shift Start</label>
+                    <input type="time" name="Schedules[${scheduleIndex}].ActualStartTime" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Shift End</label>
+                    <input type="time" name="Schedules[${scheduleIndex}].ActualEndTime" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label>Volunteer</label>
