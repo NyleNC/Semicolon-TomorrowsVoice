@@ -58,6 +58,9 @@
                                     @foreach (var schedule in scheduleViewModel.MorningShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
+                                        <small>
+                                            (@scheduleViewModel.MorningActualStartTime - @scheduleViewModel.MorningShiftEndTime)
+                                        </small>
                                     }
                                 </ul>
                             </div>
@@ -75,6 +78,9 @@
                                     @foreach (var schedule in scheduleViewModel.AfternoonShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
+                                        <small>
+                                            (@scheduleViewModel.AfternoonActualStartTime - @scheduleViewModel.AfternoonActualEndTime)
+                                        </small>
                                     }
                                 </ul>
                             </div>
@@ -92,6 +98,9 @@
                                     @foreach (var schedule in scheduleViewModel.EveningShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
+                                        <small>
+                                            (@scheduleViewModel.EveningActualStartTime - @scheduleViewModel.EveningActualEndTime)
+                                        </small>
                                     }
                                 </ul>
                             </div>
@@ -177,8 +186,8 @@
                             {
                                 <tr>
                                     <td>@schedule.Volunteer.FullName</td>
-                                    <td>@schedule.ShiftStart.ToString("hh:mm tt")</td>
-                                    <td>@schedule.ShiftEnd.ToString("hh:mm tt")</td>
+                                    <td>@schedule.ActualStartTime.Value.ToString("hh:mm tt")</td>
+                                    <td>@schedule.ActualEndTime.Value.ToString("hh:mm tt")</td>
                                     <td>@((schedule.ShiftEnd - schedule.ShiftStart).TotalHours.ToString("F2")) hours</td>
                                 </tr>
                             }

@@ -41,20 +41,20 @@ namespace TomorrowsVoices.Controllers
             foreach (var schedule in schedules)
             {
                 // Calculate shift duration in hours
-                var shiftDuration = (schedule.ShiftEnd - schedule.ShiftStart).TotalHours;
+                var shiftDuration = (schedule.ActualStartTime.Value - schedule.ActualStartTime.Value).TotalHours;
 
                 // Add to the appropriate shift list
-                if (schedule.ShiftStart >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(8)) &&
-                    schedule.ShiftStart < TimeOnly.FromTimeSpan(TimeSpan.FromHours(12)))
+                if (schedule.ActualStartTime >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(8)) &&
+                    schedule.ActualStartTime < TimeOnly.FromTimeSpan(TimeSpan.FromHours(12)))
                 {
                     viewModel.MorningShifts.Add(schedule);
                 }
-                else if (schedule.ShiftStart >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(12)) &&
-                         schedule.ShiftStart < TimeOnly.FromTimeSpan(TimeSpan.FromHours(17)))
+                else if (schedule.ActualStartTime >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(12)) &&
+                         schedule.ActualStartTime < TimeOnly.FromTimeSpan(TimeSpan.FromHours(17)))
                 {
                     viewModel.AfternoonShifts.Add(schedule);
                 }
-                else if (schedule.ShiftStart >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(17)))
+                else if (schedule.ActualStartTime >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(17)))
                 {
                     viewModel.EveningShifts.Add(schedule);
                 }
