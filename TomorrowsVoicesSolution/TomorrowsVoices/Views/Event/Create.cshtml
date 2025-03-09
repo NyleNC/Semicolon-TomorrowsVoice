@@ -14,44 +14,45 @@
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+                <label asp-for="Name" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+                <input asp-for="Name" class="form-control" id="eventName" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
+                <textarea asp-for="Address" class="form-control" style="min-height: 116px; max-height: 116px;" id="eventDescription"></textarea>
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="VolLocationID" class="control-label"></label>
-                <select asp-for="VolLocationID" class="form-control" asp-items="ViewBag.VolLocationID"></select>
-                <span asp-validation-for="VolLocationID" class="text-danger"></span>
+                <label asp-for="VolLocationID" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+                <select asp-for="VolLocationID" class="form-control" asp-items="ViewBag.VolLocationID" id="eventLocation"></select>
             </div>
             <div class="form-group">
-                <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" type="date" />
+                <label asp-for="Date" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+                <input asp-for="Date" class="form-control" type="date" id="datePicker" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="StartTime" class="control-label"></label>
-                        <input asp-for="StartTime" class="form-control" type="time" />
+                        <label asp-for="StartTime" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+                        <input asp-for="StartTime" class="form-control" type="time" id="eventStartTime" />
                         <span asp-validation-for="StartTime" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="EndTime" class="control-label"></label>
-                        <input asp-for="EndTime" class="form-control" type="time" />
+                        <label asp-for="EndTime" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+                        <input asp-for="EndTime" class="form-control" type="time" id="eventEndTime" />
                         <span asp-validation-for="EndTime" class="text-danger"></span>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="Notes" class="control-label"></label>
-                <textarea asp-for="Notes" class="form-control"></textarea>
+                <textarea asp-for="Notes" class="form-control" style="min-height: 116px; max-height: 116px;" id="eventNotes"></textarea>
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
         </div>
@@ -86,11 +87,19 @@
                         <div class="schedule-row border p-3 mb-3">
                             <div class="form-group">
                                 <label>Shift Start</label>
-                                <input type="time" class="form-control" name="Schedules[0].StartTime" required>
+                                <input type="time" class="form-control" name="Schedules[0].ShiftTime" required>
                             </div>
                             <div class="form-group">
                                 <label>Shift End</label>
-                                <input type="time" class="form-control" name="Schedules[0].EndTime" required>
+                                <input type="time" class="form-control" name="Schedules[0].ShiftEnd" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Shift Start</label>
+                                <input type="time" class="form-control" name="Schedules[0].ActualStartime" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Shift End</label>
+                                <input type="time" class="form-control" name="Schedules[0].ActualEndTime" required>
                             </div>
                     
                             <div class="form-group">
@@ -121,6 +130,10 @@
 
 @section Scripts {
     <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            let today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+            document.getElementById("datePicker").value = today; // Set default value
+        });
         let scheduleIndex = 0;
 
         // Add a new schedule row
@@ -136,6 +149,14 @@
                 <div class="form-group">
                     <label>Shift End</label>
                     <input type="time" name="Schedules[${scheduleIndex}].EndTime" class="form-control" required />
+                </div>
+                    <div class="form-group">
+                    <label>Shift Start</label>
+                    <input type="time" name="Schedules[${scheduleIndex}].ActualStartTime" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Shift End</label>
+                    <input type="time" name="Schedules[${scheduleIndex}].ActualEndTime" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label>Volunteer</label>

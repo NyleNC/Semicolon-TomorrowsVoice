@@ -8,6 +8,7 @@
 <h1>Edit Event</h1>
 <hr />
 <form asp-action="Edit" method="post">
+    <input type="hidden" id="eventID" name="eventID" value="@Model.ID" />
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
@@ -78,13 +79,16 @@
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.MorningShifts)
                                     {
-                                        <li>@schedule.Volunteer?.FullName</li>
-                                        <small>
-                                        (@scheduleViewModel.MorningActualStartTime - @scheduleViewModel.MorningShiftEndTime)
-                                        </small>
-                                        <div>
-                                            <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm">Edit</a>
-                                        </div>
+                                        <li class="d-flex justify-content-between align-content-center mb-2">
+                                            <div>@schedule.Volunteer?.FullName</div>
+                                            <div>
+                                                (@scheduleViewModel.MorningActualStartTime - @scheduleViewModel.MorningActualEndTime)
+                                            </div>
+                                            <div>
+                                                <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm" style="padding: 0px 10px">Edit</a>
+                                            </div>
+                                        </li>
+
                                     }
                                 </ul>
                             </div>
@@ -101,13 +105,16 @@
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.AfternoonShifts)
                                     {
-                                        <li>@schedule.Volunteer?.FullName</li>
-                                        <small>
-                                            (@scheduleViewModel.AfternoonActualStartTime - @scheduleViewModel.AfternoonActualEndTime)
-                                        </small>
-                                        <div>
-                                            <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm">Edit</a>
-                                        </div>
+                                        <li class="d-flex justify-content-between align-content-center mb-2">
+                                            <div>@schedule.Volunteer?.FullName</div>
+                                            <div>
+                                                (@scheduleViewModel.AfternoonActualStartTime - @scheduleViewModel.AfternoonActualEndTime)
+                                            </div>
+                                            <div>
+                                                <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm" style="padding: 0px 10px">Edit</a>
+                                            </div>
+                                        </li>
+
                                     }
                                 </ul>
                             </div>
@@ -124,10 +131,16 @@
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.EveningShifts)
                                     {
-                                        <li>@schedule.Volunteer?.FullName</li>
-                                        <div>
-                                            <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm">Edit</a>
-                                        </div>
+                                        <li class="d-flex justify-content-between align-content-center mb-2">
+                                            <div>@schedule.Volunteer?.FullName</div>
+                                            <div>
+                                                (@scheduleViewModel.EveningActualStartTime - @scheduleViewModel.EveningActualEndTime)
+                                            </div>
+                                            <div>
+                                                <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm" style="padding: 0px 10px">Edit</a>
+                                            </div>
+                                        </li>
+
                                     }
                                 </ul>
                             </div>
@@ -224,11 +237,19 @@
                         <div class="schedule-row border p-3 mb-3">
                             <div class="form-group">
                                 <label>Shift Start</label>
-                                <input type="time" class="form-control" name="Schedules[0].ShiftStart" required>
+                                <input type="time" class="form-control" name="Schedules[0].ShiftTime" required>
                             </div>
                             <div class="form-group">
                                 <label>Shift End</label>
                                 <input type="time" class="form-control" name="Schedules[0].ShiftEnd" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Start Time</label>
+                                <input type="time" class="form-control" name="Schedules[0].ActualStartime" required>
+                            </div>
+                            <div class="form-group">
+                                <label>End Time</label>
+                                <input type="time" class="form-control" name="Schedules[0].ActualEndTime" required>
                             </div>
                             <div class="form-group">
                                 <label>Volunteer</label>
@@ -256,84 +277,87 @@
 
 
 @section Scripts {
-
-
-
     <script>
-        <script>
-          $(document).ready(function () {
-              let rowCount = 1; // Start from 1 because the first row is already present
+        $(document).ready(function () {
+            let rowCount = 1; // Start from 1 because the first row is already present
 
-              // Add a new schedule row
-              $('#addSchedule').on('click', function () {
-                  const newRow = `
-                      <div class="schedule-row border p-3 mb-3">
-                          <div class="form-group">
-                              <label>Shift Start</label>
-                              <input  type="time" class="form-control" name="Schedules[${rowCount}].ShiftStart" required>
-                          </div>
-                          <div class="form-group">
-                              <label>Shift End</label>
-                              <input type="time"" class="form-control" name="Schedules[${rowCount}].ShiftEnd" required>
-                          </div>
-                          <div class="form-group">
-                              <label>Event</label>
-                              <select class="form-control" name="Schedules[${rowCount}].eventID" required>
-                                  <option value="">Select an Event</option>
-        @foreach (var eventItem in ViewBag.Events)
-        {
-                                                  <option value="@eventItem.ID">@eventItem.Name</option>
-        }
-                              </select>
-                          </div>
-                          <div class="form-group">
-                              <label>Volunteer</label>
-                              <select class="form-control" name="Schedules[${rowCount}].volunteerID" required>
-                                  <option value="">Select a Volunteer</option>
+            // Add a new schedule row
+            $('#addSchedule').on('click', function () {
+                const newRow = `
+                    <div class="schedule-row border p-3 mb-3">
+                      <div class="form-group">
+                    <label>Shift Start</label>
+                    <input type="time" name="Schedules[${scheduleIndex}].StartTime" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Shift End</label>
+                    <input type="time" name="Schedules[${scheduleIndex}].EndTime" class="form-control" required />
+                </div>
+                    <div class="form-group">
+                    <label>Start Time</label>
+                    <input type="time" name="Schedules[${scheduleIndex}].ActualStartTime" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>End Time</label>
+                    <input type="time" name="Schedules[${scheduleIndex}].ActualEndTime" class="form-control" required />
+                </div>
+                        <div class="form-group">
+                            <label>Volunteer</label>
+                            <select class="form-control" name="Schedules[${rowCount}].VolunteerID" required>
+                                <option value="">Select a Volunteer</option>
         @foreach (var volunteer in ViewBag.Volunteers)
         {
-                                                  <option value="@volunteer.ID">@volunteer.FullName</option>
+                                        <option value="@volunteer.ID">@volunteer.FullName</option>
         }
-                              </select>
-                          </div>
-                          <button type="button" class="btn btn-danger btn-sm remove-schedule">Remove</button>
-                      </div>
-                  `;
-                  $('#scheduleRows').append(newRow);
-                  rowCount++;
-              });
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm remove-schedule">Remove</button>
+                    </div>
+                `;
+                $('#scheduleRows').append(newRow);
+                rowCount++;
+            });
 
-              // Remove a schedule row
-              $(document).on('click', '.remove-schedule', function () {
-                  $(this).closest('.schedule-row').remove();
-                  rowCount--; // Decrement row count
-              });
+            // Remove a schedule row
+            $(document).on('click', '.remove-schedule', function () {
+                $(this).closest('.schedule-row').remove();
+                rowCount--; // Decrement row count
+            });
 
-              // Submit the form via AJAX
-              $('#createScheduleForm').on('submit', function (e) {
-                  e.preventDefault(); // Prevent the default form submission
+            // Submit the form via AJAX
+            $('#createScheduleForm').on('submit', function (e) {
+                e.preventDefault(); // Prevent the default form submission
 
-                  $.ajax({
-                      url: '@Url.Action("CreateMultiple", "Event")',
-                      type: 'POST',
-                      data: $(this).serialize(),
-                      success: function (response) {
-                          if (response.success) {
-                              $('#createScheduleModal').modal('hide'); // Close the modal
-                              location.reload(); // Refresh the page to show the new schedules
-                          } else {
-                              alert('Error: ' + response.message); // Show error message
-                          }
-                      },
-                      error: function (xhr, status, error) {
-                          // Log the full error response
-                          console.log(xhr.responseText);
-                          alert('An error occurred: ' + xhr.responseText);
-                      }
-                  });
-              });
-          });
+                const eventID = $('#eventID').val(); // Get the eventID
+
+                // Append eventID to each schedule
+                $('#scheduleRows .schedule-row').each(function (index, element) {
+                    $(element).append(`<input type="hidden" name="Schedules[${index}].eventID" value="${eventID}" />`);
+                });
+
+                $.ajax({
+                    url: '@Url.Action("CreateMultiple", "Event")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            $('#createScheduleModal').modal('hide'); // Close the modal
+                            location.reload(); // Refresh the page to show the new schedules
+                        } else {
+                            alert('Error: ' + response.message); // Show error message
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Log the full error response
+                        console.log(xhr.responseText);
+                        alert('An error occurred: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
     </script>
+
+
 
     <script>
                                       document.addEventListener('DOMContentLoaded', function () {

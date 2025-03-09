@@ -41,35 +41,38 @@ namespace TomorrowsVoices.Controllers
             foreach (var schedule in schedules)
             {
                 // Calculate shift duration in hours
-                var shiftDuration = (schedule.ActualStartTime.Value - schedule.ActualStartTime.Value).TotalHours;
+                if (schedule.ActualStartTime.HasValue && schedule.ActualEndTime.HasValue)
+                {
+                    var shiftDuration = (schedule.ActualEndTime.Value - schedule.ActualStartTime.Value).TotalHours;
 
-                // Add to the appropriate shift list
-                if (schedule.ActualStartTime >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(8)) &&
-                    schedule.ActualStartTime < TimeOnly.FromTimeSpan(TimeSpan.FromHours(12)))
-                {
-                    viewModel.MorningShifts.Add(schedule);
-                }
-                else if (schedule.ActualStartTime >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(12)) &&
-                         schedule.ActualStartTime < TimeOnly.FromTimeSpan(TimeSpan.FromHours(17)))
-                {
-                    viewModel.AfternoonShifts.Add(schedule);
-                }
-                else if (schedule.ActualStartTime >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(17)))
-                {
-                    viewModel.EveningShifts.Add(schedule);
-                }
-
-                // Update total hours for the volunteer
-                if (schedule.Volunteer != null)
-                {
-                    var volunteerName = schedule.Volunteer.FullName;
-                    if (viewModel.VolunteerTotalHours.ContainsKey(volunteerName))
+                    // Add to the appropriate shift list
+                    if (schedule.ActualStartTime >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(8)) &&
+                        schedule.ActualStartTime < TimeOnly.FromTimeSpan(TimeSpan.FromHours(12)))
                     {
-                        viewModel.VolunteerTotalHours[volunteerName] += shiftDuration;
+                        viewModel.MorningShifts.Add(schedule);
                     }
-                    else
+                    else if (schedule.ActualStartTime >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(12)) &&
+                             schedule.ActualStartTime < TimeOnly.FromTimeSpan(TimeSpan.FromHours(17)))
                     {
-                        viewModel.VolunteerTotalHours[volunteerName] = shiftDuration;
+                        viewModel.AfternoonShifts.Add(schedule);
+                    }
+                    else if (schedule.ActualStartTime >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(17)))
+                    {
+                        viewModel.EveningShifts.Add(schedule);
+                    }
+
+                    // Update total hours for the volunteer
+                    if (schedule.Volunteer != null)
+                    {
+                        var volunteerName = schedule.Volunteer.FullName;
+                        if (viewModel.VolunteerTotalHours.ContainsKey(volunteerName))
+                        {
+                            viewModel.VolunteerTotalHours[volunteerName] += shiftDuration;
+                        }
+                        else
+                        {
+                            viewModel.VolunteerTotalHours[volunteerName] = shiftDuration;
+                        }
                     }
                 }
             }
