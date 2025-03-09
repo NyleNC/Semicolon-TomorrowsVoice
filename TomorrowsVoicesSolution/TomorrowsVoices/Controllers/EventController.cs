@@ -28,9 +28,162 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Event
-        public async Task<IActionResult> Index(int? page, int? pageSizeID, bool archived = false)
+        public async Task<IActionResult> Index(string? SearchString, string? SearchCity, DateOnly StartDate, DateOnly EndDate, TimeOnly? StartTime, TimeOnly? EndTime, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Event")
         {
-            var tomorrowsVoicesContext = _context.Events.Where(d => d.IsArchived == archived).Include(a => a.VolLocation).Include(s=>s.Schedules);
+            string[] sortOptions = new[] { "Title", "City", "Date", "StartTime", "EndTime" };
+            int numberFilters = 0;
+
+
+
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1;//Reset page to start
+
+                if (sortOptions.Contains(actionButton))
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //Sort by the button clicked
+                }
+            }
+
+
+            //Always Filter by date range
+            //If first time loading the page, set the date range filter based on the values in the database
+            if (EndDate == DateOnly.MinValue)
+            {
+                StartDate = _context.Events.Min(o => o.Date);
+                EndDate = _context.Events.Max(o => o.Date);
+            }
+            //Check the order of the dates and swap them if required
+            if (EndDate < StartDate)
+            {
+                DateOnly temp = EndDate;
+                EndDate = StartDate;
+                StartDate = temp;
+            }
+            //Save to View Data
+            ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
+            ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
+
+            var @events = _context.Events
+                .Include(e => e.VolLocation)
+               .Include(e => e.VolAttendance).ThenInclude(v => v.Volunteer)
+               .Where(a => a.Date >= StartDate && a.Date <= EndDate.AddDays(1))
+               .Where(s => s.IsArchived == archived)
+              .AsNoTracking();
+
+            ViewData["IsArchived"] = archived;
+            ViewData["ActiveTab"] = archived ? "archived" : "active";
+
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                @events = @events.Where(p => p.Name != null && p.Name.ToLower().Contains(SearchString.ToLower())
+                                             );
+
+                numberFilters++;
+            }
+
+       
+
+            if (!string.IsNullOrEmpty(SearchCity))
+            {
+
+
+                @events = @events
+             .Where(p => p.VolLocation.City != null && p.VolLocation.City == SearchCity);
+                numberFilters++;
+            }
+
+            if (StartTime.HasValue || EndTime.HasValue)
+            {
+                @events = @events.Where(p =>
+                    (!StartTime.HasValue || p.StartTime >= StartTime.Value) &&
+                    (!EndTime.HasValue || p.EndTime <= EndTime.Value)
+                );
+
+                numberFilters++;
+            }
+
+
+            if (sortField == "Title")
+            {
+                if (sortDirection == "asc")
+                {
+                    @events = @events
+                                            .OrderBy(p => p.Name);
+                }
+                else
+                {
+                    @events = @events
+                        .OrderByDescending(p => p.Name);
+                }
+            }
+
+            else if (sortField == "StartTime")
+            {
+                if (sortDirection == "asc")
+                {
+                    @events = @events
+                                            .OrderBy(p => p.StartTime);
+                }
+                else
+                {
+                    @events = @events
+                        .OrderByDescending(p => p.StartTime);
+                }
+            }
+            else if (sortField == "EndTime")
+            {
+                if (sortDirection == "asc")
+                {
+                    @events = @events
+                                            .OrderBy(p => p.EndTime);
+                }
+                else
+                {
+                    @events = @events
+                        .OrderByDescending(p => p.EndTime);
+                }
+            }
+
+            else if (sortField == "Date")
+            {
+                if (sortDirection == "asc")
+                {
+                    @events = @events
+                        .OrderBy(p => p.Date);
+                }
+                else
+                {
+                    @events = @events
+                        .OrderByDescending(p => p.Date);
+                }
+            }
+            else if (sortField == "City")
+            {
+                if (sortDirection == "asc")
+                {
+                    @events = @events
+                        .OrderBy(p => p.VolLocation.City);
+                        
+                }
+                else
+                {
+                    @events = @events
+                        .OrderByDescending(p => p.VolLocation.City);
+
+                }
+            }
+
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            ViewData["numberFilters"] = numberFilters;
+
+           
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
             int archivedCount = await _context.Events.CountAsync(d => d.IsArchived == true);
@@ -38,11 +191,26 @@ namespace TomorrowsVoices.Controllers
             int activeCount = await _context.Events.CountAsync(d => d.IsArchived == false);
             ViewData["numberofActive"] = activeCount;
 
+                    var cityList = events.AsEnumerable()
+            .Select(v => v.VolLocation?.City.ToString())
+            .Where(city => city != null)
+            .Distinct()
+            .Select(city => new SelectListItem
+            {
+                Value = city,
+                Text = city
+            })
+            .ToList();
+
+            cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
+
+            ViewData["Cities"] = cityList;
+
             // Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
 
-            var pagedData = await PaginatedList<Event>.CreateAsync(tomorrowsVoicesContext.AsNoTracking(), page ?? 1, pageSize);
+            var pagedData = await PaginatedList<Event>.CreateAsync(events.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData);
         }
