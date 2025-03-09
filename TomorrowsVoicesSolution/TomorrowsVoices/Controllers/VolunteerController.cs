@@ -159,8 +159,8 @@ namespace TomorrowsVoices.Controllers
 
             var volunteer = await _context.Volunteers
                 .Include(v => v.VolLocation)
-                .Include(v => v.VolAttendances)
-                .ThenInclude(va => va.Event)
+                .Include(v => v.Schedules)
+                .ThenInclude(s => s.Event)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (volunteer == null)
@@ -444,6 +444,7 @@ namespace TomorrowsVoices.Controllers
 
             return Json(response);
         }
+        /**/
 
         // Excel Template Server
         public IActionResult DownloadSampleExcel()
@@ -468,9 +469,16 @@ namespace TomorrowsVoices.Controllers
         {
             var volunteers = await _context.Volunteers
                 .Include(v => v.VolLocation)
-                .Include(v => v.VolAttendances)
+                .Include(v => v.Schedules)
                 .ThenInclude(va => va.Event)
                 .ToListAsync();
+
+            // Sort volunteers: those with schedules first, then by name
+            var sortedVolunteers = volunteers
+                .OrderByDescending(v => v.Schedules.Any())
+                .ThenBy(v => v.FirstName)
+                .ThenBy(v => v.LastName)
+                .ToList();
 
             using (var package = new ExcelPackage())
             {
@@ -491,11 +499,17 @@ namespace TomorrowsVoices.Controllers
                 worksheet.Cells[1, 12].Value = "Hours Spent";
                 worksheet.Cells[1, 13].Value = "Status";
 
-                int row = 2;
-                foreach (var volunteer in volunteers)
+                // Make headers bold
+                for (int i = 1; i <= 13; i++)
                 {
-                    // If no attendances, still export volunteer details
-                    if (volunteer.VolAttendances == null || !volunteer.VolAttendances.Any())
+                    worksheet.Cells[1, i].Style.Font.Bold = true;
+                }
+
+                int row = 2;
+                foreach (var volunteer in sortedVolunteers)
+                {
+                    // If no schedules, still export volunteer details
+                    if (volunteer.Schedules == null || !volunteer.Schedules.Any())
                     {
                         worksheet.Cells[row, 1].Value = volunteer.FirstName;
                         worksheet.Cells[row, 2].Value = volunteer.LastName;
@@ -512,23 +526,23 @@ namespace TomorrowsVoices.Controllers
                     }
                     else
                     {
-                        foreach (var attendance in volunteer.VolAttendances)
+                        foreach (var schedule in volunteer.Schedules)
                         {
                             worksheet.Cells[row, 1].Value = volunteer.FirstName;
                             worksheet.Cells[row, 2].Value = volunteer.LastName;
                             worksheet.Cells[row, 3].Value = volunteer.Phone;
                             worksheet.Cells[row, 4].Value = volunteer.Email;
                             worksheet.Cells[row, 5].Value = volunteer.VolLocation?.City;
-                            worksheet.Cells[row, 6].Value = attendance.Event?.Name;
-                            worksheet.Cells[row, 7].Value = attendance.Date.ToString("yyyy-MM-dd");
-                            worksheet.Cells[row, 8].Value = attendance.ScheduledStartTime.ToString();
-                            worksheet.Cells[row, 9].Value = attendance.ScheduledEndTime.ToString();
-                            worksheet.Cells[row, 10].Value = attendance.ActualStartTime?.ToString();
-                            worksheet.Cells[row, 11].Value = attendance.ActualEndTime?.ToString();
-                            worksheet.Cells[row, 12].Value = attendance.ActualEndTime.HasValue && attendance.ActualStartTime.HasValue
-                                ? (attendance.ActualEndTime.Value - attendance.ActualStartTime.Value).TotalHours
+                            worksheet.Cells[row, 6].Value = schedule.Event?.Name;
+                            worksheet.Cells[row, 7].Value = schedule.Date.ToString("yyyy-MM-dd");
+                            worksheet.Cells[row, 8].Value = schedule.ScheduledStartTime.ToString();
+                            worksheet.Cells[row, 9].Value = schedule.ScheduledEndTime.ToString();
+                            worksheet.Cells[row, 10].Value = schedule.ActualStartTime?.ToString();
+                            worksheet.Cells[row, 11].Value = schedule.ActualEndTime?.ToString();
+                            worksheet.Cells[row, 12].Value = schedule.ActualEndTime.HasValue && schedule.ActualStartTime.HasValue
+                                ? (schedule.ActualEndTime.Value - schedule.ActualStartTime.Value).TotalHours
                                 : 0;
-                            worksheet.Cells[row, 13].Value = attendance.Status ? "Attended" : "Absent";
+                            worksheet.Cells[row, 13].Value = schedule.Status ? "Attended" : "Absent";
                             row++;
                         }
                     }
@@ -545,6 +559,8 @@ namespace TomorrowsVoices.Controllers
             }
         }
 
+
+        /**/
 
 
 

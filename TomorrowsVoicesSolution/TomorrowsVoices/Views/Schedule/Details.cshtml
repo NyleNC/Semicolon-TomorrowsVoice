@@ -16,17 +16,29 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Volunteer.FullName)
         </dd>
-        <dt class = "col-sm-2">
-           Shift Start
+        <dt class="col-sm-2">
+            Shift Start
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ShiftStart)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             Shift End
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ShiftEnd)
+        </dd>
+        <dt class = "col-sm-2">
+           Shift Started
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ActualStartTime)
+        </dd>
+        <dt class = "col-sm-2">
+            Shift Ended
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ActualEndTime)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Event)

@@ -12,15 +12,14 @@ namespace TomorrowsVoices.Models
         public string FormattedPhone => "(" + Phone.Substring(0, 3) + ") "
         + Phone.Substring(3, 3) + "-" + Phone[6..];
 
-
-        //For lookup values.
+        // For lookup values.
         [Display(Name = "Events Attended")]
-        public int EventsAttended => VolAttendances.Count(va => va.Status);
+        public int EventsAttended => Schedules.Count(s => s.IsPresent);
 
         [Display(Name = "Total Hours")]
-        public double TotalHours => VolAttendances
-            .Where(va => va.ActualStartTime.HasValue && va.ActualEndTime.HasValue)
-            .Sum(va => (va.ActualEndTime.Value - va.ActualStartTime.Value).TotalHours);
+        public double TotalHours => Schedules
+            .Where(s => s.ShiftStart != null && s.ShiftEnd != null)
+            .Sum(s => (s.ShiftEnd - s.ShiftStart).TotalHours);
 
         #endregion
 

@@ -16,9 +16,9 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" id="eventDescription" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="Address" class="control-label"></label>
+                <textarea asp-for="Address" class="form-control" style="min-height: 116px; max-height: 116px;" id="eventDescription"></textarea>
+                <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="VolLocationID" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
@@ -79,6 +79,9 @@
                                     @foreach (var schedule in scheduleViewModel.MorningShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
+                                        <small>
+                                        (@scheduleViewModel.MorningActualStartTime - @scheduleViewModel.MorningShiftEndTime)
+                                        </small>
                                         <div>
                                             <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm">Edit</a>
                                         </div>
@@ -93,12 +96,15 @@
                         <div class="card" style="background-color: #e1ccfc">
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 17px; font-weight: 700;">
-                                    Afternoon Shift (@scheduleViewModel.AfternoonShiftStartTime-@scheduleViewModel.AfternoonShiftEndTime)
+                                    Afternoon Shift (@scheduleViewModel.AfternoonShiftStartTime - @scheduleViewModel.AfternoonShiftEndTime)
                                 </div>
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.AfternoonShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
+                                        <small>
+                                            (@scheduleViewModel.AfternoonActualStartTime - @scheduleViewModel.AfternoonActualEndTime)
+                                        </small>
                                         <div>
                                             <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm">Edit</a>
                                         </div>

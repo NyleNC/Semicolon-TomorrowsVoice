@@ -70,22 +70,21 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var attendance in Model.VolAttendances)
+        @foreach (var schedule in Model.Schedules)
         {
             <tr>
-                <td>@attendance.Event?.Name</td>
-                <td>@attendance.Date.ToString("yyyy-MM-dd")</td>
+                <td>@schedule.Event?.Name</td>
+                <td>@schedule.Event?.Date.ToString("yyyy-MM-dd")</td>
                 <td>
-                    @(attendance.ActualEndTime.HasValue && attendance.ActualStartTime.HasValue
-                        ? (attendance.ActualEndTime.Value - attendance.ActualStartTime.Value).TotalHours
+                    @(schedule.ShiftEnd != null && schedule.ShiftStart != null
+                        ? (schedule.ShiftEnd - schedule.ShiftStart).TotalHours
                         : 0)
                 </td>
-                <td>@(attendance.Status ? "Attended" : "Absent")</td>
+                <td>@(schedule.IsPresent ? "Attended" : "Absent")</td>
             </tr>
         }
     </tbody>
 </table>
-
 
 <p>
     <div class="mb-3">
@@ -106,5 +105,6 @@
         <img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: inherit; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Volunteer
     </a>
 </p>
+
 
 

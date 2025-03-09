@@ -29,6 +29,13 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.StartTime) - @Html.DisplayFor(model => model.EndTime)
         </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address)
+        </dd>
     
         <dt class="col-sm-2">
            City
@@ -58,6 +65,9 @@
                                     @foreach (var schedule in scheduleViewModel.MorningShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
+                                        <small>
+                                            (@schedule.ActualStartTime - @schedule.ActualEndTime)
+                                        </small>
                                     }
                                 </ul>
                             </div>
@@ -75,6 +85,9 @@
                                     @foreach (var schedule in scheduleViewModel.AfternoonShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
+                                        <small>
+                                            (@schedule.ActualStartTime - @schedule.ActualEndTime)
+                                        </small>
                                     }
                                 </ul>
                             </div>
@@ -92,6 +105,9 @@
                                     @foreach (var schedule in scheduleViewModel.EveningShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
+                                        <small>
+                                            (@schedule.ActualStartTime - @schedule.ActualEndTime)
+                                        </small>
                                     }
                                 </ul>
                             </div>
@@ -153,47 +169,73 @@
             </table>
         </div>
 
-    <div class="text-black mb-4 mt-4" style="border-bottom: 3px solid gray">
-        <dt style="font-size: 18px">Total Hours per Volunteer</dt>
-    </div>
-    <div class="row">
-        <div class="col-lg-6 col-md-10 col-sm-12 col-12">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Volunteer</th>
+        <div class="text-black mb-4 mt-4" style="border-bottom: 3px solid gray">
+            <dt style="font-size: 18px">Total Hours per Volunteer</dt>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-10 col-sm-12 col-12">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Volunteer</th>
                             <th>Shift Start</th>
                             <th>Shift End</th>
-                        <th>Total Hours</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (ViewBag.ScheduleViewModel != null)
-                    {
-                        var scheduleViewModel = ViewBag.ScheduleViewModel as ScheduleViewModel;
+                            <th>Total Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.ScheduleViewModel != null)
+                        {
+                            var scheduleViewModel = ViewBag.ScheduleViewModel as ScheduleViewModel;
                             foreach (var schedule in scheduleViewModel.MorningShifts
                             .Concat(scheduleViewModel.AfternoonShifts)
                             .Concat(scheduleViewModel.EveningShifts))
                             {
                                 <tr>
-                                    <td>@schedule.Volunteer.FullName</td>
-                                    <td>@schedule.ShiftStart.ToString("hh:mm tt")</td>
-                                    <td>@schedule.ShiftEnd.ToString("hh:mm tt")</td>
-                                    <td>@((schedule.ShiftEnd - schedule.ShiftStart).TotalHours.ToString("F2")) hours</td>
+                                    <td>@schedule.Volunteer?.FullName</td>
+                                    <td>
+                                        @if (schedule.ActualStartTime.HasValue)
+                                        {
+                                            <span>@schedule.ActualStartTime.Value.ToString("hh:mm tt")</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Not recorded</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (schedule.ActualEndTime.HasValue)
+                                        {
+                                            <span>@schedule.ActualEndTime.Value.ToString("hh:mm tt")</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Not recorded</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (schedule.ActualStartTime.HasValue && schedule.ActualEndTime.HasValue)
+                                        {
+                                            <span>@((schedule.ActualEndTime.Value - schedule.ActualStartTime.Value).TotalHours.ToString("F2")) hours</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Not recorded</span>
+                                        }
+                                    </td>
                                 </tr>
                             }
                         }
-                    else
-                    {
-                        <tr>
-                            <td colspan="2">No volunteer hours available.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                        else
+                        {
+                            <tr>
+                                <td colspan="4">No volunteer hours available.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    </div>
 </dl>
  <dl class="row mt-4">
 <dt class="col-sm-2">

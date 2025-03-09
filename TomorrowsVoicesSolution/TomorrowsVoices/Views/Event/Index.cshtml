@@ -11,6 +11,10 @@
         <h1 class="mb-0">Events</h1>
     </div>
     <div class="float-end">
+        <a asp-action="ExportEventsToExcel" class="btn btn-white ">
+            <img src="~/Images/dark-export-icon.png" alt="export-csv-icon" style="height: 24px; width: auto; margin-right: 10px" />
+            Export
+        </a>
         <div class="btn-group">
             <a asp-action="Create" class="btn btn-primary">
                 <img src="~/Images/create-icon.png" alt="add-event-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New
@@ -347,9 +351,7 @@
                                     </th>
                  
                                     <th>
-                                        <button  type="button" class="btn btn-toolbar d-inline" style="cursor: default">
-                                            Actions
-                                        </button>
+                                        <button style="cursor: default;" type="button" name="actionButton" value="Actions" class="btn btn-toolbar no-pointer-events">Actions</button>
                                     </th>
                                 </tr>
                             </thead>
