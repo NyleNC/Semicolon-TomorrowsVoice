@@ -7,12 +7,12 @@ nav {
 
 }
 
-.modal-dialog {
+.modal-dialog-nav {
     width: 200px;
     margin-top: 10px;
     opacity: 0.9
 }
-.modal-content {
+.modal-content-nav {
     background-color: #f9f9f9
 }
 

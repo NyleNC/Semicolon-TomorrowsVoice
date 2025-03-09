@@ -63,7 +63,7 @@
 
 <!-- Modal -->
 <!-- Import Excel Modal for Singers -->
-<div class="modal fade" id="importSingerExcelModal" tabindex="-1" aria-labelledby="importSingerExcelModalLabel" aria-hidden="true">
+<div class="modal fade" id="importExcelModal" tabindex="-1" aria-labelledby="importSingerExcelModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered import-excel-modal">
         <!-- Added custom class `import-excel-modal` -->
         <div class="modal-content import-excel-modal-content">
@@ -124,30 +124,6 @@
     }
 </div>
 
-
-@* <!-- Search & Filter Form -->
-<form asp-action="Index" method="get">
-    <div class="row">
-        <div class="col-md-4">
-            <input type="text" class="form-control" name="searchString" placeholder="Search by Name" value="@Context.Request.Query["searchString"]" />
-        </div>
-        <div class="col-md-4">
-            <input type="text" class="form-control" name="searchLocation" placeholder="Search by Location" value="@Context.Request.Query["searchLocation"]" />
-        </div>
-        <div class="col-md-2">
-            <select class="form-control" name="searchIsAvailable">
-                <option value="">Availability (All)</option>
-                <option value="true" selected="@(Context.Request.Query["searchIsAvailable"] == "true")">Available</option>
-                <option value="false" selected="@(Context.Request.Query["searchIsAvailable"] == "false")">Unavailable</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-secondary w-100">Search</button>
-        </div>
-    </div>
-</form>
-
-<br /> *@
 
 
 <!-- Table for Singers -->
@@ -387,6 +363,7 @@
 
 <!-- #JS Scripts -->
 <!-- Sorting and JS Script -->
+
 <script>
     function handleSort(event, field) {
 
@@ -394,64 +371,21 @@
         const form = event.target.closest('form');
         const sortField = form.querySelector('input[name="sortField"]');
         const sortDirection = form.querySelector('input[name="sortDirection"]');
-
         if (sortField.value === field) {
-            // Toggle sort direction
             sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
         } else {
-            // Set new field and default to ascending order
             sortField.value = field;
             sortDirection.value = "asc";
         }
-
-        // Submit the form
         form.submit();
     }
 </script>
 
-
-@* Script for IsAvailable AJAX. *@
-@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        // Handle button click
-        $(".toggle-btn").click(function (event) {
-            event.preventDefault();  // Prevent page refresh
-
-            var button = $(this);
-            var singerId = button.data("id");  // Get the singer ID from the data attribute
-
-            // Make AJAX call to the server
-            $.ajax({
-                url: '@Url.Action("ToggleAvailability", "Singer")',  // URL to the controller action
-                type: 'POST',
-                data: { id: singerId },  // Pass the singer ID to the server
-                success: function (response) {
-                    if (response.success) {
-                        // Toggle button text and style
-                        if (response.isAvailable) {
-                            button.removeClass("btn-danger").addClass("btn-success").text("Available");
-                        } else {
-                            button.removeClass("btn-success").addClass("btn-danger").text("Unavailable");
-                        }
-                    } else {
-                        alert("Error: " + response.message);
-                    }
-                },  
-                error: function () {
-                    alert("An error occurred while updating availability.");
-                }
-            });
-        });
-    });
-</script> *@
-
-
 <script type="text/javascript">
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 </script>
 
 @if (TempData["SuccessMessage"] != null)
@@ -467,8 +401,8 @@
         });
     </script>
 }
-<!-- #endregion -->
 
+<!--POP UP MODAL SCRIPT-->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
