@@ -16,17 +16,10 @@ nav {
     background-color: #f9f9f9
 }
 
-.nav-link.active-page {
-    background-color: #6D28E3;
-    color: white; 
-    border-radius: 5px; 
-    padding: 5px; 
-}
 .nav-link.active {
-    color: #0400fa !important; 
+    color: #0400fa !important;
     background-color: transparent !important;
 }
-
 /* Remove blue color from hovered links */
 .nav-link:hover {
     color: #6D28E3 !important; /* Use the default text color */
@@ -905,6 +898,15 @@ label.required:after {
     #btnMobile{
 display: block
     }
+
+    .nav-link.active-page {
+    background-color: #6D28E3;
+    color: white; 
+    border-radius: 5px; 
+    padding: 5px; 
+}
+
+
 }
 
 
