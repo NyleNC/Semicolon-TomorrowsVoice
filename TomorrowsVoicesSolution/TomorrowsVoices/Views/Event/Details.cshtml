@@ -64,10 +64,12 @@
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.MorningShifts)
                                     {
-                                        <li>@schedule.Volunteer?.FullName</li>
-                                        <small>
-                                            (@schedule.ActualStartTime - @schedule.ActualEndTime)
-                                        </small>
+                                        <li class="d-flex justify-content-between align-content-center mb-2">
+                                            <div>@schedule.Volunteer?.FullName</div>
+                                            <div>
+                                                (@scheduleViewModel.MorningActualStartTime - @scheduleViewModel.MorningActualEndTime)
+                                            </div>
+                                        </li>
                                     }
                                 </ul>
                             </div>
@@ -84,10 +86,12 @@
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.AfternoonShifts)
                                     {
-                                        <li>@schedule.Volunteer?.FullName</li>
-                                        <small>
-                                            (@schedule.ActualStartTime - @schedule.ActualEndTime)
-                                        </small>
+                                        <li class="d-flex justify-content-between align-content-center mb-2">
+                                            <div>@schedule.Volunteer?.FullName</div>
+                                            <div>
+                                                (@scheduleViewModel.AfternoonActualStartTime - @scheduleViewModel.AfternoonActualEndTime)
+                                            </div>
+                                        </li>
                                     }
                                 </ul>
                             </div>
@@ -104,10 +108,12 @@
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.EveningShifts)
                                     {
-                                        <li>@schedule.Volunteer?.FullName</li>
-                                        <small>
-                                            (@schedule.ActualStartTime - @schedule.ActualEndTime)
-                                        </small>
+                                        <li class="d-flex justify-content-between align-content-center mb-2">
+                                            <div>@schedule.Volunteer?.FullName</div>
+                                            <div>
+                                                (@scheduleViewModel.EveningActualStartTime - @scheduleViewModel.EveningActualEndTime)
+                                            </div>
+                                        </li>
                                     }
                                 </ul>
                             </div>

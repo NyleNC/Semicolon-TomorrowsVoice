@@ -1583,7 +1583,7 @@ namespace TomorrowsVoices.Data
                         StartTime = TimeOnly.ParseExact("09:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
                         EndTime = TimeOnly.ParseExact("12:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
-                        Notes = "20 volunteers showed up and the event was successful."
+                        Notes = "volunteers showed up and the event was successful."
                     },
                     new Event
                     {
@@ -1593,7 +1593,7 @@ namespace TomorrowsVoices.Data
                         StartTime = TimeOnly.ParseExact("10:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
                         EndTime = TimeOnly.ParseExact("02:00 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
-                        Notes = "15 volunteers participated and collected 200 food items."
+                        Notes = "volunteers participated and collected 200 food items."
                     },
                     new Event
                     {
@@ -1603,7 +1603,7 @@ namespace TomorrowsVoices.Data
                         StartTime = TimeOnly.ParseExact("08:00 AM", "hh:mm tt", CultureInfo.InvariantCulture),
                         EndTime = TimeOnly.ParseExact("06:30 PM", "hh:mm tt", CultureInfo.InvariantCulture),
                         VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls").ID,
-                        Notes = "25 volunteers assisted and 50 units of blood were collected."
+                        Notes = "volunteers assisted and 50 units of blood were collected."
                     }
                 );
                 context.SaveChanges();
