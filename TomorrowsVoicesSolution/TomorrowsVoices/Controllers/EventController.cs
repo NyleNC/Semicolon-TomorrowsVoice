@@ -596,6 +596,8 @@ namespace TomorrowsVoices.Controllers
             TempData["SuccessMessage"] = "This archive has been activated successfully!";
             return RedirectToAction(nameof(Index));
         }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateMultiple(List<Schedule> schedules)
@@ -604,6 +606,20 @@ namespace TomorrowsVoices.Controllers
             {
                 try
                 {
+                    // Validate eventID and volunteerID
+                    foreach (var schedule in schedules)
+                    {
+                        if (!_context.Events.Any(e => e.ID == schedule.eventID))
+                        {
+                            return Json(new { success = false, message = $"Invalid eventID: {schedule.eventID}" });
+                        }
+
+                        if (!_context.Volunteers.Any(v => v.ID == schedule.volunteerID))
+                        {
+                            return Json(new { success = false, message = $"Invalid volunteerID: {schedule.volunteerID}" });
+                        }
+                    }
+
                     _context.Schedules.AddRange(schedules); // Add multiple schedules
                     await _context.SaveChangesAsync();
                     return Json(new { success = true });
@@ -611,7 +627,8 @@ namespace TomorrowsVoices.Controllers
                 catch (Exception ex)
                 {
                     // Log the exception (optional)
-                    return Json(new { success = false, message = ex.Message });
+                    Console.WriteLine(ex.ToString());
+                    return Json(new { success = false, message = ex.InnerException?.Message ?? ex.Message });
                 }
             }
 
@@ -622,6 +639,8 @@ namespace TomorrowsVoices.Controllers
                 .ToList();
             return Json(new { success = false, message = "Validation errors: " + string.Join(", ", errors) });
         }
+
+
 
 
         //ImportExcel 
