@@ -262,11 +262,7 @@
                         <td>
                             @{
                                 int presentSingers = item.Attendance.Count(a => a.Status);
-                    int availableSingersInCity = 0;
-                    if (item.Location != null)
-                    {
-                        availableSingersInCity = ViewData["AvailableSingers_" + item.Location.ID] as int? ?? 0;
-                    }
+                                int availableSingersInCity = ViewData["AvailableSingers_" + item.Location.ID] as int? ?? 0;
                             }
                             @presentSingers / @availableSingersInCity
                         </td>
