@@ -367,7 +367,7 @@ namespace TomorrowsVoices.Controllers
             var schedules = await _context.Schedules
                 .Include(s => s.Volunteer)
                 .Include(s => s.Event)
-                    .ThenInclude(e => e.VolLocation)
+                .ThenInclude(e => e.VolLocation)
                 .Where(s => s.Event.ID == id)
                 .ToListAsync();
 
@@ -433,7 +433,7 @@ namespace TomorrowsVoices.Controllers
                     if (await TryUpdateModelAsync(
                         eventToUpdate,
                         "",
-                        e => e.Name, e => e.Description, e => e.Notes,
+                        e => e.Name, e => e.Address, e => e.Notes,
                         e => e.Date, e => e.StartTime, e => e.EndTime, e => e.VolLocationID))
                     {
                         // Process all schedule IDs
@@ -780,9 +780,8 @@ namespace TomorrowsVoices.Controllers
         public async Task<IActionResult> ExportEventsToExcel()
         {
             var events = await _context.Events
+                .OrderBy(e => e.Name)
                 .Include(e => e.VolLocation)
-                .Include(e => e.Schedules!)
-                .ThenInclude(s => s.Volunteer)
                 .ToListAsync();
 
             using (var package = new ExcelPackage())
@@ -791,26 +790,30 @@ namespace TomorrowsVoices.Controllers
 
                 // Add headers
                 worksheet.Cells[1, 1].Value = "Event Name";
-                worksheet.Cells[1, 2].Value = "Description";
+                worksheet.Cells[1, 2].Value = "Address";
                 worksheet.Cells[1, 3].Value = "Date";
                 worksheet.Cells[1, 4].Value = "Start Time";
                 worksheet.Cells[1, 5].Value = "End Time";
                 worksheet.Cells[1, 6].Value = "Location";
+                worksheet.Cells[1, 7].Value = "Notes";
+
+                // Make headers bold
+                using (var range = worksheet.Cells[1, 1, 1, 6])
+                {
+                    range.Style.Font.Bold = true;
+                }
+
                 int row = 2;
                 foreach (var eventItem in events)
                 {
-                    if (eventItem.Schedules != null)
-                    {
-                        foreach (var schedule in eventItem.Schedules)
-                        {
-                            worksheet.Cells[row, 1].Value = eventItem.Name;
-                            worksheet.Cells[row, 2].Value = eventItem.Description;
-                            worksheet.Cells[row, 3].Value = eventItem.Date.ToString("yyyy-MM-dd");
-                            worksheet.Cells[row, 4].Value = eventItem.StartTime.ToString("hh\\:mm tt");
-                            worksheet.Cells[row, 5].Value = eventItem.EndTime.ToString("hh\\:mm tt");
-                            row++;
-                        }
-                    }
+                    worksheet.Cells[row, 1].Value = eventItem.Name;
+                    worksheet.Cells[row, 2].Value = eventItem.Address;
+                    worksheet.Cells[row, 3].Value = eventItem.Date.ToString("yyyy-MM-dd");
+                    worksheet.Cells[row, 4].Value = eventItem.StartTime.ToString("hh\\:mm tt");
+                    worksheet.Cells[row, 5].Value = eventItem.EndTime.ToString("hh\\:mm tt");
+                    worksheet.Cells[row, 6].Value = eventItem.VolLocation?.City;
+                    worksheet.Cells[row, 7].Value = eventItem.Notes;
+                    row++;
                 }
 
                 // Auto-fit columns for better readability
@@ -860,7 +863,7 @@ namespace TomorrowsVoices.Controllers
                     title = e.Name,
                     start = e.Date.ToDateTime(e.StartTime), // Combine Date and StartTime
                     end = e.Date.ToDateTime(e.EndTime), // Combine Date and EndTime
-                    description = e.Description,
+                    description = e.Address,
                     location = e.VolLocation.City // Include location if needed
                 })
                 .ToListAsync();
@@ -886,7 +889,7 @@ namespace TomorrowsVoices.Controllers
             {
                 id = @event.ID,
                 name = @event.Name,
-                description = @event.Description,
+                description = @event.Address,
                 date = @event.Date.ToShortDateString(),
                 startTime = @event.StartTime.ToString(),
                 endTime = @event.EndTime.ToString(),

@@ -12,9 +12,9 @@ namespace TomorrowsVoices.Models
         [StringLength(30, ErrorMessage = "Event Title cannot be more than 30 characters long.")]
         public string? Name { get; set; }
 
-        [Display(Name = "Description")]
-        [StringLength(1000, ErrorMessage = "Description cannot be more than 1000 characters long.")]
-        public string? Description { get; set; }
+        [Display(Name = "Address")]
+        [StringLength(1000, ErrorMessage = "Address cannot be more than 1000 characters long.")]
+        public string? Address { get; set; }
 
         [StringLength(2000, ErrorMessage = "Limit of 2000 characters for notes.")]
         public string? Notes { get; set; }

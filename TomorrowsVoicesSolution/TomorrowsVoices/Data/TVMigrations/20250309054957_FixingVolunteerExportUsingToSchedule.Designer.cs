@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TomorrowsVoices.Data;
 
@@ -10,9 +11,11 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    partial class TomorrowsVoicesContextModelSnapshot : ModelSnapshot
+    [Migration("20250309054957_FixingVolunteerExportUsingToSchedule")]
+    partial class FixingVolunteerExportUsingToSchedule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -85,11 +88,11 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Address")
-                        .HasMaxLength(1000)
+                    b.Property<DateOnly>("Date")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly>("Date")
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<TimeOnly>("EndTime")

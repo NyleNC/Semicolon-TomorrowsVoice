@@ -16,9 +16,9 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" id="eventDescription" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="Address" class="control-label"></label>
+                <textarea asp-for="Address" class="form-control" style="min-height: 116px; max-height: 116px;" id="eventDescription"></textarea>
+                <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="VolLocationID" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
