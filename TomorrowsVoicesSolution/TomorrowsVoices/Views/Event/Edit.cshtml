@@ -139,6 +139,9 @@
 
     <div id="attendance-container" style="padding-left: 0">
         <h2 class="attendance-header">Track Attendance</h2>
+        <!-- Include a hidden field for all schedule IDs to ensure we track all of them -->
+        <input type="hidden" name="allScheduleIds" id="allScheduleIds" value="@string.Join(",", (ViewBag.ScheduleViewModel as ScheduleViewModel).MorningShifts.Concat((ViewBag.ScheduleViewModel as ScheduleViewModel).AfternoonShifts).Concat((ViewBag.ScheduleViewModel as ScheduleViewModel).EveningShifts).Select(s => s.ID))" />
+
         <div class="row">
             <div class="col-lg-8 col-md-10 col-sm-12 col-12">
                 <div class="accordion" id="attendanceAccordion">
@@ -162,13 +165,13 @@
                                     <tr>
                                         <td class="@(shift.IsPresent ? "present-row" : "absent-row")">@shift.Volunteer?.FullName</td>
                                         <td>
-                                            <span class="attendance-icon" data-volunteer-id="@shift.Volunteer?.ID" data-is-present="@shift.IsPresent.ToString().ToLower()">
+                                            <span class="attendance-icon" data-volunteer-id="@shift.ID" data-is-present="@shift.IsPresent.ToString().ToLower()">
                                                 <span class="present-icon" style="display: @(shift.IsPresent ? "inline" : "none");">✔</span>
                                                 <span class="absent-icon" style="display: @(shift.IsPresent ? "none" : "inline");">✖</span>
                                             </span>
-                                            <input type="hidden" name="schedules[@shift.ID].ID" value="@shift.ID" />
-                                            <input type="hidden" name="schedules[@shift.ID].IsPresent" value="@shift.IsPresent.ToString().ToLower()" />
-
+                                            <!-- Use an actual input that will be part of the form data -->
+                                            <input type="checkbox" name="presentSchedules" value="@shift.ID" @(shift.IsPresent ? "checked" : "") style="display:none;" class="presence-checkbox" id="checkbox-@shift.ID" />
+                                        </td>
                                     </tr>
                                 }
                             }
@@ -327,12 +330,12 @@
     </script>
 
     <script>
-              document.addEventListener('DOMContentLoaded', function () {
+                                      document.addEventListener('DOMContentLoaded', function () {
             const attendanceIcons = document.querySelectorAll('.attendance-icon');
 
             attendanceIcons.forEach(icon => {
                 icon.addEventListener('click', function (event) {
-                    event.stopPropagation(); // Prevent bubbling issues
+                    event.stopPropagation();
 
                     const volunteerId = this.getAttribute('data-volunteer-id');
                     let isPresent = this.getAttribute('data-is-present') === 'true';
@@ -352,14 +355,26 @@
                         absentIcon.style.display = 'inline';
                     }
 
-                    // Update the hidden input field
-                    const hiddenInput = this.parentElement.querySelector('input[name="schedules[' + volunteerId + '].IsPresent"]');
-                    if (hiddenInput) {
-                        hiddenInput.value = isPresent.toString().toLowerCase();
+                    // Update the checkbox (this will be part of the form submission)
+                    const checkbox = document.getElementById('checkbox-' + volunteerId);
+                    if (checkbox) {
+                        checkbox.checked = isPresent;
+                    }
+
+                    // Update row style
+                    const volunteerRow = this.closest('tr').querySelector('td:first-child');
+                    if (volunteerRow) {
+                        if (isPresent) {
+                            volunteerRow.classList.remove('absent-row');
+                            volunteerRow.classList.add('present-row');
+                        } else {
+                            volunteerRow.classList.remove('present-row');
+                            volunteerRow.classList.add('absent-row');
+                        }
                     }
 
                     // Display message
-                    const message = isPresent ? 'The volunteer has attended' : 'The volunteer has been marked absent';
+                    const message = isPresent ? 'The volunteer has been marked present' : 'The volunteer has been marked absent';
                     alert(message);
                 });
             });
