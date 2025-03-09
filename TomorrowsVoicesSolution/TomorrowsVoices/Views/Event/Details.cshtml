@@ -67,7 +67,7 @@
                                         <li class="d-flex justify-content-between align-content-center mb-2">
                                             <div>@schedule.Volunteer?.FullName</div>
                                             <div>
-                                                (@scheduleViewModel.MorningActualStartTime - @scheduleViewModel.MorningActualEndTime)
+                                                (@schedule.ActualStartTime - @schedule.ActualEndTime)
                                             </div>
                                         </li>
                                     }
@@ -89,7 +89,7 @@
                                         <li class="d-flex justify-content-between align-content-center mb-2">
                                             <div>@schedule.Volunteer?.FullName</div>
                                             <div>
-                                                (@scheduleViewModel.AfternoonActualStartTime - @scheduleViewModel.AfternoonActualEndTime)
+                                                (@schedule.ActualStartTime - @schedule.ActualEndTime)
                                             </div>
                                         </li>
                                     }
@@ -111,7 +111,7 @@
                                         <li class="d-flex justify-content-between align-content-center mb-2">
                                             <div>@schedule.Volunteer?.FullName</div>
                                             <div>
-                                                (@scheduleViewModel.EveningActualStartTime - @scheduleViewModel.EveningActualEndTime)
+                                                (@schedule.ActualStartTime - @schedule.ActualEndTime)
                                             </div>
                                         </li>
                                     }
