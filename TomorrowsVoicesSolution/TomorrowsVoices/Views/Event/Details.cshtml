@@ -52,7 +52,7 @@
                         <div class="card" style="background-color: #e1ccfc">
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 17px; font-weight: 700;">
-                                    Morning Shift
+                                    Morning Shift (@scheduleViewModel.MorningShiftStartTime-@scheduleViewModel.MorningShiftEndTime)
                                 </div>
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.MorningShifts)
@@ -69,7 +69,7 @@
                         <div class="card" style="background-color: #e1ccfc">
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 17px; font-weight: 700;">
-                                    Afternoon Shift
+                                    Afternoon Shift (@scheduleViewModel.AfternoonShiftStartTime-@scheduleViewModel.AfternoonShiftEndTime)
                                 </div>
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.AfternoonShifts)
@@ -86,7 +86,7 @@
                         <div class="card" style="background-color: #e1ccfc">
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 17px; font-weight: 700;">
-                                    Evening Shift
+                                    Evening Shift (@scheduleViewModel.EveningShiftStartTime-@scheduleViewModel.EveningShiftEndTime)
                                 </div>
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.EveningShifts)
@@ -162,6 +162,8 @@
                 <thead>
                     <tr>
                         <th>Volunteer</th>
+                            <th>Shift Start</th>
+                            <th>Shift End</th>
                         <th>Total Hours</th>
                     </tr>
                 </thead>
@@ -169,14 +171,18 @@
                     @if (ViewBag.ScheduleViewModel != null)
                     {
                         var scheduleViewModel = ViewBag.ScheduleViewModel as ScheduleViewModel;
-                        foreach (var volunteerHours in scheduleViewModel.VolunteerTotalHours)
-                        {
-                            <tr>
-                                <td>@volunteerHours.Key</td>
-                                <td>@volunteerHours.Value.ToString("F2") hours</td>
-                            </tr>
+                            foreach (var schedule in scheduleViewModel.MorningShifts
+                            .Concat(scheduleViewModel.AfternoonShifts)
+                            .Concat(scheduleViewModel.EveningShifts))
+                            {
+                                <tr>
+                                    <td>@schedule.Volunteer.FullName</td>
+                                    <td>@schedule.ShiftStart.ToString("hh:mm tt")</td>
+                                    <td>@schedule.ShiftEnd.ToString("hh:mm tt")</td>
+                                    <td>@((schedule.ShiftEnd - schedule.ShiftStart).TotalHours.ToString("F2")) hours</td>
+                                </tr>
+                            }
                         }
-                    }
                     else
                     {
                         <tr>
@@ -212,9 +218,9 @@
             </button>
         }
     </div>
+
+
 <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
-
-
 
 
 <style>

@@ -56,7 +56,10 @@
     </div>
     <div class="container mt-5 ps-0">
         <div class="schedules-header">
-            <h1 class="schedule-title"  style="font-weight: 700">Schedules<span style="color: red">*</span></h1>
+            <h1 class="schedule-title" style="font-weight: 700">Schedules<span style="color: red">*</span></h1>
+            <button type="button" id="add-schedule" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#createScheduleModal">
+                Add Schedule
+            </button>
         </div>
         <div id="schedule-container" class="row">
             <!-- Schedule cards will be generated here -->
@@ -70,13 +73,13 @@
                         <div class="card" style="background-color: #e1ccfc">
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 17px; font-weight: 700;">
-                                    Morning Shift
+                                    Morning Shift (@scheduleViewModel.MorningShiftStartTime-@scheduleViewModel.MorningShiftEndTime)
                                 </div>
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.MorningShifts)
                                     {
                                         <li>@schedule.Volunteer?.FullName</li>
-                                     <div>
+                                        <div>
                                             <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm">Edit</a>
                                         </div>
                                     }
@@ -90,7 +93,7 @@
                         <div class="card" style="background-color: #e1ccfc">
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 17px; font-weight: 700;">
-                                    Afternoon Shift
+                                    Afternoon Shift (@scheduleViewModel.AfternoonShiftStartTime-@scheduleViewModel.AfternoonShiftEndTime)
                                 </div>
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.AfternoonShifts)
@@ -110,7 +113,7 @@
                         <div class="card" style="background-color: #e1ccfc">
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 17px; font-weight: 700;">
-                                    Evening Shift
+                                    Evening Shift (@scheduleViewModel.EveningShiftStartTime-@scheduleViewModel.EveningShiftEndTime)
                                 </div>
                                 <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
                                     @foreach (var schedule in scheduleViewModel.EveningShifts)
@@ -165,7 +168,7 @@
                                             </span>
                                             <input type="hidden" name="schedules[@shift.ID].ID" value="@shift.ID" />
                                             <input type="hidden" name="schedules[@shift.ID].IsPresent" value="@shift.IsPresent.ToString().ToLower()" />
-                                         
+
                                     </tr>
                                 }
                             }
@@ -174,30 +177,155 @@
                                 <span>No records found</span>
                             }
                         </tbody>
-                </table>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
     <div class="container mt-4 ps-0">
         <div class="row">
             <div class="col-md-4 d-flex gap-2">
 
-            <div class="form-group">
-                <button type="submit" class="btn btn-success">
-                    <img src="~/Images/save-changes-icon.png" alt="Save changes" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                    Save
-                </button>
-            </div>
-           
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">
+                        <img src="~/Images/save-changes-icon.png" alt="Save changes" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                        Save
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>
 
-<a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
+    <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
 </form>
 
-  @section Scripts {
+<!-- Create Schedule Modal -->
+<div class="modal fade" id="createScheduleModal" tabindex="-1" aria-labelledby="createScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createScheduleModalLabel">Create New Schedules</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createScheduleForm" method="post" >
+                    <div id="scheduleRows">
+                        <!-- Initial Schedule Row -->
+                        <div class="schedule-row border p-3 mb-3">
+                            <div class="form-group">
+                                <label>Shift Start</label>
+                                <input type="time" class="form-control" name="Schedules[0].ShiftStart" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Shift End</label>
+                                <input type="time" class="form-control" name="Schedules[0].ShiftEnd" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Volunteer</label>
+                                <select class="form-control" name="Schedules[0].VolunteerID" required>
+                                    <option value="">Select a Volunteer</option>
+                                    @foreach (var volunteer in ViewBag.Volunteers)
+                                    {
+                                        <option value="@volunteer.ID">@volunteer.FullName</option>
+                                    }
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm remove-schedule">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" id="addSchedule" class="btn btn-secondary btn-sm">Add Another Schedule</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="createScheduleForm" class="btn btn-primary">Create Schedules</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+
+
+    <script>
+        <script>
+          $(document).ready(function () {
+              let rowCount = 1; // Start from 1 because the first row is already present
+
+              // Add a new schedule row
+              $('#addSchedule').on('click', function () {
+                  const newRow = `
+                      <div class="schedule-row border p-3 mb-3">
+                          <div class="form-group">
+                              <label>Shift Start</label>
+                              <input  type="time" class="form-control" name="Schedules[${rowCount}].ShiftStart" required>
+                          </div>
+                          <div class="form-group">
+                              <label>Shift End</label>
+                              <input type="time"" class="form-control" name="Schedules[${rowCount}].ShiftEnd" required>
+                          </div>
+                          <div class="form-group">
+                              <label>Event</label>
+                              <select class="form-control" name="Schedules[${rowCount}].eventID" required>
+                                  <option value="">Select an Event</option>
+        @foreach (var eventItem in ViewBag.Events)
+        {
+                                                  <option value="@eventItem.ID">@eventItem.Name</option>
+        }
+                              </select>
+                          </div>
+                          <div class="form-group">
+                              <label>Volunteer</label>
+                              <select class="form-control" name="Schedules[${rowCount}].volunteerID" required>
+                                  <option value="">Select a Volunteer</option>
+        @foreach (var volunteer in ViewBag.Volunteers)
+        {
+                                                  <option value="@volunteer.ID">@volunteer.FullName</option>
+        }
+                              </select>
+                          </div>
+                          <button type="button" class="btn btn-danger btn-sm remove-schedule">Remove</button>
+                      </div>
+                  `;
+                  $('#scheduleRows').append(newRow);
+                  rowCount++;
+              });
+
+              // Remove a schedule row
+              $(document).on('click', '.remove-schedule', function () {
+                  $(this).closest('.schedule-row').remove();
+                  rowCount--; // Decrement row count
+              });
+
+              // Submit the form via AJAX
+              $('#createScheduleForm').on('submit', function (e) {
+                  e.preventDefault(); // Prevent the default form submission
+
+                  $.ajax({
+                      url: '@Url.Action("CreateMultiple", "Event")',
+                      type: 'POST',
+                      data: $(this).serialize(),
+                      success: function (response) {
+                          if (response.success) {
+                              $('#createScheduleModal').modal('hide'); // Close the modal
+                              location.reload(); // Refresh the page to show the new schedules
+                          } else {
+                              alert('Error: ' + response.message); // Show error message
+                          }
+                      },
+                      error: function (xhr, status, error) {
+                          // Log the full error response
+                          console.log(xhr.responseText);
+                          alert('An error occurred: ' + xhr.responseText);
+                      }
+                  });
+              });
+          });
+    </script>
+
     <script>
               document.addEventListener('DOMContentLoaded', function () {
             const attendanceIcons = document.querySelectorAll('.attendance-icon');
@@ -241,24 +369,24 @@
 
 
 <style>
-     .present-row {
-         background-color: lightgreen;
-     }
+    .present-row {
+        background-color: lightgreen;
+    }
 
-     .absent-row {
-         background-color: lightcoral;
-     }
+    .absent-row {
+        background-color: lightcoral;
+    }
 
-     .attendance-icon {
-         font-size: 1.2em;
-         cursor: pointer;
-     }
+    .attendance-icon {
+        font-size: 1.2em;
+        cursor: pointer;
+    }
 
-     .present-icon {
-         color: darkgreen;
-     }
+    .present-icon {
+        color: darkgreen;
+    }
 
-     .absent-icon {
-         color: darkred;
-     }
+    .absent-icon {
+        color: darkred;
+    }
 </style>

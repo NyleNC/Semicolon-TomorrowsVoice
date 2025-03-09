@@ -110,7 +110,8 @@ namespace TomorrowsVoices.Controllers
 
             // Pass the ScheduleViewModel to the view
             ViewBag.ScheduleViewModel = scheduleViewModel;
-
+            ViewBag.Events = _context.Events.ToList();
+            ViewBag.Volunteers = _context.Volunteers.ToList();
             return View(@event);
         }
 
@@ -149,13 +150,23 @@ namespace TomorrowsVoices.Controllers
                             _context.Add(schedule);
                         }
                         await _context.SaveChangesAsync();
+
                     }
 
                     return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateException)
+                catch (DbUpdateException dex)
                 {
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    var baseMessage = dex.GetBaseException().Message;
+
+                    if (baseMessage.Contains("UNIQUE constraint failed"))
+                    {
+                        ModelState.AddModelError("Email", "Unable to save changes. Remember, you can't have the same email.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    }
                 }
             }
 
@@ -216,6 +227,8 @@ namespace TomorrowsVoices.Controllers
          
             ViewBag.ScheduleViewModel = scheduleViewModel;
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", @event.VolLocationID);
+            ViewBag.Events = _context.Events.ToList();
+            ViewBag.Volunteers = _context.Volunteers.ToList();
             return View(@event);
         }
         // POST: Event/Edit/5
@@ -285,6 +298,8 @@ namespace TomorrowsVoices.Controllers
             }
 
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", @event.VolLocationID);
+            ViewBag.Events = _context.Events.ToList();
+            ViewBag.Volunteers = _context.Volunteers.ToList();
             return View(@event);
         }
         // GET: Event/Delete/5
@@ -381,6 +396,7 @@ namespace TomorrowsVoices.Controllers
                 .ToList();
             return Json(new { success = false, message = "Validation errors: " + string.Join(", ", errors) });
         }
+
 
         //ImportExcel 
         [HttpPost]

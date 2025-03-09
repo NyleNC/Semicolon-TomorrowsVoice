@@ -165,7 +165,7 @@
             e.preventDefault(); // Prevent the default form submission
 
             $.ajax({
-                url: '@Url.Action("CreateMultiple", "Schedule")',
+                url: '@Url.Action("CreateMultiple", "Event")',
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function (response) {
