@@ -7,9 +7,24 @@ nav {
 
 }
 
+.modal-dialog {
+    width: 200px;
+    margin-top: 10px;
+    opacity: 0.9
+}
+.modal-content {
+    background-color: #f9f9f9
+}
+
+.nav-link.active-page {
+    background-color: #6D28E3;
+    color: white; 
+    border-radius: 5px; 
+    padding: 5px; 
+}
 .nav-link.active {
-    color: #0400fa !important; /* Use the default text color */
-    background-color: transparent !important; /* Remove background color */
+    color: #0400fa !important; 
+    background-color: transparent !important;
 }
 
 /* Remove blue color from hovered links */
@@ -341,6 +356,10 @@ button.no-pointer-events {
     cursor: default; /* Prevent the hand cursor from appearing */
 }
 
+
+#btnMobile{
+    display: none;
+}
 
 
 .footer-logo {
@@ -839,6 +858,27 @@ label.required:after {
         height: 20px;
         margin-right: 5px;
     }
+
+    #desktopSidebar{
+        display: none;
+    }
+
+    h1{
+        font-size: 18px
+    }
+
+    .btn {
+        padding: 5px 10px
+    }
+
+    .btn-primary {
+        font-size: 10px;
+     
+    }
+
+    .btn-white{
+        font-size: 10px;
+    }
 }
 
 
@@ -861,4 +901,10 @@ label.required:after {
         width: 90px;
         margin-right: 10px;
     }
+
+    #btnMobile{
+display: block
+    }
 }
+
+
