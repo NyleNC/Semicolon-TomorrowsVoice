@@ -250,7 +250,7 @@ namespace TomorrowsVoices.Controllers
             }
 
             if (await TryUpdateModelAsync<Volunteer>(volunteerToUpdate, "",
-                v => v.FirstName, v => v.LastName, v => v.Phone, v => v.VolLocationID))
+                   v => v.FirstName, v => v.LastName, v => v.Phone, v => v.Email, v => v.VolLocationID))
             {
                 try
                 {
