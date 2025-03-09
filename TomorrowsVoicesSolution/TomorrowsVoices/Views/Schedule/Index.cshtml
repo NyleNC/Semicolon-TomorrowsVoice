@@ -35,37 +35,42 @@
 <!-- Tab Content -->
 
 
-        <div class="tab-content" id="scheduleTabsContent">
-            <!-- Morning Shift Tab -->
-            <div class="tab-pane fade show active" id="morning" role="tabpanel" aria-labelledby="morning-tab">
-                <table class="table">
-
+<div class="tab-content" id="scheduleTabsContent">
+    <!-- Morning Shift Tab -->
+    <div class="tab-pane fade show active" id="morning" role="tabpanel" aria-labelledby="morning-tab">
+        <table class="table">
             <thead>
                 <tr>
-                    @foreach (var schedule in Model.MorningShifts.GroupBy(s => new
-                    {
-                        StartTime = DateTime.Parse(s.ActualStartTime.ToString()),
-                        EndTime = DateTime.Parse(s.ActualEndTime.ToString())
-                    }))
-                    {
-                        <th>
-                            @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
-                        </th>
-                    }
+                    <th>Shift Time</th>
+                    <th>Volunteer</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    @foreach (var schedule in Model.MorningShifts.GroupBy(s => new
-                    {
-                        StartTime = DateTime.Parse(s.ActualStartTime.ToString()),
-                        EndTime = DateTime.Parse(s.ActualEndTime.ToString())
-                    }))
-                    {
+                @foreach (var schedule in Model.MorningShifts.GroupBy(s => new
+                {
+                    StartTime = s.ShiftStart,
+                    EndTime = s.ShiftEnd
+                }))
+                {
+                    <tr>
+                        <td>
+                            @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
+                        </td>
                         <td>
                             @foreach (var volunteer in schedule)
                             {
-                                <div>@volunteer.Volunteer?.FullName</div>
+                                <div>
+                                    @volunteer.Volunteer?.FullName
+                                    @if (volunteer.ActualStartTime.HasValue && volunteer.ActualEndTime.HasValue)
+                                    {
+                                        <small>(@volunteer.ActualStartTime.Value.ToString("hh\\:mm") - @volunteer.ActualEndTime.Value.ToString("hh\\:mm"))</small>
+                                    }
+                                    else
+                                    {
+                                        <small>(Not recorded)</small>
+                                    }
+                                </div>
                             }
                         </td>
                         <td>
@@ -78,41 +83,47 @@
                                 </div>
                             }
                         </td>
-                    }
-                </tr>
+                    </tr>
+                }
             </tbody>
-                </table>
-            </div>
+        </table>
+    </div>
 
-            <!-- Afternoon Shift Tab -->
-            <div class="tab-pane fade" id="afternoon" role="tabpanel" aria-labelledby="afternoon-tab">
-                <table class="table">
+    <!-- Afternoon Shift Tab -->
+    <div class="tab-pane fade" id="afternoon" role="tabpanel" aria-labelledby="afternoon-tab">
+        <table class="table">
             <thead>
                 <tr>
-                    @foreach (var schedule in Model.AfternoonShifts.GroupBy(s => new
-                    {
-                        StartTime = DateTime.Parse(s.ActualStartTime.ToString()),
-                        EndTime = DateTime.Parse(s.ActualEndTime.ToString())
-                    }))
-                    {
-                        <th>
-                            @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
-                        </th>
-                    }
+                    <th>Shift Time</th>
+                    <th>Volunteer</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    @foreach (var schedule in Model.AfternoonShifts.GroupBy(s => new
-                    {
-                        StartTime = DateTime.Parse(s.ActualStartTime.ToString()),
-                        EndTime = DateTime.Parse(s.ActualEndTime.ToString())
-                    }))
-                    {
+                @foreach (var schedule in Model.AfternoonShifts.GroupBy(s => new
+                {
+                    StartTime = s.ShiftStart,
+                    EndTime = s.ShiftEnd
+                }))
+                {
+                    <tr>
+                        <td>
+                            @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
+                        </td>
                         <td>
                             @foreach (var volunteer in schedule)
                             {
-                                <div>@volunteer.Volunteer?.FullName</div>
+                                <div>
+                                    @volunteer.Volunteer?.FullName
+                                    @if (volunteer.ActualStartTime.HasValue && volunteer.ActualEndTime.HasValue)
+                                    {
+                                        <small>(@volunteer.ActualStartTime.Value.ToString("hh\\:mm") - @volunteer.ActualEndTime.Value.ToString("hh\\:mm"))</small>
+                                    }
+                                    else
+                                    {
+                                        <small>(Not recorded)</small>
+                                    }
+                                </div>
                             }
                         </td>
                         <td>
@@ -125,41 +136,47 @@
                                 </div>
                             }
                         </td>
-                    }
-                </tr>
+                    </tr>
+                }
             </tbody>
-                </table>
-            </div>
+        </table>
+    </div>
 
-            <!-- Evening Shift Tab -->
-            <div class="tab-pane fade" id="evening" role="tabpanel" aria-labelledby="evening-tab">
-                <table class="table">
+    <!-- Evening Shift Tab -->
+    <div class="tab-pane fade" id="evening" role="tabpanel" aria-labelledby="evening-tab">
+        <table class="table">
             <thead>
                 <tr>
-                    @foreach (var schedule in Model.EveningShifts.GroupBy(s => new
-                    {
-                        StartTime = DateTime.Parse(s.ActualStartTime.ToString()),
-                        EndTime = DateTime.Parse(s.ActualEndTime.ToString())
-                    }))
-                    {
-                        <th>
-                            @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
-                        </th>
-                    }
+                    <th>Shift Time</th>
+                    <th>Volunteer</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    @foreach (var schedule in Model.EveningShifts.GroupBy(s => new
-                    {
-                        StartTime = s.ActualStartTime,
-                        EndTime = s.ActualEndTime
-                    }))
-                    {
+                @foreach (var schedule in Model.EveningShifts.GroupBy(s => new
+                {
+                    StartTime = s.ShiftStart,
+                    EndTime = s.ShiftEnd
+                }))
+                {
+                    <tr>
+                        <td>
+                            @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
+                        </td>
                         <td>
                             @foreach (var volunteer in schedule)
                             {
-                                <div>@volunteer.Volunteer?.FullName</div>
+                                <div>
+                                    @volunteer.Volunteer?.FullName
+                                    @if (volunteer.ActualStartTime.HasValue && volunteer.ActualEndTime.HasValue)
+                                    {
+                                        <small>(@volunteer.ActualStartTime.Value.ToString("hh\\:mm") - @volunteer.ActualEndTime.Value.ToString("hh\\:mm"))</small>
+                                    }
+                                    else
+                                    {
+                                        <small>(Not recorded)</small>
+                                    }
+                                </div>
                             }
                         </td>
                         <td>
@@ -172,12 +189,12 @@
                                 </div>
                             }
                         </td>
-                    }
-                </tr>
+                    </tr>
+                }
             </tbody>
-                </table>
-            </div>
-        </div>
+        </table>
+    </div>
+</div>
        
 
 

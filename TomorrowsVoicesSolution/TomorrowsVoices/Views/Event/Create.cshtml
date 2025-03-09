@@ -86,11 +86,11 @@
                         <div class="schedule-row border p-3 mb-3">
                             <div class="form-group">
                                 <label>Shift Start</label>
-                                <input type="time" class="form-control" name="Schedules[0].ActualStartTime" required>
+                                <input type="time" class="form-control" name="Schedules[0].StartTime" required>
                             </div>
                             <div class="form-group">
                                 <label>Shift End</label>
-                                <input type="time" class="form-control" name="Schedules[0].ActualEndTime" required>
+                                <input type="time" class="form-control" name="Schedules[0].EndTime" required>
                             </div>
                     
                             <div class="form-group">
@@ -131,11 +131,11 @@
             newRow.innerHTML = `
                 <div class="form-group">
                     <label>Shift Start</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].ActualStartTime" class="form-control" required />
+                    <input type="time" name="Schedules[${scheduleIndex}].StartTime" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label>Shift End</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].ActualEndTime" class="form-control" required />
+                    <input type="time" name="Schedules[${scheduleIndex}].EndTime" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label>Volunteer</label>
