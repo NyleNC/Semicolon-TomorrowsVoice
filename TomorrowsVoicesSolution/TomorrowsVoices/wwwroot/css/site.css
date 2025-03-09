@@ -10,7 +10,13 @@ nav {
 .modal-dialog-nav {
     width: 200px;
     margin-top: 10px;
-    opacity: 0.9
+    opacity: 0.9}
+.modal-dialog {
+    width: 100%;
+    margin: 0 auto; /* Center the modal horizontally */
+    position: fixed;
+    left: 15%; /* Center the modal horizontally */
+    opacity: 0.9;
 }
 .modal-content-nav {
     background-color: #f9f9f9
@@ -609,7 +615,7 @@ label.required:after {
     margin: 0 auto;
     padding: 20px;
     margin-top: 3em;
-    background-color: #f0fafc; /* Light background */
+    background-color: #F3EEFE; /* Light background */
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
@@ -651,7 +657,7 @@ label.required:after {
 .fc .fc-daygrid-day-number {
     text-decoration: none;
     font-weight: 400;
-    color: purple;
+    color: #4A1A9E;
     font-size: 1.2em;
 }
 
@@ -681,11 +687,16 @@ label.required:after {
     text-decoration: none !important;
 }
 
+.fc .fc-button-primary {
+    background-color: #310E6D !important;
+    border-color: #310E6D !important;
+}
+
 /* Event Titles */
 .fc-event {
     font-size: 14px; /* Larger font for events */
     font-weight: bold; /* Bold event titles */
-    background-color: #007bff; /* Blue background */
+    background-color: #6D28E3; /* Blue background */
     color: white; /* White text */
     border: none;
     border-radius: 4px;
@@ -694,9 +705,13 @@ label.required:after {
     transition: background-color 0.3s ease;
 }
 
-    .fc-event:hover {
-        background-color: #0056b3; /* Darker blue on hover */
-    }
+.fc-h-event {
+    background-color: #6D28E3 !important;
+}
+
+.fc-event:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
 
 /* Today's Date */
 .fc-day-today {
@@ -737,6 +752,106 @@ label.required:after {
     width: auto;
     height: 50px;
     filter: grayscale(100%) brightness(1000%) contrast(100%);
+}
+
+/* Responsive CSS for Mobile Views */
+@media (max-width: 425px) {
+    #calendar {
+        padding: 10px !important; /* Reduce padding for smaller screens */
+        margin-top: 1em !important; /* Adjust top margin */
+    }
+
+    .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr {
+        display: flex; /* Use flexbox for horizontal layout */
+        flex-wrap: nowrap; /* Prevent wrapping of toolbar items */
+        align-items: center; /* Vertically align items */
+        overflow-x: auto; /* Allow horizontal scrolling if necessary */
+        padding-bottom: 8px; /* Add space for scrollbar */
+    }
+
+    .fc .fc-toolbar.fc-header-toolbar {
+        margin-bottom: 1px !important; /* Reduce margin between toolbar and calendar */
+    }
+
+    .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr .fc-toolbar-chunk {
+        display: flex; /* Use flexbox for horizontal layout */
+        align-items: center; /* Vertically align items */
+        margin-right: 4px; /* Reduce spacing between chunks */
+    }
+
+    .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr .fc-toolbar-title {
+        font-size: 12px !important; /* Decrease font size for 425px viewport */
+        margin: 0 6px !important; /* Reduce spacing around the title */
+        font-weight: bold; /* Ensure title remains bold */
+        line-height: 1.2; /* Adjust line height for better readability */
+        white-space: nowrap; /* Prevent title from wrapping */
+    }
+
+    .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr button.fc-button-primary {
+        font-size: 8px !important; /* Decrease button font size for 425px viewport */
+        padding: 2px 4px !important; /* Adjust padding for smaller buttons */
+        margin-right: 2px; /* Reduce spacing between buttons */
+        font-weight: bold; /* Ensure button text remains bold */
+        line-height: 1.2; /* Adjust line height for better readability */
+        white-space: nowrap; /* Prevent button text from wrapping */
+    }
+
+    /* Calendar Grid Font Adjustments */
+    .fc .fc-col-header-cell-cushion {
+        font-size: 10px !important; /* Decrease header font size */
+        font-weight: bold; /* Ensure headers remain bold */
+        line-height: 1.2; /* Adjust line height */
+    }
+
+    .fc .fc-daygrid-day-number {
+        font-size: 10px !important; /* Decrease day number font size */
+        font-weight: 400; /* Normal weight for day numbers */
+        line-height: 1.2; /* Adjust line height */
+    }
+
+    .fc .fc-daygrid-day-frame {
+        padding: 2px !important; /* Reduce padding inside day cells */
+    }
+}
+
+@media (max-width: 375px) {
+    .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr .fc-toolbar-title {
+        font-size: 10px !important; /* Decrease font size for 375px viewport */
+    }
+
+    .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr button.fc-button-primary {
+        font-size: 7px !important; /* Decrease button font size for 375px viewport */
+        padding: 1px 3px !important; /* Adjust padding for smaller buttons */
+    }
+
+    /* Calendar Grid Font Adjustments */
+    .fc .fc-col-header-cell-cushion {
+        font-size: 9px !important; /* Further decrease header font size */
+    }
+
+    .fc .fc-daygrid-day-number {
+        font-size: 9px !important; /* Further decrease day number font size */
+    }
+}
+
+@media (max-width: 320px) {
+    .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr .fc-toolbar-title {
+        font-size: 8px !important; /* Decrease font size for 320px viewport */
+    }
+
+    .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr button.fc-button-primary {
+        font-size: 6px !important; /* Decrease button font size for 320px viewport */
+        padding: 1px 2px !important; /* Adjust padding for smaller buttons */
+    }
+
+    /* Calendar Grid Font Adjustments */
+    .fc .fc-col-header-cell-cushion {
+        font-size: 8px !important; /* Further decrease header font size */
+    }
+
+    .fc .fc-daygrid-day-number {
+        font-size: 8px !important; /* Further decrease day number font size */
+    }
 }
 /* Hide sidebar by default on mobile 
 */ /*@media (max-width: 768px) {
