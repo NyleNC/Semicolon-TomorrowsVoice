@@ -66,56 +66,6 @@
 </div>
 
 
-<div class="row">
-    <div class="col-12">
-        <div class="float-end">
-
-            <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
-                    data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
-                <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
-                Filter (@ViewData["numberFilters"])
-            </button>
-            <!-- Conditionally render the "Clear" button -->
-            @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
-            {
-                <a asp-action="Index" class="mb-3 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px">
-                    <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                    Clear
-                </a>
-            }
-        </div>
-
-    </div>
-</div>
-
-<!-- Filter/Search Popup -->
-<div class="filter-popup @ViewData["ShowFilter"]" id="collapseFilter">
-    <div class="card card-body" style="background-color:#f9f9f9">
-        <form asp-action="Index" method="get">
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label fw-bold">Search by Name:</label>
-                    @Html.TextBox("SearchString", null, new { @class = "form-control" })
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label class="control-label fw-bold">Filter by City:</label>
-                        @Html.DropDownList("SearchCity", ViewData["Cities"] as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>(), new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="form-group col-md-3">
-                    <label class="control-label text fw-bold">Search by Email:</label>
-                    @Html.TextBox("SearchEmail", null, new { @class = "form-control" })
-                </div>
-            </div>
-            <div class="form-group col-md-2 align-self-start">
-                <input type="submit" name="actionButton" value="Filter"
-                       class="btn text-white uniform-button" style="background-color: #6423e7; padding: 11px; border-radius: 10px" />
-            </div>
-        </form>
-    </div>
-</div>
-
 
 <!-- Modal -->
 <!-- Import Volunteers Excel Modal -->
@@ -180,12 +130,61 @@
 </div>
 
 <!-- Table for Volunteers -->
-<div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
+
     <form asp-action="Index" method="get">
         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
         <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
         <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
 
+
+        <div class="row">
+            <div class="col-12">
+                <div class="float-end">
+
+                    <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
+                            data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                        <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
+                        Filter (@ViewData["numberFilters"])
+                    </button>
+                    <!-- Conditionally render the "Clear" button -->
+                    @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+                    {
+                        <a asp-action="Index" class="mb-3 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px">
+                            <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                            Clear
+                        </a>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
+            <div class="card card-body">
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label">Search by Name:</label>
+                        @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">Filter by City:</label>
+                            @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Cities"], new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="control-label">Search by Email:</label>
+                        @Html.TextBox("SearchEmail", null, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group col-md-2 align-self-start">
+                    <input type="submit" name="actionButton" value="Filter"
+                           class="btn text-white" style="background-color: #6423e7" />
+                </div>
+            </div>
+        </div>
         <table class="table table-custom p-0 m-0">
             <thead>
                 <tr>
