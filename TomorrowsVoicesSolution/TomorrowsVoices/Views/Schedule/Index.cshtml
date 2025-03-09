@@ -35,42 +35,44 @@
 <!-- Tab Content -->
 
 
-        <div class="tab-content" id="scheduleTabsContent">
-            <!-- Morning Shift Tab -->
-            <div class="tab-pane fade show active" id="morning" role="tabpanel" aria-labelledby="morning-tab">
-                <table class="table">
-
-                    <thead>
-                        <tr>
-                    @foreach (var schedule in Model.MorningShifts.GroupBy(s => new
-                    {
-                     
-                        StartTime = s.ShiftStart,
-                        EndTime = s.ShiftEnd
-                    }))
+<div class="tab-content" id="scheduleTabsContent">
+    <!-- Morning Shift Tab -->
+    <div class="tab-pane fade show active" id="morning" role="tabpanel" aria-labelledby="morning-tab">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Shift Time</th>
+                    <th>Volunteer</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var schedule in Model.MorningShifts.GroupBy(s => new
+                {
+                    StartTime = s.ShiftStart,
+                    EndTime = s.ShiftEnd
+                }))
+                {
+                    <tr>
+                        <td>
+                            @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
+                        </td>
+                        <td>
+                            @foreach (var volunteer in schedule)
                             {
-                                <th>
-                                
-                                    @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
-                                </th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            @foreach (var schedule in Model.MorningShifts.GroupBy(s => new
-                            {
-                               
-                                StartTime = s.ShiftStart,
-                                EndTime = s.ShiftEnd
-                            }))
-                            {
-                                <td>
-                                    @foreach (var volunteer in schedule)
+                                <div>
+                                    @volunteer.Volunteer?.FullName
+                                    @if (volunteer.ActualStartTime.HasValue && volunteer.ActualEndTime.HasValue)
                                     {
-                                        <div>@volunteer.Volunteer?.FullName</div>
+                                        <small>(@volunteer.ActualStartTime.Value.ToString("hh\\:mm") - @volunteer.ActualEndTime.Value.ToString("hh\\:mm"))</small>
                                     }
-                                </td>
+                                    else
+                                    {
+                                        <small>(Not recorded)</small>
+                                    }
+                                </div>
+                            }
+                        </td>
                         <td>
                             @foreach (var volunteer in schedule)
                             {
@@ -81,101 +83,49 @@
                                 </div>
                             }
                         </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-                            }
-
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Afternoon Shift Tab -->
-            <div class="tab-pane fade" id="afternoon" role="tabpanel" aria-labelledby="afternoon-tab">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            @foreach (var schedule in Model.AfternoonShifts.GroupBy(s => new
-                            {
-                               
-                                StartTime = s.ShiftStart,
-                                EndTime = s.ShiftEnd
-                            }))
-                            {
-                                <th>
-                                   
-                                    @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
-                                </th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            @foreach (var schedule in Model.AfternoonShifts.GroupBy(s => new
-                            {
-
-                        StartTime = s.ShiftStart,
-                        EndTime = s.ShiftEnd
-                            }))
-                            {
-                                <td>
-                                    @foreach (var volunteer in schedule)
-                                    {
-                                        <div>@volunteer.Volunteer?.FullName</div>
-                                    }
-                                </td>
-                    
-
+    <!-- Afternoon Shift Tab -->
+    <div class="tab-pane fade" id="afternoon" role="tabpanel" aria-labelledby="afternoon-tab">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Shift Time</th>
+                    <th>Volunteer</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var schedule in Model.AfternoonShifts.GroupBy(s => new
+                {
+                    StartTime = s.ShiftStart,
+                    EndTime = s.ShiftEnd
+                }))
+                {
+                    <tr>
+                        <td>
+                            @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
+                        </td>
                         <td>
                             @foreach (var volunteer in schedule)
                             {
                                 <div>
-                                    <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@volunteer.ID" class="btn btn-primary btn-sm">Edit</a>
-                                    <a asp-action="Details" asp-controller="Schedule" asp-route-id="@volunteer.ID" class="btn btn-info btn-sm">Details</a>
-                                    <a asp-action="Delete" asp-controller="Schedule" asp-route-id="@volunteer.ID" class="btn btn-info btn-sm">Delete</a>
+                                    @volunteer.Volunteer?.FullName
+                                    @if (volunteer.ActualStartTime.HasValue && volunteer.ActualEndTime.HasValue)
+                                    {
+                                        <small>(@volunteer.ActualStartTime.Value.ToString("hh\\:mm") - @volunteer.ActualEndTime.Value.ToString("hh\\:mm"))</small>
+                                    }
+                                    else
+                                    {
+                                        <small>(Not recorded)</small>
+                                    }
                                 </div>
                             }
-
                         </td>
-                            }
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Evening Shift Tab -->
-            <div class="tab-pane fade" id="evening" role="tabpanel" aria-labelledby="evening-tab">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            @foreach (var schedule in Model.EveningShifts.GroupBy(s => new
-                            {
-
-                        StartTime = s.ShiftStart,
-                        EndTime = s.ShiftEnd
-                            }))
-                            {
-                                <th>
-                                 
-                                    @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
-                                </th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            @foreach (var schedule in Model.EveningShifts.GroupBy(s => new
-                            {
-
-                        StartTime = s.ShiftStart,
-                        EndTime = s.ShiftEnd
-                            }))
-                            {
-                                <td>
-                                    @foreach (var volunteer in schedule)
-                                    {
-                                        <div>@volunteer.Volunteer?.FullName</div>
-                                    }
-                                </td>
                         <td>
                             @foreach (var volunteer in schedule)
                             {
@@ -186,12 +136,65 @@
                                 </div>
                             }
                         </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Evening Shift Tab -->
+    <div class="tab-pane fade" id="evening" role="tabpanel" aria-labelledby="evening-tab">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Shift Time</th>
+                    <th>Volunteer</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var schedule in Model.EveningShifts.GroupBy(s => new
+                {
+                    StartTime = s.ShiftStart,
+                    EndTime = s.ShiftEnd
+                }))
+                {
+                    <tr>
+                        <td>
+                            @schedule.Key.StartTime.ToString("hh\\:mm") - @schedule.Key.EndTime.ToString("hh\\:mm")
+                        </td>
+                        <td>
+                            @foreach (var volunteer in schedule)
+                            {
+                                <div>
+                                    @volunteer.Volunteer?.FullName
+                                    @if (volunteer.ActualStartTime.HasValue && volunteer.ActualEndTime.HasValue)
+                                    {
+                                        <small>(@volunteer.ActualStartTime.Value.ToString("hh\\:mm") - @volunteer.ActualEndTime.Value.ToString("hh\\:mm"))</small>
+                                    }
+                                    else
+                                    {
+                                        <small>(Not recorded)</small>
+                                    }
+                                </div>
                             }
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                        </td>
+                        <td>
+                            @foreach (var volunteer in schedule)
+                            {
+                                <div>
+                                    <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@volunteer.ID" class="btn btn-primary btn-sm">Edit</a>
+                                    <a asp-action="Details" asp-controller="Schedule" asp-route-id="@volunteer.ID" class="btn btn-info btn-sm">Details</a>
+                                    <a asp-action="Delete" asp-controller="Schedule" asp-route-id="@volunteer.ID" class="btn btn-info btn-sm">Delete</a>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
        
 
 
@@ -212,12 +215,12 @@
                         <!-- Initial Schedule Row -->
                         <div class="schedule-row border p-3 mb-3">
                             <div class="form-group">
-                                <label>Shift Start</label>
-                                <input type="time" class="form-control" name="Schedules[0].ShiftStart" required>
+                                <label>Start Time</label>
+                                <input type="time" class="form-control" name="Schedules[0].ActualStartTime" required>
                             </div>
                             <div class="form-group">
-                                <label>Shift End</label>
-                                <input type="time" class="form-control" name="Schedules[0].ShiftEnd" required>
+                                <label>End Time</label>
+                                <input type="time" class="form-control" name="Schedules[0].ActualEndTime" required>
                             </div>
                             <div class="form-group">
                                 <label>Event</label>
@@ -265,39 +268,39 @@
 
             // Add a new schedule row
             $('#addSchedule').on('click', function () {
-                const newRow = `
-                    <div class="schedule-row border p-3 mb-3">
-                        <div class="form-group">
-                            <label>Shift Start</label>
-                            <input  type="time" class="form-control" name="Schedules[${rowCount}].ShiftStart" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Shift End</label>
-                            <input type="time"" class="form-control" name="Schedules[${rowCount}].ShiftEnd" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Event</label>
-                            <select class="form-control" name="Schedules[${rowCount}].eventID" required>
-                                <option value="">Select an Event</option>
+                 const newRow = `
+            <div class="schedule-row border p-3 mb-3">
+                <div class="form-group">
+                    <label>Actual Shift Start</label>
+                    <input type="time" class="form-control" name="Schedules[${rowCount}].ActualStartTime" required>
+                </div>
+                <div class="form-group">
+                    <label>Actual Shift End</label>
+                    <input type="time" class="form-control" name="Schedules[${rowCount}].ActualEndTime" required>
+                </div>
+                <div class="form-group">
+                    <label>Event</label>
+                    <select class="form-control" name="Schedules[${rowCount}].eventID" required>
+                        <option value="">Select an Event</option>
         @foreach (var eventItem in ViewBag.Events)
         {
-                                        <option value="@eventItem.ID">@eventItem.Name</option>
+                                <option value="@eventItem.ID">@eventItem.Name</option>
         }
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Volunteer</label>
-                            <select class="form-control" name="Schedules[${rowCount}].volunteerID" required>
-                                <option value="">Select a Volunteer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Volunteer</label>
+                    <select class="form-control" name="Schedules[${rowCount}].volunteerID" required>
+                        <option value="">Select a Volunteer</option>
         @foreach (var volunteer in ViewBag.Volunteers)
         {
-                                        <option value="@volunteer.ID">@volunteer.FullName</option>
+                                <option value="@volunteer.ID">@volunteer.FullName</option>
         }
-                            </select>
-                        </div>
-                        <button type="button" class="btn btn-danger btn-sm remove-schedule">Remove</button>
-                    </div>
-                `;
+                    </select>
+                </div>
+                <button type="button" class="btn btn-danger btn-sm remove-schedule">Remove</button>
+            </div>
+        `;
                 $('#scheduleRows').append(newRow);
                 rowCount++;
             });
