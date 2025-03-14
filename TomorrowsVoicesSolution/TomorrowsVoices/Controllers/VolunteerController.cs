@@ -190,6 +190,7 @@ namespace TomorrowsVoices.Controllers
                 {
                     _context.Add(volunteer);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"a new Volunteer has been added {volunteer.FullName}";
                     return RedirectToAction(nameof(Index));
                 }
               
@@ -255,6 +256,7 @@ namespace TomorrowsVoices.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"{volunteer.FullName} and its details has been edited and saved";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)

@@ -111,7 +111,7 @@ namespace TomorrowsVoices.Controllers
         // POST: Schedule/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Description,Notes,Date,StartTime,EndTime,VolLocationID")] Event @event, List<Schedule> Schedules)
+        public async Task<IActionResult> Create([Bind("ID,Name,Description,Notes,Date,StartTime,EndTime,ActualStartTime,ActualEndTime,VolLocationID")] Event @event, List<Schedule> Schedules)
         {
             if (ModelState.IsValid)
             {
@@ -172,7 +172,7 @@ namespace TomorrowsVoices.Controllers
         // POST: Schedule/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,ShiftStart,ShiftEnd,eventID,volunteerID,IsArchived")] Schedule schedule)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,ShiftStart,ShiftEnd,ActualStartTime,ActualEndTime,eventID,volunteerID,IsArchived")] Schedule schedule)
         {
             if (id != schedule.ID)
             {
@@ -201,7 +201,7 @@ namespace TomorrowsVoices.Controllers
             }
 
             // Repopulate dropdowns if the model state is invalid
-            ViewData["volunteerID"] = new SelectList(_context.Volunteers, "ID", "FullName", schedule.volunteerID);
+      
             ViewData["eventID"] = new SelectList(_context.Events, "ID", "Name", schedule.eventID); // Use Event instead of VolLocation
 
             return View(schedule);

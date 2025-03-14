@@ -71,4 +71,17 @@
             document.getElementById('VolLocationID').value = '1'; // Set to the appropriate default location ID
         }
     </script>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '@TempData["SuccessMessage"]',
+                    confirmButtonText: 'OK'
+                });
+            });
+        </script>
+    }
 }

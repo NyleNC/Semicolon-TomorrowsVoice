@@ -58,9 +58,7 @@
     <div class="container mt-5 ps-0">
         <div class="schedules-header">
             <h1 class="schedule-title" style="font-weight: 700">Schedules<span style="color: red">*</span></h1>
-            <button type="button" id="add-schedule" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#createScheduleModal">
-                Add Schedule
-            </button>
+       
         </div>
         <div id="schedule-container" class="row">
             <!-- Schedule cards will be generated here -->
@@ -82,7 +80,7 @@
                                         <li class="d-flex justify-content-between align-content-center mb-2">
                                             <div>@schedule.Volunteer?.FullName</div>
                                             <div>
-                                                (@scheduleViewModel.MorningActualStartTime - @scheduleViewModel.MorningActualEndTime)
+                                                (@schedule.ActualStartTime - @schedule.ActualEndTime)
                                             </div>
                                             <div>
                                                 <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm" style="padding: 0px 10px">Edit</a>
@@ -108,7 +106,7 @@
                                         <li class="d-flex justify-content-between align-content-center mb-2">
                                             <div>@schedule.Volunteer?.FullName</div>
                                             <div>
-                                                (@scheduleViewModel.AfternoonActualStartTime - @scheduleViewModel.AfternoonActualEndTime)
+                                                (@schedule.ActualStartTime - @schedule.ActualEndTime)
                                             </div>
                                             <div>
                                                 <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm" style="padding: 0px 10px">Edit</a>
@@ -134,7 +132,7 @@
                                         <li class="d-flex justify-content-between align-content-center mb-2">
                                             <div>@schedule.Volunteer?.FullName</div>
                                             <div>
-                                                (@scheduleViewModel.EveningActualStartTime - @scheduleViewModel.EveningActualEndTime)
+                                                (@schedule.ActualStartTime - @schedule.ActualEndTime)
                                             </div>
                                             <div>
                                                 <a asp-action="Edit" asp-controller="Schedule" asp-route-id="@schedule.ID" class="btn btn-primary btn-sm" style="padding: 0px 10px">Edit</a>
@@ -222,7 +220,7 @@
     <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
 </form>
 
-<!-- Create Schedule Modal -->
+@* <!-- Create Schedule Modal -->
 <div class="modal fade" id="createScheduleModal" tabindex="-1" aria-labelledby="createScheduleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -236,19 +234,19 @@
                         <!-- Initial Schedule Row -->
                         <div class="schedule-row border p-3 mb-3">
                             <div class="form-group">
-                                <label>Shift Start</label>
+                                <label>Schedule Shift Start</label>
                                 <input type="time" class="form-control" name="Schedules[0].ShiftTime" required>
                             </div>
                             <div class="form-group">
-                                <label>Shift End</label>
+                                <label> Schedule Shift End</label>
                                 <input type="time" class="form-control" name="Schedules[0].ShiftEnd" required>
                             </div>
                             <div class="form-group">
-                                <label>Start Time</label>
+                                <label>Actual Start Time</label>
                                 <input type="time" class="form-control" name="Schedules[0].ActualStartime" required>
                             </div>
                             <div class="form-group">
-                                <label>End Time</label>
+                                <label>Actual End Time</label>
                                 <input type="time" class="form-control" name="Schedules[0].ActualEndTime" required>
                             </div>
                             <div class="form-group">
@@ -274,49 +272,62 @@
         </div>
     </div>
 </div>
-
+ *@
 
 @section Scripts {
-    <script>
+   @*  <script>
         $(document).ready(function () {
-            let rowCount = 1; // Start from 1 because the first row is already present
+            let rowCount = 1; 
 
-            // Add a new schedule row
-            $('#addSchedule').on('click', function () {
-                const newRow = `
-                    <div class="schedule-row border p-3 mb-3">
-                      <div class="form-group">
-                    <label>Shift Start</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].StartTime" class="form-control" required />
-                </div>
-                <div class="form-group">
-                    <label>Shift End</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].EndTime" class="form-control" required />
-                </div>
+              
+        $('#createScheduleForm').on('submit', function (e) {
+            e.preventDefault(); 
+
+            // Get all schedule rows from the modal
+            const scheduleRows = $('#scheduleRows .schedule-row');
+
+            // Append each schedule row to the main form's schedules container
+            scheduleRows.each(function (index, row) {
+                const newRow = document.createElement('div');
+                newRow.className = 'schedule-row border p-3 mb-3';
+                newRow.innerHTML = `
+                    <input type="hidden" name="Schedules[${scheduleIndex}].ID" value="" />
+                    <input type="hidden" name="Schedules[${scheduleIndex}].EventID" value="@Model.ID" />
                     <div class="form-group">
-                    <label>Start Time</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].ActualStartTime" class="form-control" required />
-                </div>
-                <div class="form-group">
-                    <label>End Time</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].ActualEndTime" class="form-control" required />
-                </div>
-                        <div class="form-group">
-                            <label>Volunteer</label>
-                            <select class="form-control" name="Schedules[${rowCount}].VolunteerID" required>
-                                <option value="">Select a Volunteer</option>
+                        <label>Shift Schedule Start</label>
+                        <input type="time" name="Schedules[${scheduleIndex}].ShiftStart" class="form-control" value="${$(row).find('[name="Schedules[0].ShiftStart"]').val()}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Shift Schedule End</label>
+                        <input type="time" name="Schedules[${scheduleIndex}].ShiftEnd" class="form-control" value="${$(row).find('[name="Schedules[0].ShiftEnd"]').val()}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Actual Shift Start</label>
+                        <input type="time" name="Schedules[${scheduleIndex}].ActualStartTime" class="form-control" value="${$(row).find('[name="Schedules[0].ActualStartTime"]').val()}" />
+                    </div>
+                    <div class="form-group">
+                        <label>Actual Shift End</label>
+                        <input type="time" name="Schedules[${scheduleIndex}].ActualEndTime" class="form-control" value="${$(row).find('[name="Schedules[0].ActualEndTime"]').val()}" />
+                    </div>
+                    <div class="form-group">
+                        <label>Volunteer</label>
+                        <select name="Schedules[${scheduleIndex}].VolunteerID" class="form-control" required>
+                            <option value="">Select a Volunteer</option>
         @foreach (var volunteer in ViewBag.Volunteers)
         {
-                                        <option value="@volunteer.ID">@volunteer.FullName</option>
+                                    <option value="@volunteer.ID">${$(row).find('[name="Schedules[0].VolunteerID"]').val() === "@volunteer.ID" ? "selected" : ""}>@volunteer.FullName</option>
         }
-                            </select>
-                        </div>
-                        <button type="button" class="btn btn-danger btn-sm remove-schedule">Remove</button>
+                        </select>
                     </div>
+                    <button type="button" class="btn btn-danger btn-sm remove-schedule">Remove</button>
                 `;
-                $('#scheduleRows').append(newRow);
-                rowCount++;
+                $('#schedules-container').append(newRow);
+                scheduleIndex++;
             });
+
+            // Close the modal after appending the data
+            $('#createScheduleModal').modal('hide');
+        });
 
             // Remove a schedule row
             $(document).on('click', '.remove-schedule', function () {
@@ -324,43 +335,14 @@
                 rowCount--; // Decrement row count
             });
 
-            // Submit the form via AJAX
-            $('#createScheduleForm').on('submit', function (e) {
-                e.preventDefault(); // Prevent the default form submission
-
-                const eventID = $('#eventID').val(); // Get the eventID
-
-                // Append eventID to each schedule
-                $('#scheduleRows .schedule-row').each(function (index, element) {
-                    $(element).append(`<input type="hidden" name="Schedules[${index}].eventID" value="${eventID}" />`);
-                });
-
-                $.ajax({
-                    url: '@Url.Action("CreateMultiple", "Event")',
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        if (response.success) {
-                            $('#createScheduleModal').modal('hide'); // Close the modal
-                            location.reload(); // Refresh the page to show the new schedules
-                        } else {
-                            alert('Error: ' + response.message); // Show error message
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        // Log the full error response
-                        console.log(xhr.responseText);
-                        alert('An error occurred: ' + xhr.responseText);
-                    }
-                });
-            });
+            
         });
-    </script>
+    </script> *@
 
 
 
     <script>
-                                      document.addEventListener('DOMContentLoaded', function () {
+          document.addEventListener('DOMContentLoaded', function () {
             const attendanceIcons = document.querySelectorAll('.attendance-icon');
 
             attendanceIcons.forEach(icon => {
@@ -409,6 +391,20 @@
                 });
             });
         });
+        
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '@TempData["SuccessMessage"]',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+}
     </script>
 }
 

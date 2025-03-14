@@ -71,7 +71,7 @@ namespace TomorrowsVoices.Controllers
 
             var @events = _context.Events
                 .Include(e => e.VolLocation)
-               .Include(e => e.VolAttendance).ThenInclude(v => v.Volunteer)
+               .Include(e => e.Schedules).ThenInclude(v => v.Volunteer)
                .Where(a => a.Date >= StartDate && a.Date <= EndDate.AddDays(1))
                .Where(s => s.IsArchived == archived)
               .AsNoTracking();
@@ -227,7 +227,7 @@ namespace TomorrowsVoices.Controllers
 
             var @event = await _context.Events
                 .Include(e => e.VolLocation)
-                .Include(e => e.VolAttendance)
+                .Include(e => e.Schedules)
                     .ThenInclude(a => a.Volunteer)
                 .FirstOrDefaultAsync(m => m.ID == id);
 
@@ -308,20 +308,23 @@ namespace TomorrowsVoices.Controllers
                 {
                     // Add the event to the database
                     _context.Add(@event);
+                    string successMessage = $"A new Event called {@event.Name} has been created.";
                     await _context.SaveChangesAsync();
 
                     // Add schedules to the event
-                    if (Schedules != null)
+                    if (Schedules != null && Schedules.Any())
                     {
                         foreach (var schedule in Schedules)
                         {
                             schedule.eventID = @event.ID; // Link the schedule to the event
                             _context.Add(schedule);
                         }
+                        successMessage += $" Volunteer schedules ({Schedules.Count}) have also been created.";
                         await _context.SaveChangesAsync();
 
                     }
 
+                    TempData["SuccessMessage"] = successMessage;
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException dex)
@@ -341,6 +344,7 @@ namespace TomorrowsVoices.Controllers
 
             // If we got this far, something failed; redisplay form
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", @event.VolLocationID);
+            ViewBag.Volunteers = _context.Volunteers.ToList();
             return View(@event);
         }
 
@@ -407,13 +411,12 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Notes,Date,StartTime,EndTime,VolLocationID")] Event @event, string allScheduleIds, string[] presentSchedules)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Notes,Date,StartTime,EndTime,VolLocationID")] Event @event, string allScheduleIds, string[] presentSchedules, List<Schedule> Schedules, List<int> DeletedSchedules)
         {
             if (id != @event.ID)
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try
@@ -465,8 +468,41 @@ namespace TomorrowsVoices.Controllers
                                 }
                             }
                         }
+                        // Handle deleted schedules
+                        if (DeletedSchedules != null)
+                        {
+                            foreach (var scheduleId in DeletedSchedules)
+                            {
+                                var scheduleToDelete = await _context.Schedules.FindAsync(scheduleId);
+                                if (scheduleToDelete != null)
+                                {
+                                    _context.Schedules.Remove(scheduleToDelete);
+                                }
+                            }
+                        }
+
+                        // Handle updated and new schedules
+                        if (Schedules != null)
+                        {
+                            foreach (var schedule in Schedules)
+                            {
+                                if (schedule.ID == 0)
+                                {
+                                    // New schedule
+                                    schedule.eventID = @event.ID;
+                                    _context.Add(schedule);
+                                }
+                                else
+                                {
+                                    // Existing schedule
+                                    _context.Update(schedule);
+                                }
+                            }
+                        }
+
 
                         await _context.SaveChangesAsync();
+                        string successMessage = $"A new Event called {@event.Name} has been edited and saved.";
                         return RedirectToAction(nameof(Index));
                     }
                 }
@@ -483,8 +519,7 @@ namespace TomorrowsVoices.Controllers
                 }
                 catch (DbUpdateException ex)
                 {
-                    // Log the exception for debugging
-                    Console.WriteLine(ex.ToString());
+            
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
             }
@@ -597,7 +632,6 @@ namespace TomorrowsVoices.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateMultiple(List<Schedule> schedules)
@@ -606,20 +640,6 @@ namespace TomorrowsVoices.Controllers
             {
                 try
                 {
-                    // Validate eventID and volunteerID
-                    foreach (var schedule in schedules)
-                    {
-                        if (!_context.Events.Any(e => e.ID == schedule.eventID))
-                        {
-                            return Json(new { success = false, message = $"Invalid eventID: {schedule.eventID}" });
-                        }
-
-                        if (!_context.Volunteers.Any(v => v.ID == schedule.volunteerID))
-                        {
-                            return Json(new { success = false, message = $"Invalid volunteerID: {schedule.volunteerID}" });
-                        }
-                    }
-
                     _context.Schedules.AddRange(schedules); // Add multiple schedules
                     await _context.SaveChangesAsync();
                     return Json(new { success = true });
@@ -627,8 +647,7 @@ namespace TomorrowsVoices.Controllers
                 catch (Exception ex)
                 {
                     // Log the exception (optional)
-                    Console.WriteLine(ex.ToString());
-                    return Json(new { success = false, message = ex.InnerException?.Message ?? ex.Message });
+                    return Json(new { success = false, message = ex.Message });
                 }
             }
 
@@ -639,8 +658,6 @@ namespace TomorrowsVoices.Controllers
                 .ToList();
             return Json(new { success = false, message = "Validation errors: " + string.Join(", ", errors) });
         }
-
-
 
 
         //ImportExcel 

@@ -86,26 +86,19 @@
                         <!-- Initial Schedule Row -->
                         <div class="schedule-row border p-3 mb-3">
                             <div class="form-group">
-                                <label>Shift Start</label>
+                                <label>Shift Schedule Start</label>
                                 <input type="time" class="form-control" name="Schedules[0].ShiftTime" required>
                             </div>
                             <div class="form-group">
-                                <label>Shift End</label>
+                                <label>Shift Schedule End Time </label>
                                 <input type="time" class="form-control" name="Schedules[0].ShiftEnd" required>
                             </div>
-                            <div class="form-group">
-                                <label>Shift Start</label>
-                                <input type="time" class="form-control" name="Schedules[0].ActualStartime" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Shift End</label>
-                                <input type="time" class="form-control" name="Schedules[0].ActualEndTime" required>
-                            </div>
+                     
                     
                             <div class="form-group">
                                 <label>Volunteer</label>
                                 <select class="form-control" name="Schedules[0].volunteerID" required>
-                                    <option value="">Select a Volunteer</option>
+                          
                                     @foreach (var volunteer in ViewBag.Volunteers)
                                     {
                                         <option value="@volunteer.ID">@volunteer.FullName</option>
@@ -134,39 +127,34 @@
             let today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
             document.getElementById("datePicker").value = today; // Set default value
         });
+ 
         let scheduleIndex = 0;
 
-        // Add a new schedule row
+        // Add a new schedule row directly to the main form
         document.getElementById('add-schedule').addEventListener('click', function () {
             const container = document.getElementById('schedules-container');
             const newRow = document.createElement('div');
             newRow.className = 'schedule-row border p-3 mb-3';
             newRow.innerHTML = `
                 <div class="form-group">
-                    <label>Shift Start</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].StartTime" class="form-control" required />
+                    <label>Shift Schedule Start</label>
+                    <input type="time" name="Schedules[${scheduleIndex}].ShiftStart" class="form-control" required />
                 </div>
                 <div class="form-group">
-                    <label>Shift End</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].EndTime" class="form-control" required />
+                    <label>Shift Schedule End</label>
+                    <input type="time" name="Schedules[${scheduleIndex}].ShiftEnd" class="form-control" required />
                 </div>
-                    <div class="form-group">
-                    <label>Shift Start</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].ActualStartTime" class="form-control" required />
-                </div>
-                <div class="form-group">
-                    <label>Shift End</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].ActualEndTime" class="form-control" required />
-                </div>
+         
                 <div class="form-group">
                     <label>Volunteer</label>
-                    <select name="Schedules[${scheduleIndex}].VolunteerID" class="form-control" required>
-                        <option value="">Select a Volunteer</option>
+                                  <select class="form-control" name="Schedules[0].volunteerID" required>
+              
         @foreach (var volunteer in ViewBag.Volunteers)
         {
-                                <option value="@volunteer.ID">@volunteer.FullName</option>
+                                    <option value="@volunteer.ID">@volunteer.FullName</option>
         }
                     </select>
+                
                 </div>
                 <button type="button" class="btn btn-danger btn-sm remove-schedule">Remove</button>
             `;
@@ -181,28 +169,56 @@
             }
         });
 
-        // Submit the modal form via AJAX
+        // Submit the modal form and append data to the main form
         $('#createScheduleForm').on('submit', function (e) {
             e.preventDefault(); // Prevent the default form submission
 
-            $.ajax({
-                url: '@Url.Action("CreateMultiple", "Event")',
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function (response) {
-                    if (response.success) {
-                        $('#createScheduleModal').modal('hide'); // Close the modal
-                        location.reload(); // Refresh the page to show the new schedules
-                    } else {
-                        alert('Error: ' + response.message); // Show error message
-                    }
-                },
-                error: function (xhr, status, error) {
-                    // Log the full error response
-                    console.log(xhr.responseText);
-                    alert('An error occurred: ' + xhr.responseText);
-                }
+            // Get all schedule rows from the modal
+            const scheduleRows = $('#scheduleRows .schedule-row');
+
+            // Append each schedule row to the main form's schedules container
+            scheduleRows.each(function (index, row) {
+                const newRow = document.createElement('div');
+                newRow.className = 'schedule-row border p-3 mb-3';
+                newRow.innerHTML = `
+                    <input type="hidden" name="Schedules[${scheduleIndex}].ShiftStart" value="${$(row).find('[name="Schedules[0].ShiftStart"]').val()}" />
+                    <input type="hidden" name="Schedules[${scheduleIndex}].ShiftEnd" value="${$(row).find('[name="Schedules[0].ShiftEnd"]').val()}" />
+
+                      <select class="form-control" name="Schedules[0].volunteerID" required>
+                      
+        @foreach (var volunteer in ViewBag.Volunteers)
+        {
+                                <option value="@volunteer.ID">@volunteer.FullName</option>
+        }
+                    </select>
+                `;
+                $('#schedules-container').append(newRow);
+                scheduleIndex++;
+            });
+
+            // Close the modal after appending the data
+            $('#createScheduleModal').modal('hide');
+        });
+                $(document).ready(function () {
+            $('select[multiple]').select2({
+                placeholder: "Select Volunteers",
+                allowClear: true
             });
         });
     </script>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '@TempData["SuccessMessage"]',
+                    confirmButtonText: 'OK'
+                });
+            });
+        </script>
+    }
 }
+

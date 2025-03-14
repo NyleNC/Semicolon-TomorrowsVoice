@@ -28,10 +28,11 @@ namespace TomorrowsVoices.Models
 
         [Required(ErrorMessage = "You must select the status of the volunteer.")]
         public bool Status { get; set; }
-
-
-        public int volunteerID { get; set; }  // Foreign Key
+        public int volunteerID { get; set; } // Foreign Key
+ 
+     
         public Volunteer? Volunteer { get; set; }
+        public List<int>? volIDs { get; set; }
         public int eventID { get; set; }
         public Event? Event { get; set; }
         public bool IsArchived { get; set; }
