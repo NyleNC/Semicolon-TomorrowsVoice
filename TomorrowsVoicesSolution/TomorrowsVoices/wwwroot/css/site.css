@@ -918,9 +918,9 @@ label.required:after {
 
 
 /* For Filter/Search popup */
-.uniform-button {
-    width: 200px; /* Adjust width as needed */
-    text-align: center;
+/*.uniform-button {
+    width: 200px;*/ /* Adjust width as needed */
+    /*text-align: center;
 }
 
 .filter-popup {
@@ -931,10 +931,45 @@ label.required:after {
 }
 
     .filter-popup.show {
-        max-height: 500px; /* Adjust based on content size */
-        opacity: 1;
+        max-height: 500px;*/ /* Adjust based on content size */
+        /*opacity: 1;
         padding-bottom: 20px;
-    }
+    }*/
+
+.applied-filter-item {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 6px 12px;
+}
+
+.filter-content {
+    display: flex;
+    align-items: center;
+}
+
+.filter-remove {
+    margin-left: 8px;
+    color: #888;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.filter-remove:hover {
+    color: #d9534f;
+}
+
+.bi-check-circle-fill {
+    color: #6423e7;
+}
+
+
+
+
+
 
 /*For Details View of Vol*/
 .compact-paragraph {

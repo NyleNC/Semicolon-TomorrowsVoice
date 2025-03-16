@@ -29,9 +29,8 @@ namespace TomorrowsVoices.Controllers
         {
             var singers = _context.Singers
                             .Where(d => d.IsArchived == archived)
-                .Include(s => s.Location) // Include Location for each Singer
-
-                .AsNoTracking();
+                            .Include(s => s.Location) // Include Location for each Singer
+                            .AsNoTracking();
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
             string[] sortOptions = new[] { "FullName", "Location" };
@@ -97,23 +96,6 @@ namespace TomorrowsVoices.Controllers
                         .OrderByDescending(s => s.Location.City);
                 }
             }
-            else if (sortField == "Location")
-            {
-                if (sortDirection == "asc")
-                {
-                    singers = singers
-                        .OrderBy(s => s.Location.City)
-                        .ThenBy(s => s.FirstName)
-                        .ThenBy(s => s.LastName);
-                }
-                else
-                {
-                    singers = singers
-                        .OrderByDescending(s => s.Location.City)
-                        .ThenBy(s => s.FirstName)
-                        .ThenBy(s => s.LastName);
-                }
-            }
 
 
             ViewData["sortField"] = sortField;
@@ -126,7 +108,7 @@ namespace TomorrowsVoices.Controllers
 
             var cityList = singers.AsEnumerable()
         .Where(d => d.Location?.City != null)
-        .Select(d => d.Location.City)
+        .Select(d => d.Location?.City)
         .Distinct()
         .Select(city => new SelectListItem
         {

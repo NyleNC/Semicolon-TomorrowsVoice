@@ -49,37 +49,179 @@
 
 
 <form asp-action="Index" method="get">
-         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
-        <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
-        <div class="row">
-            <div class="col-12">
-                <div class="float-end">
-               
-                <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px"/>Calendar View</a>
-                <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
-                        data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
-                    <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
-                    Filter (@ViewData["numberFilters"])
-                </button>
-                <!-- Conditionally render the "Clear" button -->
-                @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
-                {
-                    <a asp-action="Index" class="mb-3 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px">
-                        <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                        Clear
-                    </a>
-                }
+        
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex">
+                    <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
+                            data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                        <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
+                        Filter (@ViewData["numberFilters"])
+                    </button>
+                    <!-- Conditionally render the "Clear" button -->
+                    @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+                    {
+                        <a asp-action="Index" class="mb-3 ms-2 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px">
+                            <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                            Clear
+                        </a>
+                    }
                 </div>
-
+                <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px"/>Calendar View</a>
             </div>
         </div>
-        <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
-            <div class="card card-body">
-                <div class="container">
-                    <div class="row">
-                    <div class="col-lg-2 col-4">
+    </div>
 
+    <!-- Show applied filters -->
+    @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+    {
+        <div class="applied-filters d-flex flex-wrap align-items-center">
+            @if (!string.IsNullOrEmpty(Context.Request.Query["SearchCity"]))
+            {
+                <div class="applied-filter-item me-2 mb-3">
+                    <span class="filter-content">
+                        <i class="bi bi-check-circle-fill me-1"></i>
+                        City: @Context.Request.Query["SearchCity"]
+                    </span>
+                    <a asp-action="Index"
+                       asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                       asp-route-StartDate="@Context.Request.Query["StartDate"]"
+                       asp-route-EndDate="@Context.Request.Query["EndDate"]"
+                       asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
+                       asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
+                       asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                       asp-route-sortField="@ViewData["sortField"]"
+                       asp-route-sortDirection="@ViewData["sortDirection"]"
+                       class="filter-remove">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Context.Request.Query["SearchString"]))
+            {
+                <div class="applied-filter-item me-2 mb-3">
+                    <span class="filter-content">
+                        <i class="bi bi-check-circle-fill me-1"></i>
+                        Name: @Context.Request.Query["SearchString"]
+                    </span>
+                    <a asp-action="Index"
+                       asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                       asp-route-StartDate="@Context.Request.Query["StartDate"]"
+                       asp-route-EndDate="@Context.Request.Query["EndDate"]"
+                       asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
+                       asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
+                       asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                       asp-route-sortField="@ViewData["sortField"]"
+                       asp-route-sortDirection="@ViewData["sortDirection"]"
+                       class="filter-remove">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Context.Request.Query["StartDate"]))
+            {
+                <div class="applied-filter-item me-2 mb-3">
+                    <span class="filter-content">
+                        <i class="bi bi-check-circle-fill me-1"></i>
+                        From Date: @DateTime.Parse(Context.Request.Query["StartDate"]).ToString("MM/dd/yyyy")
+                    </span>
+                    <a asp-action="Index"
+                       asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                       asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                       asp-route-EndDate="@Context.Request.Query["EndDate"]"
+                       asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
+                       asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
+                       asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                       asp-route-sortField="@ViewData["sortField"]"
+                       asp-route-sortDirection="@ViewData["sortDirection"]"
+                       class="filter-remove">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Context.Request.Query["EndDate"]))
+            {
+                <div class="applied-filter-item me-2 mb-3">
+                    <span class="filter-content">
+                        <i class="bi bi-check-circle-fill me-1"></i>
+                        To Date: @DateTime.Parse(Context.Request.Query["EndDate"]).ToString("MM/dd/yyyy")
+                    </span>
+                    <a asp-action="Index"
+                       asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                       asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                       asp-route-StartDate="@Context.Request.Query["StartDate"]"
+                       asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
+                       asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
+                       asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                       asp-route-sortField="@ViewData["sortField"]"
+                       asp-route-sortDirection="@ViewData["sortDirection"]"
+                       class="filter-remove">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Context.Request.Query["minPresentSinger"]))
+            {
+                <div class="applied-filter-item me-2 mb-3">
+                    <span class="filter-content">
+                        <i class="bi bi-check-circle-fill me-1"></i>
+                        Min Present Singers: @Context.Request.Query["minPresentSinger"]
+                    </span>
+                    <a asp-action="Index"
+                       asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                       asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                       asp-route-StartDate="@Context.Request.Query["StartDate"]"
+                       asp-route-EndDate="@Context.Request.Query["EndDate"]"
+                       asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
+                       asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                       asp-route-sortField="@ViewData["sortField"]"
+                       asp-route-sortDirection="@ViewData["sortDirection"]"
+                       class="filter-remove">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Context.Request.Query["maxPresentSinger"]))
+            {
+                <div class="applied-filter-item me-2 mb-3">
+                    <span class="filter-content">
+                        <i class="bi bi-check-circle-fill me-1"></i>
+                        Max Present Singers: @Context.Request.Query["maxPresentSinger"]
+                    </span>
+                    <a asp-action="Index"
+                       asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                       asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                       asp-route-StartDate="@Context.Request.Query["StartDate"]"
+                       asp-route-EndDate="@Context.Request.Query["EndDate"]"
+                       asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
+                       asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                       asp-route-sortField="@ViewData["sortField"]"
+                       asp-route-sortDirection="@ViewData["sortDirection"]"
+                       class="filter-remove">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+
+
+
+    <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
+        <div class="card card-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-2 col-4">
                         <label class="control-label">Filter by City:</label>
                         @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Cities"], new { @class = "form-control" })
                     </div>
@@ -87,7 +229,6 @@
                         <label class="control-label">Search Director Name:</label>
                         @Html.TextBox("SearchString", null, new { @class = "form-control" })
                     </div>
-
                     <div class="col-lg-2 col-6">
                         <label class="control-label">From Date:</label>
                         <input class="form-control" type="date" id="StartDate" name="StartDate"
@@ -98,35 +239,27 @@
                         <input class="form-control" type="date" id="StartDate" name="EndDate"
                                value="@ViewData["EndDate"]" aria-describedby="EndDate" aria-invalid="false">
                     </div>
-
-
-
                     <div class="col-lg-3 col-12">
                         <label class="control-label">Present Singers</label>
                         <div class="d-flex align-items-center gap-1">
                             <label class="control-label d-inline-block">Min:</label>
-                            <input class="form-control" style="width: 64px; padding-left: 10px; padding-right: 6px; " type="number" id="minPresentSinger" name="minPresentSinger"
+                            <input class="form-control" style="width: 64px; padding-left: 10px; padding-right: 6px;" type="number" id="minPresentSinger" name="minPresentSinger"
                                    value="@ViewData["minPresentSinger"]" aria-describedby="minPresentSinger" aria-invalid="false">
-
                             <label class="control-label d-inline-block">Max:</label>
-                            <input class="form-control" style="width: 64px; padding-left: 10px; padding-right: 6px; " type="number" id="maxPresentSinger" name="maxPresentSinger"
+                            <input class="form-control" style="width: 64px; padding-left: 10px; padding-right: 6px;" type="number" id="maxPresentSinger" name="maxPresentSinger"
                                    value="@ViewData["maxPresentSinger"]" aria-describedby="maxPresentSinger" aria-invalid="false">
                         </div>
-
                     </div>
-                    </div>
-				    
-
-               
-              <div class="form-group col-md-2 align-self-start mt-3">
+                </div>
+                <div class="form-group col-md-2 align-self-start mt-3">
                     <input type="submit" name="actionButton" value="Filter"
                            class="btn text-white" style="background-color: #6423e7" />
-
                 </div>
-                </div>
-                
             </div>
         </div>
+    </div>
+
+
     <div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
         <table class="table table-custom p-0 m-0">
             <thead >
@@ -248,7 +381,7 @@
                     </th>
                 </tr>
             </thead>
-</form>
+
             <tbody>
                 @foreach (var item in Model)
                 {
@@ -367,6 +500,7 @@
         </table>
         <partial name="_PagingNavBar" />
         </div>
+</form>
 
 
 

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using System.Text.RegularExpressions;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
 using TomorrowsVoices.Utilities;
@@ -29,7 +25,7 @@ namespace TomorrowsVoices.Controllers
                 .Include(v => v.VolLocation)
                 .AsNoTracking();
             ViewData["ActiveTab"] = archived ? "archived" : "active";
-            string[] sortOptions = new[] { "FullName", "Location", "Email" };
+            string[] sortOptions = new[] { "FullName", "City", "Email" };
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
 
@@ -139,7 +135,7 @@ namespace TomorrowsVoices.Controllers
 
             cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
 
-            ViewData["Cities"] = cityList;
+            ViewData["SearchCity"] = cityList;
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
@@ -186,14 +182,15 @@ namespace TomorrowsVoices.Controllers
         public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Phone,Email,VolLocationID")] Volunteer volunteer)
         {
             try
-            { if (ModelState.IsValid)
+            {
+                if (ModelState.IsValid)
                 {
                     _context.Add(volunteer);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = $"a new Volunteer has been added {volunteer.FullName}";
                     return RedirectToAction(nameof(Index));
                 }
-              
+
 
 
             }
@@ -212,7 +209,7 @@ namespace TomorrowsVoices.Controllers
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", volunteer.VolLocationID);
             return View(volunteer);
         }
-          
+
 
         // GET: Volunteer/Edit/5
         public async Task<IActionResult> Edit(int? id)

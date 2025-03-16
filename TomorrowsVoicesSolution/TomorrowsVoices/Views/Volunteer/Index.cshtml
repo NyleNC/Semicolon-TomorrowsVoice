@@ -129,62 +129,128 @@
     </div>
 </div>
 
+
 <!-- Table for Volunteers -->
+<form asp-action="Index" method="get">
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
 
-    <form asp-action="Index" method="get">
-        <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
-        <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
-        <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
+    <!-- Existing filter toggle button row -->
+    <div class="row">
+        <div class="col-12 d-flex justify-content-start align-items-center">
 
+            <div>
+                <button class="btn btn-white mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
+                        data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                    <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
+                    Filter (@ViewData["numberFilters"])
+                </button>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="float-end">
+                <!-- Clear button -->
+                @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+                {
+                    <a asp-action="Index" class="mb-3 ms-1 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px;">
+                        <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                        Clear
+                    </a>
+                }
+            </div>
 
-                    <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
-                            data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
-                        <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
-                        Filter (@ViewData["numberFilters"])
-                    </button>
-                    <!-- Conditionally render the "Clear" button -->
-                    @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+            <!-- Show applied filters -->
+            @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+            {
+                <div class="applied-filters d-flex flex-wrap align-items-center ms-2">
+                    @if (!string.IsNullOrEmpty(Context.Request.Query["SearchString"]))
                     {
-                        <a asp-action="Index" class="mb-3 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px">
-                            <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                            Clear
-                        </a>
+                        <div class="applied-filter-item me-2 mb-3">
+                            <span class="filter-content">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                Name: @Context.Request.Query["SearchString"]
+                            </span>
+                            <a asp-action="Index"
+                               asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                               asp-route-SearchEmail="@Context.Request.Query["SearchEmail"]"
+                               asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                               asp-route-sortField="@ViewData["sortField"]"
+                               asp-route-sortDirection="@ViewData["sortDirection"]"
+                               class="filter-remove">
+                                <i class="bi bi-x"></i>
+                            </a>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Context.Request.Query["SearchEmail"]))
+                    {
+                        <div class="applied-filter-item me-2 mb-3">
+                            <span class="filter-content">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                Email: @Context.Request.Query["SearchEmail"]
+                            </span>
+                            <a asp-action="Index"
+                               asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                               asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                               asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                               asp-route-sortField="@ViewData["sortField"]"
+                               asp-route-sortDirection="@ViewData["sortDirection"]"
+                               class="filter-remove">
+                                <i class="bi bi-x"></i>
+                            </a>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Context.Request.Query["SearchCity"]))
+                    {
+                        <div class="applied-filter-item me-2 mb-2">
+                            <span class="filter-content">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                City: @Context.Request.Query["SearchCity"]
+                            </span>
+                            <a asp-action="Index"
+                               asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                               asp-route-SearchEmail="@Context.Request.Query["SearchEmail"]"
+                               asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                               asp-route-sortField="@ViewData["sortField"]"
+                               asp-route-sortDirection="@ViewData["sortDirection"]"
+                               class="filter-remove">
+                                <i class="bi bi-x"></i>
+                            </a>
+                        </div>
                     }
                 </div>
-
-            </div>
+            }  
         </div>
+    </div>
 
-
-
-        <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
-            <div class="card card-body">
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <label class="control-label">Search by Name:</label>
-                        @Html.TextBox("SearchString", null, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="control-label">Filter by City:</label>
-                            @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Cities"], new { @class = "form-control" })
-                        </div>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="control-label">Search by Email:</label>
-                        @Html.TextBox("SearchEmail", null, new { @class = "form-control" })
+    <!-- collapsible filter panel -->
+    <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
+        <div class="card card-body">
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label class="control-label">Search by Name:</label>
+                    @Html.TextBox("SearchString", Context.Request.Query["SearchString"], new { @class = "form-control" })
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">Filter by City:</label>
+                    @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["SearchCity"], new { @class = "form-control" })
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">Filter by Email:</label>
+                    @Html.TextBox("SearchEmail", Context.Request.Query["SearchEmail"], new { @class = "form-control" })
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">&nbsp;</label>
+                    <div>
+                        <input type="submit" name="actionButton" value="Filter"
+                               class="btn text-white" style="background-color: #6423e7" />
                     </div>
                 </div>
-                <div class="form-group col-md-2 align-self-start">
-                    <input type="submit" name="actionButton" value="Filter"
-                           class="btn text-white" style="background-color: #6423e7" />
-                </div>
             </div>
         </div>
+    </div>
+
+
+    <div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
         <table class="table table-custom p-0 m-0">
             <thead>
                 <tr>
@@ -273,7 +339,7 @@
                 </th>
                 </tr>
             </thead>
-    </form>
+
             <tbody>
                 @foreach (var item in Model)
                 {
@@ -355,7 +421,7 @@
                                             {
                                                 <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
                                                     <input type="hidden" name="id" value="@item.ID" />
-                                        <button type="submit" class="dropdown-item" style=" font-size: 1rem">
+                                                    <button type="submit" class="dropdown-item" style=" font-size: 1rem">
                                                         <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
                                                     </button>
                                                 </form>
@@ -364,7 +430,7 @@
                                             {
                                                 <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');">
                                                     <input type="hidden" name="id" value="@item.ID" />
-                                        <button type="submit" class="dropdown-item" style=" font-size: 1rem">
+                                                    <button type="submit" class="dropdown-item" style=" font-size: 1rem">
                                                         <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Restore
                                                     </button>
                                                 </form>
@@ -379,8 +445,9 @@
             </tbody>
         </table>
         <partial name="_PagingNavBar" />
+    </div>
+</form>
 
-</div>
 
 
 
