@@ -106,42 +106,61 @@ namespace TomorrowsVoices.Data
             }
         }
 
+
         private static void SeedLocations(TomorrowsVoicesContext context)
         {
-            if (!context.Locations.Any())
+            if (!context.Locations.Any() && !context.DirectorLocations.Any())
             {
-                context.Locations.AddRange(
-                    new Location
-                    {
-                        City = "Toronto",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Anais" && d.LastName == "Kelsey-Verdecchia").ID
-                    },
-                    new Location
-                    {
-                        City = "Saskatoon",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Brian" && d.LastName == "Paul").ID
-                    },
-                    new Location
-                    {
-                        City = "St. Catharines",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Mendelt" && d.LastName == "Hoekstra").ID
-                    },
-                    new Location
-                    {
-                        City ="Vancouver",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Monique" && d.LastName == "Hoekstra").ID
-                    },
-                    new Location
-                    {
-                        City = "Hamilton",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Melissa" && d.LastName == "Dutch").ID
-                    },
-                    new Location
-                    {
-                        City = "Surrey",
-                        DirectorID = context.Directors.FirstOrDefault(d => d.FirstName == "Frances" && d.LastName == "Olson").ID
-                    }
-                );
+                // Retrieve Directors from the database
+                var directors = context.Directors.ToList();
+
+                // Create locations
+                var locations = new List<Location>
+        {
+            new Location { City = "Toronto" },
+            new Location { City = "Saskatoon" },
+            new Location { City = "St. Catharines" },
+            new Location { City = "Vancouver" },
+            new Location { City = "Hamilton" },
+            new Location { City = "Surrey" }
+        };
+
+                context.Locations.AddRange(locations);
+                context.SaveChanges();
+
+                // Create many-to-many relationships (DirectorLocation)
+                var directorLocations = new List<DirectorLocation>
+        {
+            new DirectorLocation {
+                DirectorID = directors.FirstOrDefault(d => d.FirstName == "Anais" && d.LastName == "Kelsey-Verdecchia")?.ID ?? 0,
+                LocationID = locations.FirstOrDefault(l => l.City == "Toronto")?.ID ?? 0
+            },
+            new DirectorLocation {
+                DirectorID = directors.FirstOrDefault(d => d.FirstName == "Brian" && d.LastName == "Paul")?.ID ?? 0,
+                LocationID = locations.FirstOrDefault(l => l.City == "Saskatoon")?.ID ?? 0
+            },
+            new DirectorLocation {
+                DirectorID = directors.FirstOrDefault(d => d.FirstName == "Mendelt" && d.LastName == "Hoekstra")?.ID ?? 0,
+                LocationID = locations.FirstOrDefault(l => l.City == "St. Catharines")?.ID ?? 0
+            },
+            new DirectorLocation {
+                DirectorID = directors.FirstOrDefault(d => d.FirstName == "Monique" && d.LastName == "Hoekstra")?.ID ?? 0,
+                LocationID = locations.FirstOrDefault(l => l.City == "Vancouver")?.ID ?? 0
+            },
+            new DirectorLocation {
+                DirectorID = directors.FirstOrDefault(d => d.FirstName == "Melissa" && d.LastName == "Dutch")?.ID ?? 0,
+                LocationID = locations.FirstOrDefault(l => l.City == "Hamilton")?.ID ?? 0
+            },
+            new DirectorLocation {
+                DirectorID = directors.FirstOrDefault(d => d.FirstName == "Frances" && d.LastName == "Olson")?.ID ?? 0,
+                LocationID = locations.FirstOrDefault(l => l.City == "Surrey")?.ID ?? 0
+            }
+        };
+
+                // Remove any invalid (0) ID entries
+                directorLocations = directorLocations.Where(dl => dl.DirectorID > 0 && dl.LocationID > 0).ToList();
+
+                context.DirectorLocations.AddRange(directorLocations);
                 context.SaveChanges();
             }
         }

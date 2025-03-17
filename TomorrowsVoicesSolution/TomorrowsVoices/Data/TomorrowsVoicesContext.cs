@@ -19,6 +19,7 @@ namespace TomorrowsVoices.Data
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Singer> Singers { get; set; }
 
+        public DbSet<DirectorLocation> DirectorLocations { get; set; }
 
         //Db sets for all the Volunteer Management classes
         public DbSet<Event> Events  { get; set; }
@@ -30,15 +31,22 @@ namespace TomorrowsVoices.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //many to many director to location
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<DirectorLocation>()
+                .HasKey(dl => new { dl.DirectorID, dl.LocationID });
 
-            //one to one relationship between location and director
-            modelBuilder.Entity<Location>()
-                .HasOne(l => l.Director)
-                .WithOne(d => d.Location)
-                .HasForeignKey<Location>(l => l.DirectorID)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<DirectorLocation>()
+                .HasOne(dl => dl.Director)
+                .WithMany(d => d.DirectorLocations)
+                .HasForeignKey(dl => dl.DirectorID)
+                     .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DirectorLocation>()
+                .HasOne(dl => dl.Location)
+                .WithMany(l => l.DirectorLocations)
+                .HasForeignKey(dl => dl.LocationID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // PREVENT CASCADE Delete FROM VOLUNTEER LOCATION TO VOLUNTEER
             modelBuilder.Entity<VolLocation>()
