@@ -1,4 +1,4 @@
-﻿ using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.IO;
@@ -25,7 +25,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Singer
-        public async Task<IActionResult> Index( int? page, int? pageSizeID, string? actionButton, string? SearchString , string? SearchCity, bool archived = false, string sortDirection = "asc", string sortField = "Name", string SingerEmergencyContactName = "EmergencyContactName", string SingerEmergencyContactNumber = "EmergencyContactNumber")
+        public async Task<IActionResult> Index(int? page, int? pageSizeID, string? actionButton, string? SearchString, string? SearchCity, bool archived = false, string sortDirection = "asc", string sortField = "Name", string SingerEmergencyContactName = "EmergencyContactName", string SingerEmergencyContactNumber = "EmergencyContactNumber")
         {
             var singers = _context.Singers
                             .Where(d => d.IsArchived == archived)
@@ -392,7 +392,7 @@ namespace TomorrowsVoices.Controllers
                                 }
 
                                 // Handle location
-                                var location = _context.Locations.FirstOrDefault(l => l.City == cityName && l.DirectorID != null);
+                                var location = _context.Locations.FirstOrDefault(l => l.City == cityName && l.DirectorLocations.FirstOrDefault().DirectorID != null);
                                 if (location == null)
                                 {
                                     errorCount++;

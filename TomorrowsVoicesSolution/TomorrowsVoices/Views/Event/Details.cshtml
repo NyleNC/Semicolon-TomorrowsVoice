@@ -1,5 +1,4 @@
-﻿@using TomorrowsVoices.ViewModels
-@model TomorrowsVoices.Models.Event
+﻿@model TomorrowsVoices.Models.Event
 
 @{
     ViewData["Title"] = "Details";
@@ -16,280 +15,69 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>   
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd class = "col-sm-10">
-			@Html.DisplayFor(model => model.Date)
-        </dd>
-
-        <dt class="col-sm-2">
-           <strong>Time</strong> 
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.StartTime) - @Html.DisplayFor(model => model.EndTime)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-    
-        <dt class="col-sm-2">
-           City
+        <div class="col-sm-2">
+            <strong>Time</strong> 
+        </div>
+        <div class="col-sm-10">
+            @Html.DisplayFor(model => model.Start) - @Html.DisplayFor(model => model.End)
+        </div>
+        <dt class = "detail-item">
+            @Html.DisplayNameFor(model => model.VolLocation)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.VolLocation.City)
         </dd>
     </dl>
-<div class="mt-4">
-    <div class="text-black mb-2" style="border-bottom: 3px solid gray">
-        <dt style="font-size: 18px">Schedules</dt>
-    </div>
+    <div class="mt-4">
+        <div class="text-black mb-2" style="border-bottom: 3px solid gray">
+            <dt style="font-size: 18px">Schedules</dt>
+        </div>
         <div class="container">
             <div class="row">
-                @if (ViewBag.ScheduleViewModel != null)
+                @if (Model.VolSchedules.Any())
                 {
-                    var scheduleViewModel = ViewBag.ScheduleViewModel as ScheduleViewModel;
+                    var groupedSchedules = Model.VolSchedules
+                    .Where(a => a.ScheduledStart != null && a.ScheduledEnd != null)
+                        .GroupBy(a => new { a.ScheduledStart, a.ScheduledEnd });
 
-                    <!-- Morning Shift -->
-                    <div class="col-lg-4 col-md-6 col-sm-12 p-2">
-                        <div class="card" style="background-color: #e1ccfc">
-                            <div class="card-body">
-                                <div class="card-title" style="font-size: 17px; font-weight: 700;">
-                                    Morning Shift (@scheduleViewModel.MorningShiftStartTime-@scheduleViewModel.MorningShiftEndTime)
-                                </div>
-                                <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
-                                    @foreach (var schedule in scheduleViewModel.MorningShifts)
-                                    {
-                                        <li class="d-flex justify-content-between align-content-center mb-2">
-                                            <div>@schedule.Volunteer?.FullName</div>
-                                            <div>
-                                                (@schedule.ActualStartTime - @schedule.ActualEndTime)
-                                            </div>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Afternoon Shift -->
-                    <div class="col-lg-4 col-md-6 col-sm-12 p-2">
-                        <div class="card" style="background-color: #e1ccfc">
-                            <div class="card-body">
-                                <div class="card-title" style="font-size: 17px; font-weight: 700;">
-                                    Afternoon Shift (@scheduleViewModel.AfternoonShiftStartTime-@scheduleViewModel.AfternoonShiftEndTime)
-                                </div>
-                                <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
-                                    @foreach (var schedule in scheduleViewModel.AfternoonShifts)
-                                    {
-                                        <li class="d-flex justify-content-between align-content-center mb-2">
-                                            <div>@schedule.Volunteer?.FullName</div>
-                                            <div>
-                                                (@schedule.ActualStartTime - @schedule.ActualEndTime)
-                                            </div>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Evening Shift -->
-                    <div class="col-lg-4 col-md-6 col-sm-12 p-2">
-                        <div class="card" style="background-color: #e1ccfc">
-                            <div class="card-body">
-                                <div class="card-title" style="font-size: 17px; font-weight: 700;">
-                                    Evening Shift (@scheduleViewModel.EveningShiftStartTime-@scheduleViewModel.EveningShiftEndTime)
-                                </div>
-                                <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
-                                    @foreach (var schedule in scheduleViewModel.EveningShifts)
-                                    {
-                                        <li class="d-flex justify-content-between align-content-center mb-2">
-                                            <div>@schedule.Volunteer?.FullName</div>
-                                            <div>
-                                                (@schedule.ActualStartTime - @schedule.ActualEndTime)
-                                            </div>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <p>No scheduled volunteers available.</p>
-                }
-            </div>
-        </div>
-    </div>
-
-    <div class="text-black mb-4 mt-4" style="border-bottom: 3px solid gray">
-        <dt style="font-size: 18px">Track Attendances</dt>
-    </div>
-    <div class="row">
-        <div class="col-lg-6 col-md-10 col-sm-12 col-12">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Volunteer</th>
-                        <th>Attendance</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (ViewBag.ScheduleViewModel != null)
+                    @foreach (var schedule in groupedSchedules)
                     {
-                        var scheduleViewModel = ViewBag.ScheduleViewModel as ScheduleViewModel;
-                        var allShifts = scheduleViewModel.MorningShifts
-                        .Concat(scheduleViewModel.AfternoonShifts)
-                        .Concat(scheduleViewModel.EveningShifts);
-
-
-                        foreach (var shift in allShifts)
+                        if (schedule.All(a => a.ScheduledStart == schedule.Key.ScheduledStart &&
+                        a.ScheduledEnd == schedule.Key.ScheduledEnd))
                         {
-                            <tr>
-                                <td class="@(shift.IsPresent ? "present-row" : "absent-row")">@shift.Volunteer?.FullName</td>
-                                <td>
-                                    <span class="attendance-icon" data-volunteer-id="@shift.Volunteer?.ID" data-is-present="@shift.IsPresent.ToString().ToLower()">
-                                        <span class="present-icon" style="display: @(shift.IsPresent ? "inline" : "none");">✔</span>
-                                        <span class="absent-icon" style="display: @(shift.IsPresent ? "none" : "inline");">✖</span>
-                                    </span>
-                                </td>
+                            <div class="col-lg-3 col-md-4 col-sm-6 p-2">
+                                <div class="card" style="background-color: #e1ccfc">
 
-                            </tr>
-                        }
+                                    <div class="card-body ">
+
+                                        <div class="card-title" style="font-size: 17px; font-weight: 700; ">
+                                            @schedule.Key.ScheduledStart.ToString() - @schedule.Key.ScheduledEnd.ToString()
+                                        </div>
+                                        <ul class="card-text list-unstyled" style="min-height: 130px; max-height: 130px; overflow-y: auto;">
+
+                                            @foreach (var attendance in schedule)
+                                            {
+                                                @foreach (var volAttendance in attendance.VolAttendances)
+                                                {
+                                                    @if (volAttendance.Status == true)
+                                                    {
+                                                        <li>@volAttendance.Volunteer.FirstName @volAttendance.Volunteer.LastName</li>
+                                                    }
+                                                  
+                                                }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     }
-                    else
-                    {
-                        <tr>
-                            <td colspan="2">No records found</td>
-                        </tr>
-                    }
-
-                </tbody>
-
-            </table>
+                }
+            }
+            else
+            {
+                <p>No schedules available.</p>
+            }
         </div>
-
-        <div class="text-black mb-4 mt-4" style="border-bottom: 3px solid gray">
-            <dt style="font-size: 18px">Total Hours per Volunteer</dt>
-        </div>
-        <div class="row">
-            <div class="col-lg-6 col-md-10 col-sm-12 col-12">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Volunteer</th>
-                            <th>Shift Start</th>
-                            <th>Shift End</th>
-                            <th>Total Hours</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (ViewBag.ScheduleViewModel != null)
-                        {
-                            var scheduleViewModel = ViewBag.ScheduleViewModel as ScheduleViewModel;
-                            foreach (var schedule in scheduleViewModel.MorningShifts
-                            .Concat(scheduleViewModel.AfternoonShifts)
-                            .Concat(scheduleViewModel.EveningShifts))
-                            {
-                                <tr>
-                                    <td>@schedule.Volunteer?.FullName</td>
-                                    <td>
-                                        @if (schedule.ActualStartTime.HasValue)
-                                        {
-                                            <span>@schedule.ActualStartTime.Value.ToString("hh:mm tt")</span>
-                                        }
-                                        else
-                                        {
-                                            <span>Not recorded</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (schedule.ActualEndTime.HasValue)
-                                        {
-                                            <span>@schedule.ActualEndTime.Value.ToString("hh:mm tt")</span>
-                                        }
-                                        else
-                                        {
-                                            <span>Not recorded</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (schedule.ActualStartTime.HasValue && schedule.ActualEndTime.HasValue)
-                                        {
-                                            <span>@((schedule.ActualEndTime.Value - schedule.ActualStartTime.Value).TotalHours.ToString("F2")) hours</span>
-                                        }
-                                        else
-                                        {
-                                            <span>Not recorded</span>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="4">No volunteer hours available.</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-</dl>
- <dl class="row mt-4">
-<dt class="col-sm-2">
-    @Html.DisplayNameFor(model => model.Notes)
-</dt>
-<dd class="col-sm-10">
-    @Html.DisplayFor(model => model.Notes)
-</dd>
-</dl>
-
-    <div class="mb-3">
-        @if (!Model.IsArchived)
-        {
-            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning">
-                <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
-            </a>
-        }
-        else
-        {
-            <button class="btn btn-warning" disabled title="Archived Directors cannot be edited.">
-                <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
-            </button>
-        }
     </div>
+</div>
 
-
-<a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
-
-
-<style>
-    .present-row {
-        background-color: lightgreen;
-    }
-
-    .absent-row {
-        background-color: lightcoral;
-    }
-
-    .attendance-icon {
-        font-size: 1.2em;
-        cursor: pointer;
-    }
-
-    .present-icon {
-        color: darkgreen;
-    }
-
-    .absent-icon {
-        color: darkred;
-    }
-</style>

@@ -19,12 +19,12 @@
                 <span class="visually-hidden">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu" style="border-radius: 10px" />
-                <li style="margin-right: 18px">
-                    <button type="button" class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#importExcelModal" >
-                        <img src="~/Images/import.png" alt="import icon" style="height: 24px; width: auto; margin-right: 8px" />
-                        Import Excel
-                    </button>
-                </li>
+            <li style="margin-right: 18px">
+                <button type="button" class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#importExcelModal">
+                    <img src="~/Images/import.png" alt="import icon" style="height: 24px; width: auto; margin-right: 8px" />
+                    Import Excel
+                </button>
+            </li>
             </ul>
         </div>
     </div>
@@ -135,155 +135,235 @@
             @Html.Raw(TempData["Success"])
         </div>
     }
+  
+    <!-- Existing filter toggle button row -->
     <div class="row">
-        <div class="col-12">
-            <div class="float-end">
+        <div class="col-12 d-flex justify-content-start align-items-center">
 
-                <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
+            <div>
+                <button class="btn btn-white mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
                         data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                     <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
                     Filter (@ViewData["numberFilters"])
                 </button>
-                <!-- Conditionally render the "Clear" button -->
+                <!-- Clear button -->
                 @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
                 {
-                    <a asp-action="Index" class="mb-3 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px">
+                    <a asp-action="Index" class="mb-3 ms-1 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px;">
                         <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
                         Clear
                     </a>
                 }
             </div>
 
+            <!-- Show applied filters -->
+            @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+            {
+                <div class="applied-filters d-flex flex-wrap align-items-center ms-2">
+                    @if (!string.IsNullOrEmpty(Context.Request.Query["SearchString"]))
+                    {
+                        <div class="applied-filter-item me-2 mb-3">
+                            <span class="filter-content">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                Name: @Context.Request.Query["SearchString"]
+                            </span>
+                            <a asp-action="Index"
+                               asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                               asp-route-SearchEmail="@Context.Request.Query["SearchEmail"]"
+                               asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                               asp-route-sortField="@ViewData["sortField"]"
+                               asp-route-sortDirection="@ViewData["sortDirection"]"
+                               class="filter-remove">
+                                <i class="bi bi-x"></i>
+                            </a>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Context.Request.Query["SearchCity"]))
+                    {
+                        <div class="applied-filter-item me-2 mb-3">
+                            <span class="filter-content">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                City: @Context.Request.Query["SearchCity"]
+                            </span>
+                            <a asp-action="Index"
+                               asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                               asp-route-SearchEmail="@Context.Request.Query["SearchEmail"]"
+                               asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                               asp-route-sortField="@ViewData["sortField"]"
+                               asp-route-sortDirection="@ViewData["sortDirection"]"
+                               class="filter-remove">
+                                <i class="bi bi-x"></i>
+                            </a>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Context.Request.Query["SearchEmail"]))
+                    {
+                        <div class="applied-filter-item me-2 mb-3">
+                            <span class="filter-content">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                Email: @Context.Request.Query["SearchEmail"]
+                            </span>
+                            <a asp-action="Index"
+                               asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                               asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                               asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                               asp-route-sortField="@ViewData["sortField"]"
+                               asp-route-sortDirection="@ViewData["sortDirection"]"
+                               class="filter-remove">
+                                <i class="bi bi-x"></i>
+                            </a>
+                        </div>
+                    }
+
+                </div>
+            }
         </div>
     </div>
+
+    <!-- collapsible filter panel -->
     <div class="collapse mb-3 @ViewData["ShowFilter"]" id="collapseFilter">
         <div class="card card-body">
             <div class="row">
                 <div class="form-group col-md-3">
-                    <label class="control-label">Search by Director Name:</label>
-                    @Html.TextBox("SearchString", null, new { @class = "form-control" })
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label class="control-label">Filter by City:</label>
-                        @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Cities"], new { @class = "form-control" })
-                    </div>
+                    <label class="control-label">Search by Name:</label>
+                    @Html.TextBox("SearchString", Context.Request.Query["SearchString"], new { @class = "form-control" })
                 </div>
                 <div class="form-group col-md-3">
-                    <label class="control-label">Search by Email:</label>
-                    @Html.TextBox("SearchEmail", null, new { @class = "form-control" })
+                    <label class="control-label">Filter by City:</label>
+                    @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Cities"], new { @class = "form-control" })
                 </div>
-            </div>
-            <div class="form-group col-md-2 align-self-start">
-                <input type="submit" name="actionButton" value="Filter"
-                       class="btn text-white" style="background-color: #6423e7" />
+                <div class="form-group col-md-3">
+                    <label class="control-label">Filter by Email:</label>
+                    @Html.TextBox("SearchEmail", Context.Request.Query["SearchEmail"], new { @class = "form-control" })
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">&nbsp;</label>
+                    <div>
+                        <input type="submit" name="actionButton" value="Filter"
+                               class="btn text-white" style="background-color: #6423e7" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+
+
+
     <div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
         <table class="table table-custom p-0 m-0">
-        <thead >
-            <tr>
-                <th>
-                    <button  type="submit" name="actionButton" value="Director" data-sort="true" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Director')">
-                        Director
-                        @if (ViewData["sortField"]?.ToString() == "Director")
-                        {
-                            if (ViewData["sortDirection"]?.ToString() == "asc")
+            <thead>
+                <tr>
+                    <th>
+                        <button type="submit" name="actionButton" value="Director" data-sort="true" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Director')">
+                            Director
+                            @if (ViewData["sortField"]?.ToString() == "Director")
                             {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
+                                if (ViewData["sortDirection"]?.ToString() == "asc")
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
                             }
                             else
                             {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
                             }
-                        }
-                        else
-                        {
-                            <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
-                        }
-                    </button>
-                </th>
-                <th>
-                    <button  type="button" name="actionButton" value="City" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'City')">
-                        City
-                        @if (ViewData["sortField"]?.ToString() == "City")
-                        {
-                            if (ViewData["sortDirection"]?.ToString() == "asc")
+                        </button>
+                    </th>
+                    <th>
+                        <button type="button" name="actionButton" value="City" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'City')">
+                            City
+                            @if (ViewData["sortField"]?.ToString() == "City")
                             {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
+                                if (ViewData["sortDirection"]?.ToString() == "asc")
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
                             }
                             else
                             {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
                             }
-                        }
-                        else
-                        {
-                            <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
-                        }
-                    </button>
-                </th>
-                <th>
-                    <button  type="button" name="actionButton" value="Email" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'Email')">
-                        Email
-                        @if (ViewData["sortField"]?.ToString() == "Email")
-                        {
-                            if (ViewData["sortDirection"]?.ToString() == "asc")
+                        </button>
+                    </th>
+                    <th>
+                        <button type="button" name="actionButton" value="Email" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'Email')">
+                            Email
+                            @if (ViewData["sortField"]?.ToString() == "Email")
                             {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
+                                if (ViewData["sortDirection"]?.ToString() == "asc")
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
                             }
                             else
                             {
-                                <div style="position: relative; display: inline-block;">
-                                    <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                    <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                </div>
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
                             }
-                        }
-                        else
-                        {
-                            <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
-                        }
-                    </button>
-                </th>
+                        </button>
+                    </th>
                     <th>
                         <button style="cursor: default;" type="button" name="actionButton" value="Actions" class="btn btn-toolbar no-pointer-events">Actions</button>
                     </th>
-            </tr>
-        </thead>
+                </tr>
+            </thead>
 </form>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DirectorFullName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Location.City)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Email)
-                    </td>
-                    <td>
+<tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorFullName)
+            </td>
+            <td>
+                @if (item.DirectorLocations != null && item.DirectorLocations.Any())
+                {
+                    <span>@item.DirectorLocations.FirstOrDefault()?.Location?.City</span>
+                }
+                else
+                {
+                    <span>No City Assigned</span>
+                }
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
                 <!-- Desktop View (Buttons) -->
-     
+
                 <div class="d-none d-lg-inline">
                     @if (item.IsArchived)
                     {
@@ -366,12 +446,12 @@
                         </ul>
                     </div>
                 </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
+            </td>
+        </tr>
+    }
+</tbody>
     </table>
-    <partial name="_PagingNavBar" />
+<partial name="_PagingNavBar" />
     </div>
 
 <script>

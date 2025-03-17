@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TomorrowsVoices.Data;
 
@@ -10,9 +11,11 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    partial class TomorrowsVoicesContextModelSnapshot : ModelSnapshot
+    [Migration("20250316204503_EntireNewApproach")]
+    partial class EntireNewApproach
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -68,27 +71,15 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("LocationID")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("ID");
 
                     b.HasIndex("Email")
                         .IsUnique();
 
                     b.ToTable("Directors");
-                });
-
-            modelBuilder.Entity("TomorrowsVoices.Models.DirectorLocation", b =>
-                {
-                    b.Property<int>("DirectorID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("LocationID")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("DirectorID", "LocationID");
-
-                    b.HasIndex("LocationID");
-
-                    b.ToTable("DirectorLocations");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Event", b =>
@@ -139,7 +130,13 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Property<string>("City")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("DirectorID")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("ID");
+
+                    b.HasIndex("DirectorID")
+                        .IsUnique();
 
                     b.ToTable("Locations");
                 });
@@ -439,25 +436,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Navigation("Singer");
                 });
 
-            modelBuilder.Entity("TomorrowsVoices.Models.DirectorLocation", b =>
-                {
-                    b.HasOne("TomorrowsVoices.Models.Director", "Director")
-                        .WithMany("DirectorLocations")
-                        .HasForeignKey("DirectorID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("TomorrowsVoices.Models.Location", "Location")
-                        .WithMany("DirectorLocations")
-                        .HasForeignKey("LocationID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Director");
-
-                    b.Navigation("Location");
-                });
-
             modelBuilder.Entity("TomorrowsVoices.Models.Event", b =>
                 {
                     b.HasOne("TomorrowsVoices.Models.VolLocation", "VolLocation")
@@ -467,6 +445,16 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .IsRequired();
 
                     b.Navigation("VolLocation");
+                });
+
+            modelBuilder.Entity("TomorrowsVoices.Models.Location", b =>
+                {
+                    b.HasOne("TomorrowsVoices.Models.Director", "Director")
+                        .WithOne("Location")
+                        .HasForeignKey("TomorrowsVoices.Models.Location", "DirectorID")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Director");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Note", b =>
@@ -567,7 +555,7 @@ namespace TomorrowsVoices.Data.TVMigrations
 
             modelBuilder.Entity("TomorrowsVoices.Models.Director", b =>
                 {
-                    b.Navigation("DirectorLocations");
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Event", b =>
@@ -577,8 +565,6 @@ namespace TomorrowsVoices.Data.TVMigrations
 
             modelBuilder.Entity("TomorrowsVoices.Models.Location", b =>
                 {
-                    b.Navigation("DirectorLocations");
-
                     b.Navigation("Session");
 
                     b.Navigation("Singer");

@@ -29,32 +29,32 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Session
-        public async Task<IActionResult> Index( string? SearchString, int? minPresentSinger, int? maxPresentSinger,DateTime StartDate, DateTime EndDate, string? SearchCity, int? page, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Session", int? pageSizeID = 10)
+        public async Task<IActionResult> Index(string? SearchString, int? minPresentSinger, int? maxPresentSinger, DateTime StartDate, DateTime EndDate, string? SearchCity, int? page, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Session", int? pageSizeID = 10)
         {
-          
-            string[] sortOptions = new[] { "City", "Date", "Attendance","Director" };
+
+            string[] sortOptions = new[] { "City", "Date", "Attendance", "Director" };
             int numberFilters = 0;
 
 
 
-			if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
-			{
-				page = 1;//Reset page to start
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1;//Reset page to start
 
-				if (sortOptions.Contains(actionButton))
-				{
-					if (actionButton == sortField) //Reverse order on same field
-					{
-						sortDirection = sortDirection == "asc" ? "desc" : "asc";
-					}
-					sortField = actionButton; //Sort by the button clicked
-				}
-			}
+                if (sortOptions.Contains(actionButton))
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //Sort by the button clicked
+                }
+            }
 
 
-			//Always Filter by date range
-			//If first time loading the page, set the date range filter based on the values in the database
-			if (EndDate == DateTime.MinValue)
+            //Always Filter by date range
+            //If first time loading the page, set the date range filter based on the values in the database
+            if (EndDate == DateTime.MinValue)
             {
                 StartDate = _context.Sessions.Min(o => o.Date).Value;
                 EndDate = _context.Sessions.Max(o => o.Date).Value;
@@ -71,11 +71,14 @@ namespace TomorrowsVoices.Controllers
             ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
 
             var sessions = _context.Sessions
-              .Include(s => s.Location).ThenInclude(l => l.Director)
-              .Include(s => s.Attendance).ThenInclude(a => a.Singer)
-               .Where(a => a.Date >= StartDate && a.Date <= EndDate.AddDays(1))
-               .Where(s=>s.IsArchived==archived)
-              .AsNoTracking();
+                .Include(s => s.Location) // Include Location
+                .ThenInclude(l => l.DirectorLocations) // Include DirectorLocations
+                .ThenInclude(dl => dl.Director) // Include Director
+                .Include(s => s.Attendance) // Include Attendance
+                .ThenInclude(a => a.Singer) // Include Singer
+                .Where(a => a.Date >= StartDate && a.Date <= EndDate.AddDays(1))
+                .Where(s => s.IsArchived == archived)
+                .AsNoTracking();
 
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
@@ -83,9 +86,9 @@ namespace TomorrowsVoices.Controllers
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                sessions = sessions.Where(p => p.Location.Director.LastName != null && p.Location.Director.LastName.ToLower().Contains(SearchString.ToLower())
-                                                || p.Location.Director.FirstName != null && p.Location.Director.FirstName.ToLower().Contains(SearchString.ToLower())
-                                                 || ((p.Location.Director.FirstName + " " + p.Location.Director.LastName).ToLower().Contains(SearchString.ToLower())));
+                sessions = sessions.Where(p => p.Location.DirectorLocations.FirstOrDefault().Director.LastName != null && p.Location.DirectorLocations.FirstOrDefault().Director.LastName.ToLower().Contains(SearchString.ToLower())
+                                                || p.Location.DirectorLocations.FirstOrDefault().Director.FirstName != null && p.Location.DirectorLocations.FirstOrDefault().Director.FirstName.ToLower().Contains(SearchString.ToLower())
+                                                 || ((p.Location.DirectorLocations.FirstOrDefault().Director.FirstName + " " + p.Location.DirectorLocations.FirstOrDefault().Director.LastName).ToLower().Contains(SearchString.ToLower())));
 
                 numberFilters++;
             }
@@ -104,14 +107,14 @@ namespace TomorrowsVoices.Controllers
             if (!string.IsNullOrEmpty(SearchCity))
             {
 
-            
-                    sessions = sessions
-                 .Where(p => p.Location.City != null && p.Location.City == SearchCity);
-                    numberFilters++;
+
+                sessions = sessions
+             .Where(p => p.Location.City != null && p.Location.City == SearchCity);
+                numberFilters++;
             }
 
-               
-            
+
+
 
 
             // sorting functionality
@@ -120,14 +123,14 @@ namespace TomorrowsVoices.Controllers
                 if (sortDirection == "asc")
                 {
                     sessions = sessions
-                        .OrderBy(p => p.Location.Director.Location.Director.FirstName)
-                        .ThenBy(p => p.Location.Director.Location.Director.LastName);
+                        .OrderBy(p => p.Location.DirectorLocations.FirstOrDefault().Director.FirstName)
+                        .ThenBy(p => p.Location.DirectorLocations.FirstOrDefault().Director.LastName);
                 }
                 else
                 {
                     sessions = sessions
-                        .OrderByDescending(p => p.Location.Director.Location.Director.FirstName)
-                        .ThenBy(p => p.Location.Director.Location.Director.LastName);
+                        .OrderByDescending(p => p.Location.DirectorLocations.FirstOrDefault().Director.FirstName)
+                        .ThenBy(p => p.Location.DirectorLocations.FirstOrDefault().Director.LastName);
                 }
             }
             else if (sortField == "Date")
@@ -162,19 +165,19 @@ namespace TomorrowsVoices.Controllers
                 {
                     sessions = sessions
                         .OrderBy(p => p.Location.City)
-                           .ThenBy(p => p.Location.Director.FirstName)
-                        .ThenBy(p => p.Location.Director.LastName);
+                           .ThenBy(p => p.Location.DirectorLocations.FirstOrDefault().Director.FirstName)
+                        .ThenBy(p => p.Location.DirectorLocations.FirstOrDefault().Director.LastName);
                 }
                 else
                 {
                     sessions = sessions
                         .OrderByDescending(p => p.Location.City)
-                              .ThenBy(p => p.Location.Director.FirstName)
-                        .ThenBy(p => p.Location.Director.LastName);
+                              .ThenBy(p => p.Location.DirectorLocations.FirstOrDefault().Director.FirstName)
+                        .ThenBy(p => p.Location.DirectorLocations.FirstOrDefault().Director.LastName);
                 }
             }
 
-			ViewData["sortField"] = sortField;
+            ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["numberFilters"] = numberFilters;
             int archivedCount = await _context.Sessions.CountAsync(d => d.IsArchived == true);
@@ -198,7 +201,7 @@ namespace TomorrowsVoices.Controllers
 
             ViewData["Cities"] = cityList;
 
-         
+
             var availableSingersPerCity = _context.Singers
                 .GroupBy(s => s.LocationID)
                 .ToDictionary(g => g.Key, g => g.Count());
@@ -228,7 +231,8 @@ namespace TomorrowsVoices.Controllers
             }
 
             var session = await _context.Sessions
-                .Include(s => s.Location).ThenInclude(l => l.Director)
+                .Include(s => s.Location).ThenInclude(l => l.DirectorLocations)
+                .ThenInclude(dl => dl.Director)
                 .Include(s => s.Attendance).ThenInclude(a => a.Singer)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
@@ -317,7 +321,7 @@ namespace TomorrowsVoices.Controllers
             }
 
             var session = await _context.Sessions
-                .Include(s => s.Location).ThenInclude(l => l.Director)
+                .Include(s => s.Location).ThenInclude(l => l.DirectorLocations)
                 .Include(s => s.Attendance).ThenInclude(a => a.Singer)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (session == null)
@@ -344,10 +348,10 @@ namespace TomorrowsVoices.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, string[] selectedOptions)
         {
-    
+
 
             var sessionToUpdate = await _context.Sessions
-                .Include(s => s.Location).ThenInclude(l => l.Director)
+                .Include(s => s.Location).ThenInclude(l => l.DirectorLocations).ThenInclude(dl => dl.Director)
                 .Include(s => s.Attendance).ThenInclude(a => a.Singer)
                 .FirstOrDefaultAsync(m => m.ID == id);
 
@@ -369,7 +373,7 @@ namespace TomorrowsVoices.Controllers
                     var totalSingersCount = sessionToUpdate.Attendance.Count();
                     //_context.Update(sessionToUpdate);
                     await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = $"Changes saved. {presentSingersCount} singers attended "; 
+                    TempData["SuccessMessage"] = $"Changes saved. {presentSingersCount} singers attended ";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (RetryLimitExceededException /* dex */)
@@ -409,7 +413,7 @@ namespace TomorrowsVoices.Controllers
             }
 
             var session = await _context.Sessions
-                .Include(s => s.Location).ThenInclude(l => l.Director)
+                .Include(s => s.Location).ThenInclude(l => l.DirectorLocations)
                 .Include(s => s.Attendance).ThenInclude(a => a.Singer)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
@@ -428,7 +432,7 @@ namespace TomorrowsVoices.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var session = await _context.Sessions
-                .Include(s => s.Location).ThenInclude(l => l.Director)
+                .Include(s => s.Location).ThenInclude(l => l.DirectorLocations).ThenInclude(dl => dl.Director)
                 .Include(s => s.Attendance).ThenInclude(a => a.Singer)
                 .FirstOrDefaultAsync(m => m.ID == id);
 
@@ -474,14 +478,30 @@ namespace TomorrowsVoices.Controllers
                 "City");
         }
         [HttpGet]
-        [HttpGet]
         public JsonResult GetDirectorAndSingersByLocation(int locationId)
         {
-            var director = _context.Locations
-                .Include(l => l.Director)
-                .FirstOrDefault(l => l.ID == locationId)
-                ?.Director?.DirectorFullName ?? "No director assigned";
+            // Fetch the location with its DirectorLocations and Director
+            var location = _context.Locations
+                .Include(l => l.DirectorLocations)
+                .ThenInclude(dl => dl.Director) // Ensure Director is included
+                .FirstOrDefault(l => l.ID == locationId);
 
+            // Handle the case where the location is not found
+            if (location == null)
+            {
+                return Json(new { directors = new List<object>(), singers = new List<object>() });
+            }
+
+            // Get the list of directors for the location
+            var directors = location.DirectorLocations
+                .Select(dl => new
+                {
+                    id = dl.Director.ID,
+                    name = dl.Director.DirectorFullName
+                })
+                .ToList();
+
+            // Fetch the singers for the location
             var singers = _context.Singers
                 .Where(s => s.LocationID == locationId)
                 .Select(s => new
@@ -491,9 +511,8 @@ namespace TomorrowsVoices.Controllers
                 })
                 .ToList();
 
-            return Json(new { directorName = director, singers });
+            return Json(new { directors, singers });
         }
-
         private void PopulateAssignedSingerData(Session session)
         {
             var allOptions = _context.Singers.Include(s => s.Location);
@@ -582,7 +601,7 @@ namespace TomorrowsVoices.Controllers
         public IActionResult AttendanceReportExport()
         {
             var sessAtts = _context.Sessions
-                .Include(s => s.Location).ThenInclude(l => l.Director)
+                .Include(s => s.Location).ThenInclude(l => l.DirectorLocations).ThenInclude(dl => dl.Director)
                 .Include(s => s.Attendance).ThenInclude(a => a.Singer)
                 .OrderBy(s => s.Date)
                 .Select(x => new
@@ -591,7 +610,7 @@ namespace TomorrowsVoices.Controllers
                     AttendancePresent = x.Attendance.Count(a => a.Status),
                     AttendanceTotal = x.Attendance.Count,
                     x.Location.City,
-                    Director = x.Location.Director.DirectorFullName
+                    Director = x.Location.DirectorLocations.FirstOrDefault().Director.DirectorFullName
                     ,
                     Notes = x.Notes
                 })
