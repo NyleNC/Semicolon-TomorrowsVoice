@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TomorrowsVoices.Data;
 
@@ -10,9 +11,11 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    partial class TomorrowsVoicesContextModelSnapshot : ModelSnapshot
+    [Migration("20250316235557_addedDirectorLocationClassmanyTomany")]
+    partial class addedDirectorLocationClassmanyTomany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -97,16 +100,18 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("End")
+                    b.Property<string>("Address")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<TimeOnly>("EndTime")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -117,7 +122,7 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Start")
+                    b.Property<TimeOnly>("StartTime")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("VolLocationID")
@@ -226,7 +231,7 @@ namespace TomorrowsVoices.Data.TVMigrations
 
                     b.HasIndex("volunteerID");
 
-                    b.ToTable("Schedule");
+                    b.ToTable("Schedules");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Session", b =>
@@ -310,19 +315,28 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("ActualEnd")
+                    b.Property<TimeOnly?>("ActualEndTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("ActualStart")
+                    b.Property<TimeOnly?>("ActualStartTime")
                         .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EventID")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("INTEGER");
+                    b.Property<TimeOnly>("ScheduledEndTime")
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("VolScheduleID")
+                    b.Property<TimeOnly>("ScheduledStartTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Status")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("VolunteerID")
@@ -330,7 +344,7 @@ namespace TomorrowsVoices.Data.TVMigrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("VolScheduleID");
+                    b.HasIndex("EventID");
 
                     b.HasIndex("VolunteerID");
 
@@ -357,28 +371,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.HasKey("ID");
 
                     b.ToTable("VolLocations");
-                });
-
-            modelBuilder.Entity("TomorrowsVoices.Models.VolSchedule", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("EventID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("ScheduledEnd")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ScheduledStart")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("EventID");
-
-                    b.ToTable("VolSchedules");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Volunteer", b =>
@@ -487,7 +479,7 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasForeignKey("VolLocationID");
 
                     b.HasOne("TomorrowsVoices.Models.Event", "Event")
-                        .WithMany()
+                        .WithMany("Schedules")
                         .HasForeignKey("eventID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -526,10 +518,10 @@ namespace TomorrowsVoices.Data.TVMigrations
 
             modelBuilder.Entity("TomorrowsVoices.Models.VolAttendance", b =>
                 {
-                    b.HasOne("TomorrowsVoices.Models.VolSchedule", "VolSchedule")
-                        .WithMany("VolAttendances")
-                        .HasForeignKey("VolScheduleID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("TomorrowsVoices.Models.Event", "Event")
+                        .WithMany("VolAttendance")
+                        .HasForeignKey("EventID")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TomorrowsVoices.Models.Volunteer", "Volunteer")
@@ -538,20 +530,9 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("VolSchedule");
+                    b.Navigation("Event");
 
                     b.Navigation("Volunteer");
-                });
-
-            modelBuilder.Entity("TomorrowsVoices.Models.VolSchedule", b =>
-                {
-                    b.HasOne("TomorrowsVoices.Models.Event", "Event")
-                        .WithMany("VolSchedules")
-                        .HasForeignKey("EventID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Volunteer", b =>
@@ -572,7 +553,9 @@ namespace TomorrowsVoices.Data.TVMigrations
 
             modelBuilder.Entity("TomorrowsVoices.Models.Event", b =>
                 {
-                    b.Navigation("VolSchedules");
+                    b.Navigation("Schedules");
+
+                    b.Navigation("VolAttendance");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Location", b =>
@@ -601,11 +584,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Navigation("Schedules");
 
                     b.Navigation("Volunteers");
-                });
-
-            modelBuilder.Entity("TomorrowsVoices.Models.VolSchedule", b =>
-                {
-                    b.Navigation("VolAttendances");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Volunteer", b =>

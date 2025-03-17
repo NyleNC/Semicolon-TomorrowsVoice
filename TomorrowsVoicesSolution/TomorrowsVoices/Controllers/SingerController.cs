@@ -1,4 +1,4 @@
-﻿ using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.IO;
@@ -25,12 +25,13 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Singer
-        public async Task<IActionResult> Index( int? page, int? pageSizeID, string? actionButton, string? SearchString , string? SearchCity, bool archived = false, string sortDirection = "asc", string sortField = "Name", string SingerEmergencyContactName = "EmergencyContactName", string SingerEmergencyContactNumber = "EmergencyContactNumber")
+        public async Task<IActionResult> Index(int? page, int? pageSizeID, string? actionButton, string? SearchString, string? SearchCity, bool archived = false, string sortDirection = "asc", string sortField = "Name", string SingerEmergencyContactName = "EmergencyContactName", string SingerEmergencyContactNumber = "EmergencyContactNumber")
         {
             var singers = _context.Singers
                             .Where(d => d.IsArchived == archived)
-                            .Include(s => s.Location) // Include Location for each Singer
-                            .AsNoTracking();
+                .Include(s => s.Location) // Include Location for each Singer
+
+                .AsNoTracking();
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
             string[] sortOptions = new[] { "FullName", "Location" };
@@ -96,6 +97,23 @@ namespace TomorrowsVoices.Controllers
                         .OrderByDescending(s => s.Location.City);
                 }
             }
+            else if (sortField == "Location")
+            {
+                if (sortDirection == "asc")
+                {
+                    singers = singers
+                        .OrderBy(s => s.Location.City)
+                        .ThenBy(s => s.FirstName)
+                        .ThenBy(s => s.LastName);
+                }
+                else
+                {
+                    singers = singers
+                        .OrderByDescending(s => s.Location.City)
+                        .ThenBy(s => s.FirstName)
+                        .ThenBy(s => s.LastName);
+                }
+            }
 
 
             ViewData["sortField"] = sortField;
@@ -108,7 +126,7 @@ namespace TomorrowsVoices.Controllers
 
             var cityList = singers.AsEnumerable()
         .Where(d => d.Location?.City != null)
-        .Select(d => d.Location?.City)
+        .Select(d => d.Location.City)
         .Distinct()
         .Select(city => new SelectListItem
         {
@@ -374,7 +392,7 @@ namespace TomorrowsVoices.Controllers
                                 }
 
                                 // Handle location
-                                var location = _context.Locations.FirstOrDefault(l => l.City == cityName && l.DirectorID != null);
+                                var location = _context.Locations.FirstOrDefault(l => l.City == cityName && l.DirectorLocations.FirstOrDefault().DirectorID != null);
                                 if (location == null)
                                 {
                                     errorCount++;

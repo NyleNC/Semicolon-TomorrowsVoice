@@ -34,15 +34,17 @@ namespace TomorrowsVoices.Controllers
         {
             var directors = _context.Directors
                  .Where(d => d.IsArchived == archived)
-                .Include(d => d.Location)
+                .Include(d => d.DirectorLocations)
+                      .ThenInclude(d => d.Location)
+
                 .AsNoTracking();
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
-      
+
             string[] sortOptions = new[] { "Director", "City", "Email" };
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
-           
+
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
                 page = 1;//Reset page to start
@@ -75,7 +77,7 @@ namespace TomorrowsVoices.Controllers
 
 
                 directors = directors
-                    .Where(p => p.Location.City != null && p.Location.City == SearchCity);
+                    .Where(p => p.DirectorLocations.Any(l => l.Location.City != null && l.Location.City == SearchCity));
                 numberFilters++;
 
             }
@@ -118,14 +120,14 @@ namespace TomorrowsVoices.Controllers
                 if (sortDirection == "asc")
                 {
                     directors = directors
-                        .OrderBy(p => p.Location.City)
+                        .OrderBy(p => p.DirectorLocations.FirstOrDefault().Location.City)
                            .ThenBy(p => p.FirstName)
                         .ThenBy(p => p.LastName);
                 }
                 else
                 {
                     directors = directors
-                        .OrderByDescending(p => p.Location.City)
+                        .OrderByDescending(p => p.DirectorLocations.FirstOrDefault().Location.City)
                               .ThenBy(p => p.FirstName)
                         .ThenBy(p => p.LastName);
                 }
@@ -140,8 +142,8 @@ namespace TomorrowsVoices.Controllers
             ViewData["numberofActive"] = activeCount;
 
             var cityList = directors.AsEnumerable()
-                .Where(d => d.Location?.City != null)
-                .Select(d => d.Location.City)
+                .Where(d => d.DirectorLocations.FirstOrDefault()?.Location?.City != null)
+                .Select(d => d.DirectorLocations.FirstOrDefault()?.Location?.City)
                 .Distinct()
                 .Select(city => new SelectListItem
                 {
@@ -173,7 +175,9 @@ namespace TomorrowsVoices.Controllers
             }
 
             var director = await _context.Directors
-                .Include(d => d.Location)
+                .Include(d => d.DirectorLocations)
+                .ThenInclude(d => d.Location)
+
 
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (director == null)
@@ -198,17 +202,16 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email,LocationID")] Director director)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email")] Director director, int? locationId)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Validate and add the city if it doesn't exist
-                    if (director.LocationID > 0)
+                    // Fetch the selected location from the database
+                    if (locationId.HasValue)
                     {
-                        var location = await _context.Locations.FindAsync(director.LocationID);
+                        var location = await _context.Locations.FindAsync(locationId.Value);
                         if (location == null)
                         {
                             ModelState.AddModelError("LocationID", "Invalid city selected.");
@@ -216,15 +219,20 @@ namespace TomorrowsVoices.Controllers
                             return View(director);
                         }
 
-                    
-
-                        director.Location = location;
+                        // Initialize the DirectorLocations collection and add the selected location
+                        director.DirectorLocations = new List<DirectorLocation>
+                {
+                    new DirectorLocation
+                    {
+                        Location = location
+                    }
+                };
                     }
 
                     _context.Add(director);
                     await _context.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = $"{director.DirectorFullName} successfully added in the city of {director.Location.City}";
+                    TempData["SuccessMessage"] = $"{director.DirectorFullName} successfully added to the city of {director.DirectorLocations.FirstOrDefault().Location.City}.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException dex)
@@ -242,10 +250,10 @@ namespace TomorrowsVoices.Controllers
                 }
             }
 
+            // Repopulate the locations dropdown in case of validation errors
             ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
             return View(director);
         }
-
         // GET: Director/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -255,14 +263,16 @@ namespace TomorrowsVoices.Controllers
             }
 
             var director = await _context.Directors
-                .Include(d => d.Location)
+                .Include(d => d.DirectorLocations)
+                      .ThenInclude(d => d.Location)
+
                 .FirstOrDefaultAsync(d => d.ID == id);
             if (director == null)
             {
                 return NotFound();
             }
 
-            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", director.LocationID);
+            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", director.DirectorLocations.FirstOrDefault()?.LocationID);
             return View(director);
         }
         // POST: Director/Edit/5
@@ -270,7 +280,7 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Email,LocationID")] Director director)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Email")] Director director, int? locationId)
         {
             if (id != director.ID)
             {
@@ -281,8 +291,10 @@ namespace TomorrowsVoices.Controllers
             {
                 try
                 {
+                    // Fetch the director to update, including the related DirectorLocations and Location
                     var directorToUpdate = await _context.Directors
-                        .Include(d => d.Location) // Ensure we have the related Location
+                        .Include(d => d.DirectorLocations)
+                        .ThenInclude(dl => dl.Location)
                         .FirstOrDefaultAsync(d => d.ID == id);
 
                     if (directorToUpdate == null)
@@ -290,21 +302,37 @@ namespace TomorrowsVoices.Controllers
                         return NotFound();
                     }
 
-                    // Update properties
+                    // Update scalar properties
                     if (await TryUpdateModelAsync(directorToUpdate, "",
-                        d => d.FirstName, d => d.LastName, d => d.Email, d => d.LocationID))
+                        d => d.FirstName, d => d.LastName, d => d.Email))
                     {
-                        var location = await _context.Locations.FindAsync(director.LocationID);
-                        if (location == null)
+                        // Fetch the new location from the database
+                        if (locationId.HasValue)
                         {
-                            ModelState.AddModelError("LocationID", "Invalid city selected.");
-                            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", directorToUpdate.LocationID);
-                            return View(directorToUpdate);
+                            var location = await _context.Locations.FindAsync(locationId.Value);
+                            if (location == null)
+                            {
+                                ModelState.AddModelError("LocationID", "Invalid city selected.");
+                                ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", locationId);
+                                return View(directorToUpdate);
+                            }
+
+                            // Remove the existing DirectorLocation (if any)
+                            var existingDirectorLocation = directorToUpdate.DirectorLocations.FirstOrDefault();
+                            if (existingDirectorLocation != null)
+                            {
+                                _context.DirectorLocations.Remove(existingDirectorLocation);
+                                await _context.SaveChangesAsync(); // Save changes to delete the existing entity
+                            }
+
+                            // Add a new DirectorLocation with the updated Location
+                            directorToUpdate.DirectorLocations.Add(new DirectorLocation
+                            {
+                                Location = location
+                            });
+
+                            await _context.SaveChangesAsync(); // Save changes to add the new entity
                         }
-
-                        directorToUpdate.Location = location; // Update navigation property
-
-                        await _context.SaveChangesAsync();
 
                         TempData["SuccessMessage"] = $"{directorToUpdate.FirstName} {directorToUpdate.LastName} has been edited and saved.";
                         return RedirectToAction(nameof(Index));
@@ -327,10 +355,10 @@ namespace TomorrowsVoices.Controllers
                 }
             }
 
-            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", director.LocationID);
+            // Repopulate the locations dropdown in case of validation errors
+            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City", locationId);
             return View(director);
         }
-
         // GET: Director/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -475,7 +503,15 @@ namespace TomorrowsVoices.Controllers
                                     _context.Locations.Add(location);
                                     await _context.SaveChangesAsync();
                                 }
-                                director.Location = location;
+
+                                // Initialize the DirectorLocations collection
+                                director.DirectorLocations = new List<DirectorLocation>
+                        {
+                            new DirectorLocation
+                            {
+                                Location = location
+                            }
+                        };
 
                                 // Add director to the database
                                 _context.Directors.Add(director);
