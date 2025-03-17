@@ -12,10 +12,6 @@ nav {
     margin-top: 10px;
     opacity: 0.9}
 .modal-dialog {
-    width: 100%;
-    margin: 0 auto; /* Center the modal horizontally */
-    position: fixed;
-    left: 15%; /* Center the modal horizontally */
     opacity: 0.9;
 }
 .modal-content-nav {
@@ -498,8 +494,9 @@ label.required:after {
 .import-excel-modal .modal-content {
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    height: 90vh; /* Full height of the viewport */
-    width: 70vw; /* Full width of the viewport */
+    height: 75vh; /* Full height of the viewport */
+    width: 90%;
+    margin: auto;
 }
 
 .import-excel-modal .modal-header {
@@ -604,6 +601,175 @@ label.required:after {
 .import-excel-invalid-feedback {
     color: #dc3545;
     font-size: 0.875rem;
+}
+@media (max-width: 768px) {
+    .import-excel-modal .modal-content {
+        height: 70vh; /* Slightly reduce height for tablets */
+        width: 100%; /* Slightly reduce width for tablets */
+        margin: auto;
+    }
+
+    .import-excel-modal .modal-header {
+        padding: 1.25rem; /* Slightly reduce padding */
+    }
+
+    .import-excel-modal .modal-title {
+        font-size: 1.375rem; /* Slightly reduce font size */
+    }
+
+    .import-excel-modal .modal-body {
+        padding: 1.5rem; /* Slightly reduce padding */
+    }
+
+    .import-excel-drop-area {
+        padding: 1.5rem; /* Slightly reduce padding */
+    }
+
+    .import-excel-drop-text {
+        font-size: 0.9375rem; /* Slightly reduce font size */
+    }
+
+    .import-excel-submit-btn {
+        padding: 0.45rem 1.25rem; /* Slightly reduce button padding */
+        font-size: 0.9375rem; /* Slightly reduce button font size */
+    }
+
+    .import-excel-alert {
+        padding: 0.625rem 1.125rem; /* Slightly reduce alert padding */
+        font-size: 0.9375rem; /* Slightly reduce alert font size */
+    }
+
+    .import-excel-image-placeholder img {
+        max-width: 95%; /* Slightly reduce image size */
+    }
+}
+/* Mobile View: 425px */
+@media (max-width: 425px) {
+    .import-excel-modal .modal-content {
+        height: 80vh; /* Reduce height for smaller screens */
+        width: 85%; /* Reduce width for smaller screens */
+        margin: auto;
+    }
+
+    .import-excel-modal .modal-header {
+        padding: 1rem; /* Reduce padding */
+    }
+
+    .import-excel-modal .modal-title {
+        font-size: 1.25rem; /* Reduce font size */
+    }
+
+    .import-excel-modal .modal-body {
+        padding: 1rem; /* Reduce padding */
+    }
+
+    .import-excel-drop-area {
+        padding: 1rem; /* Reduce padding */
+    }
+
+    .import-excel-drop-text {
+        font-size: 0.875rem; /* Reduce font size */
+    }
+
+    .import-excel-submit-btn {
+        padding: 0.4rem 1rem; /* Reduce button padding */
+        font-size: 0.875rem; /* Reduce button font size */
+    }
+
+    .import-excel-alert {
+        padding: 0.5rem 1rem; /* Reduce alert padding */
+        font-size: 0.875rem; /* Reduce alert font size */
+    }
+
+    .import-excel-image-placeholder img {
+        max-width: 90%; /* Reduce image size */
+    }
+}
+
+/* Mobile View: 375px */
+@media (max-width: 375px) {
+    .import-excel-modal .modal-content {
+        height: 75vh; /* Further reduce height */
+        width: 80%; /* Further reduce width */
+        margin: auto;
+    }
+
+    .import-excel-modal .modal-header {
+        padding: 0.75rem; /* Further reduce padding */
+    }
+
+    .import-excel-modal .modal-title {
+        font-size: 1.125rem; /* Further reduce font size */
+    }
+
+    .import-excel-modal .modal-body {
+        padding: 0.75rem; /* Further reduce padding */
+    }
+
+    .import-excel-drop-area {
+        padding: 0.75rem; /* Further reduce padding */
+    }
+
+    .import-excel-drop-text {
+        font-size: 0.8125rem; /* Further reduce font size */
+    }
+
+    .import-excel-submit-btn {
+        padding: 0.35rem 0.9rem; /* Further reduce button padding */
+        font-size: 0.8125rem; /* Further reduce button font size */
+    }
+
+    .import-excel-alert {
+        padding: 0.4rem 0.9rem; /* Further reduce alert padding */
+        font-size: 0.8125rem; /* Further reduce alert font size */
+    }
+
+    .import-excel-image-placeholder img {
+        max-width: 85%; /* Further reduce image size */
+    }
+}
+
+/* Mobile View: 320px */
+@media (max-width: 320px) {
+    .import-excel-modal .modal-content {
+        height: 70vh; /* Smallest height for very small screens */
+        width: 90%; /* Smallest width for very small screens */
+        margin: auto;
+    }
+
+    .import-excel-modal .modal-header {
+        padding: 0.5rem; /* Smallest padding */
+    }
+
+    .import-excel-modal .modal-title {
+        font-size: 1rem; /* Smallest font size */
+    }
+
+    .import-excel-modal .modal-body {
+        padding: 0.5rem; /* Smallest padding */
+    }
+
+    .import-excel-drop-area {
+        padding: 0.5rem; /* Smallest padding */
+    }
+
+    .import-excel-drop-text {
+        font-size: 0.75rem; /* Smallest font size */
+    }
+
+    .import-excel-submit-btn {
+        padding: 0.3rem 0.8rem; /* Smallest button padding */
+        font-size: 0.75rem; /* Smallest button font size */
+    }
+
+    .import-excel-alert {
+        padding: 0.3rem 0.8rem; /* Smallest alert padding */
+        font-size: 0.75rem; /* Smallest alert font size */
+    }
+
+    .import-excel-image-placeholder img {
+        max-width: 80%; /* Smallest image size */
+    }
 }
 
 /* Calendar CSS */
