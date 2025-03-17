@@ -1,224 +1,395 @@
 ﻿@using TomorrowsVoices.ViewModels
-@model TomorrowsVoices.Models.Event
+@model EventCreateVM
 
 @{
-    ViewData["Title"] = "Create Event";
+    ViewData["Title"] = "Create";
 }
 
 <h1>Create Event</h1>
-<hr />
 
-<!-- Main Form -->
-<form asp-action="Create" method="post" id="eventForm">
+
+<hr />
+<form id="eventForm" asp-action="Create" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
-                <label asp-for="Name" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <input asp-for="Name" class="form-control" id="eventName" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Event.Name" class="control-label"></label>
+                <input asp-for="Event.Name" class="form-control" id="eventName" />
+                <span asp-validation-for="Event.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <textarea asp-for="Address" class="form-control" style="min-height: 116px; max-height: 116px;" id="eventDescription"></textarea>
-                <span asp-validation-for="Address" class="text-danger"></span>
+                <label asp-for="Event.Location" class="control-label"></label>
+                <textarea asp-for="Event.Location" class="form-control" id="eventDescription" ></textarea>
+                <span asp-validation-for="Event.Location" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="VolLocationID" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <select asp-for="VolLocationID" class="form-control" asp-items="ViewBag.VolLocationID" id="eventLocation"></select>
+                <label asp-for="Event.VolLocationID" class="control-label"></label>
+                <select asp-for="Event.VolLocationID" class="form-control" asp-items="ViewBag.VolLocationID" required></select>
             </div>
             <div class="form-group">
-                <label asp-for="Date" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <input asp-for="Date" class="form-control" type="date" id="datePicker" />
-                <span asp-validation-for="Date" class="text-danger"></span>
+                <label asp-for="Event.Start" class="control-label">Date*</label>
+                <input asp-for="Event.Start" type="date" class="form-control" required />
             </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="StartTime" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                        <input asp-for="StartTime" class="form-control" type="time" id="eventStartTime" />
-                        <span asp-validation-for="StartTime" class="text-danger"></span>
+                        <label asp-for="Event.Start" class="control-label">Start Time*</label>
+                        <input asp-for="Event.Start" type="time" class="form-control" required />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="EndTime" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                        <input asp-for="EndTime" class="form-control" type="time" id="eventEndTime" />
-                        <span asp-validation-for="EndTime" class="text-danger"></span>
+                        <label asp-for="Event.End" class="control-label">End Time*</label>
+                        <input asp-for="Event.End" type="time" class="form-control" required />
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
+
             <div class="form-group">
-                <label asp-for="Notes" class="control-label"></label>
-                <textarea asp-for="Notes" class="form-control" style="min-height: 116px; max-height: 116px;" id="eventNotes"></textarea>
-                <span asp-validation-for="Notes" class="text-danger"></span>
+                <label asp-for="Event.Notes" class="control-label">Notes</label>
+                <textarea asp-for="Event.Notes" class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
+    <h3>Schedules <button type="button" id="newScheduleBtn" class="btn btn-sm btn-primary">+</button></h3>
+
+    <div id="scheduleTabs" class="mb-3">
+        <!-- Schedule tabs will be dynamically added here -->
+        @if (Model.ExistingSchedules != null && Model.ExistingSchedules.Any())
+        {
+            <ul class="nav nav-tabs" id="schedulesTab" role="tablist">
+                @for (int i = 0; i < Model.ExistingSchedules.Count; i++)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @(i == 0 ? "active" : "")" id="schedule-@i-tab" data-toggle="tab"
+                            href="#schedule-@i" role="tab">
+                            Schedule @(i + 1)
+                            
+                            <button type="button" class="btn btn-warning edit-schedule mx-2" data-schedule-index="@i">
+                                <img src="http://localhost:5091/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: 0px; margin-right: 8px">Edit
+                            </button>
+                            <button type="button" class="close remove-schedule" data-schedule-index="@i">&times;</button>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+    <div id="scheduleContent" class="tab-content mb-4">
+        <!-- Schedule content will be dynamically added here -->
+        @if (Model.ExistingSchedules != null && Model.ExistingSchedules.Any())
+        {
+            @for (int i = 0; i < Model.ExistingSchedules.Count; i++)
+            {
+                <div class="tab-pane fade @(i == 0 ? "show active" : "")" id="schedule-@i" role="tabpanel">
+                    @Html.Hidden($"ExistingSchedules[{i}].ScheduleId", Model.ExistingSchedules[i].ScheduleID)
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Start Time</label>
+                                <input type="datetime-local" class="form-control"
+                                        name="ExistingSchedules[@i].ScheduledStart"
+                                        value="@Model.ExistingSchedules[i].ScheduledStart.ToString("yyyy-MM-ddTHH:mm")" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>End Time</label>
+                                <input type="datetime-local" class="form-control"
+                                        name="ExistingSchedules[@i].ScheduledEnd"
+                                        value="@Model.ExistingSchedules[i].ScheduledEnd.ToString("yyyy-MM-ddTHH:mm")" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            }
+        }
+    </div>
+
+    <!-- Schedule Form Modal -->
+    <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Schedule</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                     @Html.Partial("_SchedulePartial", new ScheduleVM()) 
+                </div>
             </div>
         </div>
     </div>
 
-    <h3>Schedules</h3>
-    <div id="schedules-container">
-        <!-- Schedule rows will be dynamically added here -->
-    </div>
-    <button type="button" id="add-schedule" class="btn btn-secondary">Add Schedule</button>
-
-    <div class="form-group mt-4">
+    <div class="form-group">
         <button type="submit" class="btn btn-primary">Create</button>
+        <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
     </div>
 </form>
 
-<!-- Create Schedule Modal -->
-<div class="modal fade" id="createScheduleModal" tabindex="-1" role="dialog" aria-labelledby="createScheduleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="createScheduleModalLabel">Create New Schedules</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Form for Creating Multiple Schedules -->
-                <form asp-action="CreateMultiple" method="post" id="createScheduleForm">
-                    <div id="scheduleRows">
-                        <!-- Initial Schedule Row -->
-                        <div class="schedule-row border p-3 mb-3">
-                            <div class="form-group">
-                                <label>Shift Schedule Start</label>
-                                <input type="time" class="form-control" name="Schedules[0].ShiftTime" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Shift Schedule End Time </label>
-                                <input type="time" class="form-control" name="Schedules[0].ShiftEnd" required>
-                            </div>
-                     
-                    
-                            <div class="form-group">
-                                <label>Volunteer</label>
-                                <select class="form-control" name="Schedules[0].volunteerID" required>
-                          
-                                    @foreach (var volunteer in ViewBag.Volunteers)
-                                    {
-                                        <option value="@volunteer.ID">@volunteer.FullName</option>
-                                    }
-                                </select>
-                            </div>
-                            <button type="button" class="btn btn-danger btn-sm remove-schedule">Remove</button>
-                        </div>
-                    </div>
-                    <button type="button" id="addSchedule" class="btn btn-secondary btn-sm">Add Another Schedule</button>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" form="createScheduleForm" class="btn btn-primary">Create Schedules</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<a asp-action="Index" class="btn btn-secondary">Back to Events Page</a>
 
 @section Scripts {
     <script>
-            document.addEventListener("DOMContentLoaded", function () {
-            let today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-            document.getElementById("datePicker").value = today; // Set default value
-        });
- 
-        let scheduleIndex = 0;
+        // Declare originalAvailOptions at a higher scope
+        let originalAvailOptions;
 
-        // Add a new schedule row directly to the main form
-        document.getElementById('add-schedule').addEventListener('click', function () {
-            const container = document.getElementById('schedules-container');
-            const newRow = document.createElement('div');
-            newRow.className = 'schedule-row border p-3 mb-3';
-            newRow.innerHTML = `
-                <div class="form-group">
-                    <label>Shift Schedule Start</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].ShiftStart" class="form-control" required />
-                </div>
-                <div class="form-group">
-                    <label>Shift Schedule End</label>
-                    <input type="time" name="Schedules[${scheduleIndex}].ShiftEnd" class="form-control" required />
-                </div>
-         
-                <div class="form-group">
-                    <label>Volunteer</label>
-                                  <select class="form-control" name="Schedules[0].volunteerID" required>
-              
-        @foreach (var volunteer in ViewBag.Volunteers)
-        {
-                                    <option value="@volunteer.ID">@volunteer.FullName</option>
-        }
-                    </select>
-                
-                </div>
-                <button type="button" class="btn btn-danger btn-sm remove-schedule">Remove</button>
-            `;
-            container.appendChild(newRow);
-            scheduleIndex++;
-        });
+        $(document).ready(function () {
+            // Store the original options when the document loads
+            originalAvailOptions = $("#availOptions").html();
 
-        // Remove a schedule row
-        document.addEventListener('click', function (e) {
-            if (e.target.classList.contains('remove-schedule')) {
-                e.target.closest('.schedule-row').remove();
-            }
-        });
+            // Add new schedule button event handler
+            $("#newScheduleBtn").click(function () {
+                $("input[name='NewSchedule.ScheduledStart']").val('');
+                $("input[name='NewSchedule.ScheduledEnd']").val('');
 
-        // Submit the modal form and append data to the main form
-        $('#createScheduleForm').on('submit', function (e) {
-            e.preventDefault(); // Prevent the default form submission
+                $("#availOptions").html(originalAvailOptions);
+                $("#selectedOptions").empty();
 
-            // Get all schedule rows from the modal
-            const scheduleRows = $('#scheduleRows .schedule-row');
+                // Set modal title and button text for adding
+                $(".modal-title").text("Add Schedule");
+                $("#addScheduleBtn").text("Add Schedule").removeData("schedule-index");
 
-            // Append each schedule row to the main form's schedules container
-            scheduleRows.each(function (index, row) {
-                const newRow = document.createElement('div');
-                newRow.className = 'schedule-row border p-3 mb-3';
-                newRow.innerHTML = `
-                    <input type="hidden" name="Schedules[${scheduleIndex}].ShiftStart" value="${$(row).find('[name="Schedules[0].ShiftStart"]').val()}" />
-                    <input type="hidden" name="Schedules[${scheduleIndex}].ShiftEnd" value="${$(row).find('[name="Schedules[0].ShiftEnd"]').val()}" />
-
-                      <select class="form-control" name="Schedules[0].volunteerID" required>
-                      
-        @foreach (var volunteer in ViewBag.Volunteers)
-        {
-                                <option value="@volunteer.ID">@volunteer.FullName</option>
-        }
-                    </select>
-                `;
-                $('#schedules-container').append(newRow);
-                scheduleIndex++;
+                $("#scheduleModal").modal("show");
             });
 
-            // Close the modal after appending the data
-            $('#createScheduleModal').modal('hide');
-        });
-                $(document).ready(function () {
-            $('select[multiple]').select2({
-                placeholder: "Select Volunteers",
-                allowClear: true
+            // Move volunteers left to right (select)
+            $("#btnLeft").click(function () {
+                $("#availOptions option:selected").each(function () {
+                    $("#selectedOptions").append($(this));
+                });
+            });
+
+            // Move volunteers right to left (deselect)
+            $("#btnRight").click(function () {
+                $("#selectedOptions option:selected").each(function () {
+                    $("#availOptions").append($(this));
+                });
+            });
+
+            // Edit schedule button event handler - must use on() for dynamically created elements
+            $(document).on("click", ".edit-schedule", function(e) {
+                e.preventDefault();
+
+                const scheduleIndex = $(this).data("schedule-index");
+                const scheduleTab = $(`#schedule-${scheduleIndex}`);
+
+                // Extract current values
+                const scheduleId = scheduleTab.find("input[name$='.ScheduleId']").val();
+                const scheduledStart = scheduleTab.find("input[name$='.ScheduledStart']").val();
+                const scheduledEnd = scheduleTab.find("input[name$='.ScheduledEnd']").val();
+
+                // Set values in the modal
+                $("input[name='NewSchedule.ScheduledStart']").val(scheduledStart);
+                $("input[name='NewSchedule.ScheduledEnd']").val(scheduledEnd);
+
+                // Clear and repopulate volunteer selections
+                $("#selectedOptions").empty();
+                $("#availOptions").html(originalAvailOptions);
+
+                // Get selected volunteers from the schedule
+                const selectedVolunteerIds = [];
+                scheduleTab.find("input[name$='.VolunteerIds[]']").each(function() {
+                    selectedVolunteerIds.push($(this).val());
+                });
+
+                // Move volunteers from available to selected in the modal
+                selectedVolunteerIds.forEach(id => {
+                    $(`#availOptions option[value='${id}']`).appendTo("#selectedOptions");
+                });
+
+                // Change modal title and button text
+                $(".modal-title").text("Edit Schedule");
+                $("#addScheduleBtn").text("Update Schedule").data("schedule-index", scheduleIndex);
+
+                $("#scheduleModal").modal("show");
+            });
+
+            // Remove schedule button event handler
+            $(document).on("click", ".remove-schedule", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const scheduleIndex = $(this).data("schedule-index");
+
+                // Remove the tab and its content
+                $(`#schedule-${scheduleIndex}-tab`).parent().remove();
+                $(`#schedule-${scheduleIndex}`).remove();
+
+                // If there are remaining tabs, activate the first one
+                if ($("#schedulesTab .nav-item").length > 0) {
+                    $("#schedulesTab .nav-link:first").tab("show");
+                }
+
+                // Renumber the remaining tabs
+                $("#schedulesTab .nav-item").each(function(i) {
+                    const link = $(this).find("a.nav-link");
+                    link.text(` Schedule ${i + 1} `);
+                    link.find(".edit-schedule, .remove-schedule").remove();
+                    link.append(`<button type="button" class="btn btn-sm btn-warning edit-schedule mx-1" data-schedule-index="${i}">
+                                <img src="http://localhost:5091/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: 0px; margin-right: 8px">Edit
+                                </button>
+                                <button type="button" class="close remove-schedule" data-schedule-index="${i}">&times;</button>`);
+                });
+            });
+
+            // Add schedule button event handler
+            $("#addScheduleBtn").click(function () {
+                const scheduledStart = $("input[name='NewSchedule.ScheduledStart']").val();
+                const scheduledEnd = $("input[name='NewSchedule.ScheduledEnd']").val();
+                const selectedVolunteers = $("#selectedOptions option").length > 0 ?
+                                          $("#selectedOptions option") : [];
+
+                // Validation code
+                $(".schedule-form .error-message").remove();
+                let isValid = true;
+
+                if (!scheduledStart) {
+                    $("input[name='NewSchedule.ScheduledStart']").after('<div class="error-message text-danger">Start time is required</div>');
+                    isValid = false;
+                }
+
+                if (!scheduledEnd) {
+                    $("input[name='NewSchedule.ScheduledEnd']").after('<div class="error-message text-danger">End time is required</div>');
+                    isValid = false;
+                }
+
+                if (selectedVolunteers.length === 0) {
+                    $("#selectedOptions").after('<div class="error-message text-danger">At least one volunteer must be selected</div>');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    return;
+                }
+
+                // Check if we're editing or adding
+                const isEdit = $(this).text() === "Update Schedule";
+                const scheduleIndex = isEdit ? $(this).data("schedule-index") : $(".nav-tabs .nav-item").length;
+
+                // Create HTML for volunteers
+                let volunteersHtml = '';
+                let volunteerIdsHtml = '';
+
+                selectedVolunteers.each(function () {
+                    volunteersHtml += `<div>${$(this).text()}</div>`;
+                    volunteerIdsHtml += `<input type="hidden" name="ExistingSchedules[${scheduleIndex}].VolunteerIds[]" value="${$(this).val()}" />`;
+                });
+
+                if (isEdit) {
+                    // Update existing tab content
+                    const scheduleId = $(`#schedule-${scheduleIndex} input[name$='.ScheduleId']`).val();
+
+                    const tabContent = `
+                        <input type="hidden" name="ExistingSchedules[${scheduleIndex}].ScheduleId" value="${scheduleId}" />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Start Time</label>
+                                    <input type="datetime-local" class="form-control"
+                                           name="ExistingSchedules[${scheduleIndex}].ScheduledStart"
+                                           value="${scheduledStart}" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>End Time</label>
+                                    <input type="datetime-local" class="form-control"
+                                           name="ExistingSchedules[${scheduleIndex}].ScheduledEnd"
+                                           value="${scheduledEnd}" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Selected Volunteers</label>
+                            <div class="selected-volunteers">
+                                ${volunteersHtml}
+                            </div>
+                            <div class="selected-volunteer-ids">
+                                ${volunteerIdsHtml}
+                            </div>
+                        </div>
+                    `;
+
+                    $(`#schedule-${scheduleIndex}`).html(tabContent);
+                } else {
+                    // Code for adding a new schedule
+                    const tabItem = `
+                        <li class="nav-item">
+                            <a class="nav-link ${scheduleIndex === 0 ? 'active' : ''}"
+                               id="schedule-${scheduleIndex}-tab"
+                               data-toggle="tab"
+                               href="#schedule-${scheduleIndex}" role="tab">
+                                Schedule ${scheduleIndex + 1}
+                                <button type="button" class="btn btn-sm btn-warning edit-schedule mx-1" data-schedule-index="${scheduleIndex}">
+                                   <img src="http://localhost:5091/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: 0px; margin-right: 8px">Edit
+                                </button>
+                                <button type="button" class="close remove-schedule" data-schedule-index="${scheduleIndex}">&times;</button>
+                            </a>
+                        </li>
+                    `;
+
+                    const tabContent = `
+                        <div class="tab-pane fade ${scheduleIndex === 0 ? 'show active' : ''}"
+                             id="schedule-${scheduleIndex}" role="tabpanel">
+                            <input type="hidden" name="ExistingSchedules[${scheduleIndex}].ScheduleId" value="" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Start Time</label>
+                                        <input type="datetime-local" class="form-control"
+                                               name="ExistingSchedules[${scheduleIndex}].ScheduledStart"
+                                               value="${scheduledStart}" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>End Time</label>
+                                        <input type="datetime-local" class="form-control"
+                                               name="ExistingSchedules[${scheduleIndex}].ScheduledEnd"
+                                               value="${scheduledEnd}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Selected Volunteers</label>
+                                <div class="selected-volunteers">
+                                    ${volunteersHtml}
+                                </div>
+                                <div class="selected-volunteer-ids">
+                                    ${volunteerIdsHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    if (scheduleIndex === 0) {
+                        $("#scheduleTabs").html(`<ul class="nav nav-tabs" id="schedulesTab" role="tablist">${tabItem}</ul>`);
+                    } else {
+                        $("#schedulesTab").append(tabItem);
+                    }
+
+                    $("#scheduleContent").append(tabContent);
+                }
+
+                // Show the tab for the schedule we just added/edited
+                $(`#schedule-${scheduleIndex}-tab`).tab("show");
+
+                // Hide the modal
+                $("#scheduleModal").modal("hide");
+
+                // Reset the modal for next use
+                $(".modal-title").text("Add Schedule");
+                $("#addScheduleBtn").text("Add Schedule").removeData("schedule-index");
+            });
+
+            // Ensure tab functionality works for dynamically created tabs
+            $(document).on("click", "a[data-toggle='tab']", function (e) {
+                e.preventDefault();
+                $(this).tab("show");
             });
         });
     </script>
-
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: '@TempData["SuccessMessage"]',
-                    confirmButtonText: 'OK'
-                });
-            });
-        </script>
-    }
 }
-

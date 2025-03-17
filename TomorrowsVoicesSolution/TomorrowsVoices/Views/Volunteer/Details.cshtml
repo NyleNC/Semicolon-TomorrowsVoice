@@ -74,7 +74,6 @@
         {
             <tr>
                 <td>@schedule.Event?.Name</td>
-                <td>@schedule.Event?.Date.ToString("yyyy-MM-dd")</td>
                 <td>
                     @(schedule.ShiftEnd != null && schedule.ShiftStart != null
                         ? (schedule.ShiftEnd - schedule.ShiftStart).TotalHours
