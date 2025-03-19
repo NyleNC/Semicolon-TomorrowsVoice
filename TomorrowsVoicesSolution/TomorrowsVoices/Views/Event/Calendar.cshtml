@@ -8,12 +8,70 @@
     <div class="d-flex mt-0">
         <h1 class="mb-0">Events</h1>
     </div>
-    <div>
-        <a asp-action="Index" class="btn btn-primary mb-3"><img src="~/Images/table-view.png" alt="table-view-icon" style="height: 24px; width: auto; margin-right: 10px;" />Table View</a>
+    <div class="float-end">
+        <a asp-action="ExportEventsToExcel" class="btn btn-white ">
+            <img src="~/Images/dark-export-icon.png" alt="export-csv-icon" style="height: 24px; width: auto; margin-right: 10px" />
+            Export
+        </a>
+        <div class="btn-group">
+            <a asp-action="Create" class="btn btn-primary">
+                <img src="~/Images/create-icon.png" alt="add-event-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New
+            </a>
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu" style="border-radius: 10px">
+                <li style="margin-right: 18px">
+                    <button type="button" class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#importExcelModal">
+                        <img src="~/Images/import.png" alt="import icon" style="height: 24px; width: auto; margin-right: 8px" />
+                        Import Excel
+                    </button>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
-
 <p>View your Event and Attendance records.</p>
+
+@* Container for all tabs *@
+<div class="nav-container mb-3">
+    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
+       asp-action="Index" asp-route-archived="false">
+        Active
+        @if (ViewData["numberofActive"] != null && (int)ViewData["numberofActive"] == 0)
+        {
+            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">0</span>
+        }
+        else
+        {
+            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">@ViewData["numberofActive"]</span>
+        }
+    </a>
+    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
+       asp-action="Index" asp-route-archived="true">
+        Archive
+        @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
+        {
+            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">0</span>
+        }
+        else
+        {
+            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">@ViewData["numberofArchive"]</span>
+        }
+    </a>
+</div>
+
+<div class="d-flex align-items-center justify-content-end mb-2 g-2 mt-2">
+    <!-- Date Picker and Button -->
+    <div class="mb-3 me-2">
+        <input type="date" id="datePicker" class="form-control" style="width: auto; display: inline-block;">
+        <button id="goToDateButton" class="btn btn-primary">Go to Date</button>
+    </div>
+    <!-- Table View Button -->
+    <div class="mb-3">
+        <a asp-action="Index" class="btn btn-primary"><img src="~/Images/table-view.png" alt="table-view-icon" style="height: 24px; width: auto; margin-right: 10px;" />Table View</a>
+    </div>
+</div>
 
 <!-- FullCalendar Container -->
 <div id="calendar"></div>
@@ -50,7 +108,7 @@
 
 <!-- Calendar Initialization Script -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
@@ -59,7 +117,7 @@
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
-            events: '/Event/GetCalendarEvents',
+            events: '/Event/GetCalendarEvents', // Ensure this URL is correct
             dateClick: function (info) {
                 alert('Date clicked: ' + info.dateStr);
             },
@@ -91,5 +149,16 @@
             }
         });
         calendar.render();
+
+        // Add event listener to the "Go to Date" button
+        document.getElementById('goToDateButton').addEventListener('click', function () {
+            var dateStr = document.getElementById('datePicker').value;
+            if (dateStr) {
+                var date = new Date(dateStr + 'T00:00:00'); // Ensure the date is parsed correctly
+                calendar.gotoDate(date);
+            } else {
+                alert('Please select a date.');
+            }
+        });
     });
 </script>

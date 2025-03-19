@@ -1079,12 +1079,14 @@ namespace TomorrowsVoices.Controllers
         public async Task<IActionResult> GetCalendarEvents()
         {
             var events = await _context.Events
-                .Where(e => !e.IsArchived) // Exclude archived events
+                .Where(e => !e.IsArchived) // Ensure only non-archived events are fetched
                 .Select(e => new
                 {
                     id = e.ID,
                     title = e.Name,
                     description = e.Location,
+                    start = e.Start.ToString("o"), // ISO 8601 format
+                    end = e.End.ToString("o"),     // ISO 8601 format
                     location = e.VolLocation.City // Include location if needed
                 })
                 .ToListAsync();
