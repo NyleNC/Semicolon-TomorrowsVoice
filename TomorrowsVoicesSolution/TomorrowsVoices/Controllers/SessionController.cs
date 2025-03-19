@@ -322,6 +322,7 @@ namespace TomorrowsVoices.Controllers
 
             var session = await _context.Sessions
                 .Include(s => s.Location).ThenInclude(l => l.DirectorLocations)
+                    .ThenInclude(dl => dl.Director)
                 .Include(s => s.Attendance).ThenInclude(a => a.Singer)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (session == null)
@@ -414,6 +415,7 @@ namespace TomorrowsVoices.Controllers
 
             var session = await _context.Sessions
                 .Include(s => s.Location).ThenInclude(l => l.DirectorLocations)
+                    .ThenInclude(dl => dl.Director)
                 .Include(s => s.Attendance).ThenInclude(a => a.Singer)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
