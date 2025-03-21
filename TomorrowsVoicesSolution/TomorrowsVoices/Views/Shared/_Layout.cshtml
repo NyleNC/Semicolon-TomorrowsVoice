@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -57,10 +60,12 @@
     }
 </head>
 <body>
+   
     <div class="container-fluid p-0">
   
         <!-- Horizontal Navbar -->
         <nav class="navbar navbar-expand-lg px-3">
+
             <div class="container-fluid px-3 m-0 d-flex justify-content-between align-items-center">
 
                 <!-- Tomorrow's Voices Logo -->
@@ -73,12 +78,16 @@
                         style="filter: invert(1) brightness(2); margin-top: 12px;">
                     <i class="bi bi-grid"></i>
                 </button>
-
+                <partial name="_LoginPartial" />
             </div>
+
         </nav>
+       
 
         <div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true">
+
             <div class="modal-dialog modal-dialog-nav modal-sm ms-auto me-0">
+
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="menuModalLabel">Navigation</h5>
@@ -100,14 +109,18 @@
             </div>
         </div>
         <div class="row flex-nowrap">
+             @if (User.Identity.IsAuthenticated){
             <!-- Sidebar -->
             <div id="desktopSidebar" class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar text-black" style="border-right: 3px solid #f3f3f3; background-color: #f9f9f9">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
                     <!-- Menu -->
+                   
                     <button class="toggle-btn" id="btn">
                         <i class="bi bi-grid"></i>
                     </button>
+                 
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                        
                         <li>
                             <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle" style="background-color: #e0e0e0;" aria-expanded="@(IsSubMenuActive("Director", "Singer", "Session") == "show" ? "true" : "false")">
                                 <img src="~/Images/NewChoirIcon.png" class="ms-2" alt="choir icon" width="40px"> <span class="ms-1 me-1 d-none d-sm-inline" style="color:  #1d2e79">Choir Administration</span>
@@ -156,26 +169,16 @@
                         
                             </ul>
                         </li>
+                      
                     </ul>
+                  
                     <hr>
-                    <!-- Optional: User Menu -->
-                    <!-- <div class="dropdown pb-4 user-menu">
-                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle"></i>
-                            <span class="d-none d-sm-inline mx-1">User</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Sign out</a></li>
-                        </ul>
-                    </div> -->
+             
+
                 </div>
             
             </div>
+            }
 
             <!-- Main Content -->
             <div class="col pt-2 pb-3">

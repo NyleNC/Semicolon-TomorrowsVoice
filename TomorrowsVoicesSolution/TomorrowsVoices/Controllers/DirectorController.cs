@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,6 +20,7 @@ using TomorrowsVoices.Utilities;
 
 namespace TomorrowsVoices.Controllers
 {
+    [Authorize]
     public class DirectorController : Controller
     {
         private readonly TomorrowsVoicesContext _context;
@@ -30,14 +31,26 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Director
+ 
         public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Director")
         {
-            var directors = _context.Directors
-                 .Where(d => d.IsArchived == archived)
-                .Include(d => d.DirectorLocations)
-                      .ThenInclude(d => d.Location)
+            var currentDirector = await GetCurrentDirectorAsync();
 
+            // Fetch all directors if the user is an Admin
+            var directors = _context.Directors
+                .Where(d => d.IsArchived == archived)
+                .Include(d => d.DirectorLocations)
+                .ThenInclude(d => d.Location)
                 .AsNoTracking();
+
+            // Apply city-based filtering only for Directors
+            if (currentDirector != null)
+            {
+                var assignedCityIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
+                directors = directors.Where(d => d.DirectorLocations.Any(dl => assignedCityIds.Contains(dl.LocationID)));
+            }
+
+            // Rest of the filtering, sorting, and paging logic remains the same
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
 
@@ -45,44 +58,41 @@ namespace TomorrowsVoices.Controllers
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
 
-            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            if (!String.IsNullOrEmpty(actionButton)) // Form Submitted!
             {
-                page = 1;//Reset page to start
-
+                page = 1; // Reset page to start
                 if (sortOptions.Contains(actionButton))
                 {
-                    if (actionButton == sortField) //Reverse order on same field
+                    if (actionButton == sortField) // Reverse order on same field
                     {
                         sortDirection = sortDirection == "asc" ? "desc" : "asc";
                     }
-                    sortField = actionButton; //Sort by the button clicked
+                    sortField = actionButton; // Sort by the button clicked
                 }
             }
+
             if (!String.IsNullOrEmpty(SearchString))
             {
                 directors = directors.Where(p => (p.LastName != null && p.LastName.ToLower().Contains(SearchString.ToLower()))
-                                     || (p.FirstName != null && p.FirstName.ToLower().Contains(SearchString.ToLower()))
-                                     || ((p.FirstName + " " + p.LastName).ToLower().Contains(SearchString.ToLower())));
+                                         || (p.FirstName != null && p.FirstName.ToLower().Contains(SearchString.ToLower()))
+                                         || ((p.FirstName + " " + p.LastName).ToLower().Contains(SearchString.ToLower())));
                 numberFilters++;
             }
+
             if (!String.IsNullOrEmpty(SearchEmail))
             {
                 directors = directors.Where(p => p.Email != null && p.Email.ToLower().Contains(SearchEmail.ToLower()));
-
                 numberFilters++;
             }
 
             if (!string.IsNullOrEmpty(SearchCity))
             {
-
-
                 directors = directors
                     .Where(p => p.DirectorLocations.Any(l => l.Location.City != null && l.Location.City == SearchCity));
                 numberFilters++;
-
             }
 
-            // sorting functionality
+            // Sorting functionality
             if (sortField == "Director")
             {
                 if (sortDirection == "asc")
@@ -121,14 +131,14 @@ namespace TomorrowsVoices.Controllers
                 {
                     directors = directors
                         .OrderBy(p => p.DirectorLocations.FirstOrDefault().Location.City)
-                           .ThenBy(p => p.FirstName)
+                        .ThenBy(p => p.FirstName)
                         .ThenBy(p => p.LastName);
                 }
                 else
                 {
                     directors = directors
                         .OrderByDescending(p => p.DirectorLocations.FirstOrDefault().Location.City)
-                              .ThenBy(p => p.FirstName)
+                        .ThenBy(p => p.FirstName)
                         .ThenBy(p => p.LastName);
                 }
             }
@@ -136,8 +146,10 @@ namespace TomorrowsVoices.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["numberFilters"] = numberFilters;
+
             int archivedCount = await _context.Directors.CountAsync(d => d.IsArchived == true);
             ViewData["numberofArchive"] = archivedCount;
+
             int activeCount = await _context.Directors.CountAsync(d => d.IsArchived == false);
             ViewData["numberofActive"] = activeCount;
 
@@ -153,20 +165,18 @@ namespace TomorrowsVoices.Controllers
                 .ToList();
 
             cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
-
-
             ViewData["Cities"] = cityList;
-            //Handle Paging
+
+            // Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
 
             var pagedData = await PaginatedList<Director>.CreateAsync(directors.AsNoTracking(), page ?? 1, pageSize);
-
             return View(pagedData);
         }
 
-
         // GET: Director/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -189,6 +199,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Director/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             Director director = new Director();
@@ -202,6 +213,7 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email")] Director director, int? locationId)
         {
             if (ModelState.IsValid)
@@ -255,6 +267,7 @@ namespace TomorrowsVoices.Controllers
             return View(director);
         }
         // GET: Director/Edit/5
+        [Authorize(Roles = "Admin,Director")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -280,6 +293,7 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Director")]
         public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Email")] Director director, int? locationId)
         {
             if (id != director.ID)
@@ -637,6 +651,7 @@ namespace TomorrowsVoices.Controllers
 
         //archive and unarchiving
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Archive(int id)
         {
             var director = await _context.Directors.FindAsync(id);
@@ -655,6 +670,7 @@ namespace TomorrowsVoices.Controllers
 
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UnArchive(int id)
         {
             var director = await _context.Directors.FindAsync(id);
@@ -670,7 +686,26 @@ namespace TomorrowsVoices.Controllers
             TempData["SuccessMessage"] = "This archive has been activated successfully!";
             return RedirectToAction(nameof(Index));
         }
+        private async Task<Director?> GetCurrentDirectorAsync()
+        {
+            var userEmail = User.Identity?.Name; // Assuming the email is stored in the claims
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return null;
+            }
 
+            // Check if the user is an Admin
+            if (User.IsInRole("Admin"))
+            {
+                return null; // Admins bypass city restrictions
+            }
+
+            // Fetch the Director for non-Admin users
+            return await _context.Directors
+                .Include(d => d.DirectorLocations)
+                .ThenInclude(dl => dl.Location)
+                .FirstOrDefaultAsync(d => d.Email == userEmail);
+        }
         private bool DirectorExists(int id)
         {
             return _context.Directors.Any(e => e.ID == id);
