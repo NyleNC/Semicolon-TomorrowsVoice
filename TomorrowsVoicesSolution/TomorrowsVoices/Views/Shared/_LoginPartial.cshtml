@@ -12,16 +12,16 @@
                 <i class="bi bi-person-circle"></i>
                 <span class="d-none d-sm-inline mx-1">Hello @User.Identity?.Name!</span>
             </a>
+            <form id="logout-form" method="post" asp-area="Identity" asp-page="/Account/Logout" asp-page-handler="Logout"></form>
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
 
                 <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-page-handler="Logout">
-                    <button type="submit" class="dropdown-item">Logout</button>
-                </form>
-
-
+                    <form id="logout-form" method="post" asp-area="Identity" asp-page="/Account/Logout" asp-page-handler="Logout">
+                        <button type="submit" class="dropdown-item">Logout</button>
+                    </form>
             </ul>
+            
         }
         else
         {

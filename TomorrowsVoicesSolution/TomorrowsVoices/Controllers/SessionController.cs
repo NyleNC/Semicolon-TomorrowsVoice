@@ -35,7 +35,7 @@ namespace TomorrowsVoices.Controllers
             string[] sortOptions = new[] { "City", "Date", "Attendance", "Director" };
             int numberFilters = 0;
 
-
+            var currentDirector = await GetCurrentDirectorAsync();
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
@@ -79,6 +79,11 @@ namespace TomorrowsVoices.Controllers
                 .Where(a => a.Date >= StartDate && a.Date <= EndDate.AddDays(1))
                 .Where(s => s.IsArchived == archived)
                 .AsNoTracking();
+            if (currentDirector != null)
+            {
+                var assignedCityIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
+                sessions = sessions.Where(s => assignedCityIds.Contains(s.LocationID.Value));
+            }
 
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
@@ -777,6 +782,26 @@ namespace TomorrowsVoices.Controllers
             });
         }
 
+        private async Task<Director?> GetCurrentDirectorAsync()
+        {
+            var userEmail = User.Identity?.Name; 
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return null;
+            }
+
+            // Check if the user is an Admin
+            if (User.IsInRole("Admin"))
+            {
+                return null; 
+            }
+
+           
+            return await _context.Directors
+                .Include(d => d.DirectorLocations)
+                .ThenInclude(dl => dl.Location)
+                .FirstOrDefaultAsync(d => d.Email == userEmail);
+        }
         // For Calendar View
         public IActionResult Calendar()
         {

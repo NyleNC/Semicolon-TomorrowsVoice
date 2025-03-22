@@ -208,10 +208,14 @@
                     <label class="control-label">Search by Name:</label>
                     @Html.TextBox("SearchString", Context.Request.Query["SearchString"], new { @class = "form-control" })
                 </div>
-                <div class="form-group col-md-3">
-                    <label class="control-label">Filter by City:</label>
-                    @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Location"], new { @class = "form-control" })
-                </div>
+                @if (User.IsInRole("Admin"))
+                {
+                        <div class="form-group col-md-3">
+                        <label class="control-label">Filter by City:</label>
+                        @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["Location"], new { @class = "form-control" })
+                    </div>
+                }
+            
                 <div class="form-group col-md-3">
                     <label class="control-label">&nbsp;</label>
                     <div>
