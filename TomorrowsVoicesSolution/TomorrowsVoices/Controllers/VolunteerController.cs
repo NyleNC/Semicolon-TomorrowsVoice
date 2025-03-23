@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
@@ -9,6 +10,7 @@ using TomorrowsVoices.Utilities;
 
 namespace TomorrowsVoices.Controllers
 {
+    [Authorize]
     public class VolunteerController : Controller
     {
         private readonly TomorrowsVoicesContext _context;
@@ -24,6 +26,12 @@ namespace TomorrowsVoices.Controllers
                 .Where(v => v.IsArchived == archived)
                 .Include(v => v.VolLocation)
                 .AsNoTracking();
+            var currentVolunteer = await GetCurrentVolunteerAsync();
+            if (currentVolunteer != null)
+            {
+                volunteers = volunteers.Where(v => v.Email == currentVolunteer.Email);
+            }
+
             ViewData["ActiveTab"] = archived ? "archived" : "active";
             string[] sortOptions = new[] { "FullName", "City", "Email" };
             ViewData["Filtering"] = "btn-outline-secondary";
@@ -146,6 +154,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Volunteer/Details/5
+        [Authorize(Roles = "Admin,Volunteer")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -167,6 +176,7 @@ namespace TomorrowsVoices.Controllers
             return View(volunteer);
         }
         // GET: Volunteer/Create
+        [Authorize(Roles ="Admin")]
         public IActionResult Create()
         {
             Volunteer volunteer = new Volunteer();
@@ -177,6 +187,7 @@ namespace TomorrowsVoices.Controllers
         // POST: Volunteer/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Phone,Email,VolLocationID")] Volunteer volunteer)
@@ -212,6 +223,7 @@ namespace TomorrowsVoices.Controllers
 
 
         // GET: Volunteer/Edit/5
+        [Authorize(Roles = "Admin,Volunteer")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -233,6 +245,7 @@ namespace TomorrowsVoices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Volunteer")]
         public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Phone,Email,VolLocationID")] Volunteer volunteer)
         {
             if (id != volunteer.ID)
@@ -321,6 +334,7 @@ namespace TomorrowsVoices.Controllers
 
         // GET: Volunteer/InsertVolunteersFromExcel
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> InsertVolunteersFromExcel(IFormFile theExcel)
         {
             var response = new { success = false, message = "" };
@@ -446,6 +460,7 @@ namespace TomorrowsVoices.Controllers
         /**/
 
         // Excel Template Server
+
         public IActionResult DownloadSampleExcel()
         {
             // Path to the sample Excel file in your project
@@ -464,6 +479,7 @@ namespace TomorrowsVoices.Controllers
 
         // GET: Volunteer/ExportVolunteersToExcel
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ExportVolunteersToExcel()
         {
             var volunteers = await _context.Volunteers
@@ -567,6 +583,7 @@ namespace TomorrowsVoices.Controllers
 
         //archive and unarchiving
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Archive(int id)
         {
             var director = await _context.Volunteers.FindAsync(id);
@@ -585,6 +602,7 @@ namespace TomorrowsVoices.Controllers
 
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UnArchive(int id)
         {
             var director = await _context.Volunteers.FindAsync(id);
@@ -600,6 +618,13 @@ namespace TomorrowsVoices.Controllers
             TempData["SuccessMessage"] = "This archive has been activated successfully!";
             return RedirectToAction(nameof(Index));
         }
+        private async Task<Volunteer?> GetCurrentVolunteerAsync()
+        {
+            var userEmail = User.Identity?.Name; // Assuming the email is stored in the claims
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return null;
+            }
 
         // Chart Methods
         // Doughnut Chart - Volunteers by City
@@ -653,6 +678,16 @@ namespace TomorrowsVoices.Controllers
             }
         }
 
+            // Check if the user is an Admin
+            if (User.IsInRole("Admin"))
+            {
+                return null; // Admins bypass restrictions
+            }
+
+            // Fetch the Volunteer for non-Admin users
+            return await _context.Volunteers
+                .FirstOrDefaultAsync(v => v.Email == userEmail);
+        }
         private bool VolunteerExists(int id)
         {
             return _context.Volunteers.Any(e => e.ID == id);

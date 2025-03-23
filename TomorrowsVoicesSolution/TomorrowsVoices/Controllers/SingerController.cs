@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using TomorrowsVoices.Utilities;
 
 namespace TomorrowsVoices.Controllers
 {
+    [Authorize]
     public class SingerController : Controller
     {
         private readonly TomorrowsVoicesContext _context;
@@ -25,13 +27,21 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Singer
+
         public async Task<IActionResult> Index(int? page, int? pageSizeID, string? actionButton, string? SearchString, string? SearchCity, bool archived = false, string sortDirection = "asc", string sortField = "Name", string SingerEmergencyContactName = "EmergencyContactName", string SingerEmergencyContactNumber = "EmergencyContactNumber")
         {
+            var currentDirector = await GetCurrentDirectorAsync();
+       
+            
             var singers = _context.Singers
                             .Where(d => d.IsArchived == archived)
                 .Include(s => s.Location) // Include Location for each Singer
-
                 .AsNoTracking();
+            if (currentDirector != null)
+            {
+                var assignedCityIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
+                singers = singers.Where(d => d.Location.DirectorLocations.Any(dl => assignedCityIds.Contains(dl.LocationID)));
+            }
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
             string[] sortOptions = new[] { "FullName", "Location" };
@@ -550,6 +560,26 @@ namespace TomorrowsVoices.Controllers
             return Json(new { TotalCount = totalCount });
         }
 
+        private async Task<Director?> GetCurrentDirectorAsync()
+        {
+            var userEmail = User.Identity?.Name; // Assuming the email is stored in the claims
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return null;
+            }
+
+            // Check if the user is an Admin
+            if (User.IsInRole("Admin"))
+            {
+                return null; // Admins bypass city restrictions
+            }
+
+            // Fetch the Director for non-Admin users
+            return await _context.Directors
+                .Include(d => d.DirectorLocations)
+                .ThenInclude(dl => dl.Location)
+                .FirstOrDefaultAsync(d => d.Email == userEmail);
+        }
         private bool SingerExists(int id)
         {
             return _context.Singers.Any(e => e.ID == id);

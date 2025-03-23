@@ -33,6 +33,7 @@ namespace TomorrowsVoices.Models
         [Required(ErrorMessage = "You cannot leave the email blank.")]
         public string? Email { get; set; }
 
+        [Required(ErrorMessage = "Please Pick a city from the dropdown or add what you want")]
         public ICollection<DirectorLocation> DirectorLocations { get; set; } = new HashSet<DirectorLocation>();
         public bool IsArchived { get; set; }
     }

@@ -1546,7 +1546,13 @@ namespace TomorrowsVoices.Data
             {
                 context.VolLocations.AddRange(
                     new VolLocation { City = "Toronto" },
-                    new VolLocation { City = "Niagara Falls" }
+                    new VolLocation { City = "Niagara Falls" },
+                    new VolLocation { City = "St. Catharines" },
+                    new VolLocation { City = "Hamilton" },
+                    new VolLocation { City = "Welland" },
+                    new VolLocation { City = "Port Colborne" },
+                    new VolLocation { City = "Thorold" }
+
                 );
                 context.SaveChanges();
             }
@@ -1593,7 +1599,7 @@ namespace TomorrowsVoices.Data
         {
             if (!context.Events.Any())
             {
-                context.Events.AddRange(
+                 context.Events.AddRange(
                     new Event
                     {
                         Name = "Community Cleanup",
@@ -1620,6 +1626,54 @@ namespace TomorrowsVoices.Data
                         End = DateTime.Parse("2025-04-05 06:30 PM"),
                         VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls").ID,
                         Notes = "volunteers assisted and 50 units of blood were collected."
+                    },
+                    new Event
+                    {
+                        Name = "Green Earth Cleanup",
+                        Location = "123 Greenway Ave, N2L 5G6",
+                        Start = DateTime.Parse("2025-05-12 09:00 AM"),
+                        End = DateTime.Parse("2025-05-12 04:00 PM"),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "St. Catharines").ID,
+                        Notes = "Volunteers participated in a community park cleanup, collecting 200 lbs of waste and planting 30 trees."
+                    },
+
+                    new Event
+                    {
+                        Name = "Food for All Campaign",
+                        Location = "456 Hope Street, M3H 2T4",
+                        Start = DateTime.Parse("2025-06-20 10:30 AM"),
+                        End = DateTime.Parse("2025-06-20 05:00 PM"),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Welland").ID,
+                        Notes = "A food drive event where volunteers helped distribute over 500 meal packages to families in need."
+                    },
+
+                    new Event
+                    {
+                        Name = "Hamilton Yearly Marathon",
+                        Location = "789 Care Blvd, L8W 1A5",
+                        Start = DateTime.Parse("2025-07-15 07:00 AM"),
+                        End = DateTime.Parse("2025-07-15 03:00 PM"),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Hamilton").ID,
+                        Notes = "Volunteers assisted in a charity marathon, setting up water stations and guiding runners along the route."
+                    },
+                   new Event
+                   {
+                       Name = "Thorold Secondary School",
+                       Location = "321 Harmony Lane, K1A 3B2",
+                       Start = DateTime.Parse("2025-08-10 08:30 AM"),
+                       End = DateTime.Parse("2025-08-10 02:00 PM"),
+                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Thorold").ID,
+                       Notes = "Volunteers helped organize and distribute school supplies to over 200 students for the new academic year."
+                   },
+
+                    new Event
+                    {
+                        Name = "Port Colborne Senior Care",
+                        Location = "555 Compassion Road, P4N 8J6",
+                        Start = DateTime.Parse("2025-09-05 09:00 AM"),
+                        End = DateTime.Parse("2025-09-05 05:30 PM"),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Port Colborne").ID,
+                        Notes = "Volunteers supported a senior care center by organizing activities and spending quality time with residents."
                     }
                 );
                 context.SaveChanges();
@@ -1638,6 +1692,7 @@ namespace TomorrowsVoices.Data
                     new VolSchedule { ScheduledStart = DateTime.Parse("2025-04-05 08:00 AM"), ScheduledEnd = DateTime.Parse("2025-04-05 11:30 AM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
                     new VolSchedule { ScheduledStart = DateTime.Parse("2025-04-05 11:30 AM"), ScheduledEnd = DateTime.Parse("2025-04-05 03:30 PM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
                     new VolSchedule { ScheduledStart = DateTime.Parse("2025-04-05 03:30 PM"), ScheduledEnd = DateTime.Parse("2025-04-05 06:30 PM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID }
+
 
                 );
                 context.SaveChanges();
@@ -1665,7 +1720,10 @@ namespace TomorrowsVoices.Data
 
                     new VolAttendance { ActualStart = DateTime.Parse("2025-04-05 03:30 PM"), ActualEnd = DateTime.Parse("2025-04-05 6:30 PM"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Grace" && v.LastName == "Taylor").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-04-05 03:30 PM") && e.ScheduledEnd == DateTime.Parse("2025-04-05 06:30 PM")).ID },
                     new VolAttendance { Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Hank" && v.LastName == "Anderson").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-04-05 03:30 PM") && e.ScheduledEnd == DateTime.Parse("2025-04-05 06:30 PM")).ID }
-                );
+                
+                    
+                    
+                    );
                 context.SaveChanges();
             }
         }

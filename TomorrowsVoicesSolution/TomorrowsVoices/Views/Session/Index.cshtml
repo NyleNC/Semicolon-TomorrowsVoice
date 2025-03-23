@@ -15,11 +15,36 @@
 
     </div>
     <div>
-        <a href="@Url.Action("AttendanceReportExport", "Session")" class="btn btn-white me-2"><img src="~/Images/dark-export-icon.png" alt="export-icon" style="height: 24px; width: auto; margin-right: 10px" />Export</a>
+        <a href="@Url.Action("AttendanceReportExport", "Session")" class="btn btn-white me-2">
+            <img src="~/Images/dark-export-icon.png" alt="export-icon" style="height: 24px; width: auto; margin-right: 10px" />
+            Export
+        </a>
+        <button id="filteredExportBtn" class="btn btn-white me-2">
+            <img src="~/Images/dark-export-icon.png" alt="export-icon" style="height: 24px; width: auto; margin-right: 10px" />Export Filtered
+        </button>
         <a asp-action="Create" class="btn btn-primary float-end"><img src="~/Images/create-icon.png" alt="add-attendance-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New</a>
     </div>
 </div>
 <p>View your Session Attendance records.</p>
+
+<!-- Modal for displaying messages -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Message</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="messageModalBody">
+                <!-- Message will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @* Container for all tabs *@
 <div class="nav-container mb-3">
     <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
@@ -57,14 +82,8 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="d-flex justify-content-end align-items-center">
-                <!-- Calendar View Button -->
-                <a asp-action="Calendar" class="btn btn-primary mb-3">
-                    <img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px" />
-                    Calendar View
-                </a>
-                <!-- Filter and Clear Buttons -->
-                <div class="d-flex me-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex">
                     <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
                             data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                         <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
@@ -79,6 +98,7 @@
                         </a>
                     }
                 </div>
+                <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px" />Calendar View</a>
             </div>
         </div>
     </div>
@@ -271,34 +291,6 @@
             <thead>
                 <tr>
                     <th>
-                        <button type="button" class="btn btn-toolbard-inline" onclick="handleSort(event, 'City')">
-                            City
-                            @if (ViewData["sortField"]?.ToString() == "City")
-                            {
-                                if (ViewData["sortDirection"]?.ToString() == "asc")
-                                {
-                                    <div style="position: relative; display: inline-block;">
-                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #ababab;"></i>
-                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                    </div>
-
-                                }
-                                else
-                                {
-                                    <div style="position: relative; display: inline-block;">
-                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                    </div>
-
-                                }
-                            }
-                            else
-                            {
-                                <i class="fas fa-sort fa-sm d-inline" style="color: #ababab; margin-left: 2.7px"></i>
-                            }
-                        </button>
-                    </th>
-                    <th>
                         <button type="button" class="btn btn-toolbar d-inline" onclick="handleSort(event, 'Date')">
                             Date
                             @if (ViewData["sortField"]?.ToString() == "Date")
@@ -326,6 +318,36 @@
                             }
                         </button>
                     </th>
+                    
+                    <th>
+                        <button type="button" class="btn btn-toolbard-inline" onclick="handleSort(event, 'City')">
+                            City
+                            @if (ViewData["sortField"]?.ToString() == "City")
+                            {
+                                if (ViewData["sortDirection"]?.ToString() == "asc")
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #ababab;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+
+                                }
+                            }
+                            else
+                            {
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #ababab; margin-left: 2.7px"></i>
+                            }
+                        </button>
+                    </th>
+                    
                     <th>
                         <button type="button" class="btn btn-toolbar d-inline" onclick="handleSort(event, 'Attendance')">
                             Attendance
@@ -363,7 +385,7 @@
                                 {
                                     <div style="position: relative; display: inline-block;">
                                         <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #ababab;"></i>
-                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #333;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
                                     </div>
 
                                 }
@@ -387,16 +409,16 @@
                     </th>
                 </tr>
             </thead>
-</form>
+
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Location.City)
+                            @Html.DisplayFor(modelItem => item.Date)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Date)
+                            @Html.DisplayFor(modelItem => item.Location.City)
                         </td>
                         <td>
                             @{
@@ -512,15 +534,65 @@
                             </div>
                         </td>
                     </tr>
-
                 }
             </tbody>
         </table>
         <partial name="_PagingNavBar" />
     </div>
+</form>
 
 
 
+<script>
+        document.getElementById('filteredExportBtn').addEventListener('click', function () {
+        // Get all applied filter values directly from the URL query parameters
+        const searchParams = new URLSearchParams(window.location.search);
+
+        // Check if we have any filters applied
+        const hasFilters = searchParams.has('SearchString') ||
+                           searchParams.has('SearchCity') ||
+                           searchParams.has('StartDate') ||
+                           searchParams.has('EndDate') ||
+                           searchParams.has('minPresentSinger') ||
+                           searchParams.has('maxPresentSinger');
+
+        if (!hasFilters) {
+            // Show message modal if no filters are applied
+            document.getElementById('messageModalBody').innerText = 'Please apply at least one filter before exporting filtered data.';
+            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+            return;
+        }
+
+        // Construct the URL with all the current filter parameters
+        let exportUrl = '@Url.Action("FilteredAttendanceReportExport", "Session")';
+        exportUrl += '?';
+
+        if (searchParams.has('SearchString'))
+            exportUrl += 'SearchString=' + encodeURIComponent(searchParams.get('SearchString')) + '&';
+
+        if (searchParams.has('SearchCity'))
+            exportUrl += 'SearchCity=' + encodeURIComponent(searchParams.get('SearchCity')) + '&';
+
+        if (searchParams.has('StartDate'))
+            exportUrl += 'StartDate=' + encodeURIComponent(searchParams.get('StartDate')) + '&';
+
+        if (searchParams.has('EndDate'))
+            exportUrl += 'EndDate=' + encodeURIComponent(searchParams.get('EndDate')) + '&';
+
+        if (searchParams.has('minPresentSinger'))
+            exportUrl += 'minPresentSinger=' + encodeURIComponent(searchParams.get('minPresentSinger')) + '&';
+
+        if (searchParams.has('maxPresentSinger'))
+            exportUrl += 'maxPresentSinger=' + encodeURIComponent(searchParams.get('maxPresentSinger')) + '&';
+
+        // Add archived status from ViewData
+        exportUrl += 'archived=@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")';
+
+        // Navigate to the export URL, which will trigger the file download
+        window.location.href = exportUrl;
+    });
+</script>
 
 
 
