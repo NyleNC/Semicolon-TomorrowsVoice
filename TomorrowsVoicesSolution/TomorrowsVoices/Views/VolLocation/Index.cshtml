@@ -131,11 +131,7 @@
                                                 <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
                                             </a>
                                         </li>
-                                        <li>
-                                            <a class="dropdown-item text-black" asp-action="Details" asp-route-id="@item.ID">
-                                                <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
-                                            </a>
-                                        </li>
+                                   
                                         <li>
                                             @if (!item.IsArchived)
                                             {
