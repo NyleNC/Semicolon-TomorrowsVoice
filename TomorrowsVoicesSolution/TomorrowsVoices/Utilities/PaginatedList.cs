@@ -44,5 +44,13 @@ namespace TomorrowsVoices.Utilities
             }
             return new PaginatedList<T>(items, count, pageIndex, pageSize);
         }
+
+        // Create a PaginatedList from an in-memory collection (IEnumerable)
+        public static PaginatedList<T> CreateFromList(IEnumerable<T> source, int pageIndex, int pageSize)
+        {
+            var count = source.Count();
+            var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            return new PaginatedList<T>(items, count, pageIndex, pageSize);
+        }
     }
 }

@@ -690,6 +690,193 @@ namespace TomorrowsVoices.Controllers
             return NotFound("No data.");
 
         }
+
+
+        /* Trying Filtered Export */
+        [HttpGet]
+        public IActionResult FilteredAttendanceReportExport(string SearchString, string SearchCity, string StartDate, string EndDate, string minPresentSinger, string maxPresentSinger, bool archived = false)
+        {
+            // Check if any filter is applied
+            bool isFilterApplied = !string.IsNullOrEmpty(SearchString) ||
+                                  !string.IsNullOrEmpty(SearchCity) ||
+                                  !string.IsNullOrEmpty(StartDate) ||
+                                  !string.IsNullOrEmpty(EndDate) ||
+                                  !string.IsNullOrEmpty(minPresentSinger) ||
+                                  !string.IsNullOrEmpty(maxPresentSinger);
+
+            if (!isFilterApplied)
+            {
+                return Content("Please apply at least one filter before exporting.");
+            }
+
+            // Parse date values
+            var startDateTime = !string.IsNullOrEmpty(StartDate) ? DateTime.Parse(StartDate) : DateTime.MinValue;
+            var endDateTime = !string.IsNullOrEmpty(EndDate) ? DateTime.Parse(EndDate) : DateTime.MaxValue;
+
+            // Parse numeric values
+            int? minPresent = !string.IsNullOrEmpty(minPresentSinger) ? int.Parse(minPresentSinger) : (int?)null;
+            int? maxPresent = !string.IsNullOrEmpty(maxPresentSinger) ? int.Parse(maxPresentSinger) : (int?)null;
+
+            // Query the database with filters
+            var sessions = _context.Sessions
+                .Include(s => s.Location).ThenInclude(l => l.DirectorLocations).ThenInclude(dl => dl.Director)
+                .Include(s => s.Attendance).ThenInclude(a => a.Singer)
+                .Where(a => a.Date >= startDateTime && a.Date <= (endDateTime != DateTime.MaxValue ? endDateTime.AddDays(1) : endDateTime))
+                .Where(s => s.IsArchived == archived)
+                .AsQueryable();
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                sessions = sessions.Where(p => p.Location.DirectorLocations.FirstOrDefault().Director.LastName != null && p.Location.DirectorLocations.FirstOrDefault().Director.LastName.ToLower().Contains(SearchString.ToLower())
+                                            || p.Location.DirectorLocations.FirstOrDefault().Director.FirstName != null && p.Location.DirectorLocations.FirstOrDefault().Director.FirstName.ToLower().Contains(SearchString.ToLower())
+                                             || ((p.Location.DirectorLocations.FirstOrDefault().Director.FirstName + " " + p.Location.DirectorLocations.FirstOrDefault().Director.LastName).ToLower().Contains(SearchString.ToLower())));
+            }
+
+            if (minPresent.HasValue || maxPresent.HasValue)
+            {
+                sessions = sessions.Where(p =>
+                    (!minPresent.HasValue || p.Attendance.Count(a => a.Status) >= minPresent.Value) &&
+                    (!maxPresent.HasValue || p.Attendance.Count(a => a.Status) <= maxPresent.Value)
+                );
+            }
+
+            if (!string.IsNullOrEmpty(SearchCity))
+            {
+                sessions = sessions.Where(p => p.Location.City != null && p.Location.City == SearchCity);
+            }
+
+            // Get the data for the report
+            var sessAtts = sessions
+                .OrderBy(s => s.Date)
+                .Select(x => new
+                {
+                    x.Date,
+                    AttendancePresent = x.Attendance.Count(a => a.Status),
+                    AttendanceTotal = x.Attendance.Count,
+                    x.Location.City,
+                    Director = x.Location.DirectorLocations.FirstOrDefault().Director.DirectorFullName,
+                    Notes = x.Notes,
+                    AttendedSingers = x.Attendance.Where(a => a.Status).Select(a => a.Singer.FullName).ToList(),
+                    TotalSingers = x.Attendance.Select(a => a.Singer.FullName).ToList()
+                })
+                .ToList();
+
+            if (!sessAtts.Any())
+            {
+                return Content("No data available for the selected filters.");
+            }
+
+            // Generate Excel file
+            using (ExcelPackage excel = new ExcelPackage())
+            {
+                var workSheet = excel.Workbook.Worksheets.Add("Filtered Session Attendance Report");
+
+                // Title row
+                workSheet.Cells[1, 1].Value = "Filtered Attendance Report";
+                using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 6])
+                {
+                    Rng.Merge = true;
+                    Rng.Style.Font.Bold = true;
+                    Rng.Style.Font.Size = 18;
+                    Rng.Style.Font.Color.SetColor(Color.White);
+                    Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    Rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    Rng.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#100527"));
+                }
+
+                // Header row
+                using (ExcelRange headings = workSheet.Cells[3, 1, 3, 6])
+                {
+                    headings.Style.Font.Bold = true;
+                    headings.Style.Font.Color.SetColor(Color.White);
+                    var fill = headings.Style.Fill;
+                    fill.PatternType = ExcelFillStyle.Solid;
+                    fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#5b1fc7"));
+                }
+
+                // Set column headers
+                workSheet.Cells[3, 1].Value = "Date";
+                workSheet.Cells[3, 2].Value = "Attended Singers";
+                workSheet.Cells[3, 3].Value = "Total Singers";
+                workSheet.Cells[3, 4].Value = "City";
+                workSheet.Cells[3, 5].Value = "Director";
+                workSheet.Cells[3, 6].Value = "Notes";
+
+                // Fill data rows
+                int row = 4;
+                foreach (var session in sessAtts)
+                {
+                    workSheet.Cells[row, 1].Value = session.Date;
+                    workSheet.Cells[row, 2].Value = session.AttendancePresent;
+                    workSheet.Cells[row, 3].Value = session.AttendanceTotal;
+                    workSheet.Cells[row, 4].Value = session.City;
+                    workSheet.Cells[row, 5].Value = session.Director;
+                    workSheet.Cells[row, 6].Value = session.Notes;
+
+                    // Add comments with singer lists
+                    if (session.AttendedSingers.Any())
+                    {
+                        var attendedSingers = string.Join(", ", session.AttendedSingers);
+                        var comment1 = workSheet.Cells[row, 2].AddComment("Attended Singers:\n" + attendedSingers, "Singer List");
+                        comment1.AutoFit = true;
+
+                        // Adjust comment size based on content
+                        int width = Math.Min(300, Math.Max(150, attendedSingers.Length / 2));
+                        int height = Math.Min(200, Math.Max(50, session.AttendedSingers.Count * 15));
+                        comment1.From.Column = comment1.From.Column;
+                        comment1.From.Row = comment1.From.Row;
+                        comment1.To.Column = comment1.From.Column + width / 7;  // Adjust divisor as needed
+                        comment1.To.Row = comment1.From.Row + height / 15;      // Adjust divisor as needed
+                    }
+
+                    if (session.TotalSingers.Any())
+                    {
+                        var totalSingers = string.Join(", ", session.TotalSingers);
+                        var comment2 = workSheet.Cells[row, 3].AddComment("Total Singers:\n" + totalSingers, "Singer List");
+                        comment2.AutoFit = true;
+
+                        // Adjust comment size based on content
+                        int width = Math.Min(300, Math.Max(150, totalSingers.Length / 2));
+                        int height = Math.Min(200, Math.Max(50, session.TotalSingers.Count * 15));
+                        comment2.From.Column = comment2.From.Column;
+                        comment2.From.Row = comment2.From.Row;
+                        comment2.To.Column = comment2.From.Column + width / 7;  // Adjust divisor as needed
+                        comment2.To.Row = comment2.From.Row + height / 15;      // Adjust divisor as needed
+                    }
+
+                    row++;
+                }
+
+                // Style and format
+                var range = workSheet.Cells[4, 1, workSheet.Dimension.End.Row, workSheet.Dimension.End.Column];
+                range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                workSheet.Column(1).Style.Numberformat.Format = "mmm d, yyyy";
+                workSheet.Cells.AutoFitColumns();
+
+                // Return the Excel file
+                try
+                {
+                    byte[] fileData = excel.GetAsByteArray();
+                    string filename = "Filtered Attendance Report.xlsx";
+                    string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+                    return File(fileData, mimeType, filename);
+                }
+                catch (Exception ex)
+                {
+                    return Content("Could not build and download the file: " + ex.Message);
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
         //archive and unarchiving
         [HttpPost]
         public async Task<IActionResult> Archive(int id)

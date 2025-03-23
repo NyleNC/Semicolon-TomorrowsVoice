@@ -10,12 +10,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System.Drawing;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
 using TomorrowsVoices.Utilities;
 using TomorrowsVoices.ViewModels;
-
-
 
 namespace TomorrowsVoices.Controllers
 {
@@ -29,201 +29,169 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Event
-        public async Task<IActionResult> Index(string? SearchString, string? SearchCity, DateTime StartDate, DateTime EndDate, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Event")
+        public async Task<IActionResult> Index(string? SearchString, string? SearchCity, DateTime? StartDate, DateTime? EndDate, TimeSpan? StartTime, TimeSpan? EndTime, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Event")
         {
-            //string[] sortOptions = new[] { "Title", "City", "Date", "StartTime", "EndTime" };
-            //int numberFilters = 0;
+            string[] sortOptions = new[] { "Title", "City", "StartTime", "EndTime" };
+            int numberFilters = 0;
 
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
 
+                if (sortOptions.Contains(actionButton))
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //Sort by the button clicked
+                }
+            }
 
-            //if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
-            //{
-            //    page = 1;//Reset page to start
+            // Initialize the base query
+            var eventsQuery = _context.Events
+                .Include(e => e.VolLocation)
+                .Include(e => e.VolSchedules).ThenInclude(v => v.VolAttendances).ThenInclude(a => a.Volunteer)
+                .Where(s => s.IsArchived == archived)
+                .AsNoTracking();
 
-            //    if (sortOptions.Contains(actionButton))
-            //    {
-            //        if (actionButton == sortField) //Reverse order on same field
-            //        {
-            //            sortDirection = sortDirection == "asc" ? "desc" : "asc";
-            //        }
-            //        sortField = actionButton; //Sort by the button clicked
-            //    }
-            //}
+            // Default dates if not provided
+            if (!StartDate.HasValue || !EndDate.HasValue)
+            {
+                StartDate = _context.Events.Min(o => o.Start.Date);
+                EndDate = _context.Events.Max(o => o.End.Date);
+            }
+            else
+            {
+                // Only count dates as filters if they're not default values
+                // Check if StartDate is from a user filter (not default)
+                if (StartDate.HasValue && StartDate != _context.Events.Min(o => o.Start.Date))
+                {
+                    numberFilters++;
+                }
+                
+                // Check if EndDate is from a user filter (not default)
+                if (EndDate.HasValue && EndDate != _context.Events.Max(o => o.End.Date))
+                {
+                    numberFilters++;
+                }
+            }
 
+            // Check the order of the dates and swap them if required
+            if (EndDate < StartDate)
+            {
+                DateTime? temp = EndDate;
+                EndDate = StartDate;
+                StartDate = temp;
+            }
 
-            //Always Filter by date range
-            //If first time loading the page, set the date range filter based on the values in the database
-            //if (EndDate == DateTime.MinValue)
-            //{
-            //    StartDate = _context.Events.Min(o => o.Date);
-            //    EndDate = _context.Events.Max(o => o.Date);
-            //}
-            ////Check the order of the dates and swap them if required
-            //if (EndDate < StartDate)
-            //{
-            //    DateOnly temp = EndDate;
-            //    EndDate = StartDate;
-            //    StartDate = temp;
-            //}
-            //Save to View Data
-            //ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
-            //ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
+            // Save to View Data
+            ViewData["StartDate"] = StartDate?.ToString("yyyy-MM-dd");
+            ViewData["EndDate"] = EndDate?.ToString("yyyy-MM-dd");
 
-            //var @events = _context.Events
-            //    .Include(e => e.VolLocation)
-            //   .Include(e => e.VolSchedules).ThenInclude(v => v.Volunteer)
-            //   .Where(a => a.Date >= StartDate && a.Date <= EndDate.AddDays(1))
-            //   .Where(s => s.IsArchived == archived)
-            //  .AsNoTracking();
+            // Filter by date range (date part only)
+            eventsQuery = eventsQuery.Where(a => a.Start.Date >= StartDate.Value.Date && a.End.Date <= EndDate.Value.Date);
 
-            //ViewData["IsArchived"] = archived;
-            //ViewData["ActiveTab"] = archived ? "archived" : "active";
-
-
-            //if (!String.IsNullOrEmpty(SearchString))
-            //{
-            //    @events = @events.Where(p => p.Name != null && p.Name.ToLower().Contains(SearchString.ToLower())
-            //                                 );
-
-            //    numberFilters++;
-            //}
-
-
-
-            //if (!string.IsNullOrEmpty(SearchCity))
-            //{
-
-
-            //    @events = @events
-            // .Where(p => p.VolLocation.City != null && p.VolLocation.City == SearchCity);
-            //    numberFilters++;
-            //}
-
-
-
-            //if (sortField == "Title")
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        @events = @events
-            //                                .OrderBy(p => p.Name);
-            //    }
-            //    else
-            //    {
-            //        @events = @events
-            //            .OrderByDescending(p => p.Name);
-            //    }
-            //}
-
-            //else if (sortField == "StartTime")
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        @events = @events
-            //                                .OrderBy(p => p.StartTime);
-            //    }
-            //    else
-            //    {
-            //        @events = @events
-            //            .OrderByDescending(p => p.StartTime);
-            //    }
-            //}
-            //else if (sortField == "EndTime")
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        @events = @events
-            //                                .OrderBy(p => p.EndTime);
-            //    }
-            //    else
-            //    {
-            //        @events = @events
-            //            .OrderByDescending(p => p.EndTime);
-            //    }
-            //}
-
-            //else if (sortField == "Date")
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        @events = @events
-            //            .OrderBy(p => p.Date);
-            //    }
-            //    else
-            //    {
-            //        @events = @events
-            //            .OrderByDescending(p => p.Date);
-            //    }
-            //}
-            //else if (sortField == "City")
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        @events = @events
-            //            .OrderBy(p => p.VolLocation.City);
-
-            //    }
-            //    else
-            //    {
-            //        @events = @events
-            //            .OrderByDescending(p => p.VolLocation.City);
-
-            //    }
-            //}
-
-            //ViewData["sortField"] = sortField;
-            //ViewData["sortDirection"] = sortDirection;
-            //ViewData["numberFilters"] = numberFilters;
-
-
-            //ViewData["IsArchived"] = archived;
-            //ViewData["ActiveTab"] = archived ? "archived" : "active";
-            //int archivedCount = await _context.Events.CountAsync(d => d.IsArchived == true);
-            //ViewData["numberofArchive"] = archivedCount;
-            //int activeCount = await _context.Events.CountAsync(d => d.IsArchived == false);
-            //ViewData["numberofActive"] = activeCount;
-
-            //        var cityList = events.AsEnumerable()
-            //.Select(v => v.VolLocation?.City.ToString())
-            //.Where(city => city != null)
-            //.Distinct()
-            //.Select(city => new SelectListItem
-            //{
-            //    Value = city,
-            //    Text = city
-            //})
-            //.ToList();
-
-            //cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
-
-            //ViewData["Cities"] = cityList;
-
-            //// Handle Paging
-            //int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
-            //ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
-
-            //var pagedData = await PaginatedList<Event>.CreateAsync(events.AsNoTracking(), page ?? 1, pageSize);
-
-            //return View(pagedData);
-
-
-
-            var tomorrowsVoicesContext = _context.Events.Where(d => d.IsArchived == archived).Include(a => a.VolLocation);
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                eventsQuery = eventsQuery.Where(p => p.Name != null && p.Name.ToLower().Contains(SearchString.ToLower()));
+                numberFilters++;
+            }
+
+            if (!string.IsNullOrEmpty(SearchCity))
+            {
+                eventsQuery = eventsQuery.Where(p => p.VolLocation.City != null && p.VolLocation.City == SearchCity);
+                numberFilters++;
+            }
+
+            // Execute the database query before applying time filters
+            var events = await eventsQuery.ToListAsync();
+            
+            // Now filter by time range if provided (using in-memory filtering)
+            if (StartTime.HasValue || EndTime.HasValue)
+            {
+                if (StartTime.HasValue)
+                {
+                    events = events.Where(e => e.Start.TimeOfDay >= StartTime.Value).ToList();
+                    numberFilters++;
+                    ViewData["StartTime"] = StartTime?.ToString(@"hh\:mm");
+                }
+                
+                if (EndTime.HasValue)
+                {
+                    events = events.Where(e => e.End.TimeOfDay <= EndTime.Value).ToList();
+                    numberFilters++;
+                    ViewData["EndTime"] = EndTime?.ToString(@"hh\:mm");
+                }
+            }
+
+            // Apply sorting to the in-memory collection
+            events = ApplySorting(events, sortField, sortDirection).ToList();
+
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            ViewData["numberFilters"] = numberFilters;
+
             int archivedCount = await _context.Events.CountAsync(d => d.IsArchived == true);
             ViewData["numberofArchive"] = archivedCount;
             int activeCount = await _context.Events.CountAsync(d => d.IsArchived == false);
             ViewData["numberofActive"] = activeCount;
 
+            var cityList = eventsQuery.AsEnumerable()
+                .Select(v => v.VolLocation?.City.ToString())
+                .Where(city => city != null)
+                .Distinct()
+                .Select(city => new SelectListItem
+                {
+                    Value = city,
+                    Text = city
+                })
+                .ToList();
+
+            cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
+
+            ViewData["Cities"] = cityList;
+
             // Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
 
-            var pagedData = await PaginatedList<Event>.CreateAsync(tomorrowsVoicesContext.AsNoTracking(), page ?? 1, pageSize);
+            // Use PaginatedList with IEnumerable instead of IQueryable
+            var pagedData = PaginatedList<Event>.CreateFromList(events, page ?? 1, pageSize);
 
             return View(pagedData);
         }
+
+        // Helper method to apply sorting to an in-memory collection
+        private IEnumerable<Event> ApplySorting(IEnumerable<Event> events, string sortField, string sortDirection)
+        {
+            switch (sortField)
+            {
+                case "Title":
+                    events = sortDirection == "asc" ? events.OrderBy(p => p.Name) : events.OrderByDescending(p => p.Name);
+                    break;
+                case "StartTime":
+                    events = sortDirection == "asc" ? events.OrderBy(p => p.Start) : events.OrderByDescending(p => p.Start);
+                    break;
+                case "EndTime":
+                    events = sortDirection == "asc" ? events.OrderBy(p => p.End) : events.OrderByDescending(p => p.End);
+                    break;
+                case "City":
+                    events = sortDirection == "asc" ? events.OrderBy(p => p.VolLocation?.City) : events.OrderByDescending(p => p.VolLocation?.City);
+                    break;
+                default:
+                    events = events.OrderBy(p => p.Name);
+                    break;
+            }
+            
+            return events;
+        }
+
+
+
 
         // GET: Event/Details/5
 
@@ -1005,6 +973,9 @@ namespace TomorrowsVoices.Controllers
             var events = await _context.Events
                 .OrderBy(e => e.Name)
                 .Include(e => e.VolLocation)
+                .Include(e => e.VolSchedules)
+                    .ThenInclude(s => s.VolAttendances)
+                        .ThenInclude(a => a.Volunteer)
                 .ToListAsync();
 
             using (var package = new ExcelPackage())
@@ -1014,31 +985,67 @@ namespace TomorrowsVoices.Controllers
                 // Add headers
                 worksheet.Cells[1, 1].Value = "Event Name";
                 worksheet.Cells[1, 2].Value = "Address";
-                worksheet.Cells[1, 3].Value = "Date";
-                worksheet.Cells[1, 4].Value = "Start Time";
-                worksheet.Cells[1, 5].Value = "End Time";
-                worksheet.Cells[1, 6].Value = "Location";
-                worksheet.Cells[1, 7].Value = "Notes";
+                worksheet.Cells[1, 3].Value = "Start";
+                worksheet.Cells[1, 4].Value = "End";
+                worksheet.Cells[1, 5].Value = "Location";
+                worksheet.Cells[1, 6].Value = "Volunteer Count";
+                worksheet.Cells[1, 7].Value = "Total Hours";
+                worksheet.Cells[1, 8].Value = "Notes";
 
                 // Make headers bold
-                using (var range = worksheet.Cells[1, 1, 1, 6])
+                using (var range = worksheet.Cells[1, 1, 1, 8])
                 {
                     range.Style.Font.Bold = true;
+                    range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#5b1fc7"));
+                    range.Style.Font.Color.SetColor(Color.White);
                 }
 
                 int row = 2;
                 foreach (var eventItem in events)
                 {
+                    int volunteerCount = eventItem.VolSchedules.SelectMany(s => s.VolAttendances).Count(a => a.Status);
+                    double totalHours = eventItem.VolSchedules.Sum(s => (s.ScheduledEnd - s.ScheduledStart).TotalHours);
+                    var volunteers = eventItem.VolSchedules
+                        .SelectMany(s => s.VolAttendances)
+                        .Where(a => a.Status)
+                        .Select(a => a.Volunteer.FullName)
+                        .Distinct()
+                        .ToList();
+                        
                     worksheet.Cells[row, 1].Value = eventItem.Name;
                     worksheet.Cells[row, 2].Value = eventItem.Location;
-               
-                    worksheet.Cells[row, 4].Value = eventItem.Start.ToString("hh\\:mm tt");
-                    worksheet.Cells[row, 5].Value = eventItem.End.ToString("hh\\:mm tt");
-                    worksheet.Cells[row, 6].Value = eventItem.VolLocation?.City;
-                    worksheet.Cells[row, 7].Value = eventItem.Notes;
+                    worksheet.Cells[row, 3].Value = eventItem.Start;
+                    worksheet.Cells[row, 4].Value = eventItem.End;
+                    worksheet.Cells[row, 5].Value = eventItem.VolLocation?.City;
+                    worksheet.Cells[row, 6].Value = volunteerCount;
+                    worksheet.Cells[row, 7].Value = totalHours;
+                    worksheet.Cells[row, 8].Value = eventItem.Notes;
+                    
+                    // Add comment with volunteer names
+                    if (volunteers.Any())
+                    {
+                        var volunteersList = string.Join(", ", volunteers);
+                        var comment = worksheet.Cells[row, 6].AddComment("Volunteers:\n" + volunteersList, "Volunteer List");
+                        comment.AutoFit = true;
+                        
+                        // Adjust comment size based on content length
+                        int width = Math.Min(300, Math.Max(150, volunteersList.Length / 2));
+                        int height = Math.Min(200, Math.Max(50, volunteers.Count * 15));
+                        comment.From.Column = comment.From.Column;
+                        comment.From.Row = comment.From.Row;
+                        comment.To.Column = comment.From.Column + width / 7;
+                        comment.To.Row = comment.From.Row + height / 15;
+                    }
+                    
                     row++;
                 }
 
+                // Format dates and numbers
+                worksheet.Column(3).Style.Numberformat.Format = "mmm d, yyyy hh:mm tt";
+                worksheet.Column(4).Style.Numberformat.Format = "mmm d, yyyy hh:mm tt";
+                worksheet.Column(7).Style.Numberformat.Format = "#,##0.0";
+                
                 // Auto-fit columns for better readability
                 worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 
@@ -1050,12 +1057,171 @@ namespace TomorrowsVoices.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult FilteredEventReportExport(string SearchString, string SearchCity, string StartDate, string EndDate, string StartTime, string EndTime, bool archived = false)
+        {
+            // Check if any filter is applied
+            bool isFilterApplied = !string.IsNullOrEmpty(SearchString) ||
+                                  !string.IsNullOrEmpty(SearchCity) ||
+                                  !string.IsNullOrEmpty(StartDate) ||
+                                  !string.IsNullOrEmpty(EndDate) ||
+                                  !string.IsNullOrEmpty(StartTime) ||
+                                  !string.IsNullOrEmpty(EndTime);
+
+            if (!isFilterApplied)
+            {
+                return Content("Please apply at least one filter before exporting.");
+            }
+
+            // Parse date values
+            var startDateTime = !string.IsNullOrEmpty(StartDate) ? DateTime.Parse(StartDate) : DateTime.MinValue;
+            var endDateTime = !string.IsNullOrEmpty(EndDate) ? DateTime.Parse(EndDate) : DateTime.MaxValue;
+
+            // Parse time values
+            var startTimeSpan = !string.IsNullOrEmpty(StartTime) ? TimeSpan.Parse(StartTime) : TimeSpan.MinValue;
+            var endTimeSpan = !string.IsNullOrEmpty(EndTime) ? TimeSpan.Parse(EndTime) : TimeSpan.MaxValue;
+
+            // Query the database with filters
+            var events = _context.Events
+                .Include(e => e.VolLocation)
+                .Include(e => e.VolSchedules).ThenInclude(v => v.VolAttendances).ThenInclude(a => a.Volunteer)
+                .Where(e => e.Start >= startDateTime && e.End <= (endDateTime != DateTime.MaxValue ? endDateTime.AddDays(1) : endDateTime))
+                .Where(e => e.IsArchived == archived)
+                .AsEnumerable() // Switch to client-side evaluation
+                .Where(e => e.Start.TimeOfDay >= startTimeSpan && e.End.TimeOfDay <= endTimeSpan)
+                .AsQueryable();
 
 
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                events = events.Where(e => e.Name != null && e.Name.ToLower().Contains(SearchString.ToLower()));
+            }
 
+            if (!string.IsNullOrEmpty(SearchCity))
+            {
+                events = events.Where(e => e.VolLocation.City != null && e.VolLocation.City == SearchCity);
+            }
 
+            // Process the data for the report including volunteer information
+            var eventList = events
+                .OrderBy(e => e.Start)
+                .Select(e => new
+                {
+                    e.Name,
+                    e.Start,
+                    e.End,
+                    e.VolLocation.City,
+                    e.Location,
+                    e.Notes,
+                    VolunteerCount = e.VolSchedules.SelectMany(s => s.VolAttendances).Count(a => a.Status),
+                    TotalHours = e.VolSchedules.Sum(s => (s.ScheduledEnd - s.ScheduledStart).TotalHours),
+                    Volunteers = e.VolSchedules
+                        .SelectMany(s => s.VolAttendances)
+                        .Where(a => a.Status)
+                        .Select(a => a.Volunteer.FullName)
+                        .Distinct()
+                        .ToList()
+                })
+                .ToList();
 
+            if (!eventList.Any())
+            {
+                return Content("No data available for the selected filters.");
+            }
 
+            // Generate Excel file
+            using (ExcelPackage excel = new ExcelPackage())
+            {
+                var workSheet = excel.Workbook.Worksheets.Add("Filtered Event Report");
+
+                // Title row
+                workSheet.Cells[1, 1].Value = "Filtered Event Report";
+                using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 8])
+                {
+                    Rng.Merge = true;
+                    Rng.Style.Font.Bold = true;
+                    Rng.Style.Font.Size = 18;
+                    Rng.Style.Font.Color.SetColor(Color.White);
+                    Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    Rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    Rng.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#100527"));
+                }
+
+                // Header row
+                using (ExcelRange headings = workSheet.Cells[3, 1, 3, 8])
+                {
+                    headings.Style.Font.Bold = true;
+                    headings.Style.Font.Color.SetColor(Color.White);
+                    var fill = headings.Style.Fill;
+                    fill.PatternType = ExcelFillStyle.Solid;
+                    fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#5b1fc7"));
+                }
+
+                // Set column headers
+                workSheet.Cells[3, 1].Value = "Event Name";
+                workSheet.Cells[3, 2].Value = "Start";
+                workSheet.Cells[3, 3].Value = "End";
+                workSheet.Cells[3, 4].Value = "City";
+                workSheet.Cells[3, 5].Value = "Location";
+                workSheet.Cells[3, 6].Value = "Volunteer Count";
+                workSheet.Cells[3, 7].Value = "Total Hours";
+                workSheet.Cells[3, 8].Value = "Notes";
+
+                // Fill data rows
+                int row = 4;
+                foreach (var eventItem in eventList)
+                {
+                    workSheet.Cells[row, 1].Value = eventItem.Name;
+                    workSheet.Cells[row, 2].Value = eventItem.Start;
+                    workSheet.Cells[row, 3].Value = eventItem.End;
+                    workSheet.Cells[row, 4].Value = eventItem.City;
+                    workSheet.Cells[row, 5].Value = eventItem.Location;
+                    workSheet.Cells[row, 6].Value = eventItem.VolunteerCount;
+                    workSheet.Cells[row, 7].Value = eventItem.TotalHours;
+                    workSheet.Cells[row, 8].Value = eventItem.Notes;
+                    
+                    // Add comment with volunteer names
+                    if (eventItem.Volunteers.Any())
+                    {
+                        var volunteersList = string.Join(", ", eventItem.Volunteers);
+                        var comment = workSheet.Cells[row, 6].AddComment("Volunteers:\n" + volunteersList, "Volunteer List");
+                        comment.AutoFit = true;
+                        
+                        // Adjust comment size based on content length
+                        int width = Math.Min(300, Math.Max(150, volunteersList.Length / 2));
+                        int height = Math.Min(200, Math.Max(50, eventItem.Volunteers.Count * 15));
+                        comment.From.Column = comment.From.Column;
+                        comment.From.Row = comment.From.Row;
+                        comment.To.Column = comment.From.Column + width / 7;
+                        comment.To.Row = comment.From.Row + height / 15;
+                    }
+                    
+                    row++;
+                }
+
+                // Style and format
+                var range = workSheet.Cells[4, 1, workSheet.Dimension.End.Row, workSheet.Dimension.End.Column];
+                range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                workSheet.Column(2).Style.Numberformat.Format = "mmm d, yyyy hh:mm tt";
+                workSheet.Column(3).Style.Numberformat.Format = "mmm d, yyyy hh:mm tt";
+                workSheet.Column(7).Style.Numberformat.Format = "#,##0.0";
+                workSheet.Cells.AutoFitColumns();
+
+                // Return the Excel file
+                try
+                {
+                    byte[] fileData = excel.GetAsByteArray();
+                    string filename = "Filtered Event Report.xlsx";
+                    string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+                    return File(fileData, mimeType, filename);
+                }
+                catch (Exception ex)
+                {
+                    return Content("Could not build and download the file: " + ex.Message);
+                }
+            }
+        }
 
         // Excel Template Server
         public IActionResult DownloadSampleExcel()
@@ -1130,10 +1296,5 @@ namespace TomorrowsVoices.Controllers
         {
             return _context.Events.Any(e => e.ID == id);
         }
-
-
-  
     }
-
-
 }
