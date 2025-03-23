@@ -601,6 +601,58 @@ namespace TomorrowsVoices.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Chart Methods
+        // Doughnut Chart - Volunteers by City
+        [HttpGet]
+        public async Task<IActionResult> GetVolunteersByCityData()
+        {
+            var volunteersByCity = await _context.Volunteers
+                .Include(v => v.VolLocation) // Include the location to access the city
+                .GroupBy(v => v.VolLocation.City)
+                .Select(g => new
+                {
+                    City = g.Key,
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
+            var labels = volunteersByCity.Select(v => v.City).ToArray();
+            var data = volunteersByCity.Select(v => v.Count).ToArray();
+
+            return Json(new { labels, data });
+        }
+
+        // Active vs Archived - Volunteers
+        [HttpGet]
+        public async Task<IActionResult> GetActiveVsArchivedVolunteersData()
+        {
+            var activeVolunteersCount = await _context.Volunteers.CountAsync(v => !v.IsArchived);
+            var archivedVolunteersCount = await _context.Volunteers.CountAsync(v => v.IsArchived);
+
+            var labels = new[] { "Active", "Archived" };
+            var data = new[] { activeVolunteersCount, archivedVolunteersCount };
+
+            return Json(new { labels, data });
+        }
+
+        // Volunteers Count
+        [HttpGet]
+        public async Task<JsonResult> GetTotalVolunteerCount()
+        {
+            try
+            {
+                // Count all volunteers, regardless of their archived status
+                var totalCount = await _context.Volunteers.CountAsync();
+                return Json(new { TotalCount = totalCount });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework like Serilog or NLog)
+                Console.Error.WriteLine($"Error in GetTotalVolunteerCount: {ex.Message}");
+                return Json(new { TotalCount = 0 }); // Return a default value in case of error
+            }
+        }
+
         private bool VolunteerExists(int id)
         {
             return _context.Volunteers.Any(e => e.ID == id);

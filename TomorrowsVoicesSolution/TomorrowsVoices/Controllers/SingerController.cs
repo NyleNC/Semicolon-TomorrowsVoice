@@ -507,6 +507,49 @@ namespace TomorrowsVoices.Controllers
             TempData["SuccessMessage"] = "This archive has been activated successfully!";
             return RedirectToAction(nameof(Index));
         }
+
+        // Chart Methods
+        // Pie Chart - Singers by City
+        public JsonResult GetSingersByCityForDoughnut()
+        {
+            var singersByCity = _context.Singers
+                .Include(s => s.Location) // Include Location for each Singer
+                .GroupBy(s => s.Location.City)
+                .Select(g => new
+                {
+                    City = g.Key,
+                    Count = g.Count()
+                })
+                .ToList();
+
+            return Json(singersByCity);
+        }
+
+        // Active vs. Archived Singers
+        public JsonResult GetActiveVsArchivedSingers()
+        {
+            var activeCount = _context.Singers.Count(s => s.IsArchived == false);
+            var archivedCount = _context.Singers.Count(s => s.IsArchived == true);
+
+            var data = new
+            {
+                Labels = new[] { "Active", "Archived" },
+                Counts = new[] { activeCount, archivedCount }
+            };
+
+            return Json(data);
+        }
+
+        // Singer Count
+        [HttpGet]
+        public async Task<JsonResult> GetTotalSingerCount()
+        {
+            // Count all singers, regardless of their archived status
+            var totalCount = await _context.Singers.CountAsync();
+
+            return Json(new { TotalCount = totalCount });
+        }
+
         private bool SingerExists(int id)
         {
             return _context.Singers.Any(e => e.ID == id);

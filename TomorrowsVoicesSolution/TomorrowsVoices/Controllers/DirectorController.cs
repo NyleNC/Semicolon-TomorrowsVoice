@@ -671,6 +671,56 @@ namespace TomorrowsVoices.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Chart Methods
+        // Pie Chart - Director by City
+        public JsonResult GetDirectorsByCityForDoughnut()
+        {
+            var directorsByCity = _context.Directors
+                .Include(d => d.DirectorLocations)
+                .ThenInclude(dl => dl.Location)
+                .GroupBy(d => d.DirectorLocations.FirstOrDefault().Location.City)
+                .Select(g => new
+                {
+                    City = g.Key,
+                    Count = g.Count()
+                })
+                .ToList();
+
+            return Json(directorsByCity);
+        }
+
+        // Active vs. Archived Directors
+        public JsonResult GetActiveVsArchivedDirectors()
+        {
+            var activeCount = _context.Directors.Count(d => d.IsArchived == false);
+            var archivedCount = _context.Directors.Count(d => d.IsArchived == true);
+
+            var data = new
+            {
+                Labels = new[] { "Active", "Archived" },
+                Counts = new[] { activeCount, archivedCount }
+            };
+
+            return Json(data);
+        }
+
+        // Director Count
+        [HttpGet]
+        public async Task<JsonResult> GetTotalDirectorCount()
+        {
+            try
+            {
+                var totalCount = await _context.Directors.CountAsync();
+                return Json(new { TotalCount = totalCount });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework like Serilog or NLog)
+                Console.Error.WriteLine($"Error in GetTotalDirectorCount: {ex.Message}");
+                return Json(new { TotalCount = 0 }); // Return a default value in case of error
+            }
+        }
+
         private bool DirectorExists(int id)
         {
             return _context.Directors.Any(e => e.ID == id);

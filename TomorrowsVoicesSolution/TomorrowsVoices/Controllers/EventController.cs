@@ -1126,14 +1126,81 @@ namespace TomorrowsVoices.Controllers
             return View();
         }
 
+        // Chart Methods
+        // Doughnut Chart - Events by City
+        [HttpGet]
+        public async Task<IActionResult> GetEventsByCityData()
+        {
+            var eventsByCity = await _context.Events
+                .Include(e => e.VolLocation) // Include the location to access the city
+                .GroupBy(e => e.VolLocation.City)
+                .Select(g => new
+                {
+                    City = g.Key,
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
+            var labels = eventsByCity.Select(e => e.City).ToArray();
+            var data = eventsByCity.Select(e => e.Count).ToArray();
+
+            return Json(new { labels, data });
+        }
+
+        // Active vs. Archived Events
+        [HttpGet]
+        public async Task<IActionResult> GetActiveVsArchivedEventsData()
+        {
+            var activeEventsCount = await _context.Events.CountAsync(e => !e.IsArchived);
+            var archivedEventsCount = await _context.Events.CountAsync(e => e.IsArchived);
+
+            var labels = new[] { "Active", "Archived" };
+            var data = new[] { activeEventsCount, archivedEventsCount };
+
+            return Json(new { labels, data });
+        }
+
+        // Get Upcoming Events Widget
+        [HttpGet]
+        public async Task<IActionResult> GetUpcomingEvents()
+        {
+            var upcomingEvents = await _context.Events
+                .Where(e => e.Start >= DateTime.Today && !e.IsArchived) // Filter upcoming and non-archived events
+                .Include(e => e.VolLocation) // Include location details
+                .OrderBy(e => e.Start) // Order by start date
+                .Select(e => new
+                {
+                    id = e.ID,
+                    title = e.Name, // Event name
+                    date = e.Start.ToString("yyyy-MM-dd"), // Event start date
+                    location = e.VolLocation.City // Event location (city)
+                })
+                .ToListAsync();
+
+            return Json(upcomingEvents);
+        }
+
+        // Volunteers Count
+        [HttpGet]
+        public async Task<JsonResult> GetTotalEventCount()
+        {
+            try
+            {
+                // Count all events, regardless of their archived status
+                var totalCount = await _context.Events.CountAsync();
+                return Json(new { TotalCount = totalCount });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework like Serilog or NLog)
+                Console.Error.WriteLine($"Error in GetTotalEventCount: {ex.Message}");
+                return Json(new { TotalCount = 0 }); // Return a default value in case of error
+            }
+        }
+
         private bool EventExists(int id)
         {
             return _context.Events.Any(e => e.ID == id);
         }
-
-
-  
     }
-
-
 }

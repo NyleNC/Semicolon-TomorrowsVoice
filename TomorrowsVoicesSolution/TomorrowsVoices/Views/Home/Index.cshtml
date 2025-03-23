@@ -1,3 +1,1404 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Charts CSS-->
+    <style>
+        .container {
+            margin: 0;
+        }
+
+        .all-charts {
+            display: flex; /* Enable Flexbox */
+            flex-direction: row; /* Stack children horizontally */
+            gap: 20px; /* Add space between the sections (optional) */
+            align-items: flex-start; /* Align children to the left */
+            margin-bottom: 20px;
+        }
+
+            .all-charts > div {
+                flex: 1; /* Allow each section to take equal space */
+                padding: 10px; /* Optional: Add padding for better spacing */
+            }
+
+        .sub-charts {
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+
+        .outer-container {
+            display: flex !important;
+            flex-direction: row; /* Stacks child elements vertically */
+            gap: 20px; /* Adds spacing between the stacked elements */
+        }
+
+        .charts-container {
+            display: flex;
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center-align children horizontally */
+            padding: 20px 40px 20px 40px;
+        }
+
+        .charts-title, .lists-title {
+            margin: 0 0 0 0 !important;
+            font-size: 28px !important;
+            font-weight: 800 !important;
+            padding-top: 10px !important;
+        }
+
+        .pie-charts {
+            width: 150px !important; /* Fixed width for pie charts */
+            height: auto !important; /* Maintain aspect ratio */
+        }
+
+        .horizontal-charts {
+            width: 150px !important; /* Fixed width for horizontal charts */
+            height: 50px !important; /* Fixed height for horizontal charts */
+        }
+
+            .horizontal-charts canvas {
+                width: 100% !important; /* Make canvas fill the container */
+                height: 100% !important; /* Make canvas fill the container */
+            }
+
+        .headers {
+            font-size: 24px;
+            font-weight: 600;
+            padding-left: 20px;
+            padding-top: 10px;
+        }
+    </style>
+
+    <!-- List View CSS-->
+    <style>
+        /* Upcoming Sessions CSS */
+        .all-lists {
+            display: flex; /* Enable Flexbox */
+            flex-direction: row; /* Stack children horizontally */
+            gap: 20px; /* Add space between the sections (optional) */
+            align-items: flex-start; /* Align children to the left */
+            margin-bottom: 20px;
+        }
+
+            .all-lists > div {
+                flex: 1; /* Allow each section to take equal space */
+                padding: 10px; /* Optional: Add padding for better spacing */
+            }
+
+        .lists-border {
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            max-width: 750px;
+        }
+
+        .session-list {
+            width: 730px; /* Fixed width for the container */
+            height: 300px; /* Fixed height for the container */
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 10px; /* Add some padding inside the container */
+            box-sizing: border-box; /* Ensure padding is included in the width */
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+        .session-item {
+            background-color: #f9f9f9; /* Light gray background */
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            cursor: pointer; /* Change cursor to pointer */
+            width: 100%; /* Ensure session items take full width of the container */
+            box-sizing: border-box; /* Include padding in the width */
+        }
+
+            .session-item:hover {
+                transform: translateY(-5px); /* Slight lift effect */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+                background-color: #e0f7fa; /* Light blue background on hover */
+                cursor: pointer; /* Ensure cursor is pointer on hover */
+            }
+
+            .session-item h3 {
+                margin: 0;
+                font-size: 1.2rem; /* Adjust font size for the city name */
+                white-space: nowrap; /* Prevent text from wrapping */
+                overflow: hidden; /* Hide overflow */
+                text-overflow: ellipsis; /* Show ellipsis for overflow text */
+            }
+
+            .session-item p {
+                margin: 0.5rem 0 0; /* Adjust margin for the date */
+                font-size: 1rem; /* Adjust font size for the date */
+                white-space: nowrap; /* Prevent text from wrapping */
+                overflow: hidden; /* Hide overflow */
+                text-overflow: ellipsis; /* Show ellipsis for overflow text */
+            }
+
+        .animate__animated {
+            animation-duration: 1s;
+        }
+
+        /* Upcoming Sessions CSS */
+        .event-list {
+            width: 730px; /* Fixed width */
+            height: 300px; /* Fixed height */
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 10px; /* Add some padding inside the container */
+            box-sizing: border-box; /* Ensure padding is included in the width and height */
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            border-radius: 8px; /* Optional: Add rounded corners */
+        }
+
+        .event-item {
+            background-color: #f9f9f9; /* Light gray background */
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            cursor: pointer; /* Change cursor to pointer */
+            width: 100%; /* Ensure event items take full width of the container */
+            box-sizing: border-box; /* Include padding in the width */
+        }
+
+            .event-item:hover {
+                transform: translateY(-5px); /* Slight lift effect */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+                background-color: #e0f7fa; /* Light blue background on hover */
+                cursor: pointer; /* Ensure cursor is pointer on hover */
+            }
+
+            .event-item h3 {
+                margin: 0;
+                font-size: 1.2rem; /* Adjust font size for the event name */
+                white-space: nowrap; /* Prevent text from wrapping */
+                overflow: hidden; /* Hide overflow */
+                text-overflow: ellipsis; /* Show ellipsis for overflow text */
+            }
+
+            .event-item p {
+                margin: 0.5rem 0 0; /* Adjust margin for the date and location */
+                font-size: 1rem; /* Adjust font size for the date and location */
+                white-space: nowrap; /* Prevent text from wrapping */
+                overflow: hidden; /* Hide overflow */
+                text-overflow: ellipsis; /* Show ellipsis for overflow text */
+            }
+
+        .animate__animated {
+            animation-duration: 1s;
+        }
+
+        .no-sessions-message {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+            color: #666;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    <!-- Welcome Text Animation CSS-->
+    <style>
+        /* Animation for the welcome text */
+        .welcome-text {
+            opacity: 0;
+            transform: translateX(-20px); /* Start slightly to the left */
+            animation: slideInFromLeft 1s ease-out forwards, fadeIn 1s ease-out forwards;
+            text-align: left; /* Align text to the left */
+            margin-left: 20px; /* Add some left margin for better spacing */
+            margin-bottom: 50px;
+        }
+
+        /* Keyframes for the slide-in animation */
+        @@keyframes slideInFromLeft {
+            0% {
+                transform: translateX(-20px); /* Start slightly to the left */
+            }
+
+            100% {
+                transform: translateX(0); /* End at the original position */
+            }
+        }
+
+        /* Keyframes for the fade-in animation */
+        @@keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Additional styling for the welcome text */
+        #welcome-text {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+        }
+    </style>
+
+    <!-- Count Elements CSS-->
+    <style>
+        .all-counts {
+            display: flex; /* Enable Flexbox */
+            flex-direction: row; /* Stack children horizontally */
+            gap: 20px; /* Add space between the sections (optional) */
+            align-items: flex-start; /* Align children to the left */
+            margin-bottom: 20px;
+            max-width: 1520px;
+        }
+
+        .sub-counts {
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            text-align: center; /* Center text */
+        }
+
+        .first-group {
+            flex: 1; /* Each of the first 3 divs will occupy equal space */
+            max-width: 374px; /* Limit width to 374px */
+            padding: 5px 43px 15px 43px; /* Adjust padding as needed */
+        }
+
+        .second-group {
+            flex: 1; /* Each of the last 3 divs will occupy equal space */
+            max-width: 374px; /* Limit width to 374px */
+            padding: 5px 43.5px 15px 43.5px; /* Adjust padding as needed */
+        }
+
+        #directorCounts, #singerCounts, #sessionCounts, #locationCounts, #volunteerCounts, #eventCounts {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        #directorTotalCount, #singerTotalCount, #sessionTotalCount, #locationTotalCount, #volunteerTotalCount, #eventTotalCount {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        #directorCounts p, #singerCounts p, #sessionCounts p, #locationCounts p, #volunteerCounts p, #eventCounts p {
+            font-size: 1rem;
+            margin: 0;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Text -->
+    <div class="welcome-text">
+        <div id="welcome-text">
+            Welcome User!
+        </div>
+        <p>All of your data in a glimpse</p>
+    </div>
+
+    <!-- All Charts-->
+    <div class="all-charts">
+        <div class="sub-charts">
+            <p class="headers">Choir Administration</p>
+            <div class="outer-container">
+                <div class="charts-container">
+                    <div class="pie-charts">
+                        <!-- Pie Chart - Directors by City-->
+                        <canvas id="directorsByCityDoughnutChart"></canvas>
+                    </div>
+                    <a class="nav-link charts-title" asp-controller="Director" asp-action="Index">Director</a>
+                    <div class="horizontal-charts">
+                        <!-- Archived vs Active Directors-->
+                        <canvas id="activeVsArchivedChart" width="150" height="50"></canvas>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="pie-charts">
+                        <!-- Pie Chart - Singers by City -->
+                        <canvas id="singersByCityDoughnutChart"></canvas>
+                    </div>
+                    <a class="nav-link charts-title" asp-controller="Singer" asp-action="Index">Singers</a>
+                    <div class="horizontal-charts">
+                        <!-- Active vs. Archived Singers -->
+                        <canvas id="activeVsArchivedSingersChart" width="150" height="50"></canvas>
+                    </div>
+                </div>
+                <div class="charts-container">
+                    <div class="pie-charts">
+                        <!-- Pie Chart - Sessions by City -->
+                        <canvas id="sessionsByCityChart"></canvas>
+                    </div>
+                    <a class="nav-link charts-title" asp-controller="Session" asp-action="Index">Sessions</a>
+                    <div class="horizontal-charts">
+                        <!-- Active vs. Archived Sessions -->
+                        <canvas id="activeVsArchivedSessionsChart" width="150" height="50"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sub-charts">
+            <p class="headers">Events Management</p>
+            <div class="outer-container">
+                <div class="charts-container">
+                    <!-- Pie Chart - Locations -->
+                    <div class="pie-charts">
+                        <canvas id="locationsByCityChart"></canvas>
+                    </div>
+                    <a class="nav-link charts-title" asp-controller="VolLocation" asp-action="Index">Location</a>
+                    <!-- Active vs. Archived Locations -->
+                    <div class="horizontal-charts">
+                        <canvas id="activeVsArchivedLocationsChart" width="150" height="50"></canvas>
+                    </div>
+                </div>
+                <div class="charts-container">
+                    <!-- Container for the Doughnut Chart -->
+                    <div class="pie-charts">
+                        <canvas id="volunteersByCityChart"></canvas>
+                    </div>
+                    <a class="nav-link charts-title" asp-controller="Volunteer" asp-action="Index">Volunteer</a>
+                    <!-- Container for the Horizontal Bar Chart -->
+                    <div class="horizontal-charts">
+                        <canvas id="activeVsArchivedVolunteersChart" width="150" height="50"></canvas>
+                    </div>
+                </div>
+                <div class="charts-container">
+                    <!-- Container for the Doughnut Chart -->
+                    <div class="pie-charts">
+                        <canvas id="eventsByCityChart"></canvas>
+                    </div>
+                    <a class="nav-link charts-title" asp-controller="Event" asp-action="Index">Events</a>
+                    <!-- Container for the Horizontal Bar Chart -->
+                    <div class="horizontal-charts">
+                        <canvas id="activeVsArchivedEventsChart" width="150" height="50"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Count Elements -->
+    <div class="all-counts">
+        <div class="sub-counts first-group">
+            <div id="directorCounts">
+                <div id="directorTotalCount">...</div>
+                <p>Total Directors</p>
+            </div>
+        </div>
+        <div class="sub-counts first-group">
+            <div id="singerCounts">
+                <div id="singerTotalCount">...</div>
+                <p>Total Singers</p>
+            </div>
+        </div>
+        <div class="sub-counts first-group">
+            <div id="sessionCounts">
+                <div id="sessionTotalCount">...</div>
+                <p>Total Sessions</p>
+            </div>
+        </div>
+        <div class="sub-counts second-group">
+            <div id="locationCounts">
+                <div id="locationTotalCount">...</div>
+                <p>Total Locations</p>
+            </div>
+        </div>
+        <div class="sub-counts second-group">
+            <div id="volunteerCounts">
+                <div id="volunteerTotalCount">...</div>
+                <p>Total Volunteers</p>
+            </div>
+        </div>
+        <div class="sub-counts second-group">
+            <div id="eventCounts">
+                <div id="eventTotalCount">...</div>
+                <p>Total Events</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Lists-->
+    <div class="all-lists">
+        <div class="lists-border">
+            <div class="text-center">
+                <h1 class="lists-title">Upcoming Sessions</h1>
+            </div>
+
+            <div id="upcoming-sessions" class="session-list">
+                <!-- Sessions will be loaded here -->
+            </div>
+        </div>
+        <div class="lists-border">
+            <div class="text-center">
+                <h1 class="lists-title">Upcoming Events</h1>
+            </div>
+
+            <div id="upcoming-events" class="event-list">
+                <!-- Events will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Director Chart JS -->
+    <!-- Pie Chart - Directors by City-->
+    <script>
+                document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Director/GetDirectorsByCityForDoughnut')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Directors by City Data:", data);
+                    const ctx = document.getElementById('directorsByCityDoughnutChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.map(item => item.city),
+                            datasets: [{
+                                label: 'Directors by City',
+                                data: data.map(item => item.count),
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.6)',
+                                    'rgba(54, 162, 235, 0.6)',
+                                    'rgba(255, 206, 86, 0.6)',
+                                    'rgba(75, 192, 192, 0.6)',
+                                    'rgba(153, 102, 255, 0.6)',
+                                    'rgba(255, 159, 64, 0.6)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                title: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Archived vs Active Directors-->
+    <script>
+                 document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Director/GetActiveVsArchivedDirectors')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Active vs. Archived Data:", data);
+                    const ctx = document.getElementById('activeVsArchivedChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar', // Horizontal bar chart
+                        data: {
+                            labels: ['Directors'], // Single label for the horizontal bar
+                            datasets: [
+                                {
+                                    label: 'Active',
+                                    data: [data.counts[0]], // Active count
+                                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // Color for active
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                },
+                                {
+                                    label: 'Archived',
+                                    data: [data.counts[1]], // Archived count
+                                    backgroundColor: 'rgba(255, 99, 132, 0.6)', // Color for archived
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                }
+                            ]
+                        },
+                        options: {
+                            indexAxis: 'y', // Make the chart horizontal
+                            responsive: false,
+                            maintainAspectRatio: false, // Allow custom sizing
+                            plugins: {
+                                legend: {
+                                    position: 'top', // Show legend on top
+                                    display: false // Ensure legend is visible
+                                },
+                                title: {
+                                    display: false // Hide the title
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the x-axis
+                                    grid: {
+                                        display: false // Hide x-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide x-axis ticks
+                                    }
+                                },
+                                y: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the y-axis
+                                    grid: {
+                                        display: false // Hide y-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide y-axis ticks
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Singers Chart JS-->
+    <!-- Pie Chart - Singers by City-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Singer/GetSingersByCityForDoughnut')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Singers by City Data:", data);
+                    const ctx = document.getElementById('singersByCityDoughnutChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.map(item => item.city),
+                            datasets: [{
+                                label: 'Singers by City',
+                                data: data.map(item => item.count),
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.6)',
+                                    'rgba(54, 162, 235, 0.6)',
+                                    'rgba(255, 206, 86, 0.6)',
+                                    'rgba(75, 192, 192, 0.6)',
+                                    'rgba(153, 102, 255, 0.6)',
+                                    'rgba(255, 159, 64, 0.6)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false // Hide the legend
+                                },
+                                title: {
+                                    display: false // Hide the title
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Archived vs Active Singers-->
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Singer/GetActiveVsArchivedSingers')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Active vs. Archived Data:", data);
+                    const ctx = document.getElementById('activeVsArchivedSingersChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar', // Horizontal bar chart
+                        data: {
+                            labels: ['Singers'], // Single label for the horizontal bar
+                            datasets: [
+                                {
+                                    label: 'Active',
+                                    data: [data.counts[0]], // Active count
+                                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // Color for active
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                },
+                                {
+                                    label: 'Archived',
+                                    data: [data.counts[1]], // Archived count
+                                    backgroundColor: 'rgba(255, 99, 132, 0.6)', // Color for archived
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                }
+                            ]
+                        },
+                        options: {
+                            indexAxis: 'y', // Make the chart horizontal
+                            responsive: false, // Disable responsiveness
+                            maintainAspectRatio: false, // Allow custom sizing
+                            plugins: {
+                                legend: {
+                                    position: 'top', // Show legend on top
+                                    display: false // Hide the legend
+                                },
+                                title: {
+                                    display: false // Hide the title
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the x-axis
+                                    grid: {
+                                        display: false // Hide x-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide x-axis ticks
+                                    }
+                                },
+                                y: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the y-axis
+                                    grid: {
+                                        display: false // Hide y-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide y-axis ticks
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Sessions Charts JS -->
+    <!-- Doughnut Chart - Session by City -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Session/GetSessionsByCityData')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Sessions by City Data:", data);
+                    const ctx = document.getElementById('sessionsByCityChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Sessions by City',
+                                data: data.data,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.6)',
+                                    'rgba(54, 162, 235, 0.6)',
+                                    'rgba(255, 206, 86, 0.6)',
+                                    'rgba(75, 192, 192, 0.6)',
+                                    'rgba(153, 102, 255, 0.6)',
+                                    'rgba(255, 159, 64, 0.6)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false // Hide the legend
+                                },
+                                title: {
+                                    display: false // Hide the title
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Active vs Archived Sessions -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Session/GetActiveVsArchivedSessionsData')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Active vs. Archived Sessions Data:", data);
+                    const ctx = document.getElementById('activeVsArchivedSessionsChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar', // Horizontal bar chart
+                        data: {
+                            labels: ['Sessions'], // Single label for the horizontal bar
+                            datasets: [
+                                {
+                                    label: 'Active',
+                                    data: [data.data[0]], // Active count
+                                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // Color for active
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                },
+                                {
+                                    label: 'Archived',
+                                    data: [data.data[1]], // Archived count
+                                    backgroundColor: 'rgba(255, 99, 132, 0.6)', // Color for archived
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                }
+                            ]
+                        },
+                        options: {
+                            indexAxis: 'y', // Make the chart horizontal
+                            responsive: false, // Disable responsiveness
+                            maintainAspectRatio: false, // Allow custom sizing
+                            plugins: {
+                                legend: {
+                                    position: 'top', // Show legend on top
+                                    display: false // Hide the legend
+                                },
+                                title: {
+                                    display: false // Hide the title
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the x-axis
+                                    grid: {
+                                        display: false // Hide x-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide x-axis ticks
+                                    }
+                                },
+                                y: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the y-axis
+                                    grid: {
+                                        display: false // Hide y-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide y-axis ticks
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Locations Charts JS -->
+    <!-- Doughnut Chart - Locations by City -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/VolLocation/GetLocationsByCityData')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Locations by City Data:", data);
+                    const ctx = document.getElementById('locationsByCityChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Locations by City',
+                                data: data.data,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.6)',
+                                    'rgba(54, 162, 235, 0.6)',
+                                    'rgba(255, 206, 86, 0.6)',
+                                    'rgba(75, 192, 192, 0.6)',
+                                    'rgba(153, 102, 255, 0.6)',
+                                    'rgba(255, 159, 64, 0.6)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false // Hide the legend
+                                },
+                                title: {
+                                    display: false // Hide the title
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Active vs Archived Locations -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/VolLocation/GetActiveVsArchivedLocationsData')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Active vs. Archived Locations Data:", data);
+                    const ctx = document.getElementById('activeVsArchivedLocationsChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar', // Horizontal bar chart
+                        data: {
+                            labels: ['Locations'], // Single label for the horizontal bar
+                            datasets: [
+                                {
+                                    label: 'Active',
+                                    data: [data.data[0]], // Active count
+                                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // Color for active
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                },
+                                {
+                                    label: 'Archived',
+                                    data: [data.data[1]], // Archived count
+                                    backgroundColor: 'rgba(255, 99, 132, 0.6)', // Color for archived
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                }
+                            ]
+                        },
+                        options: {
+                            indexAxis: 'y', // Make the chart horizontal
+                            responsive: false, // Disable responsiveness
+                            maintainAspectRatio: false, // Allow custom sizing
+                            plugins: {
+                                legend: {
+                                    position: 'top', // Show legend on top
+                                    display: false // Hide the legend
+                                },
+                                title: {
+                                    display: false // Hide the title
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the x-axis
+                                    grid: {
+                                        display: false // Hide x-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide x-axis ticks
+                                    }
+                                },
+                                y: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the y-axis
+                                    grid: {
+                                        display: false // Hide y-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide y-axis ticks
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Volunteers Chart JS -->
+    <!-- Doughnut Chart - Volunteers by City -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Volunteer/GetVolunteersByCityData')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Volunteers by City Data:", data);
+                    const ctx = document.getElementById('volunteersByCityChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Volunteers by City',
+                                data: data.data,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.6)',
+                                    'rgba(54, 162, 235, 0.6)',
+                                    'rgba(255, 206, 86, 0.6)',
+                                    'rgba(75, 192, 192, 0.6)',
+                                    'rgba(153, 102, 255, 0.6)',
+                                    'rgba(255, 159, 64, 0.6)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false // Hide the legend
+                                },
+                                title: {
+                                    display: false // Hide the title
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Active vs Archived Volunteers -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Volunteer/GetActiveVsArchivedVolunteersData')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Active vs. Archived Volunteers Data:", data);
+                    const ctx = document.getElementById('activeVsArchivedVolunteersChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar', // Horizontal bar chart
+                        data: {
+                            labels: ['Volunteers'], // Single label for the horizontal bar
+                            datasets: [
+                                {
+                                    label: 'Active',
+                                    data: [data.data[0]], // Active count
+                                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // Color for active
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                },
+                                {
+                                    label: 'Archived',
+                                    data: [data.data[1]], // Archived count
+                                    backgroundColor: 'rgba(255, 99, 132, 0.6)', // Color for archived
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                }
+                            ]
+                        },
+                        options: {
+                            indexAxis: 'y', // Make the chart horizontal
+                            responsive: false, // Disable responsiveness
+                            maintainAspectRatio: false, // Allow custom sizing
+                            plugins: {
+                                legend: {
+                                    position: 'top', // Show legend on top
+                                    display: false // Hide the legend
+                                },
+                                title: {
+                                    display: false // Hide the title
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the x-axis
+                                    grid: {
+                                        display: false // Hide x-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide x-axis ticks
+                                    }
+                                },
+                                y: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the y-axis
+                                    grid: {
+                                        display: false // Hide y-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide y-axis ticks
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Events Charts JS -->
+    <!-- Doughnut Chart - Events by City -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Event/GetEventsByCityData')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Events by City Data:", data);
+                    const ctx = document.getElementById('eventsByCityChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Events by City',
+                                data: data.data,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.6)',
+                                    'rgba(54, 162, 235, 0.6)',
+                                    'rgba(255, 206, 86, 0.6)',
+                                    'rgba(75, 192, 192, 0.6)',
+                                    'rgba(153, 102, 255, 0.6)',
+                                    'rgba(255, 159, 64, 0.6)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false // Hide the legend
+                                },
+                                title: {
+                                    display: false // Hide the title
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Active vs Archived Events -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Event/GetActiveVsArchivedEventsData')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Active vs. Archived Events Data:", data);
+                    const ctx = document.getElementById('activeVsArchivedEventsChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar', // Horizontal bar chart
+                        data: {
+                            labels: ['Events'], // Single label for the horizontal bar
+                            datasets: [
+                                {
+                                    label: 'Active',
+                                    data: [data.data[0]], // Active count
+                                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // Color for active
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                },
+                                {
+                                    label: 'Archived',
+                                    data: [data.data[1]], // Archived count
+                                    backgroundColor: 'rgba(255, 99, 132, 0.6)', // Color for archived
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1,
+                                    barThickness: 20 // Adjust bar thickness (in pixels)
+                                }
+                            ]
+                        },
+                        options: {
+                            indexAxis: 'y', // Make the chart horizontal
+                            responsive: false, // Disable responsiveness
+                            maintainAspectRatio: false, // Allow custom sizing
+                            plugins: {
+                                legend: {
+                                    position: 'top', // Show legend on top
+                                    display: false // Hide the legend
+                                },
+                                title: {
+                                    display: false // Hide the title
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the x-axis
+                                    grid: {
+                                        display: false // Hide x-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide x-axis ticks
+                                    }
+                                },
+                                y: {
+                                    stacked: true, // Stack the bars horizontally
+                                    display: false, // Hide the y-axis
+                                    grid: {
+                                        display: false // Hide y-axis grid lines
+                                    },
+                                    ticks: {
+                                        display: false // Hide y-axis ticks
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    // console.log("Chart created:", chart);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+
+    <!-- Upcoming Session List -->
+    <script>
+        $(document).ready(function () {
+            loadUpcomingSessions();
+        });
+
+        function loadUpcomingSessions() {
+            $.ajax({
+                url: '@Url.Action("GetUpcomingSessions", "Session")',
+                type: 'GET',
+                success: function (data) {
+                    $('#upcoming-sessions').empty(); // Clear the container
+
+                    if (data.length > 0) {
+                        // If there are sessions, render them
+                        data.forEach(function (session) {
+                            var sessionHtml = `
+                                <div class="session-item animate__animated animate__fadeIn" data-session-id="${session.id}">
+                                    <h3>${session.title}</h3>
+                                    <p><strong>Date:</strong> ${session.date}</p>
+                                </div>
+                            `;
+                            $('#upcoming-sessions').append(sessionHtml);
+                        });
+
+                        // Add click event listener to session items
+                        $('.session-item').on('click', function () {
+                            var sessionId = $(this).data('session-id'); // Get the session ID
+                            window.location.href = '@Url.Action("Details", "Session")' + '/' + sessionId; // Redirect to Details page
+                        });
+                    } else {
+                        // If no sessions are available, show a message
+                        var noSessionsHtml = `
+                            <div class="no-sessions-message">
+                                <p>No Sessions Upcoming</p>
+                            </div>
+                        `;
+                        $('#upcoming-sessions').append(noSessionsHtml);
+                    }
+                },
+                error: function () {
+                    $('#upcoming-sessions').html('<p>Error loading sessions.</p>');
+                }
+            });
+        }
+    </script>
+
+    <!-- Upcoming Events List -->
+    <script>
+        $(document).ready(function () {
+            loadUpcomingEvents();
+        });
+
+        function loadUpcomingEvents() {
+            $.ajax({
+                url: '@Url.Action("GetUpcomingEvents", "Event")',
+                type: 'GET',
+                success: function (data) {
+                    $('#upcoming-events').empty(); // Clear the container
+
+                    if (data.length > 0) {
+                        // If there are events, render them
+                        data.forEach(function (event) {
+                            var eventHtml = `
+                                <div class="event-item animate__animated animate__fadeIn" data-event-id="${event.id}">
+                                    <h3>${event.title}</h3>
+                                    <p><strong>Date:</strong> ${event.date}</p>
+                                    <p><strong>Location:</strong> ${event.location}</p>
+                                </div>
+                            `;
+                            $('#upcoming-events').append(eventHtml);
+                        });
+
+                        // Add click event listener to event items
+                        $('.event-item').on('click', function () {
+                            var eventId = $(this).data('event-id'); // Get the event ID
+                            window.location.href = '@Url.Action("Details", "Event")' + '/' + eventId; // Redirect to Details page
+                        });
+                    } else {
+                        // If no events are available, show a message
+                        var noEventsHtml = `
+                            <div class="no-events-message">
+                                <p>No Events Upcoming</p>
+                            </div>
+                        `;
+                        $('#upcoming-events').append(noEventsHtml);
+                    }
+                },
+                error: function () {
+                    $('#upcoming-events').html('<p>Error loading events.</p>');
+                }
+            });
+        }
+    </script>
+
+    <!-- Director Count -->
+    <script>
+        $(document).ready(function () {
+            // AJAX call for Director count
+            $.ajax({
+                url: '@Url.Action("GetTotalDirectorCount", "Director")',
+                type: 'GET',
+                success: function (data) {
+                    console.log("Director Count Response:", data); // Log the response
+                    $('#directorTotalCount').text(data.totalCount); // Update the Director count
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error); // Log the error
+                    $('#directorTotalCount').text('Error'); // Display error if AJAX fails
+                }
+            });
+
+            // AJAX call for Singer count
+            $.ajax({
+                url: '@Url.Action("GetTotalSingerCount", "Singer")',
+                type: 'GET',
+                success: function (data) {
+                    console.log("Singer Count Response:", data); // Log the response
+                    $('#singerTotalCount').text(data.totalCount); // Update the Singer count
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error); // Log the error
+                    $('#singerTotalCount').text('Error'); // Display error if AJAX fails
+                }
+            });
+
+            // AJAX call for Session count
+            $.ajax({
+                url: '@Url.Action("GetTotalSessionCount", "Session")',
+                type: 'GET',
+                success: function (data) {
+                    console.log("Session Count Response:", data); // Log the response
+                    $('#sessionTotalCount').text(data.totalCount); // Update the Session count
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error); // Log the error
+                    $('#sessionTotalCount').text('Error'); // Display error if AJAX fails
+                }
+            });
+
+            $.ajax({
+                url: '@Url.Action("GetTotalLocationCount", "VolLocation")',
+                type: 'GET',
+                success: function (data) {
+                    console.log("Location Count Response:", data); // Log the response
+                    $('#locationTotalCount').text(data.totalCount); // Update the Location count
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error); // Log the error
+                    $('#locationTotalCount').text('Error'); // Display error if AJAX fails
+                }
+            });
+
+            $.ajax({
+                url: '@Url.Action("GetTotalVolunteerCount", "Volunteer")',
+                type: 'GET',
+                success: function (data) {
+                    console.log("Volunteer Count Response:", data); // Log the response
+                    $('#volunteerTotalCount').text(data.totalCount); // Update the Volunteer count
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error); // Log the error
+                    $('#volunteerTotalCount').text('Error'); // Display error if AJAX fails
+                }
+            });
+
+            $.ajax({
+                url: '@Url.Action("GetTotalEventCount", "Event")',
+                type: 'GET',
+                success: function (data) {
+                    console.log("Event Count Response:", data); // Log the response
+                    $('#eventTotalCount').text(data.totalCount); // Update the Event count
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error); // Log the error
+                    $('#eventTotalCount').text('Error'); // Display error if AJAX fails
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -783,15 +783,80 @@ namespace TomorrowsVoices.Controllers
             return View();
         }
 
+        // Chart methods
+        // Doughnut Chart - Sessions by City
+        [HttpGet]
+        public async Task<IActionResult> GetSessionsByCityData()
+        {
+            var sessionsByCity = await _context.Sessions
+                .Include(s => s.Location)
+                .GroupBy(s => s.Location.City)
+                .Select(g => new
+                {
+                    City = g.Key,
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
+            var labels = sessionsByCity.Select(s => s.City).ToArray();
+            var data = sessionsByCity.Select(s => s.Count).ToArray();
+
+            return Json(new { labels, data });
+        }
+
+        // Active vs. Archived Session
+        [HttpGet]
+        public async Task<IActionResult> GetActiveVsArchivedSessionsData()
+        {
+            var activeSessionsCount = await _context.Sessions.CountAsync(s => !s.IsArchived);
+            var archivedSessionsCount = await _context.Sessions.CountAsync(s => s.IsArchived);
+
+            var labels = new[] { "Active", "Archived" };
+            var data = new[] { activeSessionsCount, archivedSessionsCount };
+
+            return Json(new { labels, data });
+        }
+
+        // Upcoming Session Widget
+        [HttpGet]
+        public async Task<IActionResult> GetUpcomingSessions()
+        {
+            var upcomingSessions = await _context.Sessions
+                .Where(s => s.Date >= DateTime.Today && !s.IsArchived)
+                .Include(s => s.Location)
+                .OrderBy(s => s.Date)
+                .Select(s => new
+                {
+                    id = s.ID,
+                    title = s.Location.City, // City name
+                    date = s.Date.Value.ToString("yyyy-MM-dd") // Session date
+                })
+                .ToListAsync();
+
+            return Json(upcomingSessions);
+        }
+
+        // Sessions Count
+        [HttpGet]
+        public async Task<JsonResult> GetTotalSessionCount()
+        {
+            try
+            {
+                // Count all sessions, regardless of their archived status
+                var totalCount = await _context.Sessions.CountAsync();
+                return Json(new { TotalCount = totalCount });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework like Serilog or NLog)
+                Console.Error.WriteLine($"Error in GetTotalSessionCount: {ex.Message}");
+                return Json(new { TotalCount = 0 }); // Return a default value in case of error
+            }
+        }
+
         private bool SessionExists(int id)
         {
             return _context.Sessions.Any(e => e.ID == id);
         }
-
-
-
-
-
-
     }
 }

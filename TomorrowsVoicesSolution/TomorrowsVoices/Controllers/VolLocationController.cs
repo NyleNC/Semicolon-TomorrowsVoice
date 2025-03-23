@@ -203,6 +203,58 @@ namespace TomorrowsVoices.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Chart Methods
+        // Doughnut Chart - Locations by City
+        [HttpGet]
+        public async Task<IActionResult> GetLocationsByCityData()
+        {
+            var locationsByCity = await _context.VolLocations
+                .GroupBy(l => l.City)
+                .Select(g => new
+                {
+                    City = g.Key,
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
+            var labels = locationsByCity.Select(l => l.City).ToArray();
+            var data = locationsByCity.Select(l => l.Count).ToArray();
+
+            return Json(new { labels, data });
+        }
+
+        // Active vs. Archived Locations
+        [HttpGet]
+        public async Task<IActionResult> GetActiveVsArchivedLocationsData()
+        {
+            var activeLocationsCount = await _context.VolLocations.CountAsync(l => !l.IsArchived);
+            var archivedLocationsCount = await _context.VolLocations.CountAsync(l => l.IsArchived);
+
+            var labels = new[] { "Active", "Archived" };
+            var data = new[] { activeLocationsCount, archivedLocationsCount };
+
+            return Json(new { labels, data });
+        }
+
+
+        // Locations Count
+        [HttpGet]
+        public async Task<JsonResult> GetTotalLocationCount()
+        {
+            try
+            {
+                // Count all locations, regardless of their archived status
+                var totalCount = await _context.VolLocations.CountAsync();
+                return Json(new { TotalCount = totalCount });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework like Serilog or NLog)
+                Console.Error.WriteLine($"Error in GetTotalLocationCount: {ex.Message}");
+                return Json(new { TotalCount = 0 }); // Return a default value in case of error
+            }
+        }
+
         private bool VolLocationExists(int id)
         {
             return _context.VolLocations.Any(e => e.ID == id);
