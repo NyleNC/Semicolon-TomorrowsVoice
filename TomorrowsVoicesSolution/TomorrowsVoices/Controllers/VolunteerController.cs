@@ -625,6 +625,16 @@ namespace TomorrowsVoices.Controllers
             {
                 return null;
             }
+            // Check if the user is an Admin
+            if (User.IsInRole("Admin"))
+            {
+                return null; // Admins bypass restrictions
+            }
+
+            // Fetch the Volunteer for non-Admin users
+            return await _context.Volunteers
+                .FirstOrDefaultAsync(v => v.Email == userEmail);
+        }
 
         // Chart Methods
         // Doughnut Chart - Volunteers by City
@@ -678,16 +688,6 @@ namespace TomorrowsVoices.Controllers
             }
         }
 
-            // Check if the user is an Admin
-            if (User.IsInRole("Admin"))
-            {
-                return null; // Admins bypass restrictions
-            }
-
-            // Fetch the Volunteer for non-Admin users
-            return await _context.Volunteers
-                .FirstOrDefaultAsync(v => v.Email == userEmail);
-        }
         private bool VolunteerExists(int id)
         {
             return _context.Volunteers.Any(e => e.ID == id);

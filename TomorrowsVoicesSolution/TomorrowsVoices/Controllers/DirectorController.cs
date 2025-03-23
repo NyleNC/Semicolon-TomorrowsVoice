@@ -693,6 +693,18 @@ namespace TomorrowsVoices.Controllers
             {
                 return null;
             }
+            // Check if the user is an Admin
+            if (User.IsInRole("Admin"))
+            {
+                return null; // Admins bypass city restrictions
+            }
+
+            // Fetch the Director for non-Admin users
+            return await _context.Directors
+                .Include(d => d.DirectorLocations)
+                .ThenInclude(dl => dl.Location)
+                .FirstOrDefaultAsync(d => d.Email == userEmail);
+        }
 
         // Chart Methods
         // Pie Chart - Director by City
@@ -744,18 +756,6 @@ namespace TomorrowsVoices.Controllers
             }
         }
 
-            // Check if the user is an Admin
-            if (User.IsInRole("Admin"))
-            {
-                return null; // Admins bypass city restrictions
-            }
-
-            // Fetch the Director for non-Admin users
-            return await _context.Directors
-                .Include(d => d.DirectorLocations)
-                .ThenInclude(dl => dl.Location)
-                .FirstOrDefaultAsync(d => d.Email == userEmail);
-        }
         private bool DirectorExists(int id)
         {
             return _context.Directors.Any(e => e.ID == id);
