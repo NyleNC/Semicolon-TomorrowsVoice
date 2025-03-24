@@ -69,36 +69,42 @@ namespace TomorrowsVoices.Data
                     {
                         FirstName = "Anais",
                         LastName = "Kelsey-Verdecchia",
+                        dirPhoneNumber = "9993456796",
                         Email = "averdecchia@tv.com"
                     },
                     new Director
                     {
                         FirstName = "Brian",
                         LastName = "Paul",
+                        dirPhoneNumber = "9993456795",
                         Email = "bpaul@tv.com"
                     },
                     new Director
                     {
                         FirstName = "Mendelt",
                         LastName = "Hoekstra",
+                        dirPhoneNumber = "9993456794",
                         Email = "menhoekstra@tv.com"
                     },
                     new Director
                     {
                         FirstName = "Monique",
                         LastName = "Hoekstra",
+                        dirPhoneNumber = "9993456793",
                         Email = "monhoekstra@tv.com"
                     },
                     new Director
                     {
                         FirstName = "Melissa",
                         LastName = "Dutch",
+                        dirPhoneNumber = "9993456792",
                         Email = "mdutch@tv.com"
                     },
                     new Director
                     {
                         FirstName = "Frances",
                         LastName = "Olson",
+                        dirPhoneNumber="9993456791",
                         Email = "folson@tv.com"
                     }
                 );

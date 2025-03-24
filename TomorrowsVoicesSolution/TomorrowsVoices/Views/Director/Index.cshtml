@@ -27,7 +27,7 @@
                 <li style="margin-right: 18px">
                     <button type="button" class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#importExcelModal">
                         <img src="~/Images/import.png" alt="import icon" style="height: 24px; width: auto; margin-right: 8px" />
-                        Import Excel
+                       Bulk Upload
                     </button>
                 </li>
             }
@@ -296,7 +296,7 @@
                     </th>
                     <th>
                         <button type="button" name="actionButton" value="City" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'City')">
-                            City
+                            Chapter
                             @if (ViewData["sortField"]?.ToString() == "City")
                             {
                                 if (ViewData["sortDirection"]?.ToString() == "asc")
@@ -347,6 +347,32 @@
                         </button>
                     </th>
                     <th>
+                        <button type="button" name="actionButton" value="dirPhoneNumber" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'Phone')">
+                            Phone Number
+                            @if (ViewData["sortField"]?.ToString() == "Phone")
+                            {
+                                if (ViewData["sortDirection"]?.ToString() == "asc")
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #fff; margin-left: 2.7px"></i>
+                            }
+                        </button>
+                    </th>
+                    <th>
                         <button style="cursor: default;" type="button" name="actionButton" value="Actions" class="btn btn-toolbar no-pointer-events">Actions</button>
                     </th>
                 </tr>
@@ -369,9 +395,12 @@
                     <span>No City Assigned</span>
                 }
             </td>
-
+         
             <td>
                 @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FormattedContactNumber)
             </td>
             <td>
                 <!-- Desktop View (Buttons) -->
@@ -392,9 +421,9 @@
                         </div>
                     }
 
-                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
+               @*      <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
                         <img src="~/Images/icons8-document-48.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
-                    </a> |
+                    </a> | *@
                     @if (User.IsInRole("Admin"))
                     {
                         <div class="btn-group">
@@ -434,11 +463,11 @@
                                     <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
                                 </a>
                             </li>
-                            <li>
+                      @*       <li>
                                 <a class="dropdown-item text-black" asp-action="Details" asp-route-id="@item.ID">
                                     <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
                                 </a>
-                            </li>
+                            </li> *@
                             @if (User.IsInRole("Admin"))
                             {
                                 <li>

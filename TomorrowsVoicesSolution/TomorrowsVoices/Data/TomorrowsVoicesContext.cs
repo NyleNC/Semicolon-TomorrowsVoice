@@ -107,6 +107,10 @@ namespace TomorrowsVoices.Data
 
                 .HasIndex(d => d.Email)
                 .IsUnique();
+            modelBuilder.Entity<Director>()
+
+              .HasIndex(d => d.dirPhoneNumber)
+              .IsUnique();
         }
     }
 }

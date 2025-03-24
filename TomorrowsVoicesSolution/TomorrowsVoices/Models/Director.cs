@@ -16,6 +16,9 @@ namespace TomorrowsVoices.Models
 
             }
         }
+        [Display(Name = "Emergency Contact Number")]
+        public string FormattedContactNumber => "(" + dirPhoneNumber.Substring(0, 3) + ") "
++ dirPhoneNumber.Substring(3, 3) + "-" + dirPhoneNumber[6..];
 
         [Display(Name = "First Name")]
         [Required(ErrorMessage = "You cannot leave the first name blank.")]
@@ -34,7 +37,19 @@ namespace TomorrowsVoices.Models
         public string? Email { get; set; }
 
         [Required(ErrorMessage = "Please Pick a city from the dropdown or add what you want")]
+
         public ICollection<DirectorLocation> DirectorLocations { get; set; } = new HashSet<DirectorLocation>();
+
+        [Display(Name = "Director Phone Number")]
+        [Required(ErrorMessage = "Phone number is required.")]
+        [RegularExpression("^\\d{10}$", ErrorMessage = "Please enter a valid 10-digit phone number (no space).")]
+        [DisplayFormat(DataFormatString = "{0:(###) ###-####}")]
+        [DataType(DataType.PhoneNumber)]
+        [MaxLength(10)]
+
+        public string? dirPhoneNumber { get; set; }
+
+
         public bool IsArchived { get; set; }
     }
 }
