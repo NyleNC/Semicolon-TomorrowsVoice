@@ -88,11 +88,11 @@ using (var scope = app.Services.CreateScope())
     TomorrowsVoicesInitializer.Initialize(serviceProvider: services, DeleteDatabase: true,
         UseMigrations: true, SeedSampleData: true);
 
-    //ApplicationDbInitializer.Initialize(serviceProvider: services,
-    //    UseMigrations: true, SeedSampleData: true);
-
     ApplicationDbInitializer.Initialize(serviceProvider: services,
-    UseMigrations: true, SeedSampleData: true);
+        UseMigrations: true, SeedSampleData: true);
+
+    //ApplicationDbInitializer.Initialize(serviceProvider: services,
+    //UseMigrations: true, SeedSampleData: true);
 }
 
 app.Run();
