@@ -543,10 +543,31 @@ namespace TomorrowsVoices.Controllers
         {
             if (id != model.Event.ID)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = $"ID mismatch: URL ID {id} vs Model ID {model.Event.ID}";
+                return RedirectToAction(nameof(Index));
             }
 
-            if (ModelState.IsValid)
+            // Log the received data
+            Console.WriteLine($"Edit POST received for Event ID: {id}");
+            Console.WriteLine($"Model Event ID: {model.Event.ID}");
+            Console.WriteLine($"Schedules count: {model.ExistingSchedules?.Count ?? 0}");
+
+            // Validate model state but perform additional validations
+            // for ExistingSchedules to ensure we don't lose that data if ModelState is invalid
+            bool validSchedules = true;
+            if (model.ExistingSchedules != null)
+            {
+                foreach (var schedule in model.ExistingSchedules)
+                {
+                    if (schedule.ScheduledStart >= schedule.ScheduledEnd)
+                    {
+                        ModelState.AddModelError("", "Schedule end time must be after start time");
+                        validSchedules = false;
+                    }
+                }
+            }
+
+            if (ModelState.IsValid && validSchedules)
             {
                 try
                 {
@@ -563,7 +584,8 @@ namespace TomorrowsVoices.Controllers
 
                             if (eventToUpdate == null)
                             {
-                                return NotFound();
+                                TempData["ErrorMessage"] = $"Event with ID {id} not found.";
+                                return RedirectToAction(nameof(Index));
                             }
 
                             // Update event basic properties
@@ -574,29 +596,74 @@ namespace TomorrowsVoices.Controllers
                             eventToUpdate.End = model.Event.End;
                             eventToUpdate.VolLocationID = model.Event.VolLocationID;
 
+                            // Save changes to the event properties first
+                            _context.Update(eventToUpdate);
+                            await _context.SaveChangesAsync();
+                            Console.WriteLine($"Updated event basic properties.");
+
+                            // Get all current schedules for potential cleanup
+                            var currentScheduleIds = eventToUpdate.VolSchedules.Select(s => s.ID).ToList();
+                            Console.WriteLine($"Current schedules: {string.Join(", ", currentScheduleIds)}");
+
+                            var submittedScheduleIds = model.ExistingSchedules?
+                                .Where(s => s.ScheduleID.HasValue && s.ScheduleID.Value > 0)
+                                .Select(s => s.ScheduleID.Value)
+                                .ToList() ?? new List<int>();
+                            Console.WriteLine($"Submitted schedules: {string.Join(", ", submittedScheduleIds)}");
+
+                            // Handle schedules that were removed
+                            var schedulesToRemove = currentScheduleIds.Except(submittedScheduleIds).ToList();
+                            Console.WriteLine($"Schedules to remove: {string.Join(", ", schedulesToRemove)}");
+
+                            foreach (var scheduleId in schedulesToRemove)
+                            {
+                                var scheduleToRemove = await _context.VolSchedules
+                                    .Include(s => s.VolAttendances)
+                                    .FirstOrDefaultAsync(s => s.ID == scheduleId);
+
+                                if (scheduleToRemove != null)
+                                {
+                                    // Remove associated attendances first
+                                    _context.VolAttendances.RemoveRange(scheduleToRemove.VolAttendances);
+                                    _context.VolSchedules.Remove(scheduleToRemove);
+                                    Console.WriteLine($"Removing schedule {scheduleId} and its attendances");
+                                }
+                            }
+                            await _context.SaveChangesAsync();
+
                             // Update existing schedules and add new ones
                             if (model.ExistingSchedules != null && model.ExistingSchedules.Any())
                             {
+                                Console.WriteLine($"Processing {model.ExistingSchedules.Count} schedules");
+
                                 foreach (var scheduleVM in model.ExistingSchedules)
                                 {
                                     VolSchedule schedule;
+                                    bool isNew = false;
 
                                     if (scheduleVM.ScheduleID.HasValue && scheduleVM.ScheduleID.Value > 0)
                                     {
                                         // Existing schedule - update it
-                                        schedule = await _context.VolSchedules.FindAsync(scheduleVM.ScheduleID.Value);
+                                        Console.WriteLine($"Updating existing schedule: {scheduleVM.ScheduleID}");
+                                        schedule = await _context.VolSchedules
+
+                                            .Include(s => s.VolAttendances)
+                                            .FirstOrDefaultAsync(s => s.ID == scheduleVM.ScheduleID.Value);
+
                                         if (schedule != null)
                                         {
                                             schedule.ScheduledStart = scheduleVM.ScheduledStart;
                                             schedule.ScheduledEnd = scheduleVM.ScheduledEnd;
 
                                             // Remove existing attendance records
-                                            var existingAttendances = _context.VolAttendances.Where(a => a.VolScheduleID == schedule.ID);
-                                            _context.VolAttendances.RemoveRange(existingAttendances);
+                                            _context.VolAttendances.RemoveRange(schedule.VolAttendances);
+                                            await _context.SaveChangesAsync();
                                         }
                                         else
                                         {
                                             // Schedule ID provided but not found - create new
+                                            Console.WriteLine($"Schedule ID provided but not found: {scheduleVM.ScheduleID}. Creating new.");
+                                            isNew = true;
                                             schedule = new VolSchedule
                                             {
                                                 ScheduledStart = scheduleVM.ScheduledStart,
@@ -610,6 +677,8 @@ namespace TomorrowsVoices.Controllers
                                     else
                                     {
                                         // New schedule - create it
+                                        Console.WriteLine("Creating new schedule");
+                                        isNew = true;
                                         schedule = new VolSchedule
                                         {
                                             ScheduledStart = scheduleVM.ScheduledStart,
@@ -623,6 +692,7 @@ namespace TomorrowsVoices.Controllers
                                     // Add volunteer attendance records
                                     if (scheduleVM.VolunteerIds != null && scheduleVM.VolunteerIds.Any())
                                     {
+                                        Console.WriteLine($"Adding {scheduleVM.VolunteerIds.Count} volunteers to schedule {schedule.ID}");
                                         foreach (var volunteerId in scheduleVM.VolunteerIds)
                                         {
                                             var attendance = new VolAttendance
@@ -638,80 +708,76 @@ namespace TomorrowsVoices.Controllers
                                         }
                                         await _context.SaveChangesAsync();
                                     }
+                                    else
+                                    {
+                                        Console.WriteLine($"No volunteers added to schedule {schedule.ID}");
+                                    }
                                 }
                             }
-
-                            // Handle schedules that were removed (in the current model but not in the submitted model)
-                            var currentScheduleIds = eventToUpdate.VolSchedules.Select(s => s.ID).ToList();
-                            var submittedScheduleIds = model.ExistingSchedules
-                                .Where(s => s.ScheduleID.HasValue)
-                                .Select(s => s.ScheduleID.Value)
-                                .ToList();
-
-                            var schedulesToRemove = currentScheduleIds.Except(submittedScheduleIds).ToList();
-
-                            foreach (var scheduleId in schedulesToRemove)
-                            {
-                                var scheduleToRemove = await _context.VolSchedules
-                                    .Include(s => s.VolAttendances)
-                                    .FirstOrDefaultAsync(s => s.ID == scheduleId);
-
-                                if (scheduleToRemove != null)
-                                {
-                                    // Remove associated attendances first
-                                    _context.VolAttendances.RemoveRange(scheduleToRemove.VolAttendances);
-
-                                    // Then remove the schedule
-                                    _context.VolSchedules.Remove(scheduleToRemove);
-                                }
-                            }
-
-                            await _context.SaveChangesAsync();
-
-                            // Update the event entity
-                            _context.Update(eventToUpdate);
-                            await _context.SaveChangesAsync();
 
                             // Commit transaction
                             await transaction.CommitAsync();
+                            Console.WriteLine("Transaction committed successfully");
 
+                            TempData["SuccessMessage"] = "Event updated successfully!";
                             return RedirectToAction(nameof(Index));
                         }
                         catch (Exception ex)
                         {
                             // Rollback transaction
                             await transaction.RollbackAsync();
+                            Console.WriteLine($"Transaction rolled back due to error: {ex.Message}");
 
                             // Add more detailed error information
                             ModelState.AddModelError("", "An error occurred while updating the event: " + ex.Message);
                             if (ex.InnerException != null)
                             {
                                 ModelState.AddModelError("", "Details: " + ex.InnerException.Message);
+                                Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
                             }
 
-                            throw;
+                            throw; // Let the catch block outside handle it
                         }
                     }
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
+                    Console.WriteLine($"Concurrency exception: {ex.Message}");
                     if (!EventExists(model.Event.ID))
                     {
-                        return NotFound();
+                        TempData["ErrorMessage"] = $"Event with ID {model.Event.ID} not found after update attempt.";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError("", "The record was modified by another user. Please try again.");
                     }
                 }
                 catch (Exception ex)
                 {
                     // Log error
+                    Console.WriteLine($"General exception: {ex.Message}");
                     ModelState.AddModelError("", "An error occurred while updating the event: " + ex.Message);
+                    if (ex.StackTrace != null)
+                    {
+                        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                    }
+                }
+            }
+            else
+            {
+                // Log validation errors
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        Console.WriteLine($"Validation error for {state.Key}: {error.ErrorMessage}");
+                    }
                 }
             }
 
             // If we got this far, something failed, redisplay form
+            Console.WriteLine("Redisplaying form due to errors");
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", model.Event.VolLocationID);
             PopulateAssignedVolunteerData(model.Event);
             return View(model);

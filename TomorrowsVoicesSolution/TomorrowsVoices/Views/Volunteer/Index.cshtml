@@ -31,7 +31,7 @@
                     <li style="margin-right: 18px">
                         <button type="button" class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#importExcelModal">
                             <img src="~/Images/import.png" alt="import icon" style="height: 24px; width: auto; margin-right: 8px" />
-                            Import Excel
+                            Bulk Import Excel
                         </button>
                     </li>
                 </ul>
@@ -43,33 +43,34 @@
 <p>View your Volunteers records.</p>
 
 @* Archived tabs *@
-@if (User.IsInRole("Admin")) {
-<div class="nav-container mb-3">
-    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
-       asp-action="Index" asp-route-archived="false">
-        Active
-        @if (ViewData["numberofActive"] != null && (int)ViewData["numberofActive"] == 0)
-        {
-            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">0</span>
-        }
-        else
-        {
-            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">@ViewData["numberofActive"]</span>
-        }
-    </a>
-    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
-       asp-action="Index" asp-route-archived="true">
-        Archived
-        @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
-        {
-            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">0</span>
-        }
-        else
-        {
-            <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">@ViewData["numberofArchive"]</span>
-        }
-    </a>
-</div>
+@if (User.IsInRole("Admin")) 
+{
+    <div class="nav-container mb-3">
+        <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
+           asp-action="Index" asp-route-archived="false">
+            Active
+            @if (ViewData["numberofActive"] != null && (int)ViewData["numberofActive"] == 0)
+            {
+                <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">0</span>
+            }
+            else
+            {
+                <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">@ViewData["numberofActive"]</span>
+            }
+        </a>
+        <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
+           asp-action="Index" asp-route-archived="true">
+            Archived
+            @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
+            {
+                <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">0</span>
+            }
+            else
+            {
+                <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">@ViewData["numberofArchive"]</span>
+            }
+        </a>
+    </div>
 }
 
 
@@ -144,92 +145,93 @@
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" />
-    @if (User.IsInRole("Admin")) {
-    <!-- Existing filter toggle button row -->
-    <div class="row">
-        <div class="col-12 d-flex justify-content-start align-items-center">
+    @if (User.IsInRole("Admin")) 
+    {
+        <!-- Existing filter toggle button row -->
+        <div class="row">
+            <div class="col-12 d-flex justify-content-start align-items-center">
 
-            <div>
-                <button class="btn btn-white mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
-                        data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
-                    <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
-                    Filter (@ViewData["numberFilters"])
-                </button>
+                <div>
+                    <button class="btn btn-white mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
+                            data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                        <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
+                        Filter (@ViewData["numberFilters"])
+                    </button>
 
-                <!-- Clear button -->
-                @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
-                {
-                    <a asp-action="Index" class="mb-3 ms-1 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px;">
-                        <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-                        Clear
-                    </a>
-                }
-            </div>
-
-            <!-- Show applied filters -->
-            @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
-            {
-                <div class="applied-filters d-flex flex-wrap align-items-center ms-2">
-                    @if (!string.IsNullOrEmpty(Context.Request.Query["SearchString"]))
+                    <!-- Clear button -->
+                    @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
                     {
-                        <div class="applied-filter-item me-2 mb-3">
-                            <span class="filter-content">
-                                <i class="bi bi-check-circle-fill me-1"></i>
-                                Name: @Context.Request.Query["SearchString"]
-                            </span>
-                            <a asp-action="Index"
-                               asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
-                               asp-route-SearchEmail="@Context.Request.Query["SearchEmail"]"
-                               asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
-                               asp-route-sortField="@ViewData["sortField"]"
-                               asp-route-sortDirection="@ViewData["sortDirection"]"
-                               class="filter-remove">
-                                <i class="bi bi-x"></i>
-                            </a>
-                        </div>
-                    }
-
-                    @if (!string.IsNullOrEmpty(Context.Request.Query["SearchEmail"]))
-                    {
-                        <div class="applied-filter-item me-2 mb-3">
-                            <span class="filter-content">
-                                <i class="bi bi-check-circle-fill me-1"></i>
-                                Email: @Context.Request.Query["SearchEmail"]
-                            </span>
-                            <a asp-action="Index"
-                               asp-route-SearchString="@Context.Request.Query["SearchString"]"
-                               asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
-                               asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
-                               asp-route-sortField="@ViewData["sortField"]"
-                               asp-route-sortDirection="@ViewData["sortDirection"]"
-                               class="filter-remove">
-                                <i class="bi bi-x"></i>
-                            </a>
-                        </div>
-                    }
-
-                    @if (!string.IsNullOrEmpty(Context.Request.Query["SearchCity"]))
-                    {
-                        <div class="applied-filter-item me-2 mb-2">
-                            <span class="filter-content">
-                                <i class="bi bi-check-circle-fill me-1"></i>
-                                City: @Context.Request.Query["SearchCity"]
-                            </span>
-                            <a asp-action="Index"
-                               asp-route-SearchString="@Context.Request.Query["SearchString"]"
-                               asp-route-SearchEmail="@Context.Request.Query["SearchEmail"]"
-                               asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
-                               asp-route-sortField="@ViewData["sortField"]"
-                               asp-route-sortDirection="@ViewData["sortDirection"]"
-                               class="filter-remove">
-                                <i class="bi bi-x"></i>
-                            </a>
-                        </div>
+                        <a asp-action="Index" class="mb-3 ms-1 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px;">
+                            <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+                            Clear
+                        </a>
                     }
                 </div>
-            }  
+
+                <!-- Show applied filters -->
+                @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+                {
+                    <div class="applied-filters d-flex flex-wrap align-items-center ms-2">
+                        @if (!string.IsNullOrEmpty(Context.Request.Query["SearchString"]))
+                        {
+                            <div class="applied-filter-item me-2 mb-3">
+                                <span class="filter-content">
+                                    <i class="bi bi-check-circle-fill me-1"></i>
+                                    Name: @Context.Request.Query["SearchString"]
+                                </span>
+                                <a asp-action="Index"
+                                   asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                                   asp-route-SearchEmail="@Context.Request.Query["SearchEmail"]"
+                                   asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                                   asp-route-sortField="@ViewData["sortField"]"
+                                   asp-route-sortDirection="@ViewData["sortDirection"]"
+                                   class="filter-remove">
+                                    <i class="bi bi-x"></i>
+                                </a>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Context.Request.Query["SearchEmail"]))
+                        {
+                            <div class="applied-filter-item me-2 mb-3">
+                                <span class="filter-content">
+                                    <i class="bi bi-check-circle-fill me-1"></i>
+                                    Email: @Context.Request.Query["SearchEmail"]
+                                </span>
+                                <a asp-action="Index"
+                                   asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                                   asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                                   asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                                   asp-route-sortField="@ViewData["sortField"]"
+                                   asp-route-sortDirection="@ViewData["sortDirection"]"
+                                   class="filter-remove">
+                                    <i class="bi bi-x"></i>
+                                </a>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Context.Request.Query["SearchCity"]))
+                        {
+                            <div class="applied-filter-item me-2 mb-2">
+                                <span class="filter-content">
+                                    <i class="bi bi-check-circle-fill me-1"></i>
+                                    City: @Context.Request.Query["SearchCity"]
+                                </span>
+                                <a asp-action="Index"
+                                   asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                                   asp-route-SearchEmail="@Context.Request.Query["SearchEmail"]"
+                                   asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                                   asp-route-sortField="@ViewData["sortField"]"
+                                   asp-route-sortDirection="@ViewData["sortDirection"]"
+                                   class="filter-remove">
+                                    <i class="bi bi-x"></i>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                }  
+            </div>
         </div>
-    </div>
     }
 
     <!-- collapsible filter panel -->
@@ -349,7 +351,7 @@
                 </th>
                 </tr>
             </thead>
-</form>
+
             <tbody>
                 @foreach (var item in Model)
                 {
@@ -456,6 +458,7 @@
         </table>
         <partial name="_PagingNavBar" />
     </div>
+</form>
 
 
 

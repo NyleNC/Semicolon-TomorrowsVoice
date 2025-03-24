@@ -191,47 +191,47 @@
             });
 
             // Edit schedule button event handler - must use on() for dynamically created elements
-                   $(document).on("click", ".edit-schedule", function(e) {
-            e.preventDefault();
+            $(document).on("click", ".edit-schedule", function(e) {
+                e.preventDefault();
 
-            const scheduleIndex = $(this).data("schedule-index");
-            const scheduleTab = $(`#schedule-${scheduleIndex}`);
+                const scheduleIndex = $(this).data("schedule-index");
+                const scheduleTab = $(`#schedule-${scheduleIndex}`);
 
-            // Extract current values
-            const scheduleId = scheduleTab.find("input[name$='.ScheduleId']").val();
-            const scheduledStart = scheduleTab.find("input[name$='.ScheduledStart']").val();
-            const scheduledEnd = scheduleTab.find("input[name$='.ScheduledEnd']").val();
+                // Extract current values
+                const scheduleId = scheduleTab.find("input[name$='.ScheduleId']").val();
+                const scheduledStart = scheduleTab.find("input[name$='.ScheduledStart']").val();
+                const scheduledEnd = scheduleTab.find("input[name$='.ScheduledEnd']").val();
 
-            // Set values in the modal
-            $("input[name='NewSchedule.ScheduledStart']").val(scheduledStart);
-            $("input[name='NewSchedule.ScheduledEnd']").val(scheduledEnd);
+                // Set values in the modal
+                $("input[name='NewSchedule.ScheduledStart']").val(scheduledStart);
+                $("input[name='NewSchedule.ScheduledEnd']").val(scheduledEnd);
 
-            // Clear and repopulate volunteer selections
-            $("#selectedOptions").empty();
-            $("#availOptions").html(originalAvailOptions);
+                // Clear and repopulate volunteer selections
+                $("#selectedOptions").empty();
+                $("#availOptions").html(originalAvailOptions);
 
-            // Get selected volunteers from the schedule
-            const selectedVolunteerIds = [];
-            scheduleTab.find("input[name$='.VolunteerIds[]']").each(function() {
-                selectedVolunteerIds.push($(this).val());
+                // Get selected volunteers from the schedule
+                const selectedVolunteerIds = [];
+                scheduleTab.find("input[name$='.VolunteerIds[]']").each(function() {
+                    selectedVolunteerIds.push($(this).val());
+                });
+
+                // Move volunteers from available to selected in the modal
+                selectedVolunteerIds.forEach(id => {
+                    const option = $(`#availOptions option[value='${id}']`);
+                    if (option.length > 0) {
+                        option.appendTo("#selectedOptions");
+                    }
+                });
+
+                // Change modal title and button text
+                $(".modal-title").text("Edit Schedule");
+                $("#addScheduleBtn").text("Update Schedule").data("schedule-index", scheduleIndex);
+
+                $("#scheduleModal").modal("show");
             });
 
-            // Move volunteers from available to selected in the modal
-            selectedVolunteerIds.forEach(id => {
-                const option = $(`#availOptions option[value='${id}']`);
-                if (option.length > 0) {
-                    option.appendTo("#selectedOptions");
-                }
-            });
-
-            // Change modal title and button text
-            $(".modal-title").text("Edit Schedule");
-            $("#addScheduleBtn").text("Update Schedule").data("schedule-index", scheduleIndex);
-
-            $("#scheduleModal").modal("show");
-        });
-
-            // Remove schedule button event handler
+            // Remove schedule button event handler - FIXED RENUMBERING LOGIC
             $(document).on("click", ".remove-schedule", function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -247,15 +247,39 @@
                     $("#schedulesTab .nav-link:first").tab("show");
                 }
 
-                // Renumber the remaining tabs
+                // Properly renumber the remaining tabs with correct index values
                 $("#schedulesTab .nav-item").each(function(i) {
                     const link = $(this).find("a.nav-link");
-                    link.text(` Schedule ${i + 1} `);
+                    link.attr("id", `schedule-${i}-tab`);
+                    link.attr("href", `#schedule-${i}`);
+                    link.text(`Schedule ${i + 1}`);
+
+                    // Update all buttons with correct index
+                    link.find(".edit-schedule").attr("data-schedule-index", i);
+                    link.find(".remove-schedule").attr("data-schedule-index", i);
+
+                    // Remove and re-add with updated indexes
                     link.find(".edit-schedule, .remove-schedule").remove();
-                    link.append(`    <button type="button" class="btn btn-warning edit-schedule mx-2" data-schedule-index="${scheduleIndex}">
-                                    <img src="http://localhost:5091/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: 0px; margin-right: 8px">Edit
-                                </button>
-                                <button type="button" class="close remove-schedule" data-schedule-index="${i}">&times;</button>`);
+                    link.append(`
+                        <button type="button" class="btn btn-warning edit-schedule mx-2" data-schedule-index="${i}">
+                            <img src="/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: 0px; margin-right: 8px">Edit
+                        </button>
+                        <button type="button" class="close remove-schedule" data-schedule-index="${i}">&times;</button>
+                    `);
+                });
+
+                // Also renumber the content panes
+                $("#scheduleContent .tab-pane").each(function(i) {
+                    const pane = $(this);
+                    pane.attr("id", `schedule-${i}`);
+
+                    // Update all hidden fields and input names with the correct index
+                    pane.find(`input[name^='ExistingSchedules[']`).each(function() {
+                        const input = $(this);
+                        const name = input.attr('name');
+                        const newName = name.replace(/ExistingSchedules\[\d+\]/, `ExistingSchedules[${i}]`);
+                        input.attr('name', newName);
+                    });
                 });
             });
 
@@ -281,7 +305,7 @@
                 }
 
                 if (selectedVolunteers.length === 0) {
-                    $("#selectedOptions").after('<div class="error-messa ge text-danger">At least one volunteer must be selected</div>');
+                    $("#selectedOptions").after('<div class="error-message text-danger">At least one volunteer must be selected</div>');
                     isValid = false;
                 }
 
@@ -347,8 +371,8 @@
                                data-toggle="tab"
                                href="#schedule-${scheduleIndex}" role="tab">
                                 Schedule ${scheduleIndex + 1}
-                                 <button type="button" class="btn btn-warning edit-schedule mx-2" data-schedule-index="${scheduleIndex}">
-                                    <img src="http://localhost:5091/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: 0px; margin-right: 8px">Edit
+                                <button type="button" class="btn btn-warning edit-schedule mx-2" data-schedule-index="${scheduleIndex}">
+                                    <img src="/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: 0px; margin-right: 8px">Edit
                                 </button>
                                 <button type="button" class="close remove-schedule" data-schedule-index="${scheduleIndex}">&times;</button>
                             </a>
@@ -413,6 +437,20 @@
             $(document).on("click", "a[data-toggle='tab']", function (e) {
                 e.preventDefault();
                 $(this).tab("show");
+            });
+
+            // Make sure form submission includes the Event.ID
+            $("#eventForm").submit(function(e) {
+                // Make sure all selected volunteers in the modal are properly selected before submission
+                $("#selectedOptions option").prop("selected", true);
+
+                // Ensure the Event.ID is included
+                if (!$("input[name='Event.ID']").length) {
+                    $(this).append(`<input type="hidden" name="Event.ID" value="${@Model.Event.ID}" />`);
+                }
+
+                console.log("Form is being submitted with Event ID: " + @Model.Event.ID);
+                return true;
             });
         });
     </script>

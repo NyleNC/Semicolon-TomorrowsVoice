@@ -16,26 +16,29 @@
         <div class="btn-group">
             @if (User.IsInRole("Admin"))
             {
-                <a asp-action="Create" class="btn btn-primary">
-                    <img src="~/Images/create-icon.png" alt="add-event-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New
-                </a>
+            <a asp-action="Create" class="btn btn-primary">
+                <img src="~/Images/create-icon.png" alt="add-event-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New
+            </a>
 
-                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="visually-hidden">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu" style="border-radius: 10px" />
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+
+            <ul class="dropdown-menu" style="border-radius: 10px">
                 <li style="margin-right: 18px">
                     <button type="button" class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#importExcelModal">
                         <img src="~/Images/import.png" alt="import icon" style="height: 24px; width: auto; margin-right: 8px" />
-                       Bulk Upload
+                        Bulk Import Excel
                     </button>
                 </li>
-            }
             </ul>
-
+            }
         </div>
     </div>
 </div>
+
+
+
 <p>View your Director records.</p>
 @* Container for all tabs *@
 @if (User.IsInRole("Admin"))
@@ -65,7 +68,8 @@
                 <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")">@ViewData["numberofArchive"]</span>
             }
         </a>
-    </div>}
+    </div>
+}
 
 <!-- Modal -->
 <!-- Import Excel Modal -->
@@ -501,6 +505,11 @@
     </table>
 <partial name="_PagingNavBar" />
     </div>
+
+
+
+
+
 
 <script>
     function handleSort(event, field) {

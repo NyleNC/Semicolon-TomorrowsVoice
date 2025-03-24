@@ -1,0 +1,44 @@
+@model TomorrowsVoices.ViewModels.ScheduleVM
+
+<div class="schedule-form">
+    <div class="form-group">
+        <label for="NewSchedule_ScheduledStart">Start Time</label>
+        <input type="datetime-local" class="form-control" id="NewSchedule_ScheduledStart" name="NewSchedule.ScheduledStart" />
+    </div>
+    <div class="form-group">
+        <label for="NewSchedule_ScheduledEnd">End Time</label>
+        <input type="datetime-local" class="form-control" id="NewSchedule_ScheduledEnd" name="NewSchedule.ScheduledEnd" />
+    </div>
+    <div class="form-group">
+        <label>Volunteers</label>
+        <div class="row">
+            <div class="col-md-5">
+                <p>Available Volunteers:</p>
+                <select id="availOptions" multiple class="form-control" style="height: 200px;">
+                    @foreach (var item in ViewBag.availOpts)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2 text-center py-3">
+                <button type="button" id="btnLeft" class="btn btn-primary btn-sm mb-2">&rarr;</button><br />
+                <button type="button" id="btnRight" class="btn btn-primary btn-sm">&larr;</button>
+            </div>
+            <div class="col-md-5">
+                <p>Selected Volunteers:</p>
+                <select id="selectedOptions" multiple class="form-control" style="height: 200px;">
+                    @foreach (var item in ViewBag.selOpts)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+                <small class="text-muted">All volunteers in this list will be assigned to the schedule</small>
+            </div>
+        </div>
+    </div>
+    <div class="form-group mt-3">
+        <button type="button" id="addScheduleBtn" class="btn btn-primary">Add Schedule</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+    </div>
+</div>
