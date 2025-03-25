@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     /// <inheritdoc />
-    public partial class fgs : Migration
+    public partial class latestMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,6 +20,7 @@ namespace TomorrowsVoices.Data.TVMigrations
                     FirstName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    dirPhoneNumber = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     IsArchived = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -335,6 +336,12 @@ namespace TomorrowsVoices.Data.TVMigrations
                 name: "IX_DirectorLocations_LocationID",
                 table: "DirectorLocations",
                 column: "LocationID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Directors_dirPhoneNumber",
+                table: "Directors",
+                column: "dirPhoneNumber",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Directors_Email",

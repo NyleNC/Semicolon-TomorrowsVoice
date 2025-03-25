@@ -1,0 +1,61 @@
+﻿@model TomorrowsVoices.ViewModels.UserVM
+
+@{
+    ViewBag.Title = "Edit Roles";
+}
+
+<h2>Edit Role Assignments</h2>
+
+
+<form asp-action="Edit">
+    <hr />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                <input asp-for="UserName" class="form-control" readonly="readonly"/>
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="UserRoles" class="control-label"></label>
+                <table>
+                    <tr>
+                        @{
+                            int cnt = 0;
+                            List<TomorrowsVoices.ViewModels.RoleVM> roles = ViewBag.Roles;
+                            foreach (var role in roles)
+                            {
+                                if (cnt++ % 3 == 0)
+                                {
+                                @:</tr><tr>
+                                }
+                                @:<td>
+                                    <input type="checkbox"
+                                           name="selectedRoles"
+                                           value="@role.RoleName"
+                                           @(Html.Raw(role.Assigned ? "checked=\"checked\"" : "")) />
+                                    @role.RoleName @:&nbsp;&nbsp;
+                                @:</td>
+                            }
+                        @:</tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <input type="submit" id="btnSubmit" value="Save" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </form>
+
+     <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 160px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to User Management</a>
+
+
+

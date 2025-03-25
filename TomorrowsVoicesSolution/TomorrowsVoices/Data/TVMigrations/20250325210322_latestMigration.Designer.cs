@@ -11,8 +11,8 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    [Migration("20250323042643_fgs")]
-    partial class fgs
+    [Migration("20250325210322_latestMigration")]
+    partial class latestMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,9 +71,17 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("dirPhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
                     b.HasKey("ID");
 
                     b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("dirPhoneNumber")
                         .IsUnique();
 
                     b.ToTable("Directors");

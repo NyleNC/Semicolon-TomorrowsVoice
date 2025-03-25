@@ -78,6 +78,9 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.HasIndex("Email")
                         .IsUnique();
 
+                    b.HasIndex("dirPhoneNumber")
+                        .IsUnique();
+
                     b.ToTable("Directors");
                 });
 
