@@ -1,0 +1,205 @@
+/* Volunteer Portal Styling */
+
+/* Main Layout */
+.volunteer-portal-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.welcome-message {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #5b1fc7;
+    margin-bottom: 1rem;
+}
+
+/* Portal Navigation Tabs */
+.portal-tabs {
+    display: flex;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.portal-tab {
+    padding: 0.75rem 1rem;
+    margin-right: 0.5rem;
+    color: #495057;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.portal-tab:hover {
+    color: #5b1fc7;
+    text-decoration: none;
+}
+
+.portal-tab.active {
+    color: #5b1fc7;
+    font-weight: 600;
+    border-bottom-color: #5b1fc7;
+}
+
+/* Event Cards */
+.event-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0,0,0,0.125);
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.event-card.registered {
+    border-left: 5px solid #28a745;
+}
+
+.event-card .card-header {
+    background-color: #f8f9fa;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.event-card .card-title {
+    margin-bottom: 0;
+    font-weight: 600;
+    flex-grow: 1;
+}
+
+.event-info p {
+    margin-bottom: 0.5rem;
+}
+
+.event-info i {
+    width: 20px;
+    color: #5b1fc7;
+    margin-right: 0.5rem;
+}
+
+/* Shifts List */
+.shift-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.shift-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.shift-item:last-child {
+    border-bottom: none;
+}
+
+.shift-item.registered {
+    background-color: #e8f5e9;
+}
+
+.shift-duration {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+}
+
+/* My Events Page */
+.my-event-card {
+    margin-bottom: 1.5rem;
+}
+
+.shift-table {
+    font-size: 0.95rem;
+}
+
+.countdown {
+    font-weight: 600;
+    color: #5b1fc7;
+}
+
+/* Check-in Page */
+.check-in-card {
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.check-in-card .card-header {
+    background-color: #5b1fc7;
+    color: white;
+    padding: 1.5rem;
+}
+
+.check-in-card .card-title {
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.event-location {
+    font-size: 1.1rem;
+}
+
+.check-in-details {
+    padding: 1rem 0;
+}
+
+.detail-group {
+    margin-bottom: 1.2rem;
+}
+
+.detail-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.detail-group p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.countdown-display {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #5b1fc7;
+}
+
+.check-in-actions {
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+#checkInButton, #checkOutButton {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.check-in-info, .checked-in-time, .completed-shift, .upcoming-shift, .missed-shift {
+    text-align: left;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .event-card-container {
+        margin-bottom: 1rem;
+    }
+    
+    .shift-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .shift-actions {
+        margin-top: 0.5rem;
+        align-self: flex-end;
+    }
+}

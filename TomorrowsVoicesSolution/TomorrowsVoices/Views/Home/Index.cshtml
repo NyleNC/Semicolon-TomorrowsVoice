@@ -1,6 +1,14 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@{
     ViewData["Title"] = "Home Page";
+    var isAuthenticated = User.Identity.IsAuthenticated;
 }
+
+@if (isAuthenticated)
+{
+    <!-- Dashboard content here -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1402,3 +1410,8 @@
 
 </body>
 </html>
+}
+else
+{
+    <p>You must be logged in to view this content.</p>
+}
