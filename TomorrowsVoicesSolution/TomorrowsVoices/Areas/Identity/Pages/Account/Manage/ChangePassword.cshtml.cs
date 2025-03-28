@@ -77,7 +77,7 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account.Manage
 
             if (ForceChange)
             {
-                StatusMessage = "You must change your default password before continuing.";
+                StatusMessage = "You must change your temporary password before continuing.";
                 Input = new InputModel(); // Initialize without requiring old password
             }
 
