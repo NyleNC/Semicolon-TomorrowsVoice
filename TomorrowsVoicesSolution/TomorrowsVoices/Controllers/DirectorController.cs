@@ -239,12 +239,20 @@ namespace TomorrowsVoices.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email")] Director director, int? locationId)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,dirPhoneNumber,Email")] Director director, int? locationId)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Check if the phone number is already in use
+                    bool phoneExists = await _context.Directors.AnyAsync(d => d.dirPhoneNumber == director.dirPhoneNumber);
+                    if (phoneExists)
+                    {
+                        ModelState.AddModelError("dirPhoneNumber", "This phone number is already associated with another director.");
+                        ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
+                        return View(director);
+                    }
                     // Fetch the selected location from the database
                     if (locationId.HasValue)
                     {
@@ -278,7 +286,7 @@ namespace TomorrowsVoices.Controllers
 
                     if (baseMessage.Contains("UNIQUE constraint failed"))
                     {
-                        ModelState.AddModelError("Email", "Unable to save changes. Remember, you can't have the same email.");
+                        ModelState.AddModelError("Email", "Unable to save changes. The email already exists and its connected to a director.");
                     }
                     else
                     {
@@ -319,7 +327,7 @@ namespace TomorrowsVoices.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Director")]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Email")] Director director, int? locationId)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,dirPhoneNumber,Email")] Director director, int? locationId)
         {
             if (id != director.ID)
             {
@@ -343,7 +351,7 @@ namespace TomorrowsVoices.Controllers
 
                     // Update scalar properties
                     if (await TryUpdateModelAsync(directorToUpdate, "",
-                        d => d.FirstName, d => d.LastName, d => d.Email))
+                        d => d.FirstName, d => d.LastName,d=>d.dirPhoneNumber, d => d.Email))
                     {
                         // Fetch the new location from the database
                         if (locationId.HasValue)
