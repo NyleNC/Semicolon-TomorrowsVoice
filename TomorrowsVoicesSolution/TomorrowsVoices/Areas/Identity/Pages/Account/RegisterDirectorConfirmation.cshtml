@@ -8,7 +8,8 @@
 @{
     if (@Model.DisplayConfirmAccountLink)
     {
-        <p>Director account has been created
+        <p>
+            Director account has been created, Since we dont have email sender yet, click here to confirm your account
             <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
         </p>
     }
