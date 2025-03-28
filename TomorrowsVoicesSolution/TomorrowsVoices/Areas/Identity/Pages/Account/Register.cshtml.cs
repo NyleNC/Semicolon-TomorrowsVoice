@@ -16,8 +16,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using TomorrowsVoices.Data;
+using TomorrowsVoices.Models;
 
 namespace TomorrowsVoices.Areas.Identity.Pages.Account
 {
@@ -29,13 +33,15 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly TomorrowsVoicesContext _context;
 
         public RegisterModel(
-            UserManager<IdentityUser> userManager,
-            IUserStore<IdentityUser> userStore,
-            SignInManager<IdentityUser> signInManager,
-            ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+        UserManager<IdentityUser> userManager,
+        IUserStore<IdentityUser> userStore,
+        SignInManager<IdentityUser> signInManager,
+        ILogger<RegisterModel> logger,
+        IEmailSender emailSender,
+        TomorrowsVoicesContext context) // Add this parameter
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -43,6 +49,7 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context; 
         }
 
         /// <summary>
@@ -74,7 +81,15 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            /// 
+            [Required(ErrorMessage = "You cannot leave the first name blank.")]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required(ErrorMessage = "You cannot leave the last name blank.")]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+            [Required(ErrorMessage = "Email is Required")]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -97,6 +112,21 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required(ErrorMessage = "Please select your city")]
+            [Display(Name = "City")]
+            public int VolLocationID { get; set; }  
+
+            // Property to hold the select list options
+            public SelectList CityOptions { get; set; }
+
+            [Display(Name = "Phone Number")]
+            [Required(ErrorMessage = "Phone number is required.")]
+            [RegularExpression("^\\d{10}$", ErrorMessage = "Please enter a valid 10-digit phone number (no spaces).")]
+            [DisplayFormat(DataFormatString = "{0:(###) ###-####}")]
+            [DataType(DataType.PhoneNumber)]
+            [MaxLength(10)]
+            public string? Phone { get; set; }
         }
 
 
@@ -104,6 +134,10 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            Input = new InputModel
+            {
+                CityOptions = new SelectList(await _context.VolLocations.ToListAsync(), "ID", "City")
+            };
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -120,8 +154,32 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, "Volunteer");
                     _logger.LogInformation("User created a new account with password.");
 
+                    // Create and save the Volunteer record
+                    var volunteer = new Volunteer
+                    {
+                        FirstName = Input.FirstName,
+                        LastName = Input.LastName,
+                        Email = Input.Email,
+                        Phone=Input.Phone,
+                        VolLocationID = Input.VolLocationID
+
+                    };
+
+                    try
+                    {
+                        _context.Volunteers.Add(volunteer);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error creating volunteer record");
+                        // Handle error appropriately
+                    }
+
+                    // Rest of your existing code...
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -150,9 +208,9 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
                 }
             }
 
-            // If we got this far, something failed, redisplay form
             return Page();
         }
+        
 
         private IdentityUser CreateUser()
         {

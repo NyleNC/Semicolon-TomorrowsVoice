@@ -56,7 +56,7 @@ namespace TomorrowsVoices.Data
                     {
                         try
                         {
-                            string defaultPassword = "Pa55w@rd";
+                            string defaultPassword = "Password.1";
 
                             if (userManager.FindByEmailAsync("admin@outlook.com").Result == null)
                             {

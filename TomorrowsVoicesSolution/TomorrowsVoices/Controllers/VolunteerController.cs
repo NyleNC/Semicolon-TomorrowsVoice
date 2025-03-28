@@ -26,10 +26,18 @@ namespace TomorrowsVoices.Controllers
                 .Where(v => v.IsArchived == archived)
                 .Include(v => v.VolLocation)
                 .AsNoTracking();
-            var currentVolunteer = await GetCurrentVolunteerAsync();
-            if (currentVolunteer != null)
+            if (!User.IsInRole("Admin"))
             {
-                volunteers = volunteers.Where(v => v.Email == currentVolunteer.Email);
+                var currentVolunteer = await GetCurrentVolunteerAsync();
+                if (currentVolunteer != null)
+                {
+                    volunteers = volunteers.Where(v => v.Email == currentVolunteer.Email);
+                }
+                else
+                {
+                    // If no volunteer record exists, show nothing to non-admins
+                    volunteers = volunteers.Where(v => false);
+                }
             }
 
             ViewData["ActiveTab"] = archived ? "archived" : "active";
@@ -620,18 +628,18 @@ namespace TomorrowsVoices.Controllers
         }
         private async Task<Volunteer?> GetCurrentVolunteerAsync()
         {
-            var userEmail = User.Identity?.Name; // Assuming the email is stored in the claims
+            var userEmail = User.Identity?.Name;
             if (string.IsNullOrEmpty(userEmail))
             {
                 return null;
             }
-            // Check if the user is an Admin
+
+            // Admins see all records
             if (User.IsInRole("Admin"))
             {
-                return null; // Admins bypass restrictions
+                return null;
             }
 
-            // Fetch the Volunteer for non-Admin users
             return await _context.Volunteers
                 .FirstOrDefaultAsync(v => v.Email == userEmail);
         }

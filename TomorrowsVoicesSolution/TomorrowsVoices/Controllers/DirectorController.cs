@@ -34,7 +34,7 @@ namespace TomorrowsVoices.Controllers
  
         public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity,string? SearchPhone, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Director")
         {
-            var currentDirector = await GetCurrentDirectorAsync();
+    
 
             // Fetch all directors if the user is an Admin
             var directors = _context.Directors
@@ -43,11 +43,19 @@ namespace TomorrowsVoices.Controllers
                 .ThenInclude(d => d.Location)
                 .AsNoTracking();
 
-            // Apply city-based filtering only for Directors
-            if (currentDirector != null)
+    
+            if (!User.IsInRole("Admin"))
             {
-                var assignedCityIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
-                directors = directors.Where(d => d.DirectorLocations.Any(dl => assignedCityIds.Contains(dl.LocationID)));
+                var currentDirector = await GetCurrentDirectorAsync();
+                if (currentDirector != null)
+                {
+                    directors = directors.Where(v => v.Email == currentDirector.Email);
+                }
+                else
+                {
+                    // If no volunteer record exists, show nothing to non-admins
+                    directors = directors.Where(v => false);
+                }
             }
 
             // Rest of the filtering, sorting, and paging logic remains the same
