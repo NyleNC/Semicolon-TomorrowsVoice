@@ -54,8 +54,8 @@ namespace TomorrowsVoices.Data
                     SeedVolLocation(context);
                     SeedVolunteers(context);
                     SeedEvents(context);
-                    SeedVolSchedules(context);
-                    SeedVolAttendances(context);
+                    //SeedVolSchedules(context);
+           
                 }
             }
         }
@@ -1605,134 +1605,115 @@ namespace TomorrowsVoices.Data
         {
             if (!context.Events.Any())
             {
-                 context.Events.AddRange(
-                    new Event
-                    {
-                        Name = "Community Cleanup",
-                        Location = "123 Test Street, A1B 1C2",
-                        Start = DateTime.Parse("2025-02-20 09:00 AM"),
-                        End = DateTime.Parse("2025-02-20 12:00 PM"),
-                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
-                        Notes = "2 volunteers were absent"
-                    },
-                    new Event
-                    {
-                        Name = "Food Drive",
-                        Location = "123 Hi Street, D4U 1C2",
-                        Start = DateTime.Parse("2025-03-10 10:00 AM"),
-                        End = DateTime.Parse("2025-03-10 02:00 PM"),
-                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
-                        Notes = "volunteers collected 200 food items."
-                    },
-                    new Event
-                    {
-                        Name = "Blood Donation Camp",
-                        Location = "737 Check Street, L0U 7D5",
-                        Start = DateTime.Parse("2025-04-05 08:00 AM"),
-                        End = DateTime.Parse("2025-04-05 06:30 PM"),
-                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls").ID,
-                        Notes = "volunteers assisted and 50 units of blood were collected."
-                    },
-                    new Event
-                    {
-                        Name = "Green Earth Cleanup",
-                        Location = "123 Greenway Ave, N2L 5G6",
-                        Start = DateTime.Parse("2025-05-12 09:00 AM"),
-                        End = DateTime.Parse("2025-05-12 04:00 PM"),
-                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "St. Catharines").ID,
-                        Notes = "Volunteers participated in a community park cleanup, collecting 200 lbs of waste and planting 30 trees."
-                    },
-
-                    new Event
-                    {
-                        Name = "Food for All Campaign",
-                        Location = "456 Hope Street, M3H 2T4",
-                        Start = DateTime.Parse("2025-06-20 10:30 AM"),
-                        End = DateTime.Parse("2025-06-20 05:00 PM"),
-                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Welland").ID,
-                        Notes = "A food drive event where volunteers helped distribute over 500 meal packages to families in need."
-                    },
-
-                    new Event
-                    {
-                        Name = "Hamilton Yearly Marathon",
-                        Location = "789 Care Blvd, L8W 1A5",
-                        Start = DateTime.Parse("2025-07-15 07:00 AM"),
-                        End = DateTime.Parse("2025-07-15 03:00 PM"),
-                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Hamilton").ID,
-                        Notes = "Volunteers assisted in a charity marathon, setting up water stations and guiding runners along the route."
-                    },
+                context.Events.AddRange(
+                   new Event
+                   {
+                       Name = "Community Cleanup",
+                      
+                       Address = "123 Test Street, A1B 1C2",
+                       Date = DateTime.Parse("2025-02-20"),
+                       Start = DateTime.Parse("2025-02-20 09:00 AM"),
+                       End = DateTime.Parse("2025-02-20 12:00 PM"),
+                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
+                       Notes = "2 volunteers were absent"
+                   },
+                   new Event
+                   {
+                       Name = "Food Drive",
+                       Address = "123 Hi Street, D4U 1C2",
+                       Date = DateTime.Parse("2025-03-10"),
+                       Start = DateTime.Parse("2025-03-10 10:00 AM"),
+                       End = DateTime.Parse("2025-03-10 02:00 PM"),
+                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
+                       Notes = "Volunteers collected 200 food items."
+                   },
+                   new Event
+                   {
+                       Name = "Blood Donation Camp",
+                       Address = "737 Check Street, L0U 7D5",
+                       Date = DateTime.Parse("2025-04-05"),
+                       Start = DateTime.Parse("2025-04-05 08:00 AM"),
+                       End = DateTime.Parse("2025-04-05 06:30 PM"),
+                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls").ID,
+                       Notes = "Volunteers assisted and 50 units of blood were collected."
+                   },
+                   new Event
+                   {
+                       Name = "Green Earth Cleanup",
+                       Address = "123 Greenway Ave, N2L 5G6",
+                       Date = DateTime.Parse("2025-05-12"),
+                       Start = DateTime.Parse("2025-05-12 09:00 AM"),
+                       End = DateTime.Parse("2025-05-12 04:00 PM"),
+                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "St. Catharines").ID,
+                       Notes = "Volunteers participated in a community park cleanup, collecting 200 lbs of waste and planting 30 trees."
+                   },
+                   new Event
+                   {
+                       Name = "Food for All Campaign",
+                       Address = "456 Hope Street, M3H 2T4",
+                       Date = DateTime.Parse("2025-06-20"),
+                       Start = DateTime.Parse("2025-06-20 10:30 AM"),
+                       End = DateTime.Parse("2025-06-20 05:00 PM"),
+                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Welland").ID,
+                       Notes = "A food drive event where volunteers helped distribute over 500 meal packages to families in need."
+                   },
+                   new Event
+                   {
+                       Name = "Hamilton Yearly Marathon",
+                       Address = "789 Care Blvd, L8W 1A5",
+                       Date = DateTime.Parse("2025-07-15"),
+                       Start = DateTime.Parse("2025-07-15 07:00 AM"),
+                       End = DateTime.Parse("2025-07-15 03:00 PM"),
+                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Hamilton").ID,
+                       Notes = "Volunteers assisted in a charity marathon, setting up water stations and guiding runners along the route."
+                   },
                    new Event
                    {
                        Name = "Thorold Secondary School",
-                       Location = "321 Harmony Lane, K1A 3B2",
+                       Address = "321 Harmony Lane, K1A 3B2",
+                       Date = DateTime.Parse("2025-08-10"),
                        Start = DateTime.Parse("2025-08-10 08:30 AM"),
                        End = DateTime.Parse("2025-08-10 02:00 PM"),
                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Thorold").ID,
                        Notes = "Volunteers helped organize and distribute school supplies to over 200 students for the new academic year."
                    },
-
-                    new Event
-                    {
-                        Name = "Port Colborne Senior Care",
-                        Location = "555 Compassion Road, P4N 8J6",
-                        Start = DateTime.Parse("2025-09-05 09:00 AM"),
-                        End = DateTime.Parse("2025-09-05 05:30 PM"),
-                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Port Colborne").ID,
-                        Notes = "Volunteers supported a senior care center by organizing activities and spending quality time with residents."
-                    }
+                   new Event
+                   {
+                       Name = "Port Colborne Senior Care",
+                       Address = "555 Compassion Road, P4N 8J6",
+                       Date = DateTime.Parse("2025-09-05"),
+                       Start = DateTime.Parse("2025-09-05 09:00 AM"),
+                       End = DateTime.Parse("2025-09-05 05:30 PM"),
+                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Port Colborne").ID,
+                       Notes = "Volunteers supported a senior care center by organizing activities and spending quality time with residents."
+                   }
                 );
                 context.SaveChanges();
             }
+  
+
         }
 
-        private static void SeedVolSchedules(TomorrowsVoicesContext context)
-        {
-            if (!context.VolSchedules.Any())
-            {
-                context.VolSchedules.AddRange(
-                    new VolSchedule { ScheduledStart = DateTime.Parse("2025-02-20 09:00 AM"), ScheduledEnd = DateTime.Parse("2025-02-20 12:00 PM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
+        //private static void SeedVolSchedules(TomorrowsVoicesContext context)
+        //{
+        //    if (!context.VolSchedules.Any())
+        //    {
+        //        context.VolSchedules.AddRange(
+        //            new VolSchedule { ShiftDate = DateTime.Parse("2025-02-20") ,ScheduledStart = DateTime.Parse("2025-02-20 09:00 AM"), ScheduledEnd = DateTime.Parse("2025-02-20 12:00 PM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
 
 
 
-                    new VolSchedule { ScheduledStart = DateTime.Parse("2025-04-05 08:00 AM"), ScheduledEnd = DateTime.Parse("2025-04-05 11:30 AM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-                    new VolSchedule { ScheduledStart = DateTime.Parse("2025-04-05 11:30 AM"), ScheduledEnd = DateTime.Parse("2025-04-05 03:30 PM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-                    new VolSchedule { ScheduledStart = DateTime.Parse("2025-04-05 03:30 PM"), ScheduledEnd = DateTime.Parse("2025-04-05 06:30 PM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID }
+        //            new VolSchedule { ShiftDate = DateTime.Parse("2025-04-05"),ScheduledStart = DateTime.Parse("2025-04-05 08:00 AM"), ScheduledEnd = DateTime.Parse("2025-04-05 11:30 AM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+        //            new VolSchedule { ShiftDate = DateTime.Parse("2025-04-05"),ScheduledStart = DateTime.Parse("2025-04-05 11:30 AM"), ScheduledEnd = DateTime.Parse("2025-04-05 03:30 PM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
+        //            new VolSchedule { ShiftDate = DateTime.Parse("2025-04-05"),ScheduledStart = DateTime.Parse("2025-04-05 03:30 PM"), ScheduledEnd = DateTime.Parse("2025-04-05 06:30 PM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID }
 
 
-                );
-                context.SaveChanges();
-            }
-        }
+        //        );
+        //        context.SaveChanges();
+        //    }
+        //}
 
-        private static void SeedVolAttendances(TomorrowsVoicesContext context)
-        {
-            if (!context.VolAttendances.Any())
-            {
-                context.VolAttendances.AddRange(
-                    new VolAttendance { ActualStart = DateTime.Parse("2025-02-20 09:00 AM"), ActualEnd = DateTime.Parse("2025-02-20 12:00 PM"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "David" && v.LastName == "Miller").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-02-20 09:00 AM") && e.ScheduledEnd == DateTime.Parse("2025-02-20 12:00 PM")).ID },
-                    new VolAttendance { ActualStart = DateTime.Parse("2025-02-20 09:20 AM"), ActualEnd = DateTime.Parse("2025-02-20 12:00 PM"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Tina" && v.LastName == "Lewis").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-02-20 09:00 AM") && e.ScheduledEnd == DateTime.Parse("2025-02-20 12:00 PM")).ID },
-                    new VolAttendance { Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Jack" && v.LastName == "Jackson").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-02-20 09:00 AM") && e.ScheduledEnd == DateTime.Parse("2025-02-20 12:00 PM")).ID },
-
-
-
-                    new VolAttendance { ActualStart = DateTime.Parse("2025-04-05 08:10 AM"), ActualEnd = DateTime.Parse("2025-04-05 11:30 AM"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Charlie" && v.LastName == "Davis").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-04-05 08:00 AM") && e.ScheduledEnd == DateTime.Parse("2025-04-05 11:30 AM")).ID },
-                    new VolAttendance { ActualStart = DateTime.Parse("2025-04-05 08:00 AM"), ActualEnd = DateTime.Parse("2025-04-05 11:30 AM"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Paul" && v.LastName == "Martinez").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-04-05 08:00 AM") && e.ScheduledEnd == DateTime.Parse("2025-04-05 11:30 AM")).ID },
-                    new VolAttendance { ActualStart = DateTime.Parse("2025-04-05 08:20 AM"), ActualEnd = DateTime.Parse("2025-04-05 11:30 AM"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Quinn" && v.LastName == "Robinson").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-04-05 08:00 AM") && e.ScheduledEnd == DateTime.Parse("2025-04-05 11:30 AM")).ID },
-
-                    new VolAttendance { ActualStart = DateTime.Parse("2025-04-05 11:50 AM"), ActualEnd = DateTime.Parse("2025-04-05 03:30 PM"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Eve" && v.LastName == "Wilson").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-04-05 11:30 AM") && e.ScheduledEnd == DateTime.Parse("2025-04-05 03:30 PM")).ID },
-                    new VolAttendance { Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Frank" && v.LastName == "Moore").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-04-05 11:30 AM") && e.ScheduledEnd == DateTime.Parse("2025-04-05 03:30 PM")).ID },
-
-
-                    new VolAttendance { ActualStart = DateTime.Parse("2025-04-05 03:30 PM"), ActualEnd = DateTime.Parse("2025-04-05 6:30 PM"), Status = true, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Grace" && v.LastName == "Taylor").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-04-05 03:30 PM") && e.ScheduledEnd == DateTime.Parse("2025-04-05 06:30 PM")).ID },
-                    new VolAttendance { Status = false, VolunteerID = context.Volunteers.FirstOrDefault(v => v.FirstName == "Hank" && v.LastName == "Anderson").ID, VolScheduleID = context.VolSchedules.FirstOrDefault(e => e.ScheduledStart == DateTime.Parse("2025-04-05 03:30 PM") && e.ScheduledEnd == DateTime.Parse("2025-04-05 06:30 PM")).ID }
-                
-                    
-                    
-                    );
-                context.SaveChanges();
-            }
-        }
+       
     
 
 }

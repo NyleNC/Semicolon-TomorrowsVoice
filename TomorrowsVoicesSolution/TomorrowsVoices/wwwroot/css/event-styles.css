@@ -1,0 +1,265 @@
+/* Multi-Date Calendar Styling */
+.calendar-section {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-title {
+    font-size: 1.5rem;
+    margin: 0;
+    color: #343a40;
+}
+
+.calendar-toggle {
+    cursor: pointer;
+    color: #6423e7;
+    user-select: none;
+}
+
+.calendar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Flatpickr Calendar Styling */
+.flatpickr-calendar {
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15) !important;
+    width: 100% !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected.inRange,
+.flatpickr-day.startRange.inRange,
+.flatpickr-day.endRange.inRange,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange:focus,
+.flatpickr-day.endRange:focus,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover,
+.flatpickr-day.selected.prevMonthDay,
+.flatpickr-day.startRange.prevMonthDay,
+.flatpickr-day.endRange.prevMonthDay,
+.flatpickr-day.selected.nextMonthDay,
+.flatpickr-day.startRange.nextMonthDay,
+.flatpickr-day.endRange.nextMonthDay {
+    background: #6423e7 !important;
+    border-color: #6423e7 !important;
+}
+
+/* Selected Dates Pills */
+.selected-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.date-pill {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 30px;
+    padding: 6px 12px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.date-pill.configured {
+    border-color: #28a745;
+    background-color: #f0fff4;
+}
+
+.date-pill.not-configured {
+    border-color: #ffc107;
+    background-color: #fffbeb;
+}
+
+.date-pill-text {
+    margin-right: 8px;
+}
+
+.date-pill-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.date-pill-action {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.date-pill-action.configure {
+    color: #6423e7;
+}
+
+.date-pill-action.remove {
+    color: #dc3545;
+}
+
+.date-pill-action:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.date-pill-status {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 20px;
+    margin-right: 8px;
+}
+
+.date-pill-status.configured {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.date-pill-status.not-configured {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Date Configuration Modal Styling */
+.modal-header {
+    background-color: #6423e7;
+    color: white;
+}
+
+.modal-date-info {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Shift Card Styling */
+.shift-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid #6423e7;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.shift-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.shift-time {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.shift-time i {
+    color: #6423e7;
+}
+
+.shift-capacity {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.shift-capacity i {
+    color: #6423e7;
+}
+
+.shift-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.shift-action {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.shift-action:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.shift-action.remove {
+    color: #dc3545;
+}
+
+.shift-action.remove:hover {
+    background-color: #ffeeee;
+}
+
+/* Empty state styling */
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    color: #dee2e6;
+    margin-bottom: 15px;
+}
+
+.empty-state p {
+    margin-bottom: 15px;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: #6423e7;
+    border-color: #6423e7;
+}
+
+.btn-primary:hover {
+    background-color: #5617c8;
+    border-color: #5617c8;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}

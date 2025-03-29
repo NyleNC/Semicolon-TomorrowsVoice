@@ -31,8 +31,8 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Director
- 
-        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity,string? SearchPhone, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Director")
+
+        public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, string? SearchPhone, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Director")
         {
             var currentDirector = await GetCurrentDirectorAsync();
 
