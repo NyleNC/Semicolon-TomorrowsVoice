@@ -123,7 +123,13 @@ namespace TomorrowsVoices.Controllers
             }
             else
             {
+                //At least one role checked so loop through all the roles
+                //and add or remove as required
 
+                //We need to do this next line because foreach loops don't always work well
+                //for data returned by EF when working async.  Pulling it into an IList<>
+                //first means we can safely loop over the colleciton making async calls and avoid
+                //the error 'New transaction is not allowed because there are other threads running in the session'
                 IList<IdentityRole> allRoles = _context.Roles.ToList<IdentityRole>();
 
                 foreach (var r in allRoles)

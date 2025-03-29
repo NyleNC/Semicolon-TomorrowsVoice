@@ -35,7 +35,7 @@ namespace TomorrowsVoices.Controllers
             string[] sortOptions = new[] { "City", "Date", "Attendance", "Director" };
             int numberFilters = 0;
 
-  
+            var currentDirector = await GetCurrentDirectorAsync();
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
@@ -79,20 +79,12 @@ namespace TomorrowsVoices.Controllers
                 .Where(a => a.Date >= StartDate && a.Date <= EndDate.AddDays(1))
                 .Where(s => s.IsArchived == archived)
                 .AsNoTracking();
-            if (!User.IsInRole("Admin"))
+            if (currentDirector != null)
             {
-                var currentDirector = await GetCurrentDirectorAsync();
-                if (currentDirector != null)
-                {
-                    var assignedCityIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
-                    sessions = sessions.Where(s => assignedCityIds.Contains(s.LocationID.Value));
-                }
-                else
-                {
-                    // If no volunteer record exists, show nothing to non-admins
-                    sessions = sessions.Where(v => false);
-                }
+                var assignedCityIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
+                sessions = sessions.Where(s => assignedCityIds.Contains(s.LocationID.Value));
             }
+
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
 

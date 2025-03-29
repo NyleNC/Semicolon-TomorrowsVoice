@@ -26,18 +26,10 @@ namespace TomorrowsVoices.Controllers
                 .Where(v => v.IsArchived == archived)
                 .Include(v => v.VolLocation)
                 .AsNoTracking();
-            if (!User.IsInRole("Admin"))
+            var currentVolunteer = await GetCurrentVolunteerAsync();
+            if (currentVolunteer != null)
             {
-                var currentVolunteer = await GetCurrentVolunteerAsync();
-                if (currentVolunteer != null)
-                {
-                    volunteers = volunteers.Where(v => v.Email == currentVolunteer.Email);
-                }
-                else
-                {
-                    // If no volunteer record exists, show nothing to non-admins
-                    volunteers = volunteers.Where(v => false);
-                }
+                volunteers = volunteers.Where(v => v.Email == currentVolunteer.Email);
             }
 
             ViewData["ActiveTab"] = archived ? "archived" : "active";
@@ -172,7 +164,8 @@ namespace TomorrowsVoices.Controllers
 
             var volunteer = await _context.Volunteers
                 .Include(v => v.VolLocation)
-                .Include(v => v.Schedules)
+                .Include(v => v.VolAttendances)
+                .ThenInclude(v => v.VolSchedule)
                 .ThenInclude(s => s.Event)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
@@ -492,17 +485,12 @@ namespace TomorrowsVoices.Controllers
         {
             var volunteers = await _context.Volunteers
                 .Include(v => v.VolLocation)
-                .Include(v => v.Schedules)
+                .Include(v => v.VolAttendances)
+                .ThenInclude(va => va.VolSchedule)
                 .ThenInclude(va => va.Event)
                 .ToListAsync();
 
-            // Sort volunteers: those with schedules first, then by name
-            var sortedVolunteers = volunteers
-                .OrderByDescending(v => v.Schedules.Any())
-                .ThenBy(v => v.FirstName)
-                .ThenBy(v => v.LastName)
-                .ToList();
-
+  
             using (var package = new ExcelPackage())
             {
                 var worksheet = package.Workbook.Worksheets.Add("Volunteers");
@@ -529,47 +517,47 @@ namespace TomorrowsVoices.Controllers
                 }
 
                 int row = 2;
-                foreach (var volunteer in sortedVolunteers)
-                {
-                    // If no schedules, still export volunteer details
-                    if (volunteer.Schedules == null || !volunteer.Schedules.Any())
-                    {
-                        worksheet.Cells[row, 1].Value = volunteer.FirstName;
-                        worksheet.Cells[row, 2].Value = volunteer.LastName;
-                        worksheet.Cells[row, 3].Value = volunteer.Phone;
-                        worksheet.Cells[row, 4].Value = volunteer.Email;
-                        worksheet.Cells[row, 5].Value = volunteer.VolLocation?.City;
+                //foreach (var volunteer in sortedVolunteers)
+                //{
+                //    // If no schedules, still export volunteer details
+                //    if (volunteer.Schedules == null || !volunteer.Schedules.Any())
+                //    {
+                //        worksheet.Cells[row, 1].Value = volunteer.FirstName;
+                //        worksheet.Cells[row, 2].Value = volunteer.LastName;
+                //        worksheet.Cells[row, 3].Value = volunteer.Phone;
+                //        worksheet.Cells[row, 4].Value = volunteer.Email;
+                //        worksheet.Cells[row, 5].Value = volunteer.VolLocation?.City;
 
-                        // Highlight the lack of attendance
-                        worksheet.Cells[row, 6].Value = "No Attendance Records";
-                        worksheet.Cells[row, 6].Style.Font.Color.SetColor(System.Drawing.Color.Red);
-                        worksheet.Cells[row, 6].Style.Font.Italic = true;
+                //        // Highlight the lack of attendance
+                //        worksheet.Cells[row, 6].Value = "No Attendance Records";
+                //        worksheet.Cells[row, 6].Style.Font.Color.SetColor(System.Drawing.Color.Red);
+                //        worksheet.Cells[row, 6].Style.Font.Italic = true;
 
-                        row++;
-                    }
-                    else
-                    {
-                        foreach (var schedule in volunteer.Schedules)
-                        {
-                            worksheet.Cells[row, 1].Value = volunteer.FirstName;
-                            worksheet.Cells[row, 2].Value = volunteer.LastName;
-                            worksheet.Cells[row, 3].Value = volunteer.Phone;
-                            worksheet.Cells[row, 4].Value = volunteer.Email;
-                            worksheet.Cells[row, 5].Value = volunteer.VolLocation?.City;
-                            worksheet.Cells[row, 6].Value = schedule.Event?.Name;
-                            worksheet.Cells[row, 7].Value = schedule.Date.ToString("yyyy-MM-dd");
-                            worksheet.Cells[row, 8].Value = schedule.ScheduledStartTime.ToString();
-                            worksheet.Cells[row, 9].Value = schedule.ScheduledEndTime.ToString();
-                            worksheet.Cells[row, 10].Value = schedule.ActualStartTime?.ToString();
-                            worksheet.Cells[row, 11].Value = schedule.ActualEndTime?.ToString();
-                            worksheet.Cells[row, 12].Value = schedule.ActualEndTime.HasValue && schedule.ActualStartTime.HasValue
-                                ? (schedule.ActualEndTime.Value - schedule.ActualStartTime.Value).TotalHours
-                                : 0;
-                            worksheet.Cells[row, 13].Value = schedule.Status ? "Attended" : "Absent";
-                            row++;
-                        }
-                    }
-                }
+                //        row++;
+                //    }
+                //    else
+                //    {
+                //        foreach (var schedule in volunteer.Schedules)
+                //        {
+                //            worksheet.Cells[row, 1].Value = volunteer.FirstName;
+                //            worksheet.Cells[row, 2].Value = volunteer.LastName;
+                //            worksheet.Cells[row, 3].Value = volunteer.Phone;
+                //            worksheet.Cells[row, 4].Value = volunteer.Email;
+                //            worksheet.Cells[row, 5].Value = volunteer.VolLocation?.City;
+                //            worksheet.Cells[row, 6].Value = schedule.Event?.Name;
+                //            worksheet.Cells[row, 7].Value = schedule.Date.ToString("yyyy-MM-dd");
+                //            worksheet.Cells[row, 8].Value = schedule.ScheduledStartTime.ToString();
+                //            worksheet.Cells[row, 9].Value = schedule.ScheduledEndTime.ToString();
+                //            worksheet.Cells[row, 10].Value = schedule.ActualStartTime?.ToString();
+                //            worksheet.Cells[row, 11].Value = schedule.ActualEndTime?.ToString();
+                //            worksheet.Cells[row, 12].Value = schedule.ActualEndTime.HasValue && schedule.ActualStartTime.HasValue
+                //                ? (schedule.ActualEndTime.Value - schedule.ActualStartTime.Value).TotalHours
+                //                : 0;
+                //            worksheet.Cells[row, 13].Value = schedule.Status ? "Attended" : "Absent";
+                //            row++;
+                //        }
+                //    }
+                //}
 
                 // Auto-fit columns for better readability
                 worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
@@ -628,18 +616,18 @@ namespace TomorrowsVoices.Controllers
         }
         private async Task<Volunteer?> GetCurrentVolunteerAsync()
         {
-            var userEmail = User.Identity?.Name;
+            var userEmail = User.Identity?.Name; // Assuming the email is stored in the claims
             if (string.IsNullOrEmpty(userEmail))
             {
                 return null;
             }
-
-            // Admins see all records
+            // Check if the user is an Admin
             if (User.IsInRole("Admin"))
             {
-                return null;
+                return null; // Admins bypass restrictions
             }
 
+            // Fetch the Volunteer for non-Admin users
             return await _context.Volunteers
                 .FirstOrDefaultAsync(v => v.Email == userEmail);
         }

@@ -29,7 +29,7 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Event
-        public async Task<IActionResult> Index(string? SearchString, string? SearchCity, DateTime? StartDate, DateTime? EndDate, TimeSpan? StartTime, TimeSpan? EndTime, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Event")
+        public async Task<IActionResult> Index(string? SearchString, string? SearchCity, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Event")
         {
             string[] sortOptions = new[] { "Title", "City", "StartTime", "EndTime" };
             int numberFilters = 0;
@@ -51,46 +51,45 @@ namespace TomorrowsVoices.Controllers
             // Initialize the base query
             var eventsQuery = _context.Events
                 .Include(e => e.VolLocation)
-                .Include(e => e.VolSchedules).ThenInclude(v => v.VolAttendances).ThenInclude(a => a.Volunteer)
                 .Where(s => s.IsArchived == archived)
                 .AsNoTracking();
 
             // Default dates if not provided
-            if (!StartDate.HasValue || !EndDate.HasValue)
-            {
-                StartDate = _context.Events.Min(o => o.Start.Date);
-                EndDate = _context.Events.Max(o => o.End.Date);
-            }
-            else
-            {
-                // Only count dates as filters if they're not default values
-                // Check if StartDate is from a user filter (not default)
-                if (StartDate.HasValue && StartDate != _context.Events.Min(o => o.Start.Date))
-                {
-                    numberFilters++;
-                }
-                
-                // Check if EndDate is from a user filter (not default)
-                if (EndDate.HasValue && EndDate != _context.Events.Max(o => o.End.Date))
-                {
-                    numberFilters++;
-                }
-            }
+            //if (!StartDate.HasValue || !EndDate.HasValue)
+            //{
+            //    StartDate = _context.Events.Min(o => o.Start.Date);
+            //    EndDate = _context.Events.Max(o => o.End.Date);
+            //}
+            //else
+            //{
+            //    // Only count dates as filters if they're not default values
+            //    // Check if StartDate is from a user filter (not default)
+            //    if (StartDate.HasValue && StartDate != _context.Events.Min(o => o.Start.Date))
+            //    {
+            //        numberFilters++;
+            //    }
 
-            // Check the order of the dates and swap them if required
-            if (EndDate < StartDate)
-            {
-                DateTime? temp = EndDate;
-                EndDate = StartDate;
-                StartDate = temp;
-            }
+            //    // Check if EndDate is from a user filter (not default)
+            //    if (EndDate.HasValue && EndDate != _context.Events.Max(o => o.End.Date))
+            //    {
+            //        numberFilters++;
+            //    }
+            //}
 
-            // Save to View Data
-            ViewData["StartDate"] = StartDate?.ToString("yyyy-MM-dd");
-            ViewData["EndDate"] = EndDate?.ToString("yyyy-MM-dd");
+            //// Check the order of the dates and swap them if required
+            //if (EndDate < StartDate)
+            //{
+            //    DateTime? temp = EndDate;
+            //    EndDate = StartDate;
+            //    StartDate = temp;
+            //}
 
-            // Filter by date range (date part only)
-            eventsQuery = eventsQuery.Where(a => a.Start.Date >= StartDate.Value.Date && a.End.Date <= EndDate.Value.Date);
+            //// Save to View Data
+            //ViewData["StartDate"] = StartDate?.ToString("yyyy-MM-dd");
+            //ViewData["EndDate"] = EndDate?.ToString("yyyy-MM-dd");
+
+            //// Filter by date range (date part only)
+            //eventsQuery = eventsQuery.Where(a => a.Start.Date >= StartDate.Value.Date && a.End.Date <= EndDate.Value.Date);
 
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
@@ -109,24 +108,24 @@ namespace TomorrowsVoices.Controllers
 
             // Execute the database query before applying time filters
             var events = await eventsQuery.ToListAsync();
-            
+
             // Now filter by time range if provided (using in-memory filtering)
-            if (StartTime.HasValue || EndTime.HasValue)
-            {
-                if (StartTime.HasValue)
-                {
-                    events = events.Where(e => e.Start.TimeOfDay >= StartTime.Value).ToList();
-                    numberFilters++;
-                    ViewData["StartTime"] = StartTime?.ToString(@"hh\:mm");
-                }
-                
-                if (EndTime.HasValue)
-                {
-                    events = events.Where(e => e.End.TimeOfDay <= EndTime.Value).ToList();
-                    numberFilters++;
-                    ViewData["EndTime"] = EndTime?.ToString(@"hh\:mm");
-                }
-            }
+            //if (StartTime.HasValue || EndTime.HasValue)
+            //{
+            //    if (StartTime.HasValue)
+            //    {
+            //        events = events.Where(e => e.Start.TimeOfDay >= StartTime.Value).ToList();
+            //        numberFilters++;
+            //        ViewData["StartTime"] = StartTime?.ToString(@"hh\:mm");
+            //    }
+
+            //    if (EndTime.HasValue)
+            //    {
+            //        events = events.Where(e => e.End.TimeOfDay <= EndTime.Value).ToList();
+            //        numberFilters++;
+            //        ViewData["EndTime"] = EndTime?.ToString(@"hh\:mm");
+            //    }
+            //}
 
             // Apply sorting to the in-memory collection
             events = ApplySorting(events, sortField, sortDirection).ToList();
@@ -239,124 +238,186 @@ namespace TomorrowsVoices.Controllers
         {
             var model = new EventCreateVM
             {
-                Event = new Event(),
-                NewSchedule = new ScheduleVM(),
-                ExistingSchedules = new List<ScheduleVM>()
+                
+              
             };
-            PopulateAssignedVolunteerData(model.Event);
 
             // Load locations for dropdown
-            ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", model.Event.VolLocationID);
+            ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City");
             return View(model);
         }
-        // Update your Create POST method to handle volunteer assignments
+
+        // POST: Event/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EventCreateVM model, string[] selectedOptions)
+        public async Task<IActionResult> Create(EventCreateVM model)
         {
-
+            // Check if the model is valid
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Begin transaction
+                    // Begin transaction for database operations
                     using (var transaction = await _context.Database.BeginTransactionAsync())
                     {
-
                         try
                         {
+                            // Check if we have multi-date events
+                            bool hasMultiDateEvents = model.MultiDateEvents != null && model.MultiDateEvents.Any();
 
-                            // Save Event
-                            _context.Events.Add(model.Event);
-                            await _context.SaveChangesAsync();
-
-                            // Get the newly created event ID
-                            int eventId = model.Event.ID;
-
-                            // Save Schedules and Volunteer Assignments
-                            if (model.ExistingSchedules != null && model.ExistingSchedules.Any())
+                            // If we have multi-date events, don't create a default event
+                            // Otherwise, create the single event as normal
+                            if (!hasMultiDateEvents)
                             {
-                                foreach (var scheduleVM in model.ExistingSchedules)
+                                // Ensure the model has proper date/time values
+                                if (model.Event.Date == default)
                                 {
-                                    VolSchedule schedule;
+                                    model.Event.Date = DateTime.Today;
+                                }
 
-                                    if (scheduleVM.ScheduleID.HasValue && scheduleVM.ScheduleID.Value > 0)
-                                    {
-                                        // Existing schedule - update it
-                                        schedule = await _context.VolSchedules.FindAsync(scheduleVM.ScheduleID.Value);
-                                        if (schedule != null)
-                                        {
-                                            schedule.ScheduledStart = scheduleVM.ScheduledStart;
-                                            schedule.ScheduledEnd = scheduleVM.ScheduledEnd;
+                                // Save the single event
+                                _context.Events.Add(model.Event);
+                                await _context.SaveChangesAsync();
 
-                                            // Remove existing attendance records
-                                            var existingAttendances = _context.VolAttendances.Where(a => a.VolScheduleID == schedule.ID);
-                                            _context.VolAttendances.RemoveRange(existingAttendances);
-                                        }
-                                        else
-                                        {
-                                            // Schedule ID provided but not found - create new
-                                            schedule = new VolSchedule
-                                            {
-                                                ScheduledStart = scheduleVM.ScheduledStart,
-                                                ScheduledEnd = scheduleVM.ScheduledEnd,
-                                                EventID = eventId
-                                            };
-                                            _context.VolSchedules.Add(schedule);
-                                            await _context.SaveChangesAsync();
-                                        }
-                                    }
-                                    else
+                                int eventId = model.Event.ID;
+
+                                // Save schedules for the single event
+                                if (model.ExistingSchedules != null && model.ExistingSchedules.Any())
+                                {
+                                    foreach (var scheduleVM in model.ExistingSchedules)
                                     {
-                                        // New schedule - create it
-                                        schedule = new VolSchedule
+                                        var schedule = new VolSchedule
                                         {
+                                            ShiftDate = model.Event.Date,
                                             ScheduledStart = scheduleVM.ScheduledStart,
                                             ScheduledEnd = scheduleVM.ScheduledEnd,
+                                            Capacity = scheduleVM.Capacity > 0 ? scheduleVM.Capacity : 1,
                                             EventID = eventId
                                         };
                                         _context.VolSchedules.Add(schedule);
-                                        await _context.SaveChangesAsync();
+                                    }
+                                    await _context.SaveChangesAsync();
+                                }
+                            }
+
+                            // Handle multi-date events
+                            if (hasMultiDateEvents)
+                            {
+                                foreach (var multiDateEvent in model.MultiDateEvents)
+                                {
+                                    // Skip if date is invalid
+                                    if (string.IsNullOrEmpty(multiDateEvent.Date))
+                                    {
+                                        continue;
                                     }
 
-                                    // Add volunteer attendance records
-                                    if (scheduleVM.VolunteerIds != null && scheduleVM.VolunteerIds.Any())
+                                    // Parse the date and times
+                                    if (!DateTime.TryParse(multiDateEvent.Date, out DateTime eventDate))
                                     {
-                                        foreach (var volunteerId in scheduleVM.VolunteerIds)
-                                        {
-                                            var attendance = new VolAttendance
-                                            {
-                                                VolunteerID = volunteerId,
-                                                VolScheduleID = schedule.ID,
-                                                Status = true,
-                                                ActualStart = schedule.ScheduledStart,
-                                                ActualEnd = schedule.ScheduledEnd
-                                            };
+                                        continue; // Skip invalid dates
+                                    }
 
-                                            _context.VolAttendances.Add(attendance);
+                                    DateTime eventStartTime;
+                                    DateTime eventEndTime;
+
+                                    try
+                                    {
+                                        eventStartTime = DateTime.Parse($"{multiDateEvent.Date} {multiDateEvent.StartTime}");
+                                        eventEndTime = DateTime.Parse($"{multiDateEvent.Date} {multiDateEvent.EndTime}");
+                                    }
+                                    catch
+                                    {
+                                        // If time parsing fails, skip this entry
+                                        continue;
+                                    }
+
+                                    // Create the event
+                                    var multiDateEventModel = new Event
+                                    {
+                                        Name = model.Event.Name,
+                                        Location = model.Event.Location,
+                                        Address = model.Event.Address,
+                                        VolLocationID = model.Event.VolLocationID,
+                                        Notes = model.Event.Notes,
+                                        Date = eventDate,
+                                        Start = eventStartTime,
+                                        End = eventEndTime,
+                                        IsArchived = false // Ensure new events are not archived
+                                    };
+
+                                    _context.Events.Add(multiDateEventModel);
+                                    await _context.SaveChangesAsync();
+
+                                    int multiDateEventId = multiDateEventModel.ID;
+
+                                    // Add shifts for this event if any
+                                    if (multiDateEvent.Shifts != null && multiDateEvent.Shifts.Any())
+                                    {
+                                        foreach (var shift in multiDateEvent.Shifts)
+                                        {
+                                            try
+                                            {
+                                                // Parse the shift times
+                                                var shiftStartStr = $"{multiDateEvent.Date} {shift.ScheduledStart:HH:mm}";
+                                                var shiftEndStr = $"{multiDateEvent.Date} {shift.ScheduledEnd:HH:mm}";
+
+                                                DateTime shiftStart = DateTime.Parse(shiftStartStr);
+                                                DateTime shiftEnd = DateTime.Parse(shiftEndStr);
+
+                                                var schedule = new VolSchedule
+                                                {
+                                                    ShiftDate = eventDate,
+                                                    ScheduledStart = shiftStart,
+                                                    ScheduledEnd = shiftEnd,
+                                                    Capacity = shift.Capacity > 0 ? shift.Capacity : 1,
+                                                    EventID = multiDateEventId
+                                                };
+
+                                                _context.VolSchedules.Add(schedule);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                // Log the error but continue with other shifts
+                                                Console.WriteLine($"Error adding shift: {ex.Message}");
+                                            }
                                         }
+
                                         await _context.SaveChangesAsync();
                                     }
                                 }
                             }
 
-                            // Commit transaction
+                            // Commit the transaction
                             await transaction.CommitAsync();
-
                             return RedirectToAction(nameof(Index));
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // Rollback transaction
+                            // Rollback on error
                             await transaction.RollbackAsync();
-                            throw;
+                            ModelState.AddModelError("", $"Error saving event: {ex.Message}");
+
+                            if (ex.InnerException != null)
+                            {
+                                ModelState.AddModelError("", $"Details: {ex.InnerException.Message}");
+                            }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Log error
                     ModelState.AddModelError("", "An error occurred while creating the event: " + ex.Message);
+                }
+            }
+            else
+            {
+                // Log validation errors
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        Console.WriteLine($"Validation error for {state.Key}: {error.ErrorMessage}");
+                    }
                 }
             }
 
@@ -364,6 +425,10 @@ namespace TomorrowsVoices.Controllers
             ViewData["VolLocationID"] = new SelectList(_context.VolLocations, "ID", "City", model.Event.VolLocationID);
             return View(model);
         }
+
+
+
+
 
         // Populate assigned 
         private void PopulateAssignedVolunteerData(Event @event)
@@ -521,10 +586,7 @@ namespace TomorrowsVoices.Controllers
                     ScheduleID = schedule.ID,
                     ScheduledStart = schedule.ScheduledStart,
                     ScheduledEnd = schedule.ScheduledEnd,
-                    VolunteerIds = schedule.VolAttendances
-                        .Where(a => a.Status)
-                        .Select(a => a.VolunteerID)
-                        .ToList()
+                    
                 };
                 model.ExistingSchedules.Add(scheduleVM);
             }
@@ -689,29 +751,7 @@ namespace TomorrowsVoices.Controllers
                                         await _context.SaveChangesAsync();
                                     }
 
-                                    // Add volunteer attendance records
-                                    if (scheduleVM.VolunteerIds != null && scheduleVM.VolunteerIds.Any())
-                                    {
-                                        Console.WriteLine($"Adding {scheduleVM.VolunteerIds.Count} volunteers to schedule {schedule.ID}");
-                                        foreach (var volunteerId in scheduleVM.VolunteerIds)
-                                        {
-                                            var attendance = new VolAttendance
-                                            {
-                                                VolunteerID = volunteerId,
-                                                VolScheduleID = schedule.ID,
-                                                Status = true,
-                                                ActualStart = schedule.ScheduledStart,
-                                                ActualEnd = schedule.ScheduledEnd
-                                            };
-
-                                            _context.VolAttendances.Add(attendance);
-                                        }
-                                        await _context.SaveChangesAsync();
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine($"No volunteers added to schedule {schedule.ID}");
-                                    }
+                                    
                                 }
                             }
 

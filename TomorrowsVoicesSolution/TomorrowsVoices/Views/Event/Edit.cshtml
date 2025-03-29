@@ -102,27 +102,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Selected Volunteers</label>
-                        <div class="selected-volunteers">
-                            @foreach (var volunteerId in Model.ExistingSchedules[i].VolunteerIds)
-                            {
-                                var volunteer = Model.Event.VolSchedules
-                                .SelectMany(s => s.VolAttendances)
-                                .FirstOrDefault(a => a.VolunteerID == volunteerId)?.Volunteer;
-                                if (volunteer != null)
-                                {
-                                    <div>@volunteer.FullName</div>
-                                }
-                            }
-                        </div>
-                        <div class="selected-volunteer-ids">
-                            @foreach (var volunteerId in Model.ExistingSchedules[i].VolunteerIds)
-                            {
-                                <input type="hidden" name="ExistingSchedules[@i].VolunteerIds[]" value="@volunteerId" />
-                            }
-                        </div>
-                    </div>
+                  
                 </div>
             }
         }
