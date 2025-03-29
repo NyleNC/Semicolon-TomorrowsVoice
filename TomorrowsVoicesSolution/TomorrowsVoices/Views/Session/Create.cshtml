@@ -43,7 +43,7 @@
 
             <div class="form-group">
                 <label asp-for="Date" class="control-label" style="font-weight: 700">Session Date</label><span style="color: red">*</span>
-                <input asp-for="Date" class="form-control" />
+                <input asp-for="Date" class="form-control" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
 

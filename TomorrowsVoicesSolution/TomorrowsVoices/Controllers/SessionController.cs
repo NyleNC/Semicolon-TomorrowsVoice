@@ -1034,9 +1034,10 @@ namespace TomorrowsVoices.Controllers
         public async Task<IActionResult> GetUpcomingSessions()
         {
             var upcomingSessions = await _context.Sessions
-                .Where(s => s.Date >= DateTime.Today && !s.IsArchived)
+                .Where(s => s.Date <= DateTime.Today && !s.IsArchived)
                 .Include(s => s.Location)
-                .OrderBy(s => s.Date)
+                .OrderByDescending(s => s.Date) // Changed to descending order
+                .Take(10) // Take only 10 most recent
                 .Select(s => new
                 {
                     id = s.ID,

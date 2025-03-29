@@ -1399,7 +1399,8 @@ namespace TomorrowsVoices.Controllers
             var upcomingEvents = await _context.Events
                 .Where(e => e.Start >= DateTime.Today && !e.IsArchived) // Filter upcoming and non-archived events
                 .Include(e => e.VolLocation) // Include location details
-                .OrderBy(e => e.Start) // Order by start date
+                .OrderByDescending(s => s.Start) // Changed to descending order
+                .Take(10) // Take only 10 most recent
                 .Select(e => new
                 {
                     id = e.ID,

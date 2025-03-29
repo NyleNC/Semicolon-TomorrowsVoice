@@ -12,7 +12,8 @@
     <!-- Charts CSS-->
     <style>
         .container {
-            margin: 0;
+            margin: 0 auto;
+            max-width: 1540px;
         }
 
         .all-charts {
@@ -92,10 +93,15 @@
                 padding: 10px; /* Optional: Add padding for better spacing */
             }
 
-        .lists-border {
+        .lists-border, .director-lists {
             box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
             border-radius: 5px;
             max-width: 750px;
+        }
+
+        .director-lists {
+            height: 542px;
+            max-height: 542px;
         }
 
         .session-list {
@@ -246,11 +252,17 @@
         }
 
         /* Additional styling for the welcome text */
-        #welcome-text {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #333;
-            margin-top: 20px;
+        #welcome-text, #no-user-text {
+            font-size: 2.5rem !important;
+            font-weight: bold !important;
+            color: #333 !important;
+            margin-top: 20px !important;
+        }
+
+        #no-user-text {
+            text-align: left;
+            padding-left: 20px;
+            margin-top: 2em !important;
         }
     </style>
 
@@ -304,158 +316,282 @@
             width: 150px;
         }
     </style>
+
+    <!-- Director Dashboard Elements Stacks CSS -->
+    <style>
+        .all-stacks {
+            display: flex;
+            gap: 20px; /* Space between the stack-col and all-lists */
+            width: 100%;
+            max-width: 1200px; /* Adjust as needed */
+            padding: 20px;
+        }
+
+        .stack-col {
+            display: flex;
+            flex-direction: column;
+            flex: 2; /* Takes 2/3 of the space (adjust as needed) */
+        }
+    </style>
 </head>
 <body>
-    <!-- Welcome Text -->
-    <div class="welcome-text">
-        <div id="welcome-text">
-            Welcome User!
-        </div>
-        <p>All of your data in a glimpse</p>
-    </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <!-- Content for all logged-in users -->
+        @if (User.IsInRole("Admin"))
+        {
+            <!-- Welcome Text -->
+            <div class="welcome-text">
+                <div id="welcome-text">
+                    Welcome Admin!
+                </div>
+                <p>All of your data in a glimpse</p>
+            </div>
 
-    <!-- All Charts-->
-    <div class="all-charts">
-        <div class="sub-charts">
-            <p class="headers">Choir Administration</p>
-            <div class="outer-container">
-                <div class="charts-container">
-                    <div class="pie-charts">
-                        <!-- Pie Chart - Directors by City-->
-                        <canvas id="directorsByCityDoughnutChart"></canvas>
+            <!-- All Charts -->
+            <div class="all-charts">
+                <div class="sub-charts">
+                    <p class="headers">Choir Administration</p>
+                    <div class="outer-container">
+                        <div class="charts-container">
+                            <div class="pie-charts">
+                                <!-- Pie Chart - Directors by City-->
+                                <canvas id="directorsByCityDoughnutChart"></canvas>
+                            </div>
+                            <a class="nav-link charts-title" asp-controller="Director" asp-action="Index">Director</a>
+                            <div class="horizontal-charts">
+                                <!-- Archived vs Active Directors-->
+                                <canvas id="activeVsArchivedChart" width="150" height="50"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="charts-container">
+                            <div class="pie-charts">
+                                <!-- Pie Chart - Singers by City -->
+                                <canvas id="singersByCityDoughnutChart"></canvas>
+                            </div>
+                            <a class="nav-link charts-title" asp-controller="Singer" asp-action="Index">Singers</a>
+                            <div class="horizontal-charts">
+                                <!-- Active vs. Archived Singers -->
+                                <canvas id="activeVsArchivedSingersChart" width="150" height="50"></canvas>
+                            </div>
+                        </div>
+                        <div class="charts-container">
+                            <div class="pie-charts">
+                                <!-- Pie Chart - Sessions by City -->
+                                <canvas id="sessionsByCityChart"></canvas>
+                            </div>
+                            <a class="nav-link charts-title" asp-controller="Session" asp-action="Index">Sessions</a>
+                            <div class="horizontal-charts">
+                                <!-- Active vs. Archived Sessions -->
+                                <canvas id="activeVsArchivedSessionsChart" width="150" height="50"></canvas>
+                            </div>
+                        </div>
                     </div>
-                    <a class="nav-link charts-title" asp-controller="Director" asp-action="Index">Director</a>
-                    <div class="horizontal-charts">
-                        <!-- Archived vs Active Directors-->
-                        <canvas id="activeVsArchivedChart" width="150" height="50"></canvas>
+                </div>
+                <div class="sub-charts">
+                    <p class="headers">Events Management</p>
+                    <div class="outer-container">
+                        <div class="charts-container">
+                            <!-- Pie Chart - Locations -->
+                            <div class="pie-charts">
+                                <canvas id="locationsByCityChart"></canvas>
+                            </div>
+                            <a class="nav-link charts-title" asp-controller="VolLocation" asp-action="Index">Location</a>
+                            <!-- Active vs. Archived Locations -->
+                            <div class="horizontal-charts">
+                                <canvas id="activeVsArchivedLocationsChart" width="150" height="50"></canvas>
+                            </div>
+                        </div>
+                        <div class="charts-container">
+                            <!-- Container for the Doughnut Chart -->
+                            <div class="pie-charts">
+                                <canvas id="volunteersByCityChart"></canvas>
+                            </div>
+                            <a class="nav-link charts-title" asp-controller="Volunteer" asp-action="Index">Volunteer</a>
+                            <!-- Container for the Horizontal Bar Chart -->
+                            <div class="horizontal-charts">
+                                <canvas id="activeVsArchivedVolunteersChart" width="150" height="50"></canvas>
+                            </div>
+                        </div>
+                        <div class="charts-container">
+                            <!-- Container for the Doughnut Chart -->
+                            <div class="pie-charts">
+                                <canvas id="eventsByCityChart"></canvas>
+                            </div>
+                            <a class="nav-link charts-title" asp-controller="Event" asp-action="Index">Events</a>
+                            <!-- Container for the Horizontal Bar Chart -->
+                            <div class="horizontal-charts">
+                                <canvas id="activeVsArchivedEventsChart" width="150" height="50"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Count Elements -->
+            <div class="all-counts">
+                <div class="sub-counts first-group">
+                    <div id="directorCounts">
+                        <div id="directorTotalCount" style="color: rgba(0, 128, 128, 0.6)">...</div>
+                        <p>Total Directors</p>
+                    </div>
+                </div>
+                <div class="sub-counts first-group">
+                    <div id="singerCounts">
+                        <div id="singerTotalCount" style="color: rgba(102, 0, 204, 0.6)">...</div>
+                        <p>Total Singers</p>
+                    </div>
+                </div>
+                <div class="sub-counts first-group">
+                    <div id="sessionCounts">
+                        <div id="sessionTotalCount" style="color: rgba(0, 100, 0, 0.6)">...</div>
+                        <p>Total Sessions</p>
+                    </div>
+                </div>
+                <div class="sub-counts second-group">
+                    <div id="locationCounts">
+                        <div id="locationTotalCount" style="color: rgba(0, 0, 139, 0.6)">...</div>
+                        <p>Total Locations</p>
+                    </div>
+                </div>
+                <div class="sub-counts second-group">
+                    <div id="volunteerCounts">
+                        <div id="volunteerTotalCount" style="color: rgba(139, 0, 0, 0.6)">...</div>
+                        <p>Total Volunteers</p>
+                    </div>
+                </div>
+                <div class="sub-counts second-group">
+                    <div id="eventCounts">
+                        <div id="eventTotalCount" style="color: rgba(255, 165, 0, 0.6)">...</div>
+                        <p>Total Events</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Lists-->
+            <div class="all-lists">
+                <div class="lists-border">
+                    <div class="text-center">
+                        <h1 class="lists-title">Recent Sessions</h1>
+                    </div>
+
+                    <div id="upcoming-sessions" class="session-list">
+                        <!-- Sessions will be loaded here -->
+                    </div>
+                </div>
+                <div class="lists-border">
+                    <div class="text-center">
+                        <h1 class="lists-title">Upcoming Events</h1>
+                    </div>
+
+                    <div id="upcoming-events" class="event-list">
+                        <!-- Events will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (User.IsInRole("Director"))
+        {
+            <!-- Welcome Text -->
+            <div class="welcome-text">
+                <div id="welcome-text">
+                    Welcome Director!
+                </div>
+                <p>All of your data in a glimpse</p>
+            </div>
+
+            <!-- Charts, Counts, and List Elements-->
+            <div class="all-stacks">
+                <div class="stack-col">
+                    <div class="all-charts">
+                        <div class="sub-charts">
+                            <p class="headers">Choir Administration</p>
+                            <div class="outer-container">
+                                <div class="charts-container">
+                                    <div class="pie-charts">
+                                        <!-- Pie Chart - Directors by City-->
+                                        <canvas id="directorsByCityDoughnutChart"></canvas>
+                                    </div>
+                                    <a class="nav-link charts-title" asp-controller="Director" asp-action="Index">Director</a>
+                                    <div class="horizontal-charts">
+                                        <!-- Archived vs Active Directors-->
+                                        <canvas id="activeVsArchivedChart" width="150" height="50"></canvas>
+                                    </div>
+                                </div>
+
+                                <div class="charts-container">
+                                    <div class="pie-charts">
+                                        <!-- Pie Chart - Singers by City -->
+                                        <canvas id="singersByCityDoughnutChart"></canvas>
+                                    </div>
+                                    <a class="nav-link charts-title" asp-controller="Singer" asp-action="Index">Singers</a>
+                                    <div class="horizontal-charts">
+                                        <!-- Active vs. Archived Singers -->
+                                        <canvas id="activeVsArchivedSingersChart" width="150" height="50"></canvas>
+                                    </div>
+                                </div>
+                                <div class="charts-container">
+                                    <div class="pie-charts">
+                                        <!-- Pie Chart - Sessions by City -->
+                                        <canvas id="sessionsByCityChart"></canvas>
+                                    </div>
+                                    <a class="nav-link charts-title" asp-controller="Session" asp-action="Index">Sessions</a>
+                                    <div class="horizontal-charts">
+                                        <!-- Active vs. Archived Sessions -->
+                                        <canvas id="activeVsArchivedSessionsChart" width="150" height="50"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Count Elements -->
+                    <div class="all-counts">
+                        <div class="sub-counts first-group">
+                            <div id="directorCounts">
+                                <div id="directorTotalCount">...</div>
+                                <p>Total Directors</p>
+                            </div>
+                        </div>
+                        <div class="sub-counts first-group">
+                            <div id="singerCounts">
+                                <div id="singerTotalCount">...</div>
+                                <p>Total Singers</p>
+                            </div>
+                        </div>
+                        <div class="sub-counts first-group">
+                            <div id="sessionCounts">
+                                <div id="sessionTotalCount">...</div>
+                                <p>Total Sessions</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="charts-container">
-                    <div class="pie-charts">
-                        <!-- Pie Chart - Singers by City -->
-                        <canvas id="singersByCityDoughnutChart"></canvas>
-                    </div>
-                    <a class="nav-link charts-title" asp-controller="Singer" asp-action="Index">Singers</a>
-                    <div class="horizontal-charts">
-                        <!-- Active vs. Archived Singers -->
-                        <canvas id="activeVsArchivedSingersChart" width="150" height="50"></canvas>
-                    </div>
-                </div>
-                <div class="charts-container">
-                    <div class="pie-charts">
-                        <!-- Pie Chart - Sessions by City -->
-                        <canvas id="sessionsByCityChart"></canvas>
-                    </div>
-                    <a class="nav-link charts-title" asp-controller="Session" asp-action="Index">Sessions</a>
-                    <div class="horizontal-charts">
-                        <!-- Active vs. Archived Sessions -->
-                        <canvas id="activeVsArchivedSessionsChart" width="150" height="50"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="sub-charts">
-            <p class="headers">Events Management</p>
-            <div class="outer-container">
-                <div class="charts-container">
-                    <!-- Pie Chart - Locations -->
-                    <div class="pie-charts">
-                        <canvas id="locationsByCityChart"></canvas>
-                    </div>
-                    <a class="nav-link charts-title" asp-controller="VolLocation" asp-action="Index">Location</a>
-                    <!-- Active vs. Archived Locations -->
-                    <div class="horizontal-charts">
-                        <canvas id="activeVsArchivedLocationsChart" width="150" height="50"></canvas>
-                    </div>
-                </div>
-                <div class="charts-container">
-                    <!-- Container for the Doughnut Chart -->
-                    <div class="pie-charts">
-                        <canvas id="volunteersByCityChart"></canvas>
-                    </div>
-                    <a class="nav-link charts-title" asp-controller="Volunteer" asp-action="Index">Volunteer</a>
-                    <!-- Container for the Horizontal Bar Chart -->
-                    <div class="horizontal-charts">
-                        <canvas id="activeVsArchivedVolunteersChart" width="150" height="50"></canvas>
-                    </div>
-                </div>
-                <div class="charts-container">
-                    <!-- Container for the Doughnut Chart -->
-                    <div class="pie-charts">
-                        <canvas id="eventsByCityChart"></canvas>
-                    </div>
-                    <a class="nav-link charts-title" asp-controller="Event" asp-action="Index">Events</a>
-                    <!-- Container for the Horizontal Bar Chart -->
-                    <div class="horizontal-charts">
-                        <canvas id="activeVsArchivedEventsChart" width="150" height="50"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                <!-- All Lists-->
+                <div class="all-lists">
+                    <div class="lists-border director-lists">
+                        <div class="text-center">
+                            <h1 class="lists-title">Recent Sessions</h1>
+                        </div>
 
-    <!-- Total Count Elements -->
-    <div class="all-counts">
-        <div class="sub-counts first-group">
-            <div id="directorCounts">
-                <div id="directorTotalCount">...</div>
-                <p>Total Directors</p>
+                        <div id="upcoming-sessions" class="session-list">
+                            <!-- Sessions will be loaded here -->
+                        </div>
+                    </div>
+                </div>
             </div>
+        }
+    }
+    else
+    {
+        <div class="welcome-text">
+            <!-- Content for anonymous users -->
+            <div id="no-user-text">Please log in to view content</div>
         </div>
-        <div class="sub-counts first-group">
-            <div id="singerCounts">
-                <div id="singerTotalCount">...</div>
-                <p>Total Singers</p>
-            </div>
-        </div>
-        <div class="sub-counts first-group">
-            <div id="sessionCounts">
-                <div id="sessionTotalCount">...</div>
-                <p>Total Sessions</p>
-            </div>
-        </div>
-        <div class="sub-counts second-group">
-            <div id="locationCounts">
-                <div id="locationTotalCount">...</div>
-                <p>Total Locations</p>
-            </div>
-        </div>
-        <div class="sub-counts second-group">
-            <div id="volunteerCounts">
-                <div id="volunteerTotalCount">...</div>
-                <p>Total Volunteers</p>
-            </div>
-        </div>
-        <div class="sub-counts second-group">
-            <div id="eventCounts">
-                <div id="eventTotalCount">...</div>
-                <p>Total Events</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- All Lists-->
-    <div class="all-lists">
-        <div class="lists-border">
-            <div class="text-center">
-                <h1 class="lists-title">Upcoming Sessions</h1>
-            </div>
-
-            <div id="upcoming-sessions" class="session-list">
-                <!-- Sessions will be loaded here -->
-            </div>
-        </div>
-        <div class="lists-border">
-            <div class="text-center">
-                <h1 class="lists-title">Upcoming Events</h1>
-            </div>
-
-            <div id="upcoming-events" class="event-list">
-                <!-- Events will be loaded here -->
-            </div>
-        </div>
-    </div>
+    }
 
     <!-- Director Chart JS -->
     <!-- Pie Chart - Directors by City-->
@@ -474,20 +610,58 @@
                                 label: 'Directors by City',
                                 data: data.map(item => item.count),
                                 backgroundColor: [
-                                    'rgba(255, 99, 132, 0.6)',
-                                    'rgba(54, 162, 235, 0.6)',
-                                    'rgba(255, 206, 86, 0.6)',
-                                    'rgba(75, 192, 192, 0.6)',
-                                    'rgba(153, 102, 255, 0.6)',
-                                    'rgba(255, 159, 64, 0.6)'
+                                        'rgba(0, 128, 128, 0.6)',       // Teal
+                                        'rgba(0, 139, 139, 0.6)',        // DarkCyan
+                                        'rgba(32, 178, 170, 0.6)',       // LightSeaGreen
+                                        'rgba(0, 105, 148, 0.6)',        // Prussian Blue
+                                        'rgba(0, 154, 137, 0.6)',        // Tiffany Blue
+                                        'rgba(0, 180, 171, 0.6)',        // Teal Blue
+                                        'rgba(0, 121, 107, 0.6)',        // Pine Green
+                                        'rgba(0, 168, 150, 0.6)',        // Persian Green
+                                        'rgba(0, 191, 179, 0.6)',        // Robin Egg Blue
+                                        'rgba(0, 206, 209, 0.6)',        // DarkTurquoise
+                                        'rgba(64, 224, 208, 0.6)',       // Turquoise
+                                        'rgba(72, 209, 204, 0.6)',       // MediumTurquoise
+                                        'rgba(95, 158, 160, 0.6)',       // CadetBlue
+                                        'rgba(102, 205, 170, 0.6)',      // MediumAquamarine
+                                        'rgba(0, 199, 140, 0.6)',        // Emerald
+                                        'rgba(0, 107, 91, 0.6)',         // Skobeloff
+                                        'rgba(0, 147, 131, 0.6)',        // Viridian Green
+                                        'rgba(0, 161, 154, 0.6)',        // Caribbean Green
+                                        'rgba(0, 171, 169, 0.6)',        // Bondi Blue
+                                        'rgba(0, 183, 172, 0.6)',        // Java
+                                        'rgba(0, 193, 185, 0.6)',        // Pacific Blue
+                                        'rgba(0, 203, 198, 0.6)',        // Tiffany Light
+                                        'rgba(0, 213, 201, 0.6)',        // Bright Teal
+                                        'rgba(0, 223, 205, 0.6)',        // Aqua Island
+                                        'rgba(0, 233, 209, 0.6)'          // Turquoise Pearl
                                 ],
                                 borderColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
+                                        'rgba(0, 128, 128, 0.6)',       // Teal
+                                        'rgba(0, 139, 139, 0.6)',        // DarkCyan
+                                        'rgba(32, 178, 170, 0.6)',       // LightSeaGreen
+                                        'rgba(0, 105, 148, 0.6)',        // Prussian Blue
+                                        'rgba(0, 154, 137, 0.6)',        // Tiffany Blue
+                                        'rgba(0, 180, 171, 0.6)',        // Teal Blue
+                                        'rgba(0, 121, 107, 0.6)',        // Pine Green
+                                        'rgba(0, 168, 150, 0.6)',        // Persian Green
+                                        'rgba(0, 191, 179, 0.6)',        // Robin Egg Blue
+                                        'rgba(0, 206, 209, 0.6)',        // DarkTurquoise
+                                        'rgba(64, 224, 208, 0.6)',       // Turquoise
+                                        'rgba(72, 209, 204, 0.6)',       // MediumTurquoise
+                                        'rgba(95, 158, 160, 0.6)',       // CadetBlue
+                                        'rgba(102, 205, 170, 0.6)',      // MediumAquamarine
+                                        'rgba(0, 199, 140, 0.6)',        // Emerald
+                                        'rgba(0, 107, 91, 0.6)',         // Skobeloff
+                                        'rgba(0, 147, 131, 0.6)',        // Viridian Green
+                                        'rgba(0, 161, 154, 0.6)',        // Caribbean Green
+                                        'rgba(0, 171, 169, 0.6)',        // Bondi Blue
+                                        'rgba(0, 183, 172, 0.6)',        // Java
+                                        'rgba(0, 193, 185, 0.6)',        // Pacific Blue
+                                        'rgba(0, 203, 198, 0.6)',        // Tiffany Light
+                                        'rgba(0, 213, 201, 0.6)',        // Bright Teal
+                                        'rgba(0, 223, 205, 0.6)',        // Aqua Island
+                                        'rgba(0, 233, 209, 0.6)'          // Turquoise Pearl
                                 ],
                                 borderWidth: 1
                             }]
@@ -601,20 +775,58 @@
                                 label: 'Singers by City',
                                 data: data.map(item => item.count),
                                 backgroundColor: [
-                                    'rgba(255, 99, 132, 0.6)',
-                                    'rgba(54, 162, 235, 0.6)',
-                                    'rgba(255, 206, 86, 0.6)',
-                                    'rgba(75, 192, 192, 0.6)',
-                                    'rgba(153, 102, 255, 0.6)',
-                                    'rgba(255, 159, 64, 0.6)'
+                                        'rgba(102, 0, 204, 0.6)',     // Deep Purple
+                                        'rgba(123, 44, 191, 0.6)',    // Royal Purple
+                                        'rgba(147, 112, 219, 0.6)',   // Medium Purple
+                                        'rgba(138, 43, 226, 0.6)',    // Blue Violet
+                                        'rgba(153, 50, 204, 0.6)',    // Dark Orchid
+                                        'rgba(186, 85, 211, 0.6)',    // Medium Orchid
+                                        'rgba(148, 0, 211, 0.6)',     // Dark Violet
+                                        'rgba(128, 0, 128, 0.6)',     // Purple
+                                        'rgba(102, 51, 153, 0.6)',    // Rebecca Purple
+                                        'rgba(106, 13, 173, 0.6)',    // Grape
+                                        'rgba(117, 7, 135, 0.6)',     // Patriarch
+                                        'rgba(75, 0, 130, 0.6)',      // Indigo
+                                        'rgba(111, 45, 168, 0.6)',    // Purple Heart
+                                        'rgba(142, 69, 133, 0.6)',    // Plum
+                                        'rgba(154, 78, 174, 0.6)',    // Deep Lilac
+                                        'rgba(120, 81, 169, 0.6)',    // Royalty
+                                        'rgba(145, 95, 109, 0.6)',    // Mauve Taupe
+                                        'rgba(103, 65, 114, 0.6)',    // Halayà Úbe
+                                        'rgba(130, 102, 153, 0.6)',   // Lavender Purple
+                                        'rgba(156, 89, 209, 0.6)',    // Amethyst
+                                        'rgba(170, 152, 169, 0.6)',   // Purple Fog
+                                        'rgba(179, 158, 181, 0.6)',   // Purple Ash
+                                        'rgba(201, 160, 220, 0.6)',   // Bright Lavender
+                                        'rgba(183, 132, 167, 0.6)',   // African Violet
+                                        'rgba(204, 153, 204, 0.6)'    // Pastel Purple
                                 ],
                                 borderColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
+                                        'rgb(102, 0, 204)',     // Deep Purple
+                                        'rgb(123, 44, 191)',    // Royal Purple
+                                        'rgb(147, 112, 219)',   // Medium Purple
+                                        'rgb(138, 43, 226)',    // Blue Violet
+                                        'rgb(153, 50, 204)',    // Dark Orchid
+                                        'rgb(186, 85, 211)',    // Medium Orchid
+                                        'rgb(148, 0, 211)',     // Dark Violet
+                                        'rgb(128, 0, 128)',     // Purple
+                                        'rgb(102, 51, 153)',    // Rebecca Purple
+                                        'rgb(106, 13, 173)',    // Grape
+                                        'rgb(117, 7, 135)',     // Patriarch
+                                        'rgb(75, 0, 130)',      // Indigo
+                                        'rgb(111, 45, 168)',    // Purple Heart
+                                        'rgb(142, 69, 133)',    // Plum
+                                        'rgb(154, 78, 174)',    // Deep Lilac
+                                        'rgb(120, 81, 169)',    // Royalty
+                                        'rgb(145, 95, 109)',    // Mauve Taupe
+                                        'rgb(103, 65, 114)',    // Halayà Úbe
+                                        'rgb(130, 102, 153)',   // Lavender Purple
+                                        'rgb(156, 89, 209)',    // Amethyst
+                                        'rgb(170, 152, 169)',   // Purple Fog
+                                        'rgb(179, 158, 181)',   // Purple Ash
+                                        'rgb(201, 160, 220)',   // Bright Lavender
+                                        'rgb(183, 132, 167)',   // African Violet
+                                        'rgb(204, 153, 204)'    // Pastel Purple
                                 ],
                                 borderWidth: 1
                             }]
@@ -728,20 +940,58 @@
                                 label: 'Sessions by City',
                                 data: data.data,
                                 backgroundColor: [
-                                    'rgba(255, 99, 132, 0.6)',
-                                    'rgba(54, 162, 235, 0.6)',
-                                    'rgba(255, 206, 86, 0.6)',
-                                    'rgba(75, 192, 192, 0.6)',
-                                    'rgba(153, 102, 255, 0.6)',
-                                    'rgba(255, 159, 64, 0.6)'
+                                        'rgba(0, 100, 0, 0.6)',          // DarkGreen
+                                        'rgba(34, 139, 34, 0.6)',        // ForestGreen
+                                        'rgba(0, 128, 0, 0.6)',          // Green
+                                        'rgba(50, 205, 50, 0.6)',        // LimeGreen
+                                        'rgba(46, 139, 87, 0.6)',        // SeaGreen
+                                        'rgba(60, 179, 113, 0.6)',       // MediumSeaGreen
+                                        'rgba(32, 178, 170, 0.6)',       // LightSeaGreen
+                                        'rgba(152, 251, 152, 0.6)',      // PaleGreen
+                                        'rgba(143, 188, 143, 0.6)',      // DarkSeaGreen
+                                        'rgba(0, 255, 127, 0.6)',        // SpringGreen
+                                        'rgba(0, 250, 154, 0.6)',        // MediumSpringGreen
+                                        'rgba(144, 238, 144, 0.6)',      // LightGreen
+                                        'rgba(102, 205, 170, 0.6)',      // MediumAquamarine
+                                        'rgba(0, 128, 128, 0.6)',        // Teal
+                                        'rgba(0, 139, 139, 0.6)',        // DarkCyan
+                                        'rgba(0, 206, 209, 0.6)',        // DarkTurquoise
+                                        'rgba(72, 209, 204, 0.6)',       // MediumTurquoise
+                                        'rgba(64, 224, 208, 0.6)',       // Turquoise
+                                        'rgba(0, 199, 140, 0.6)',        // Emerald
+                                        'rgba(127, 255, 0, 0.6)',        // Chartreuse
+                                        'rgba(173, 255, 47, 0.6)',       // GreenYellow
+                                        'rgba(124, 252, 0, 0.6)',        // LawnGreen
+                                        'rgba(107, 142, 35, 0.6)',       // OliveDrab
+                                        'rgba(85, 107, 47, 0.6)',        // DarkOliveGreen
+                                        'rgba(154, 205, 50, 0.6)'        // YellowGreen
                                 ],
                                 borderColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
+                                        'rgb(0, 100, 0)',          // DarkGreen
+                                        'rgb(34, 139, 34)',        // ForestGreen
+                                        'rgb(0, 128, 0)',          // Green
+                                        'rgb(50, 205, 50)',        // LimeGreen
+                                        'rgb(46, 139, 87)',        // SeaGreen
+                                        'rgb(60, 179, 113)',       // MediumSeaGreen
+                                        'rgb(32, 178, 170)',       // LightSeaGreen
+                                        'rgb(152, 251, 152)',      // PaleGreen
+                                        'rgb(143, 188, 143)',      // DarkSeaGreen
+                                        'rgb(0, 255, 127)',        // SpringGreen
+                                        'rgb(0, 250, 154)',        // MediumSpringGreen
+                                        'rgb(144, 238, 144)',      // LightGreen
+                                        'rgb(102, 205, 170)',      // MediumAquamarine
+                                        'rgb(0, 128, 128)',        // Teal
+                                        'rgb(0, 139, 139)',        // DarkCyan
+                                        'rgb(0, 206, 209)',        // DarkTurquoise
+                                        'rgb(72, 209, 204)',       // MediumTurquoise
+                                        'rgb(64, 224, 208)',       // Turquoise
+                                        'rgb(0, 199, 140)',        // Emerald
+                                        'rgb(127, 255, 0)',        // Chartreuse
+                                        'rgb(173, 255, 47)',       // GreenYellow
+                                        'rgb(124, 252, 0)',        // LawnGreen
+                                        'rgb(107, 142, 35)',       // OliveDrab
+                                        'rgb(85, 107, 47)',        // DarkOliveGreen
+                                        'rgb(154, 205, 50)'        // YellowGreen
                                 ],
                                 borderWidth: 1
                             }]
@@ -855,20 +1105,58 @@
                                 label: 'Locations by City',
                                 data: data.data,
                                 backgroundColor: [
-                                    'rgba(255, 99, 132, 0.6)',
-                                    'rgba(54, 162, 235, 0.6)',
-                                    'rgba(255, 206, 86, 0.6)',
-                                    'rgba(75, 192, 192, 0.6)',
-                                    'rgba(153, 102, 255, 0.6)',
-                                    'rgba(255, 159, 64, 0.6)'
+                                        'rgba(0, 0, 139, 0.6)',        // DarkBlue
+                                        'rgba(0, 0, 205, 0.6)',        // MediumBlue
+                                        'rgba(0, 0, 255, 0.6)',        // Blue
+                                        'rgba(25, 25, 112, 0.6)',      // MidnightBlue
+                                        'rgba(65, 105, 225, 0.6)',     // RoyalBlue
+                                        'rgba(70, 130, 180, 0.6)',     // SteelBlue
+                                        'rgba(100, 149, 237, 0.6)',    // CornflowerBlue
+                                        'rgba(30, 144, 255, 0.6)',     // DodgerBlue
+                                        'rgba(0, 191, 255, 0.6)',      // DeepSkyBlue
+                                        'rgba(135, 206, 235, 0.6)',    // SkyBlue
+                                        'rgba(135, 206, 250, 0.6)',    // LightSkyBlue
+                                        'rgba(173, 216, 230, 0.6)',    // LightBlue
+                                        'rgba(176, 196, 222, 0.6)',    // LightSteelBlue
+                                        'rgba(95, 158, 160, 0.6)',     // CadetBlue
+                                        'rgba(0, 139, 139, 0.6)',      // DarkCyan
+                                        'rgba(0, 206, 209, 0.6)',      // DarkTurquoise
+                                        'rgba(64, 224, 208, 0.6)',     // Turquoise
+                                        'rgba(72, 209, 204, 0.6)',     // MediumTurquoise
+                                        'rgba(32, 178, 170, 0.6)',     // LightSeaGreen (Teal-Blue)
+                                        'rgba(0, 128, 128, 0.6)',      // Teal
+                                        'rgba(0, 105, 148, 0.6)',      // Prussian Blue
+                                        'rgba(8, 37, 103, 0.6)',       // Oxford Blue
+                                        'rgba(41, 116, 156, 0.6)',     // Jellyfish Blue
+                                        'rgba(79, 148, 205, 0.6)',     // Denim Blue
+                                        'rgba(123, 175, 212, 0.6)'     // Carolina Blue
                                 ],
                                 borderColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
+                                        'rgb(0, 0, 139)',        // DarkBlue
+                                        'rgb(0, 0, 205)',        // MediumBlue
+                                        'rgb(0, 0, 255)',        // Blue
+                                        'rgb(25, 25, 112)',      // MidnightBlue
+                                        'rgb(65, 105, 225)',     // RoyalBlue
+                                        'rgb(70, 130, 180)',     // SteelBlue
+                                        'rgb(100, 149, 237)',    // CornflowerBlue
+                                        'rgb(30, 144, 255)',     // DodgerBlue
+                                        'rgb(0, 191, 255)',      // DeepSkyBlue
+                                        'rgb(135, 206, 235)',    // SkyBlue
+                                        'rgb(135, 206, 250)',    // LightSkyBlue
+                                        'rgb(173, 216, 230)',    // LightBlue
+                                        'rgb(176, 196, 222)',    // LightSteelBlue
+                                        'rgb(95, 158, 160)',     // CadetBlue
+                                        'rgb(0, 139, 139)',      // DarkCyan
+                                        'rgb(0, 206, 209)',      // DarkTurquoise
+                                        'rgb(64, 224, 208)',     // Turquoise
+                                        'rgb(72, 209, 204)',     // MediumTurquoise
+                                        'rgb(32, 178, 170)',     // LightSeaGreen (Teal-Blue)
+                                        'rgb(0, 128, 128)',      // Teal
+                                        'rgb(0, 105, 148)',      // Prussian Blue
+                                        'rgb(8, 37, 103)',       // Oxford Blue
+                                        'rgb(41, 116, 156)',     // Jellyfish Blue
+                                        'rgb(79, 148, 205)',     // Denim Blue
+                                        'rgb(123, 175, 212)'     // Carolina Blue
                                 ],
                                 borderWidth: 1
                             }]
@@ -982,20 +1270,58 @@
                                 label: 'Volunteers by City',
                                 data: data.data,
                                 backgroundColor: [
-                                    'rgba(255, 99, 132, 0.6)',
-                                    'rgba(54, 162, 235, 0.6)',
-                                    'rgba(255, 206, 86, 0.6)',
-                                    'rgba(75, 192, 192, 0.6)',
-                                    'rgba(153, 102, 255, 0.6)',
-                                    'rgba(255, 159, 64, 0.6)'
+                                        'rgba(139, 0, 0, 0.6)',        // DarkRed
+                                        'rgba(178, 34, 34, 0.6)',      // Firebrick
+                                        'rgba(165, 42, 42, 0.6)',      // Brown (DarkRed-adjacent)
+                                        'rgba(220, 20, 60, 0.6)',      // Crimson
+                                        'rgba(255, 0, 0, 0.6)',        // Red
+                                        'rgba(255, 69, 0, 0.6)',       // OrangeRed
+                                        'rgba(205, 92, 92, 0.6)',      // IndianRed
+                                        'rgba(240, 128, 128, 0.6)',    // LightCoral
+                                        'rgba(233, 150, 122, 0.6)',    // DarkSalmon
+                                        'rgba(250, 128, 114, 0.6)',    // Salmon
+                                        'rgba(255, 160, 122, 0.6)',    // LightSalmon
+                                        'rgba(255, 99, 71, 0.6)',      // Tomato
+                                        'rgba(255, 127, 80, 0.6)',     // Coral
+                                        'rgba(199, 21, 133, 0.6)',     // MediumVioletRed
+                                        'rgba(219, 112, 147, 0.6)',    // PaleVioletRed
+                                        'rgba(255, 105, 180, 0.6)',    // HotPink
+                                        'rgba(255, 20, 147, 0.6)',     // DeepPink
+                                        'rgba(128, 0, 0, 0.6)',        // Maroon
+                                        'rgba(153, 0, 0, 0.6)',        // DarkScarlet
+                                        'rgba(192, 0, 0, 0.6)',        // Harvard Crimson
+                                        'rgba(227, 66, 52, 0.6)',      // Venetian Red
+                                        'rgba(206, 32, 41, 0.6)',      // Cardinal Red
+                                        'rgba(169, 17, 1, 0.6)',       // KU Crimson
+                                        'rgba(188, 0, 45, 0.6)',       // Alabama Crimson
+                                        'rgba(171, 39, 79, 0.6)'       // Raspberry
                                 ],
                                 borderColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
+                                        'rgb(139, 0, 0)',        // DarkRed
+                                        'rgb(178, 34, 34)',      // Firebrick
+                                        'rgb(165, 42, 42)',      // Brown (DarkRed-adjacent)
+                                        'rgb(220, 20, 60)',      // Crimson
+                                        'rgb(255, 0, 0)',        // Red
+                                        'rgb(255, 69, 0)',       // OrangeRed
+                                        'rgb(205, 92, 92)',      // IndianRed
+                                        'rgb(240, 128, 128)',    // LightCoral
+                                        'rgb(233, 150, 122)',    // DarkSalmon
+                                        'rgb(250, 128, 114)',    // Salmon
+                                        'rgb(255, 160, 122)',    // LightSalmon
+                                        'rgb(255, 99, 71)',      // Tomato
+                                        'rgb(255, 127, 80)',     // Coral
+                                        'rgb(199, 21, 133)',     // MediumVioletRed
+                                        'rgb(219, 112, 147)',    // PaleVioletRed
+                                        'rgb(255, 105, 180)',    // HotPink
+                                        'rgb(255, 20, 147)',     // DeepPink
+                                        'rgb(128, 0, 0)',        // Maroon
+                                        'rgb(153, 0, 0)',        // DarkScarlet
+                                        'rgb(192, 0, 0)',        // Harvard Crimson
+                                        'rgb(227, 66, 52)',      // Venetian Red
+                                        'rgb(206, 32, 41)',      // Cardinal Red
+                                        'rgb(169, 17, 1)',       // KU Crimson
+                                        'rgb(188, 0, 45)',       // Alabama Crimson
+                                        'rgb(171, 39, 79)'       // Raspberry
                                 ],
                                 borderWidth: 1
                             }]
@@ -1109,20 +1435,58 @@
                                 label: 'Events by City',
                                 data: data.data,
                                 backgroundColor: [
-                                    'rgba(255, 99, 132, 0.6)',
-                                    'rgba(54, 162, 235, 0.6)',
-                                    'rgba(255, 206, 86, 0.6)',
-                                    'rgba(75, 192, 192, 0.6)',
-                                    'rgba(153, 102, 255, 0.6)',
-                                    'rgba(255, 159, 64, 0.6)'
+                                            'rgba(255, 140, 0, 0.6)',      // DarkOrange
+                                            'rgba(255, 127, 0, 0.6)',       // Orange (web color)
+                                            'rgba(255, 165, 0, 0.6)',       // Orange (CSS)
+                                            'rgba(230, 92, 0, 0.6)',        // Tangelo
+                                            'rgba(210, 105, 30, 0.6)',      // Chocolate (orange-brown)
+                                            'rgba(255, 69, 0, 0.6)',        // OrangeRed
+                                            'rgba(204, 85, 0, 0.6)',        // BurntOrange
+                                            'rgba(191, 87, 0, 0.6)',        // DarkGoldenrod
+                                            'rgba(255, 117, 24, 0.6)',      // Pumpkin
+                                            'rgba(237, 135, 45, 0.6)',      // CadmiumOrange
+                                            'rgba(255, 88, 0, 0.6)',        // SafetyOrange
+                                            'rgba(255, 102, 0, 0.6)',       // InternationalOrange
+                                            'rgba(226, 114, 91, 0.6)',      // DarkSalmon
+                                            'rgba(217, 144, 88, 0.6)',      // Peru
+                                            'rgba(205, 133, 63, 0.6)',      // SandyBrown
+                                            'rgba(255, 153, 51, 0.6)',      // DeepSaffron
+                                            'rgba(255, 126, 0, 0.6)',       // Persimmon
+                                            'rgba(255, 109, 58, 0.6)',      // OutrageousOrange
+                                            'rgba(233, 150, 122, 0.6)',     // DarkSalmon
+                                            'rgba(255, 160, 122, 0.6)',      // LightSalmon
+                                            'rgba(255, 99, 71, 0.6)',       // Tomato
+                                            'rgba(255, 127, 80, 0.6)',      // Coral
+                                            'rgba(255, 158, 0, 0.6)',       // OrangePeel
+                                            'rgba(255, 174, 66, 0.6)',      // YellowOrange
+                                            'rgba(255, 189, 136, 0.6)'      // MacaroniCheese
                                 ],
                                 borderColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
+                                            'rgba(255, 140, 0, 0.6)',      // DarkOrange
+                                            'rgba(255, 127, 0, 0.6)',       // Orange (web color)
+                                            'rgba(255, 165, 0, 0.6)',       // Orange (CSS)
+                                            'rgba(230, 92, 0, 0.6)',        // Tangelo
+                                            'rgba(210, 105, 30, 0.6)',      // Chocolate (orange-brown)
+                                            'rgba(255, 69, 0, 0.6)',        // OrangeRed
+                                            'rgba(204, 85, 0, 0.6)',        // BurntOrange
+                                            'rgba(191, 87, 0, 0.6)',        // DarkGoldenrod
+                                            'rgba(255, 117, 24, 0.6)',      // Pumpkin
+                                            'rgba(237, 135, 45, 0.6)',      // CadmiumOrange
+                                            'rgba(255, 88, 0, 0.6)',        // SafetyOrange
+                                            'rgba(255, 102, 0, 0.6)',       // InternationalOrange
+                                            'rgba(226, 114, 91, 0.6)',      // DarkSalmon
+                                            'rgba(217, 144, 88, 0.6)',      // Peru
+                                            'rgba(205, 133, 63, 0.6)',      // SandyBrown
+                                            'rgba(255, 153, 51, 0.6)',      // DeepSaffron
+                                            'rgba(255, 126, 0, 0.6)',       // Persimmon
+                                            'rgba(255, 109, 58, 0.6)',      // OutrageousOrange
+                                            'rgba(233, 150, 122, 0.6)',     // DarkSalmon
+                                            'rgba(255, 160, 122, 0.6)',      // LightSalmon
+                                            'rgba(255, 99, 71, 0.6)',       // Tomato
+                                            'rgba(255, 127, 80, 0.6)',      // Coral
+                                            'rgba(255, 158, 0, 0.6)',       // OrangePeel
+                                            'rgba(255, 174, 66, 0.6)',      // YellowOrange
+                                            'rgba(255, 189, 136, 0.6)'      // MacaroniCheese
                                 ],
                                 borderWidth: 1
                             }]
