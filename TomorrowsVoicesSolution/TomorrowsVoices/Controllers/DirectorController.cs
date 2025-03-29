@@ -34,7 +34,7 @@ namespace TomorrowsVoices.Controllers
 
         public async Task<IActionResult> Index(string? SearchString, string? SearchEmail, string? SearchCity, string? SearchPhone, int? page, int? pageSizeID, string? actionButton, bool archived = false, string sortDirection = "asc", string sortField = "Director")
         {
-            var currentDirector = await GetCurrentDirectorAsync();
+
 
             // Fetch all directors if the user is an Admin
             var directors = _context.Directors
@@ -43,11 +43,19 @@ namespace TomorrowsVoices.Controllers
                 .ThenInclude(d => d.Location)
                 .AsNoTracking();
 
-            // Apply city-based filtering only for Directors
-            if (currentDirector != null)
+
+            if (!User.IsInRole("Admin"))
             {
-                var assignedCityIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
-                directors = directors.Where(d => d.DirectorLocations.Any(dl => assignedCityIds.Contains(dl.LocationID)));
+                var currentDirector = await GetCurrentDirectorAsync();
+                if (currentDirector != null)
+                {
+                    directors = directors.Where(v => v.Email == currentDirector.Email);
+                }
+                else
+                {
+                    // If no volunteer record exists, show nothing to non-admins
+                    directors = directors.Where(v => false);
+                }
             }
 
             // Rest of the filtering, sorting, and paging logic remains the same
@@ -231,12 +239,20 @@ namespace TomorrowsVoices.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email")] Director director, int? locationId)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,dirPhoneNumber,Email")] Director director, int? locationId)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Check if the phone number is already in use
+                    bool phoneExists = await _context.Directors.AnyAsync(d => d.dirPhoneNumber == director.dirPhoneNumber);
+                    if (phoneExists)
+                    {
+                        ModelState.AddModelError("dirPhoneNumber", "This phone number is already associated with another director.");
+                        ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
+                        return View(director);
+                    }
                     // Fetch the selected location from the database
                     if (locationId.HasValue)
                     {
@@ -270,7 +286,7 @@ namespace TomorrowsVoices.Controllers
 
                     if (baseMessage.Contains("UNIQUE constraint failed"))
                     {
-                        ModelState.AddModelError("Email", "Unable to save changes. Remember, you can't have the same email.");
+                        ModelState.AddModelError("Email", "Unable to save changes. The email already exists and its connected to a director.");
                     }
                     else
                     {
@@ -311,7 +327,7 @@ namespace TomorrowsVoices.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Director")]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Email")] Director director, int? locationId)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,dirPhoneNumber,Email")] Director director, int? locationId)
         {
             if (id != director.ID)
             {
@@ -335,7 +351,7 @@ namespace TomorrowsVoices.Controllers
 
                     // Update scalar properties
                     if (await TryUpdateModelAsync(directorToUpdate, "",
-                        d => d.FirstName, d => d.LastName, d => d.Email))
+                        d => d.FirstName, d => d.LastName, d => d.dirPhoneNumber, d => d.Email))
                     {
                         // Fetch the new location from the database
                         if (locationId.HasValue)

@@ -11,8 +11,8 @@ using TomorrowsVoices.Data;
 namespace TomorrowsVoices.Data.TVMigrations
 {
     [DbContext(typeof(TomorrowsVoicesContext))]
-    [Migration("20250329013527_addedApprovalForVolunteerRegistration")]
-    partial class addedApprovalForVolunteerRegistration
+    [Migration("20250329225651_LAtestupdateswithIdentity+sahils")]
+    partial class LAtestupdateswithIdentitysahils
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,6 +108,14 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("End")
                         .HasColumnType("TEXT");
 
@@ -115,7 +123,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
@@ -179,65 +186,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.HasIndex("AttendanceID");
 
                     b.ToTable("Notes");
-                });
-
-            modelBuilder.Entity("TomorrowsVoices.Models.Schedule", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeOnly?>("ActualEndTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<TimeOnly?>("ActualStartTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsPresent")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeOnly>("ScheduledEndTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<TimeOnly>("ScheduledStartTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<TimeOnly>("ShiftEnd")
-                        .HasColumnType("TEXT");
-
-                    b.Property<TimeOnly>("ShiftStart")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("VolLocationID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("eventID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("volIDs")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("volunteerID")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("VolLocationID");
-
-                    b.HasIndex("eventID");
-
-                    b.HasIndex("volunteerID");
-
-                    b.ToTable("Schedule");
                 });
 
             modelBuilder.Entity("TomorrowsVoices.Models.Session", b =>
@@ -376,6 +324,9 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Capacity")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("EventID")
                         .HasColumnType("INTEGER");
 
@@ -383,6 +334,9 @@ namespace TomorrowsVoices.Data.TVMigrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ScheduledStart")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ShiftDate")
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
@@ -497,29 +451,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Navigation("Attendance");
                 });
 
-            modelBuilder.Entity("TomorrowsVoices.Models.Schedule", b =>
-                {
-                    b.HasOne("TomorrowsVoices.Models.VolLocation", null)
-                        .WithMany("Schedules")
-                        .HasForeignKey("VolLocationID");
-
-                    b.HasOne("TomorrowsVoices.Models.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("eventID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TomorrowsVoices.Models.Volunteer", "Volunteer")
-                        .WithMany("Schedules")
-                        .HasForeignKey("volunteerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("Volunteer");
-                });
-
             modelBuilder.Entity("TomorrowsVoices.Models.Session", b =>
                 {
                     b.HasOne("TomorrowsVoices.Models.Location", "Location")
@@ -615,8 +546,6 @@ namespace TomorrowsVoices.Data.TVMigrations
                 {
                     b.Navigation("Events");
 
-                    b.Navigation("Schedules");
-
                     b.Navigation("Volunteers");
                 });
 
@@ -627,8 +556,6 @@ namespace TomorrowsVoices.Data.TVMigrations
 
             modelBuilder.Entity("TomorrowsVoices.Models.Volunteer", b =>
                 {
-                    b.Navigation("Schedules");
-
                     b.Navigation("VolAttendances");
                 });
 #pragma warning restore 612, 618
