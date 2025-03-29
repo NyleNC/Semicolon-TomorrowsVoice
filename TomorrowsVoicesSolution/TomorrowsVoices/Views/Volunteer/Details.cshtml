@@ -54,36 +54,10 @@
     <p class="compact-paragraph"><strong>Email:</strong> @Model.Email</p>
     <p class="compact-paragraph"><strong>Phone:</strong> @Model.FormattedPhone</p>
     <p class="compact-paragraph"><strong>City:</strong> @Model.VolLocation?.City</p>
-    <p class="compact-paragraph"><strong>Events Attended:</strong> @Model.EventsAttended</p>
-    <p class="compact-paragraph"><strong>Total Hours:</strong> @Model.TotalHours</p>
+  
 </div>
 <br />
 
-<h3>Event Details</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th><strong>Event Name</strong></th>
-            <th><strong>Date</strong></th>
-            <th><strong>Hours Spent</strong></th>
-            <th><strong>Status</strong></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var schedule in Model.Schedules)
-        {
-            <tr>
-                <td>@schedule.Event?.Name</td>
-                <td>
-                    @(schedule.ShiftEnd != null && schedule.ShiftStart != null
-                        ? (schedule.ShiftEnd - schedule.ShiftStart).TotalHours
-                        : 0)
-                </td>
-                <td>@(schedule.IsPresent ? "Attended" : "Absent")</td>
-            </tr>
-        }
-    </tbody>
-</table>
 
 <p>
     <div class="mb-3">

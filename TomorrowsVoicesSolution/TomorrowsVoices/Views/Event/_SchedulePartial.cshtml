@@ -3,57 +3,24 @@
 
 <div class="schedule-form">
     <div class="form-group">
-        <label>Scheduled Start <span class="text-danger">*</span></label>
-        <input type="datetime-local" class="form-control" name="NewSchedule.ScheduledStart"
-               value="@Model?.ScheduledStart.ToString("yyyy-MM-ddTHH:mm")" required />
+        <label>Shift Start Time <span class="text-danger">*</span></label>
+        <input type="time" class="form-control" name="NewSchedule.ScheduledStart"
+               value="@Model?.ScheduledStart.ToString("HH:mm")" required />
     </div>
     <div class="form-group">
-        <label>Scheduled End <span class="text-danger">*</span></label>
-        <input type="datetime-local" class="form-control" name="NewSchedule.ScheduledEnd"
-               value="@Model?.ScheduledEnd.ToString("yyyy-MM-ddTHH:mm")" required />
+        <label>Shift End Time <span class="text-danger">*</span></label>
+        <input type="time" class="form-control" name="NewSchedule.ScheduledEnd"
+               value="@Model?.ScheduledEnd.ToString("HH:mm")" required />
     </div>
-    <div class="volunteer-selection mt-4">
-        <h5>Volunteer Assignment <span class="text-danger">*</span></h5>
-        <div class="col-md-12">
-            <div class="row">
-                <div class="form-group col-md-6">
-                    <label class="control-label" style="font-weight: 700"> Choose Volunteers</label> <button type="button" id="btnLeft" class="btn btn-success btn-sm">
-                        <strong>+</strong>
-                    </button>&nbsp;&nbsp;
-                    @Html.ListBox("availOptions", (MultiSelectList)ViewBag.availOpts,
-                             new { @size = 10, @class = "form-control list-box-height", @style = "margin-top: 0.5rem;" })
-                </div>
-
-                <div class="form-group col-md-6">
-                    <label class="control-label" style="font-weight: 700"> Volunteers Selected</label> <button type="button" id="btnRight" class="btn btn-danger btn-sm">
-                        <strong>-</strong>
-                    </button>
-                    @Html.ListBox("selectedOptions", (MultiSelectList)ViewBag.selOpts,
-                             new { @size = 10, @class = "form-control list-box-height", @style = "margin-top: 0.5rem;" })
-                </div>
-            </div>
-        </div>
+    <div class="form-group">
+        <label>Capacity <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" name="NewSchedule.Capacity"
+               value="@(Model?.Capacity ?? 1)" min="1" max="100" required />
+        <small class="text-muted">Maximum number of volunteers for this shift</small>
     </div>
-    <button type="button" id="addScheduleBtn" class="btn btn-primary">Add Schedule</button>
+    <button type="button" id="addScheduleBtn" class="btn btn-primary">Add Shift</button>
 </div>
 
-
-    <script>
-        $(document).ready(function () {
-            // Move selected options between list boxes
-            $("#btnLeft").click(function () {
-                $("#availOptions option:selected").each(function () {
-                    $("#selectedOptions").append($(this));
-                });
-            });
-
-            $("#btnRight").click(function () {
-                $("#selectedOptions option:selected").each(function () {
-                    $("#availOptions").append($(this));
-                });
-            });
-        });
-    </script>
 
 <style>
     .error-message {

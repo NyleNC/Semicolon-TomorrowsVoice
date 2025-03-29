@@ -142,7 +142,7 @@
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" /> 
         
-    <div class="row">
+   @*  <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex">
@@ -163,10 +163,10 @@
                 <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px" />Calendar View</a>
             </div>
         </div>
-    </div>
+    </div> *@
 
     <!-- Show applied filters -->
-    @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+@*     @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
     {
         <div class="applied-filters d-flex flex-wrap align-items-center">
             @if (!string.IsNullOrEmpty(Context.Request.Query["SearchString"]))
@@ -346,7 +346,8 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>  *@
+
     <div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
         <table class="table table-custom p-0 m-0">
             <thead>
@@ -379,7 +380,7 @@
                     </th>
                     <th>
                         <button type="button" class="btn btn-toolbard-inline" onclick="handleSort(event, 'City')">
-                            City
+                            Chapter
                             @if (ViewData["sortField"]?.ToString() == "City")
                             {
                                 if (ViewData["sortDirection"]?.ToString() == "asc")
@@ -401,6 +402,11 @@
                             {
                                 <i class="fas fa-sort fa-sm d-inline" style="color: #ababab; margin-left: 2.7px"></i>
                             }
+                        </button>
+                    </th>
+                    <th>
+                        <button type="button" class="btn btn-toolbard-inline" onclick="handleSort(event, 'StartTime')">
+                            Date
                         </button>
                     </th>
                     <th>
@@ -470,6 +476,9 @@
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.VolLocation.City)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Date)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Start)

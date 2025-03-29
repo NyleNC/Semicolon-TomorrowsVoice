@@ -12,14 +12,6 @@ namespace TomorrowsVoices.Models
         public string FormattedPhone => "(" + Phone.Substring(0, 3) + ") "
         + Phone.Substring(3, 3) + "-" + Phone[6..];
 
-        // For lookup values.
-        [Display(Name = "Events Attended")]
-        public int EventsAttended => Schedules.Count(s => s.IsPresent);
-
-        [Display(Name = "Total Hours")]
-        public double TotalHours => Schedules
-            .Where(s => s.ShiftStart != null && s.ShiftEnd != null)
-            .Sum(s => (s.ShiftEnd - s.ShiftStart).TotalHours);
 
         #endregion
 
@@ -56,7 +48,6 @@ namespace TomorrowsVoices.Models
 
         public ICollection<VolAttendance> VolAttendances { get; set; } = new HashSet<VolAttendance>();
         public bool IsArchived { get; set; }
-        public ICollection<Schedule> Schedules { get; set; } = new HashSet<Schedule>();
 
        public int ApproveID { get; set; }
         public ApprovalStatus Status{ get; set; } = ApprovalStatus.Pending;

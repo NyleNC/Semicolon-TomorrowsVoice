@@ -17,13 +17,9 @@
 
                 <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <form id="logout-form" method="post" asp-area="Identity" asp-page="/Account/Logout" asp-page-handler="Logout">
-                    <button type="submit" class="dropdown-item">Logout</button>
-                </form>
-                @if (User.IsInRole("Admin"))
-                {
-                    <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/RegisterDirector"><span class="ms-1">Register a Director?</span></a></li>
-                }
+                    <form id="logout-form" method="post" asp-area="Identity" asp-page="/Account/Logout" asp-page-handler="Logout">
+                        <button type="submit" class="dropdown-item">Logout</button>
+                    </form>
             </ul>
             
         }

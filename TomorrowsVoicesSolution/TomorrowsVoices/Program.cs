@@ -89,26 +89,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
-
-app.Use(async (context, next) =>
-{
-    if (context.User.Identity?.IsAuthenticated == true)
-    {
-        var userManager = context.RequestServices.GetRequiredService<UserManager<IdentityUser>>();
-        var user = await userManager.GetUserAsync(context.User);
-
-        if (user != null && (await userManager.GetClaimsAsync(user))
-            .Any(c => c.Type == "ForcePasswordChange" && c.Value == "true"))
-        {
-            if (!context.Request.Path.StartsWithSegments("/Identity/Account/Manage/ChangePassword"))
-            {
-                context.Response.Redirect("/Identity/Account/Manage/ChangePassword?forceChange=true");
-                return;
-            }
-        }
-    }
-    await next();
-});
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

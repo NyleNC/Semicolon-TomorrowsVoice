@@ -1210,16 +1210,18 @@ label.required:after {
         margin-right: 10px;
     }
 
-    #btnMobile {
-        display: block
+    #btnMobile{
+display: block
     }
 
     .nav-link.active-page {
-        background-color: #6D28E3;
-        color: white;
-        border-radius: 5px;
-        padding: 5px;
-    }
+    background-color: #6D28E3;
+    color: white; 
+    border-radius: 5px; 
+    padding: 5px; 
+}
+
+
 }
 
 

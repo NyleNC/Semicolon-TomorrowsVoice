@@ -17,10 +17,6 @@
     <NameOfLastUsedPublishProfile>E:\GitHub TV-3\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\Properties\PublishProfiles\TomorrowsVoices-Semicolon - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
     <_SelectedScaffolderID>IdentityScaffolder</_SelectedScaffolderID>
     <_SelectedScaffolderCategoryPath>root/Identity</_SelectedScaffolderCategoryPath>
-    <Area_SelectedScaffolderID>IdentityScaffolder</Area_SelectedScaffolderID>
-    <Area_SelectedScaffolderCategoryPath>root/Identity</Area_SelectedScaffolderCategoryPath>
-    <WebStackScaffolding_DbContextDialogWidth>650</WebStackScaffolding_DbContextDialogWidth>
-    <WebStackScaffolding_IdentityDialogWidth>650</WebStackScaffolding_IdentityDialogWidth>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>

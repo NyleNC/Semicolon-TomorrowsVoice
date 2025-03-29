@@ -30,26 +30,17 @@ namespace TomorrowsVoices.Controllers
 
         public async Task<IActionResult> Index(int? page, int? pageSizeID, string? actionButton, string? SearchString, string? SearchCity, bool archived = false, string sortDirection = "asc", string sortField = "Name", string SingerEmergencyContactName = "EmergencyContactName", string SingerEmergencyContactNumber = "EmergencyContactNumber")
         {
-      
+            var currentDirector = await GetCurrentDirectorAsync();
        
             
             var singers = _context.Singers
                             .Where(d => d.IsArchived == archived)
                 .Include(s => s.Location) // Include Location for each Singer
                 .AsNoTracking();
-            if (!User.IsInRole("Admin"))
+            if (currentDirector != null)
             {
-                var currentDirector = await GetCurrentDirectorAsync();
-                if (currentDirector != null)
-                {
-                    var assignedCityIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
-                    singers = singers.Where(d => d.Location.DirectorLocations.Any(dl => assignedCityIds.Contains(dl.LocationID)));
-                }
-                else
-                {
-
-                    singers = singers.Where(v => false);
-                }
+                var assignedCityIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
+                singers = singers.Where(d => d.Location.DirectorLocations.Any(dl => assignedCityIds.Contains(dl.LocationID)));
             }
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
