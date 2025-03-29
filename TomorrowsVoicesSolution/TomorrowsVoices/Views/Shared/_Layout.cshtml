@@ -133,6 +133,15 @@
 
                                 </li>
                             }
+                            @if (User.IsInRole("Admin") @* || User.IsInRole("Director") *@)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link px-0 text-black" asp-area="Identity" asp-page="/Account/ApproveVolunteers">
+                                       
+                                        <span class="ms-1">Approve Volunteers</span>
+                                    </a>
+                                </li>
+                            }
                             @if (User.IsInRole("Admin") || User.IsInRole("Director"))
                             {
                                 <li>

@@ -1,21 +1,25 @@
 ﻿@model IEnumerable<TomorrowsVoices.ViewModels.UserVM>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 @{
     ViewBag.Title = "User Roles";
 }
 
 <h2>User Role Assignments</h2>
 
-<table class="table">
-    <tr>
-        <th>
+<div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
+<table class="table table-custom p-0 m-0">
+        <thead >
+            <tr >
+                <th class="text-white">
             @Html.DisplayNameFor(model => model.UserName)
         </th>
-        <th>
+                <th class="text-white">
             @Html.DisplayNameFor(model => model.UserRoles)
         </th>
         <th></th>
     </tr>
-
+        </thead>
+    <tbody>
     @foreach (var item in Model)
     {
         <tr>
@@ -35,5 +39,6 @@
             </td>
         </tr>
     }
-
+        </tbody>
 </table>
+</div>

@@ -39,6 +39,10 @@ namespace TomorrowsVoices.Controllers
                     volunteers = volunteers.Where(v => false);
                 }
             }
+            if (!User.IsInRole("Admin") /*&& !User.IsInRole("Director")*/)
+            {
+                volunteers = volunteers.Where(v => v.Status == ApprovalStatus.Approved);
+            }
 
             ViewData["ActiveTab"] = archived ? "archived" : "active";
             string[] sortOptions = new[] { "FullName", "City", "Email" };

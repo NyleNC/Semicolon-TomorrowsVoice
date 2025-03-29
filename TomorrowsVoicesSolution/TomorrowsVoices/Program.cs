@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using TomorrowsVoices.Data;
+using TomorrowsVoices.Utilities;
+using TomorrowsVoices.ViewModels;
+using static TomorrowsVoices.Utilities.EmailService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +54,16 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
 });
+
+//For the Identity System
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+//For email service configuration
+builder.Services.AddSingleton<IEmailConfiguration>(builder.Configuration
+    .GetSection("EmailConfiguration").Get<EmailConfiguration>());
+
+//Email with methods for production use.
+builder.Services.AddTransient<IMyEmailSender, MyEmailSender>();
 
 builder.Services.AddControllersWithViews();
 

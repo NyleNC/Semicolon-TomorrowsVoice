@@ -58,6 +58,8 @@ namespace TomorrowsVoices.Models
         public bool IsArchived { get; set; }
         public ICollection<Schedule> Schedules { get; set; } = new HashSet<Schedule>();
 
+       public int ApproveID { get; set; }
+        public ApprovalStatus Status{ get; set; } = ApprovalStatus.Pending;
     }
 }
 

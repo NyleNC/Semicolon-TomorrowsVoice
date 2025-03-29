@@ -164,7 +164,8 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
                         LastName = Input.LastName,
                         Email = Input.Email,
                         Phone=Input.Phone,
-                        VolLocationID = Input.VolLocationID
+                        VolLocationID = Input.VolLocationID,
+                        Status = ApprovalStatus.Pending,
 
                     };
 
