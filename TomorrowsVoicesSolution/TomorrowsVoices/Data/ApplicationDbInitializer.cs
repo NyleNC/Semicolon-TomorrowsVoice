@@ -141,12 +141,12 @@ namespace TomorrowsVoices.Data
                                         await userManager.AddToRoleAsync(user, "Volunteer");
                                     }
                                 }
-                                if (await userManager.FindByEmailAsync("jsmith@example.com") == null)
+                                if (await userManager.FindByEmailAsync("jane.smith@outlook.com") == null)
                                 {
                                     IdentityUser user = new IdentityUser
                                     {
-                                        UserName = "jsmith@example.com",
-                                        Email = "jsmith@example.com",
+                                        UserName = "jane.smith@outlook.com",
+                                        Email = "jane.smith@outlook.com",
                                         EmailConfirmed = true
                                     };
 
@@ -157,12 +157,12 @@ namespace TomorrowsVoices.Data
                                         await userManager.AddToRoleAsync(user, "Volunteer");
                                     }
                                 }
-                                if (await userManager.FindByEmailAsync("ajohnson@example.com") == null)
+                                if (await userManager.FindByEmailAsync("alice.johnson@yahoo.com") == null)
                                 {
                                     IdentityUser user = new IdentityUser
                                     {
-                                        UserName = "ajohnson@example.com",
-                                        Email = "ajohnson@example.com",
+                                        UserName = "alice.johnson@yahoo.com",
+                                        Email = "alice.johnson@yahoo.com",
                                         EmailConfirmed = true
                                     };
 
@@ -189,12 +189,12 @@ namespace TomorrowsVoices.Data
                                         await userManager.AddToRoleAsync(user, "Volunteer");
                                     }
                                 }
-                                if (await userManager.FindByEmailAsync("cdavis@example.com") == null)
+                                if (await userManager.FindByEmailAsync("charlie.davis@gmail.com") == null)
                                 {
                                     IdentityUser user = new IdentityUser
                                     {
-                                        UserName = "cdavis@example.com",
-                                        Email = "cdavis@example.com",
+                                        UserName = "charlie.davis@gmail.com",
+                                        Email = "charlie.davis@gmail.com",
                                         EmailConfirmed = true
                                     };
 
