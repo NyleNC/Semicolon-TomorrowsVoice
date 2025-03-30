@@ -142,7 +142,7 @@
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <input type="hidden" name="archived" value="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")" /> 
         
-   @*  <div class="row">
+    <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex">
@@ -163,10 +163,10 @@
                 <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px" />Calendar View</a>
             </div>
         </div>
-    </div> *@
+    </div>
 
     <!-- Show applied filters -->
-@*     @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
+    @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
     {
         <div class="applied-filters d-flex flex-wrap align-items-center">
             @if (!string.IsNullOrEmpty(Context.Request.Query["SearchString"]))
@@ -177,15 +177,17 @@
                         Name: @Context.Request.Query["SearchString"]
                     </span>
                     <a asp-action="Index"
-                        asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
-                        asp-route-StartDate="@Context.Request.Query["StartDate"]"
-                        asp-route-EndDate="@Context.Request.Query["EndDate"]"
-                        asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
-                        asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
-                        asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
-                        asp-route-sortField="@ViewData["sortField"]"
-                        asp-route-sortDirection="@ViewData["sortDirection"]"
-                        class="filter-remove">
+                       asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                       asp-route-StartDate="@Context.Request.Query["StartDate"]"
+                       asp-route-EndDate="@Context.Request.Query["EndDate"]"
+                       asp-route-StartTime="@Context.Request.Query["StartTime"]"
+                       asp-route-EndTime="@Context.Request.Query["EndTime"]"
+                       asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
+                       asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
+                       asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                       asp-route-sortField="@ViewData["sortField"]"
+                       asp-route-sortDirection="@ViewData["sortDirection"]"
+                       class="filter-remove">
                         <i class="bi bi-x"></i>
                     </a>
                 </div>
@@ -198,21 +200,21 @@
                         City: @Context.Request.Query["SearchCity"]
                     </span>
                     <a asp-action="Index"
-                        asp-route-SearchString="@Context.Request.Query["SearchString"]"
-                        asp-route-StartDate="@Context.Request.Query["StartDate"]"
-                        asp-route-EndDate="@Context.Request.Query["EndDate"]"
-                        asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
-                        asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
-                        asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
-                        asp-route-sortField="@ViewData["sortField"]"
-                        asp-route-sortDirection="@ViewData["sortDirection"]"
-                        class="filter-remove">
+                       asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                       asp-route-StartDate="@Context.Request.Query["StartDate"]"
+                       asp-route-EndDate="@Context.Request.Query["EndDate"]"
+                       asp-route-StartTime="@Context.Request.Query["StartTime"]"
+                       asp-route-EndTime="@Context.Request.Query["EndTime"]"
+                       asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
+                       asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
+                       asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                       asp-route-sortField="@ViewData["sortField"]"
+                       asp-route-sortDirection="@ViewData["sortDirection"]"
+                       class="filter-remove">
                         <i class="bi bi-x"></i>
                     </a>
                 </div>
             }
-
-
             @if (!string.IsNullOrEmpty(Context.Request.Query["StartDate"]))
             {
                 <div class="applied-filter-item me-2 mb-3">
@@ -221,20 +223,21 @@
                         From Date: @DateTime.Parse(Context.Request.Query["StartDate"]).ToString("MM/dd/yyyy")
                     </span>
                     <a asp-action="Index"
-                        asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
-                        asp-route-SearchString="@Context.Request.Query["SearchString"]"
-                        asp-route-EndDate="@Context.Request.Query["EndDate"]"
-                        asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
-                        asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
-                        asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
-                        asp-route-sortField="@ViewData["sortField"]"
-                        asp-route-sortDirection="@ViewData["sortDirection"]"
-                        class="filter-remove">
+                       asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                       asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                       asp-route-EndDate="@Context.Request.Query["EndDate"]"
+                       asp-route-StartTime="@Context.Request.Query["StartTime"]"
+                       asp-route-EndTime="@Context.Request.Query["EndTime"]"
+                       asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
+                       asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
+                       asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                       asp-route-sortField="@ViewData["sortField"]"
+                       asp-route-sortDirection="@ViewData["sortDirection"]"
+                       class="filter-remove">
                         <i class="bi bi-x"></i>
                     </a>
                 </div>
             }
-
             @if (!string.IsNullOrEmpty(Context.Request.Query["EndDate"]))
             {
                 <div class="applied-filter-item me-2 mb-3">
@@ -243,20 +246,21 @@
                         To Date: @DateTime.Parse(Context.Request.Query["EndDate"]).ToString("MM/dd/yyyy")
                     </span>
                     <a asp-action="Index"
-                        asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
-                        asp-route-SearchString="@Context.Request.Query["SearchString"]"
-                        asp-route-StartDate="@Context.Request.Query["StartDate"]"
-                        asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
-                        asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
-                        asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
-                        asp-route-sortField="@ViewData["sortField"]"
-                        asp-route-sortDirection="@ViewData["sortDirection"]"
-                        class="filter-remove">
+                       asp-route-SearchCity="@Context.Request.Query["SearchCity"]"
+                       asp-route-SearchString="@Context.Request.Query["SearchString"]"
+                       asp-route-StartDate="@Context.Request.Query["StartDate"]"
+                       asp-route-StartTime="@Context.Request.Query["StartTime"]"
+                       asp-route-EndTime="@Context.Request.Query["EndTime"]"
+                       asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
+                       asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
+                       asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
+                       asp-route-sortField="@ViewData["sortField"]"
+                       asp-route-sortDirection="@ViewData["sortDirection"]"
+                       class="filter-remove">
                         <i class="bi bi-x"></i>
                     </a>
                 </div>
             }
-
             @if (!string.IsNullOrEmpty(Context.Request.Query["StartTime"]))
             {
                 <div class="applied-filter-item me-2 mb-3">
@@ -270,6 +274,8 @@
                        asp-route-StartDate="@Context.Request.Query["StartDate"]"
                        asp-route-EndDate="@Context.Request.Query["EndDate"]"
                        asp-route-EndTime="@Context.Request.Query["EndTime"]"
+                       asp-route-minPresentSinger="@Context.Request.Query["minPresentSinger"]"
+                       asp-route-maxPresentSinger="@Context.Request.Query["maxPresentSinger"]"
                        asp-route-archived="@(ViewData["ActiveTab"]?.ToString() == "archived" ? "true" : "false")"
                        asp-route-sortField="@ViewData["sortField"]"
                        asp-route-sortDirection="@ViewData["sortDirection"]"
@@ -278,7 +284,6 @@
                     </a>
                 </div>
             }
-
             @if (!string.IsNullOrEmpty(Context.Request.Query["EndTime"]))
             {
                 <div class="applied-filter-item me-2 mb-3">
@@ -310,43 +315,42 @@
                 <div class="row">
                     <div class="col-lg-2 col-8">
                         <label class="control-label">Search Event Title:</label>
-                        @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                        @Html.TextBox("SearchString", Context.Request.Query["SearchString"], new { @class = "form-control" })
                     </div>
                     <div class="col-lg-2 col-4">
                         <label class="control-label">Filter by City:</label>
-                        @Html.DropDownList("SearchCity", ViewData["Cities"] as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>(), new { @class = "form-control" })
+                        @Html.DropDownList("SearchCity", ViewData["Cities"] as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>(), "Select City", new { @class = "form-control", @value = Context.Request.Query["SearchCity"] })
                     </div>
                     <div class="col-lg-2 col-6">
                         <label class="control-label">From Date:</label>
                         <input class="form-control" type="date" id="StartDate" name="StartDate"
-                                value="@ViewData["StartDate"]" aria-describedby="EndDate" aria-invalid="false">
+                               value="@Context.Request.Query["StartDate"]" aria-describedby="EndDate" aria-invalid="false">
                     </div>
                     <div class="col-lg-2 col-6">
                         <label class="control-label">To Date:</label>
                         <input class="form-control" type="date" id="EndDate" name="EndDate"
-                                value="@ViewData["EndDate"]" aria-describedby="EndDate" aria-invalid="false">
+                               value="@Context.Request.Query["EndDate"]" aria-describedby="EndDate" aria-invalid="false">
                     </div>
                     <div class="col-lg-3 col-12">
                         <label class="control-label">Time:</label>
                         <div class="d-flex align-items-center gap-2">
                             <label class="control-label d-inline-block">From:</label>
                             <input class="form-control" style="width: 245px;" type="time" id="StartTime" name="StartTime"
-                                    value="@ViewData["StartTime"]" aria-describedby="StartTime" aria-invalid="false">
+                                   value="@ViewData["StartTime"]" aria-describedby="StartTime" aria-invalid="false">
 
                             <label class="control-label d-inline-block">To:</label>
                             <input class="form-control" style="width: 245px;" type="time" id="EndTime" name="EndTime"
-                                    value="@ViewData["EndTime"]" aria-describedby="EndTime" aria-invalid="false">
+                                   value="@ViewData["EndTime"]" aria-describedby="EndTime" aria-invalid="false">
                         </div>
-
-                    </div> 
+                    </div>
                 </div>
                 <div class="form-group col-md-2 align-self-start mt-3">
                     <input type="submit" name="actionButton" value="Filter"
-                            class="btn text-white" style="background-color: #6423e7" />
+                           class="btn text-white" style="background-color: #6423e7" />
                 </div>
             </div>
         </div>
-    </div>  *@
+    </div>
 
     <div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
         <table class="table table-custom p-0 m-0">
@@ -405,8 +409,29 @@
                         </button>
                     </th>
                     <th>
-                        <button type="button" class="btn btn-toolbard-inline" onclick="handleSort(event, 'StartTime')">
+                        <button type="button" class="btn btn-toolbard-inline" onclick="handleSort(event, 'Date')">
                             Date
+                            @if (ViewData["sortField"]?.ToString() == "Date")
+                            {
+                                if (ViewData["sortDirection"]?.ToString() == "asc")
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #ababab;"></i>
+                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="position: relative; display: inline-block;">
+                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
+                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #ababab; margin-left: 2.7px"></i>
+                            }
                         </button>
                     </th>
                     <th>

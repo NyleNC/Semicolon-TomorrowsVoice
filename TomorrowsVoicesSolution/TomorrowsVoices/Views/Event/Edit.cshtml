@@ -719,16 +719,19 @@
                 $("#generateShiftsModal").modal("hide");
             });
 
-              // Form submission - handle multi-date events
-        $("#eventForm").on("submit", function(e) {
-            // If we have selected dates
-            if (flatpickrCalendar.selectedDates.length > 0 && Object.keys(dateConfigurations).length > 0) {
-                e.preventDefault();
+            // Form submission - handle multi-date events
+            $("#eventForm").on("submit", function(e) {
+                // If we have selected dates
+                if (flatpickrCalendar.selectedDates.length > 0 && Object.keys(dateConfigurations).length > 0) {
+                    e.preventDefault();
 
                 console.log("Form submit triggered for multi-date event");
                 console.log("Selected dates:", flatpickrCalendar.selectedDates);
                 console.log("Date configurations:", dateConfigurations);
 
+                // Track all scheduleIds for handling deleted schedules
+                const processedScheduleIds = [];
+                
                 // Serialize multi-date configurations
                 let configIndex = 0;
 
@@ -756,7 +759,12 @@
                     // Add shifts
                     if (config.shifts && config.shifts.length > 0) {
                         config.shifts.forEach((shift, shiftIdx) => {
-                            console.log(`Adding shift ${shiftIdx} for date ${dateStr}`);
+                            console.log(`Adding shift ${shiftIdx} for date ${dateStr}:`, shift);
+
+                            // Track processed schedule IDs
+                            if (shift.scheduleId) {
+                                processedScheduleIds.push(parseInt(shift.scheduleId));
+                            }
 
                             $("<input>").attr({
                                 type: "hidden",
@@ -789,56 +797,97 @@
 
                     configIndex++;
                 }
+                
+                // Track deleted schedule IDs
+                @foreach (var schedule in Model.ExistingSchedules)
+                {
+                    <text>
+                    // Check if schedule ID exists but wasn't included in processed IDs
+                    if (!processedScheduleIds.includes(@schedule.ScheduleID)) {
+                        $("<input>").attr({
+                            type: "hidden",
+                            name: "DeletedScheduleIDs[]", 
+                            value: @schedule.ScheduleID
+                        }).appendTo(this);
+                    }
+                    </text>
+                }
 
                 // Submit the form
                 this.submit();
             }
             // If we're using regular shifts without multi-dates
-            else if ($(".shift-card").length > 0) {
+            else {
                 e.preventDefault();
 
                 console.log("Form submit for single event with shifts");
+                const processedScheduleIds = [];
 
-                // Get all shift data
-                $(".shift-card").each(function(idx) {
+                // Get all shift data from modal
+                const shifts = [];
+                $("#dateConfigShiftsContainer .shift-card").each(function() {
                     const card = $(this);
-                    const startTime = card.attr("data-start");
-                    const endTime = card.attr("data-end");
-                    const capacity = card.attr("data-capacity");
-                    const scheduleId = card.attr("data-schedule-id") || "";
+                    shifts.push({
+                        startTime: card.attr("data-start"),
+                        endTime: card.attr("data-end"),
+                        capacity: parseInt(card.attr("data-capacity")),
+                        scheduleId: card.attr("data-schedule-id") || ""
+                    });
 
-                    console.log(`Adding existing schedule ${idx}:`, { scheduleId, startTime, endTime, capacity });
+                    // Track processed IDs
+                    if (card.attr("data-schedule-id")) {
+                        processedScheduleIds.push(parseInt(card.attr("data-schedule-id")));
+                    }
+                });
 
-                    // Add to form
+                // Add shifts to form
+                shifts.forEach((shift, idx) => {
+                    console.log(`Adding existing schedule ${idx}:`, shift);
+
                     $("<input>").attr({
                         type: "hidden",
                         name: `ExistingSchedules[${idx}].ScheduleID`,
-                        value: scheduleId
-                    }).appendTo($("#eventForm"));
+                        value: shift.scheduleId
+                    }).appendTo(this);
 
                     $("<input>").attr({
                         type: "hidden",
                         name: `ExistingSchedules[${idx}].ScheduledStart`,
-                        value: startTime
-                    }).appendTo($("#eventForm"));
+                        value: shift.startTime
+                    }).appendTo(this);
 
                     $("<input>").attr({
                         type: "hidden",
                         name: `ExistingSchedules[${idx}].ScheduledEnd`,
-                        value: endTime
-                    }).appendTo($("#eventForm"));
+                        value: shift.endTime
+                    }).appendTo(this);
 
                     $("<input>").attr({
                         type: "hidden",
                         name: `ExistingSchedules[${idx}].Capacity`,
-                        value: capacity
-                    }).appendTo($("#eventForm"));
+                        value: shift.capacity
+                    }).appendTo(this);
                 });
+
+                // Track deleted schedule IDs
+                @foreach (var schedule in Model.ExistingSchedules)
+                {
+                    <text>
+                    // Check if schedule ID exists but wasn't included in processed IDs
+                    if (!processedScheduleIds.includes(@schedule.ScheduleID)) {
+                        $("<input>").attr({
+                            type: "hidden",
+                            name: "DeletedScheduleIDs[]", 
+                            value: @schedule.ScheduleID
+                        }).appendTo(this);
+                        console.log("Adding deleted schedule ID:", @schedule.ScheduleID);
+                    }
+                    </text>
+                }
 
                 // Submit the form
                 this.submit();
             }
-            // Otherwise just let the normal submission happen
         });
 
             // Ensure tab functionality works for dynamically created tabs

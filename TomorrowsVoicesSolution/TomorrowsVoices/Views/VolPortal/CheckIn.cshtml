@@ -136,6 +136,31 @@
     </div>
 </div>
 
+<h2>Check In</h2>
+
+<p>Event: @Model.EventName</p>
+<p>Location: @Model.EventLocation, @Model.EventCity</p>
+<p>Shift: @Model.ShiftStart.ToString("g") - @Model.ShiftEnd.ToString("g")</p>
+
+@if (Model.CanCheckIn)
+{
+    <form asp-action="PerformCheckIn" method="post">
+        <input type="hidden" name="id" value="@Model.AttendanceId" />
+        <button type="submit" class="btn btn-primary">Check In</button>
+    </form>
+}
+else if (Model.CanCheckOut)
+{
+    <form asp-action="PerformCheckOut" method="post">
+        <input type="hidden" name="id" value="@Model.AttendanceId" />
+        <button type="submit" class="btn btn-primary">Check Out</button>
+    </form>
+}
+else
+{
+    <p>You cannot check in or out at this time.</p>
+}
+
 @section Scripts {
     <script src="~/js/volunteer-portal.js"></script>
     @if (Model.TimeUntilShift.TotalMinutes > 0 && Model.TimeUntilShift.TotalMinutes <= 15)
