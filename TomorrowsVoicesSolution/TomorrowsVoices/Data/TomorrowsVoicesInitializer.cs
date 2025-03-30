@@ -1821,6 +1821,7 @@ namespace TomorrowsVoices.Data
                         ShiftDate = today.AddDays(-15),
                         ScheduledStart = today.AddDays(-15).AddHours(9),
                         ScheduledEnd = today.AddDays(-15).AddHours(12),
+                        Capacity = 15,
                         EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID
                     },
 
@@ -1830,6 +1831,7 @@ namespace TomorrowsVoices.Data
                         ShiftDate = today.AddDays(-7),
                         ScheduledStart = today.AddDays(-7).AddHours(10),
                         ScheduledEnd = today.AddDays(-7).AddHours(12),
+                        Capacity = 10,
                         EventID = context.Events.FirstOrDefault(e => e.Name == "Food Drive").ID
                     },
 
@@ -1839,6 +1841,7 @@ namespace TomorrowsVoices.Data
                         ShiftDate = today.AddDays(-7),
                         ScheduledStart = today.AddDays(-7).AddHours(12),
                         ScheduledEnd = today.AddDays(-7).AddHours(14),
+                        Capacity = 10,
                         EventID = context.Events.FirstOrDefault(e => e.Name == "Food Drive").ID
                     },
 
@@ -1848,6 +1851,7 @@ namespace TomorrowsVoices.Data
                         ShiftDate = today.AddMonths(-2),
                         ScheduledStart = today.AddMonths(-2).AddHours(17),
                         ScheduledEnd = today.AddMonths(-2).AddHours(22),
+                        Capacity = 20,
                         EventID = context.Events.FirstOrDefault(e => e.Name == "Winter Concert Support").ID
                     },
 
@@ -1857,6 +1861,7 @@ namespace TomorrowsVoices.Data
                         ShiftDate = today.AddMonths(-3),
                         ScheduledStart = today.AddMonths(-3).AddHours(8),
                         ScheduledEnd = today.AddMonths(-3).AddHours(12),
+                        Capacity = 15,
                         EventID = context.Events.FirstOrDefault(e => e.Name == "Holiday Food Bank").ID
                     },
 
@@ -1866,6 +1871,7 @@ namespace TomorrowsVoices.Data
                         ShiftDate = today.AddMonths(-3),
                         ScheduledStart = today.AddMonths(-3).AddHours(12),
                         ScheduledEnd = today.AddMonths(-3).AddHours(16),
+                        Capacity = 15,
                         EventID = context.Events.FirstOrDefault(e => e.Name == "Holiday Food Bank").ID
                     },
 
@@ -1875,6 +1881,7 @@ namespace TomorrowsVoices.Data
                         ShiftDate = today,
                         ScheduledStart = today.AddHours(10),
                         ScheduledEnd = today.AddHours(15),
+                        Capacity = 15,
                         EventID = context.Events.FirstOrDefault(e => e.Name == "Today's School Workshop").ID
                     },
 
@@ -1884,6 +1891,7 @@ namespace TomorrowsVoices.Data
                         ShiftDate = today,
                         ScheduledStart = today.AddHours(18),
                         ScheduledEnd = today.AddHours(21),
+                        Capacity = 10,
                         EventID = context.Events.FirstOrDefault(e => e.Name == "Evening Choir Practice").ID
                     },
 
@@ -1893,6 +1901,7 @@ namespace TomorrowsVoices.Data
                         ShiftDate = today.AddDays(5),
                         ScheduledStart = today.AddDays(5).AddHours(8),
                         ScheduledEnd = today.AddDays(5).AddHours(13),
+                        Capacity = 10,
                         EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID
                     },
 
@@ -1902,6 +1911,7 @@ namespace TomorrowsVoices.Data
                         ShiftDate = today.AddDays(5),
                         ScheduledStart = today.AddDays(5).AddHours(13),
                         ScheduledEnd = today.AddDays(5).AddHours(18.5),
+                        Capacity = 10,
                         EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID
                     },
 
@@ -1911,6 +1921,7 @@ namespace TomorrowsVoices.Data
                         ShiftDate = today.AddDays(3),
                         ScheduledStart = today.AddDays(3).AddHours(9),
                         ScheduledEnd = today.AddDays(3).AddHours(14),
+                        Capacity = 20,
                         EventID = context.Events.FirstOrDefault(e => e.Name == "Weekend Park Cleanup").ID
                     }
                 );
