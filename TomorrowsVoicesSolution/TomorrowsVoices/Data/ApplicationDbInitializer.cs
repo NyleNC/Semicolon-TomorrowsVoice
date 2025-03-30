@@ -93,6 +93,22 @@ namespace TomorrowsVoices.Data
                                         await userManager.AddToRoleAsync(user, "Director");
                                     }
                                 }
+                                if (await userManager.FindByEmailAsync("averdecchia@tv.com") == null)
+                                {
+                                    IdentityUser user = new IdentityUser
+                                    {
+                                        UserName = "averdecchia@tv.com",
+                                        Email = "averdecchia@tv.com",
+                                        EmailConfirmed = true
+                                    };
+
+                                    IdentityResult result = await userManager.CreateAsync(user, defaultPassword);
+
+                                    if (result.Succeeded)
+                                    {
+                                        await userManager.AddToRoleAsync(user, "Director");
+                                    }
+                                }
                                 if (await userManager.FindByEmailAsync("volunteer@outlook.com") == null)
                                 {
                                     IdentityUser user = new IdentityUser
@@ -109,52 +125,133 @@ namespace TomorrowsVoices.Data
                                         await userManager.AddToRoleAsync(user, "Volunteer");
                                     }
                                 }
+                                if (await userManager.FindByEmailAsync("john.doe@gmail.com") == null)
+                                {
+                                    IdentityUser user = new IdentityUser
+                                    {
+                                        UserName = "john.doe@gmail.com",
+                                        Email = "john.doe@gmail.com",
+                                        EmailConfirmed = true
+                                    };
+
+                                    IdentityResult result = await userManager.CreateAsync(user, defaultPassword);
+
+                                    if (result.Succeeded)
+                                    {
+                                        await userManager.AddToRoleAsync(user, "Volunteer");
+                                    }
+                                }
+                                if (await userManager.FindByEmailAsync("jsmith@example.com") == null)
+                                {
+                                    IdentityUser user = new IdentityUser
+                                    {
+                                        UserName = "jsmith@example.com",
+                                        Email = "jsmith@example.com",
+                                        EmailConfirmed = true
+                                    };
+
+                                    IdentityResult result = await userManager.CreateAsync(user, defaultPassword);
+
+                                    if (result.Succeeded)
+                                    {
+                                        await userManager.AddToRoleAsync(user, "Volunteer");
+                                    }
+                                }
+                                if (await userManager.FindByEmailAsync("ajohnson@example.com") == null)
+                                {
+                                    IdentityUser user = new IdentityUser
+                                    {
+                                        UserName = "ajohnson@example.com",
+                                        Email = "ajohnson@example.com",
+                                        EmailConfirmed = true
+                                    };
+
+                                    IdentityResult result = await userManager.CreateAsync(user, defaultPassword);
+
+                                    if (result.Succeeded)
+                                    {
+                                        await userManager.AddToRoleAsync(user, "Volunteer");
+                                    }
+                                }
+                                if (await userManager.FindByEmailAsync("bbrown@example.com") == null)
+                                {
+                                    IdentityUser user = new IdentityUser
+                                    {
+                                        UserName = "bbrown@example.com",
+                                        Email = "bbrown@example.com",
+                                        EmailConfirmed = true
+                                    };
+
+                                    IdentityResult result = await userManager.CreateAsync(user, defaultPassword);
+
+                                    if (result.Succeeded)
+                                    {
+                                        await userManager.AddToRoleAsync(user, "Volunteer");
+                                    }
+                                }
+                                if (await userManager.FindByEmailAsync("cdavis@example.com") == null)
+                                {
+                                    IdentityUser user = new IdentityUser
+                                    {
+                                        UserName = "cdavis@example.com",
+                                        Email = "cdavis@example.com",
+                                        EmailConfirmed = true
+                                    };
+
+                                    IdentityResult result = await userManager.CreateAsync(user, defaultPassword);
+
+                                    if (result.Succeeded)
+                                    {
+                                        await userManager.AddToRoleAsync(user, "Volunteer");
+                                    }
+                                }
                             }
+
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex.GetBaseException().Message);
                             }
                         }
 
-                        // Enhance volunteer data  
-                        EnhanceVolunteerData(context);
+                        //// Enhance volunteer data  
+                        //EnhanceVolunteerData(context);
                     }
                 }
             }
         }
 
-        private static void EnhanceVolunteerData(TomorrowsVoicesContext context)
-        {
-            var volunteers = context.Volunteers.ToList();
+        //private static void EnhanceVolunteerData(TomorrowsVoicesContext context)
+        //{
+        //    var volunteers = context.Volunteers.ToList();
 
-            if (volunteers.Any())
-            {
-                var john = volunteers.FirstOrDefault(v => v.FirstName == "John" && v.LastName == "Doe");
-                var jane = volunteers.FirstOrDefault(v => v.FirstName == "Jane" && v.LastName == "Smith");
-                var alice = volunteers.FirstOrDefault(v => v.FirstName == "Alice" && v.LastName == "Johnson");
-                var bob = volunteers.FirstOrDefault(v => v.FirstName == "Bob" && v.LastName == "Brown");
-                var charlie = volunteers.FirstOrDefault(v => v.FirstName == "Charlie" && v.LastName == "Davis");
+        //    if (volunteers.Any())
+        //    {
+        //        var john = volunteers.FirstOrDefault(v => v.FirstName == "John" && v.LastName == "Doe");
+        //        var jane = volunteers.FirstOrDefault(v => v.FirstName == "Jane" && v.LastName == "Smith");
+        //        var alice = volunteers.FirstOrDefault(v => v.FirstName == "Alice" && v.LastName == "Johnson");
+        //        var bob = volunteers.FirstOrDefault(v => v.FirstName == "Bob" && v.LastName == "Brown");
+        //        var charlie = volunteers.FirstOrDefault(v => v.FirstName == "Charlie" && v.LastName == "Davis");
 
-                if (john != null)
-                    john.Email = "john.doe@gmail.com";
-                if (jane != null)
-                    jane.Email = "jsmith@example.com";
-                if (alice != null)
-                    alice.Email = "ajohnson@example.com";
-                if (bob != null)
-                    bob.Email = "bbrown@example.com";
-                if (charlie != null)
-                    charlie.Email = "cdavis@example.com";
+        //        if (john != null)
+        //            john.Email = "john.doe@gmail.com";
+        //        if (jane != null)
+        //            jane.Email = "jsmith@example.com";
+        //        if (alice != null)
+        //            alice.Email = "ajohnson@example.com";
+        //        if (bob != null)
+        //            bob.Email = "bbrown@example.com";
+        //        if (charlie != null)
+        //            charlie.Email = "cdavis@example.com";
 
-                context.SaveChanges();
+        //        context.SaveChanges();
 
-                Console.WriteLine("User login information for volunteer portal:");
-                Console.WriteLine($"John Doe - Username: john.doe@gmail.com - Password: Pa55w@rd");
-                Console.WriteLine($"Jane Smith - Username: jsmith@example.com - Password: Pa55w@rd");
-                Console.WriteLine($"Alice Johnson - Username: ajohnson@example.com - Password: Pa55w@rd");
-                Console.WriteLine($"Bob Brown - Username: bbrown@example.com - Password: Pa55w@rd");
-                Console.WriteLine($"Charlie Davis - Username: cdavis@example.com - Password: Pa55w@rd");
-            }
-        }
+        //        Console.WriteLine("User login information for volunteer portal:");
+        //        Console.WriteLine($"John Doe - Username: john.doe@gmail.com - Password: Pa55w@rd");
+        //        Console.WriteLine($"Jane Smith - Username: jsmith@example.com - Password: Pa55w@rd");
+        //        Console.WriteLine($"Alice Johnson - Username: ajohnson@example.com - Password: Pa55w@rd");
+        //        Console.WriteLine($"Bob Brown - Username: bbrown@example.com - Password: Pa55w@rd");
+        //        Console.WriteLine($"Charlie Davis - Username: cdavis@example.com - Password: Pa55w@rd");
+        //    }
+        
     }
 }
