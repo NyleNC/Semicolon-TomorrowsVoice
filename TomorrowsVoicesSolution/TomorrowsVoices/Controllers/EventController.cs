@@ -16,9 +16,11 @@ using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
 using TomorrowsVoices.Utilities;
 using TomorrowsVoices.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TomorrowsVoices.Controllers
 {
+    [Authorize]
     public class EventController : Controller
     {
         private readonly TomorrowsVoicesContext _context;

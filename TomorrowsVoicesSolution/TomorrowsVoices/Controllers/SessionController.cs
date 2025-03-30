@@ -16,9 +16,11 @@ using OfficeOpenXml.Style;
 using System.Drawing;
 
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TomorrowsVoices.Controllers
 {
+    [Authorize]
     public class SessionController : Controller
     {
         private readonly TomorrowsVoicesContext _context;

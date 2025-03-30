@@ -14,6 +14,7 @@ using OfficeOpenXml;
 
 namespace TomorrowsVoices.Controllers
 {
+    [Authorize]
     public class VolunteerPortalController : Controller
     {
         private readonly TomorrowsVoicesContext _context;

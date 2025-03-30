@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using TomorrowsVoices.Utilities;
 
 namespace TomorrowsVoices.Controllers
 {
+    [Authorize]
     public class VolLocationController : Controller
     {
         private readonly TomorrowsVoicesContext _context;
