@@ -29,36 +29,99 @@ nav {
 }
 
 .sidebar {
-    width: 250px; /* Default width for expanded state */
-    transition: width 0.3s;
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    background-color: #FFFFFF;
-    overflow: hidden;
+    width: 250px;
+    transition: all 0.3s;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-right: 1px solid #e9ecef;
 }
 
-    .sidebar.collapsed {
-        width: 80px; /* Width for collapsed state */
-    }
+.sidebar.collapsed {
+    width: 80px;
+}
 
-        .sidebar.collapsed .nav-link span {
-            opacity: 0;
-            visibility: hidden;
-        }
+.sidebar .nav-link {
+    color: #495057;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+}
 
-        .sidebar.collapsed .nav-link img {
-            margin-right: 0;
-            width: 25px /* Remove margin for icons when collapsed */
-        }
+.sidebar .nav-link:hover {
+    color: #6D28E3;
+    background-color: #f8f9fa;
+}
 
+.sidebar .nav-link.active-page {
+    color: #ffffff;
+    background-color: #6D28E3;
+}
 
+.sidebar .nav-link i {
+    font-size: 1.1rem;
+    margin-right: 0.75rem;
+    width: 1.5rem;
+    text-align: center;
+}
+
+.sidebar .nav-link span {
+    transition: opacity 0.3s;
+}
+
+.sidebar.collapsed .nav-link span {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.sidebar .nav-link .bi-chevron-down {
+    margin-left: auto;
+    transition: transform 0.2s;
+}
+
+.sidebar .nav-link[aria-expanded="true"] .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+.sidebar .collapse .nav-link {
+    padding-left: 2rem;
+    font-size: 0.95rem;
+}
 
 .toggle-btn {
     background: none;
     border: none;
     font-size: 1.5rem;
+    color: #6D28E3;
     cursor: pointer;
-    margin-bottom: 10px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+    color: #5B1FC7;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1000;
+        transform: translateX(-100%);
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
 }
 
 .nav-link {

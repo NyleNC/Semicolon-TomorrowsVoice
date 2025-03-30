@@ -4,43 +4,50 @@
     ViewData["Title"] = "Approve Volunteers";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="d-flex align-items-center justify-content-between mb-2 g-2 mt-2">
+    <div class="d-flex mt-0">
+        <h1 class="mb-0">Approve Volunteers</h1>
+    </div>
+</div>
+<p>Review and approve pending volunteer applications.</p>
 
-<div style="border: 3px solid #F1F1F1; border-radius: 12px; overflow: hidden; margin: 0; padding: 0">
-    <table class="table table-custom p-0 m-0">
-    <thead>
-        <tr>
-                <th class="text-white">Name</th>
-                <th class="text-white">Email</th>
-                <th class="text-white">Location</th>
-
-                <th class="text-white">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var volunteer in Model.PendingVolunteers)
-        {
-            <tr>
-                <td>@volunteer.FullName</td>
-                <td>@volunteer.Email</td>
-                <td>@volunteer.VolLocation?.City</td>
-              
-                <td>
-                    <form method="post">
-                        <button type="submit" asp-page-handler="Approve"
-                                asp-route-volunteerId="@volunteer.ID"
-                                class="btn btn-success">
-                            Approve
-                        </button>
-                        <button type="submit" asp-page-handler="Reject"
-                                asp-route-volunteerId="@volunteer.ID"
-                                class="btn btn-danger">
-                            Reject
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var volunteer in Model.PendingVolunteers)
+                    {
+                        <tr>
+                            <td>@volunteer.FullName</td>
+                            <td>@volunteer.Email</td>
+                            <td>@volunteer.VolLocation?.City</td>
+                            <td>
+                                <form method="post" class="d-inline">
+                                    <button type="submit" asp-page-handler="Approve"
+                                            asp-route-volunteerId="@volunteer.ID"
+                                            class="btn btn-success btn-sm">
+                                        <i class="bi bi-check-circle"></i> Approve
+                                    </button>
+                                    <button type="submit" asp-page-handler="Reject"
+                                            asp-route-volunteerId="@volunteer.ID"
+                                            class="btn btn-danger btn-sm">
+                                        <i class="bi bi-x-circle"></i> Reject
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

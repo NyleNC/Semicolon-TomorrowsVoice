@@ -638,7 +638,7 @@ namespace TomorrowsVoices.Controllers
             Console.WriteLine($"Event Edit POST received for event ID: {id}");
             Console.WriteLine($"Number of ExistingSchedules: {(model.ExistingSchedules?.Count ?? 0)}");
             Console.WriteLine($"Number of MultiDateEvents: {(model.MultiDateEvents?.Count ?? 0)}");
-            Console.WriteLine($"Number of deleted schedule IDs: {(model.DeletedScheduleIDs?.Count ?? 0)}");
+         
 
             if (ModelState.IsValid)
             {

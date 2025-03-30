@@ -112,25 +112,38 @@
 
 
         <div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true">
-
             <div class="modal-dialog modal-dialog-nav modal-sm ms-auto me-0">
-
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="menuModalLabel">Navigation</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body modal-body-nav">
-                        <h6 class="fw-bold">Choir Administration</h6>
-                        <a class="nav-link" asp-controller="Director" asp-action="Index">Director</a>
-                        <a class="nav-link" asp-controller="Singer" asp-action="Index">Singer</a>
-                        <a class="nav-link" asp-controller="Session" asp-action="Index">Session</a>
-                        <hr>
-                        <h6 class="fw-bold">Volunteer Management</h6>
-                        <a class="nav-link" asp-controller="VolLocation" asp-action="Index">Location</a>
-                        <a class="nav-link" asp-controller="Volunteer" asp-action="Index">Volunteer</a>
-                        <a class="nav-link" asp-controller="Event" asp-action="Index">Event</a>
-                        <a class="nav-link" asp-controller="Schedule" asp-action="Index">Schedule</a>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Director"))
+                        {
+                            <h6 class="fw-bold">Choir Administration</h6>
+                            <a class="nav-link" asp-controller="Director" asp-action="Index">Director</a>
+                            <a class="nav-link" asp-controller="Singer" asp-action="Index">Singer</a>
+                            <a class="nav-link" asp-controller="Session" asp-action="Index">Session</a>
+                            <hr>
+                            <h6 class="fw-bold">Event Management</h6>
+                            <a class="nav-link" asp-controller="VolLocation" asp-action="Index">Location</a>
+                            <a class="nav-link" asp-controller="Event" asp-action="Index">Event</a>
+                            <a class="nav-link" asp-controller="Volunteer" asp-action="Index">Volunteer</a>
+                            <a class="nav-link" asp-controller="VolunteerPortal" asp-action="AdminPortal">Admin Portal</a>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <hr>
+                            <h6 class="fw-bold">User Administration</h6>
+                            <a class="nav-link" asp-controller="UserRole" asp-action="Index">User Management</a>
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/ApproveVolunteers">Approve Volunteers</a>
+                        }
+                        @if (User.IsInRole("Volunteer"))
+                        {
+                            <a class="nav-link" asp-controller="VolunteerPortal" asp-action="AvailableEvents">Available Events</a>
+                            <a class="nav-link" asp-controller="VolunteerPortal" asp-action="MyEvents">My Events</a>
+                        }
                     </div>
                 </div>
             </div>
@@ -139,113 +152,108 @@
              @if (User.Identity.IsAuthenticated)
              {
                 <!-- Sidebar -->
-                <div id="desktopSidebar" class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar text-black" style="border-right: 3px solid #f3f3f3; background-color: #f9f9f9">
-                    <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                        <!-- Menu -->
-
+                <div id="desktopSidebar" class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar">
+                    <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
+                        <!-- Menu Toggle -->
                         <button class="toggle-btn" id="btn">
                             <i class="bi bi-grid"></i>
                         </button>
 
+                        <!-- Main Menu -->
                         <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li>
-                                    <a class="nav-link px-0 text-black @(IsActive("UserRole","Index"))" asp-controller="UserRole" asp-action="Index">
-                                        <img src="~/Images/icons8-raise-a-hand-to-answer-48.png" alt="attendance icon" width="20px" class="ms-3"> <span class="ms-1">User Management</span>
-                                    </a>
-
-                                </li>
-                            }
-                            @if (User.IsInRole("Admin") @* || User.IsInRole("Director") *@)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link px-0 text-black" asp-area="Identity" asp-page="/Account/ApproveVolunteers">
-                                       
-                                        <span class="ms-1">Approve Volunteers</span>
-                                    </a>
-                                </li>
-                            }
                             @if (User.IsInRole("Admin") || User.IsInRole("Director"))
                             {
-                                <li>
-                                    <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle" style="background-color: #e0e0e0;" aria-expanded="@(IsSubMenuActive("Director", "Singer", "Session") == "show" ? "true" : "false")">
-                                        <img src="~/Images/NewChoirIcon.png" class="ms-2" alt="choir icon" width="40px"> <span class="ms-1 me-1 d-none d-sm-inline" style="color:  #1d2e79">Choir Administration</span>
-                                        <i class="bi bi-chevron-down ms-1 me-2"></i>
+                                <li class="nav-item w-100">
+                                    <a class="nav-link" data-bs-toggle="collapse" href="#submenu1">
+                                        <i class="bi bi-people-fill"></i> <span>Choir Administration</span>
+                                        <i class="bi bi-chevron-down ms-auto"></i>
                                     </a>
                                     <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("Director", "Singer", "Session"))" id="submenu1">
-
-                                        <li class="w-100">
-                                            <a class="nav-link px-0 text-black @(IsActive("Director","Index")) sub-menu-item" asp-controller="Director" asp-action="Index">
-                                                <img src="~/Images/icons8-administrator-male-48.png" alt="director icon" width="20px" class="ms-3"> <span class="ms-1">Director</span>
+                                        <li class="nav-item w-100">
+                                            <a class="nav-link @(IsActive("Director","Index"))" asp-controller="Director" asp-action="Index">
+                                                <i class="bi bi-person-badge"></i> <span>Director</span>
                                             </a>
                                         </li>
-                                        <li>
-                                            <a class="nav-link px-0 text-black @(IsActive("Singer","Index")) sub-menu-item" asp-controller="Singer" asp-action="Index">
-                                                <img src="~/Images/icons8-group-48 (1).png" alt="singer icon" width="20px" class="ms-3"> <span class="ms-1">Singer</span>
+                                        <li class="nav-item w-100">
+                                            <a class="nav-link @(IsActive("Singer","Index"))" asp-controller="Singer" asp-action="Index">
+                                                <i class="bi bi-music-note-beamed"></i> <span>Singer</span>
                                             </a>
                                         </li>
-                                        <li>
-                                            <a class="nav-link px-0 text-black @(IsActive("Session","Index")) sub-menu-item" asp-controller="Session" asp-action="Index">
-                                                <img src="~/Images/icons8-raise-a-hand-to-answer-48.png" alt="attendance icon" width="20px" class="ms-3"> <span class="ms-1">Session</span>
+                                        <li class="nav-item w-100">
+                                            <a class="nav-link @(IsActive("Session","Index"))" asp-controller="Session" asp-action="Index">
+                                                <i class="bi bi-calendar-check"></i> <span>Session</span>
                                             </a>
                                         </li>
-
                                     </ul>
-
                                 </li>
-                            }
-                            @if (User.IsInRole("Admin") || User.IsInRole("Volunteer"))
-                            {
-                                <li>
-                                    <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle" style="background-color: #e0e0e0;" aria-expanded="@(IsSubMenuActive("VolLocation", "Volunteer", "Event","Schedule") == "show" ? "true" : "false")">
-                                        <img src="~/Images/NewVolunteerIcon.png" class="ms-2" alt="volunteer icon" width="40px">
-                                        <span class="ms-1 d-none d-sm-inline" style=" color: #1d2e79">Volunteer Management</span>
-                                        <i class="bi bi-chevron-down ms-1 me-2"></i>
+                                <li class="nav-item w-100">
+                                    <a class="nav-link" data-bs-toggle="collapse" href="#submenu2">
+                                        <i class="bi bi-gear"></i> <span>Event Management</span>
+                                        <i class="bi bi-chevron-down ms-auto"></i>
                                     </a>
                                     <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("VolLocation", "Volunteer", "Event","Schedule"))" id="submenu2">
-                                        @if (User.IsInRole("Admin"))
-                                        {
-                                            <li class="w-100">
-                                                <a class="nav-link px-0 text-black @(IsActive("VolLocation","Index")) sub-menu-item" asp-controller="VolLocation" asp-action="Index">
-                                                    <img src="~/Images/icons8-location-48.png" alt="location icon" width="20px" class="ms-3"> <span class="ms-1">Location</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="nav-link px-0 text-black @(IsActive("Event","Index")) sub-menu-item" asp-controller="Event" asp-action="Index">
-                                                    <img src="~/Images/icons8-event-48.png" alt="event icon" width="20px" class="ms-3"> <span class="ms-1">Event</span>
-                                                </a>
-                                            </li>
-                                        }
-                                        @if( User.IsInRole("Admin") || (User.IsInRole("Volunteer")))
-                                        {
-                                            <li>
-                                                <a class="nav-link px-0 text-black @(IsActive("Volunteer","Index")) sub-menu-item" asp-controller="Volunteer" asp-action="Index">
-                                                    <img src="~/Images/icons8-group-48 (1).png" alt="volunteer icon" width="20px" class="ms-3"> <span class="ms-1">Volunteer</span>
-                                                </a>
-                                            </li>
-
-                                            <!-- For Volunteer Portal -->
-                                            <li>
-                                                <a class="nav-link px-0 text-black @(IsActive("VolunteerPortal","AvailableEvents")) sub-menu-item"
-                                                   asp-controller="VolunteerPortal" asp-action="AvailableEvents">
-                                                    <img src="~/Images/icons8-raise-a-hand-to-answer-48.png" alt="volunteer portal icon" width="20px" class="ms-3">
-                                                    <span class="ms-1">Volunteer Portal</span>
-                                                </a>
-                                            </li>
-                                        }
-                                    
+                                        <li class="nav-item w-100">
+                                            <a class="nav-link @(IsActive("VolLocation","Index"))" asp-controller="VolLocation" asp-action="Index">
+                                                <i class="bi bi-geo-alt"></i> <span>Location</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item w-100">
+                                            <a class="nav-link @(IsActive("Event","Index"))" asp-controller="Event" asp-action="Index">
+                                                <i class="bi bi-calendar-event"></i> <span>Event</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item w-100">
+                                            <a class="nav-link @(IsActive("Volunteer","Index"))" asp-controller="Volunteer" asp-action="Index">
+                                                <i class="bi bi-people"></i> <span>Volunteer</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item w-100">
+                                            <a class="nav-link @(IsActive("VolunteerPortal","AdminPortal"))" asp-controller="VolunteerPortal" asp-action="AdminPortal">
+                                                <i class="bi bi-speedometer2"></i> <span>Admin Portal</span>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </li>
                             }
-                            </ul>
-                  
-                    <hr>
-             
-
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item w-100">
+                                    <a class="nav-link" data-bs-toggle="collapse" href="#submenu3">
+                                        <i class="bi bi-shield-check"></i> <span>User Administration</span>
+                                        <i class="bi bi-chevron-down ms-auto"></i>
+                                    </a>
+                                    <ul class="collapse nav flex-column ms-1" id="submenu3">
+                                        <li class="nav-item w-100">
+                                            <a class="nav-link @(IsActive("UserRole","Index"))" asp-controller="UserRole" asp-action="Index">
+                                                <i class="bi bi-people"></i> <span>User Management</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item w-100">
+                                            <a class="nav-link" asp-area="Identity" asp-page="/Account/ApproveVolunteers">
+                                                <i class="bi bi-check-circle"></i> <span>Approve Volunteers</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                            @if (User.IsInRole("Volunteer"))
+                            {
+                                <li class="nav-item w-100">
+                                    <a class="nav-link" asp-controller="VolunteerPortal" asp-action="AvailableEvents">
+                                        <i class="bi bi-calendar-plus"></i> <span>Available Events</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item w-100">
+                                    <a class="nav-link" asp-controller="VolunteerPortal" asp-action="MyEvents">
+                                        <i class="bi bi-calendar-check"></i> <span>My Events</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
                 </div>
-            
-            </div>
+  
+         
             }
 
             <!-- Main Content -->
@@ -270,7 +278,6 @@
 
     <script>    
         document.addEventListener('DOMContentLoaded', function () {
-
             // Get current path
             let currentPath = window.location.pathname.toLowerCase();
 
@@ -292,6 +299,12 @@
                 const spans = sidebar.querySelectorAll('.nav-link span');
                 spans.forEach(span => {
                     span.style.display = sidebar.classList.contains('collapsed') ? 'none' : 'inline';
+                });
+
+                // Toggle dropdown icons visibility
+                const dropdownIcons = sidebar.querySelectorAll('.bi-chevron-down');
+                dropdownIcons.forEach(icon => {
+                    icon.style.display = sidebar.classList.contains('collapsed') ? 'none' : 'inline';
                 });
             });
 

@@ -1,0 +1,164 @@
+@model TomorrowsVoices.ViewModels.EventDetailsViewModel
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<div class="event-details-header">
+    <h1>@Model.Title</h1>
+    <div class="event-meta">
+        <p><i class="fas fa-calendar"></i> @Model.Start.ToString("MMM dd, yyyy") - @Model.End.ToString("MMM dd, yyyy")</p>
+        <p><i class="fas fa-map-marker-alt"></i> @Model.Address, @Model.City</p>
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <p><i class="fas fa-info-circle"></i> @Model.Notes</p>
+        }
+    </div>
+    <a href="@Url.Action("AdminPortal", new { viewType = "event" })" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Events
+    </a>
+</div>
+
+<div class="schedules-container">
+    @foreach (var schedule in Model.Schedules)
+    {
+        <div class="schedule-card">
+            <div class="schedule-header">
+                <h3>Shift: @schedule.Start.ToString("MMM dd, yyyy HH:mm") - @schedule.End.ToString("HH:mm")</h3>
+                <span class="volunteer-count">@schedule.Volunteers.Count Volunteers</span>
+            </div>
+            <div class="volunteers-list">
+                @if (schedule.Volunteers.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>City</th>
+                                    <th>Check In/Out</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var volunteer in schedule.Volunteers)
+                                {
+                                    <tr>
+                                        <td>@volunteer.FullName</td>
+                                        <td>
+                                            <div><i class="fas fa-envelope"></i> @volunteer.Email</div>
+                                            <div><i class="fas fa-phone"></i> @volunteer.Phone</div>
+                                        </td>
+                                        <td>@volunteer.City</td>
+                                        <td>
+                                            @if (volunteer.ActualStart.HasValue)
+                                            {
+                                                <div class="text-success">
+                                                    <i class="fas fa-sign-in-alt"></i> @volunteer.ActualStart.Value.ToString("HH:mm")
+                                                </div>
+                                            }
+                                            @if (volunteer.ActualEnd.HasValue)
+                                            {
+                                                <div class="text-danger">
+                                                    <i class="fas fa-sign-out-alt"></i> @volunteer.ActualEnd.Value.ToString("HH:mm")
+                                                </div>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("VolunteerDetails", "VolunteerPortal", new { id = volunteer.VolunteerId })" 
+                                               class="btn btn-sm btn-primary">
+                                                <i class="fas fa-user"></i> Profile
+                                            </a>
+                                            <a href="@Url.Action("ExportVolunteerHistory", new { id = volunteer.VolunteerId })" 
+                                               class="btn btn-sm btn-secondary">
+                                                <i class="fas fa-download"></i> History
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        No volunteers signed up for this shift.
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .event-details-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .event-meta {
+        margin: 1rem 0;
+        color: #6c757d;
+    }
+
+    .event-meta p {
+        margin-bottom: 0.5rem;
+    }
+
+    .event-meta i {
+        width: 20px;
+        margin-right: 0.5rem;
+    }
+
+    .schedules-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .schedule-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .schedule-header {
+        background: #f8f9fa;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .volunteer-count {
+        background: #e9ecef;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .volunteers-list {
+        padding: 1rem;
+    }
+
+    .table th {
+        background: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .btn-sm {
+        margin: 0.25rem;
+    }
+
+    .text-success, .text-danger {
+        font-size: 0.9rem;
+    }
+</style> 

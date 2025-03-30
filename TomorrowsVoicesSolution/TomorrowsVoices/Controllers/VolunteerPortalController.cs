@@ -10,6 +10,7 @@ using TomorrowsVoices.Models;
 using TomorrowsVoices.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using OfficeOpenXml;
 
 namespace TomorrowsVoices.Controllers
 {
@@ -367,6 +368,285 @@ namespace TomorrowsVoices.Controllers
 
             TempData["SuccessMessage"] = $"Admin view: Acting as volunteer {volunteer.FullName}";
             return RedirectToAction(nameof(AvailableEvents));
+        }
+
+        // GET: VolunteerPortal/AdminPortal
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AdminPortal(string viewType = "event")
+        {
+            ViewData["ViewType"] = viewType;
+
+            if (viewType == "event")
+            {
+                var events = await _context.Events
+                    .Include(e => e.VolLocation)
+                    .Include(e => e.VolSchedules)
+                        .ThenInclude(s => s.VolAttendances)
+                            .ThenInclude(a => a.Volunteer)
+                    .Where(e => !e.IsArchived)
+                    .OrderByDescending(e => e.Start)
+                    .ToListAsync();
+
+                var eventViewModels = events.Select(e => new AdminEventViewModel
+                {
+                    EventId = e.ID,
+                    Title = e.Name,
+                    Address = e.Address,
+                    City = e.VolLocation?.City,
+                    Start = e.Start,
+                    End = e.End,
+                    Notes = e.Notes,
+                    VolunteerCount = e.VolSchedules
+                        .SelectMany(s => s.VolAttendances)
+                        .Where(a => a.Status)
+                        .Select(a => a.VolunteerID)
+                        .Distinct()
+                        .Count(),
+                    Shifts = e.VolSchedules
+                        .OrderBy(s => s.ScheduledStart)
+                        .Select(s => new ShiftViewModel
+                        {
+                            Start = s.ScheduledStart,
+                            End = s.ScheduledEnd,
+                            VolunteerCount = s.VolAttendances.Count(a => a.Status)
+                        })
+                        .ToList(),
+                    FilledShifts = e.VolSchedules.Count(s => s.VolAttendances.Any(a => a.Status)),
+                    TotalShifts = e.VolSchedules.Count
+                }).ToList();
+
+                return View("~/Views/VolPortal/AdminPortal.cshtml", eventViewModels);
+            }
+            else // volunteer view
+            {
+                var volunteers = await _context.Volunteers
+                    .Include(v => v.VolLocation)
+                    .Include(v => v.VolAttendances)
+                        .ThenInclude(a => a.VolSchedule)
+                            .ThenInclude(s => s.Event)
+                    .Where(v => !v.IsArchived)
+                    .OrderBy(v => v.FirstName)
+                    .ThenBy(v => v.LastName)
+                    .ToListAsync();
+
+                var volunteerViewModels = volunteers.Select(v => new AdminVolunteerViewModel
+                {
+                    VolunteerId = v.ID,
+                    FullName = v.FullName,
+                    Email = v.Email,
+                    Phone = v.Phone,
+                    City = v.VolLocation?.City,
+                    TotalEvents = v.VolAttendances
+                        .Where(a => a.Status)
+                        .Select(a => a.VolSchedule.Event)
+                        .Distinct()
+                        .Count(),
+                    TotalHours = v.VolAttendances
+                        .Where(a => a.Status && a.ActualStart.HasValue && a.ActualEnd.HasValue)
+                        .Sum(a => (a.ActualEnd.Value - a.ActualStart.Value).TotalHours),
+                    LastEvent = v.VolAttendances
+                        .Where(a => a.Status)
+                        .Select(a => a.VolSchedule.Event)
+                        .OrderByDescending(e => e.End)
+                        .FirstOrDefault()
+                }).ToList();
+
+                return View("~/Views/VolPortal/AdminPortal.cshtml", volunteerViewModels);
+            }
+        }
+
+        // GET: VolunteerPortal/ExportVolunteerHistory/5
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ExportVolunteerHistory(int id)
+        {
+            var volunteer = await _context.Volunteers
+                .Include(v => v.VolLocation)
+                .Include(v => v.VolAttendances)
+                    .ThenInclude(a => a.VolSchedule)
+                        .ThenInclude(s => s.Event)
+                .FirstOrDefaultAsync(v => v.ID == id);
+
+            if (volunteer == null)
+            {
+                return NotFound();
+            }
+
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Volunteer History");
+
+                // Add volunteer information
+                worksheet.Cells[1, 1].Value = "Volunteer Information";
+                worksheet.Cells[1, 1].Style.Font.Bold = true;
+                worksheet.Cells[2, 1].Value = "Name";
+                worksheet.Cells[2, 2].Value = volunteer.FullName;
+                worksheet.Cells[3, 1].Value = "Email";
+                worksheet.Cells[3, 2].Value = volunteer.Email;
+                worksheet.Cells[4, 1].Value = "Phone";
+                worksheet.Cells[4, 2].Value = volunteer.Phone;
+                worksheet.Cells[5, 1].Value = "City";
+                worksheet.Cells[5, 2].Value = volunteer.VolLocation?.City;
+
+                // Add event history
+                worksheet.Cells[7, 1].Value = "Event History";
+                worksheet.Cells[7, 1].Style.Font.Bold = true;
+                worksheet.Cells[8, 1].Value = "Event Name";
+                worksheet.Cells[8, 2].Value = "Date";
+                worksheet.Cells[8, 3].Value = "Shift Start";
+                worksheet.Cells[8, 4].Value = "Shift End";
+                worksheet.Cells[8, 5].Value = "Actual Start";
+                worksheet.Cells[8, 6].Value = "Actual End";
+                worksheet.Cells[8, 7].Value = "Hours";
+
+                var row = 9;
+                foreach (var attendance in volunteer.VolAttendances.Where(a => a.Status).OrderByDescending(a => a.VolSchedule.Event.Start))
+                {
+                    worksheet.Cells[row, 1].Value = attendance.VolSchedule.Event.Name;
+                    worksheet.Cells[row, 2].Value = attendance.VolSchedule.Event.Start.ToString("MMM dd, yyyy");
+                    worksheet.Cells[row, 3].Value = attendance.VolSchedule.ScheduledStart.ToString("MMM dd, yyyy HH:mm");
+                    worksheet.Cells[row, 4].Value = attendance.VolSchedule.ScheduledEnd.ToString("MMM dd, yyyy HH:mm");
+                    worksheet.Cells[row, 5].Value = attendance.ActualStart?.ToString("MMM dd, yyyy HH:mm");
+                    worksheet.Cells[row, 6].Value = attendance.ActualEnd?.ToString("MMM dd, yyyy HH:mm");
+                    
+                    if (attendance.ActualStart.HasValue && attendance.ActualEnd.HasValue)
+                    {
+                        worksheet.Cells[row, 7].Value = (attendance.ActualEnd.Value - attendance.ActualStart.Value).TotalHours;
+                    }
+                    row++;
+                }
+
+                // Add summary
+                row += 2;
+                worksheet.Cells[row, 1].Value = "Summary";
+                worksheet.Cells[row, 1].Style.Font.Bold = true;
+                worksheet.Cells[row + 1, 1].Value = "Total Events";
+                worksheet.Cells[row + 1, 2].Value = volunteer.VolAttendances.Where(a => a.Status).Select(a => a.VolSchedule.Event).Distinct().Count();
+                worksheet.Cells[row + 2, 1].Value = "Total Hours";
+                worksheet.Cells[row + 2, 2].Value = volunteer.VolAttendances
+                    .Where(a => a.Status && a.ActualStart.HasValue && a.ActualEnd.HasValue)
+                    .Sum(a => (a.ActualEnd.Value - a.ActualStart.Value).TotalHours);
+
+                // Auto-fit columns
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                // Generate the Excel file
+                var excelBytes = package.GetAsByteArray();
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+                    $"VolunteerHistory_{volunteer.FullName.Replace(" ", "_")}.xlsx");
+            }
+        }
+
+        // GET: VolunteerPortal/EventDetails/5
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EventDetails(int id)
+        {
+            var evt = await _context.Events
+                .Include(e => e.VolLocation)
+                .Include(e => e.VolSchedules)
+                    .ThenInclude(s => s.VolAttendances)
+                        .ThenInclude(a => a.Volunteer)
+                            .ThenInclude(v => v.VolLocation)
+                .FirstOrDefaultAsync(e => e.ID == id);
+
+            if (evt == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new EventDetailsViewModel
+            {
+                EventId = evt.ID,
+                Title = evt.Name,
+                Address = evt.Address,
+                City = evt.VolLocation?.City,
+                Start = evt.Start,
+                End = evt.End,
+                Notes = evt.Notes,
+                Schedules = evt.VolSchedules
+                    .OrderBy(s => s.ScheduledStart)
+                    .Select(s => new ScheduleDetailsViewModel
+                    {
+                        ScheduleId = s.ID,
+                        Start = s.ScheduledStart,
+                        End = s.ScheduledEnd,
+                        Volunteers = s.VolAttendances
+                            .Where(a => a.Status)
+                            .Select(a => new VolunteerDetailsViewModel
+                            {
+                                VolunteerId = a.Volunteer.ID,
+                                FullName = a.Volunteer.FullName,
+                                Email = a.Volunteer.Email,
+                                Phone = a.Volunteer.Phone,
+                                City = a.Volunteer.VolLocation?.City,
+                                ActualStart = a.ActualStart,
+                                ActualEnd = a.ActualEnd
+                            })
+                            .ToList()
+                    })
+                    .ToList()
+            };
+
+            return View("~/Views/VolPortal/EventDetails.cshtml", viewModel);
+        }
+
+        // GET: VolunteerPortal/VolunteerDetails/5
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> VolunteerDetails(int id)
+        {
+            var volunteer = await _context.Volunteers
+                .Include(v => v.VolLocation)
+                .Include(v => v.VolAttendances)
+                    .ThenInclude(a => a.VolSchedule)
+                        .ThenInclude(s => s.Event)
+                            .ThenInclude(e => e.VolLocation)
+                .FirstOrDefaultAsync(v => v.ID == id);
+
+            if (volunteer == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new VolunteerDetailsViewModel
+            {
+                VolunteerId = volunteer.ID,
+                FullName = volunteer.FullName,
+                Email = volunteer.Email,
+                Phone = volunteer.Phone,
+                City = volunteer.VolLocation?.City,
+                TotalEvents = volunteer.VolAttendances
+                    .Where(a => a.Status)
+                    .Select(a => a.VolSchedule.Event)
+                    .Distinct()
+                    .Count(),
+                TotalHours = volunteer.VolAttendances
+                    .Where(a => a.Status && a.ActualStart.HasValue && a.ActualEnd.HasValue)
+                    .Sum(a => (a.ActualEnd.Value - a.ActualStart.Value).TotalHours),
+                EventHistory = volunteer.VolAttendances
+                    .Where(a => a.Status)
+                    .GroupBy(a => a.VolSchedule.Event)
+                    .Select(g => new VolunteerEventHistory
+                    {
+                        EventId = g.Key.ID,
+                        EventName = g.Key.Name,
+                        EventDate = g.Key.Start,
+                        EventLocation = g.Key.Address,
+                        EventCity = g.Key.VolLocation?.City,
+                        Shifts = g.Select(a => new ShiftHistory
+                        {
+                            Start = a.VolSchedule.ScheduledStart,
+                            End = a.VolSchedule.ScheduledEnd,
+                            ActualStart = a.ActualStart,
+                            ActualEnd = a.ActualEnd,
+                            HoursWorked = a.ActualStart.HasValue && a.ActualEnd.HasValue
+                                ? (a.ActualEnd.Value - a.ActualStart.Value).TotalHours
+                                : 0
+                        }).ToList()
+                    })
+                    .OrderByDescending(e => e.EventDate)
+                    .ToList()
+            };
+
+            return View("~/Views/VolPortal/VolunteerDetails.cshtml", viewModel);
         }
     }
 }

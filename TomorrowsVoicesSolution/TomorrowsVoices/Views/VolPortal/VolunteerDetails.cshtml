@@ -1,0 +1,286 @@
+@model TomorrowsVoices.ViewModels.VolunteerDetailsViewModel
+@{
+    ViewData["Title"] = "Volunteer Details";
+}
+
+<div class="volunteer-details-header">
+    <div class="header-content">
+        <div class="header-row">
+            <h1 class="mt-4">@Model.FullName</h1>
+            <a href="@Url.Action("AdminPortal")" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Admin Portal
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="volunteer-info-card">
+    <div class="info-section">
+        <div class="info-item">
+            <i class="fas fa-envelope"></i>
+            <span>@Model.Email</span>
+        </div>
+        <div class="info-item">
+            <i class="fas fa-phone"></i>
+            <span>@Model.Phone</span>
+        </div>
+        <div class="info-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>@Model.City</span>
+        </div>
+    </div>
+    <div class="stats-section">
+        <div class="stat-card">
+            <i class="fas fa-calendar-check"></i>
+            <div class="stat-info">
+                <span class="stat-value">@Model.TotalEvents</span>
+                <span class="stat-label">Total Events</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-clock"></i>
+            <div class="stat-info">
+                <span class="stat-value">@Model.TotalHours.ToString("F1")</span>
+                <span class="stat-label">Total Hours</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="event-history-section">
+    <h2>Event History</h2>
+    @foreach (var eventHistory in Model.EventHistory)
+    {
+        <div class="event-card">
+            <div class="event-header">
+                <h3>@eventHistory.EventName</h3>
+                <span class="event-date">@eventHistory.EventDate.ToString("MMMM dd, yyyy")</span>
+            </div>
+            <div class="event-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>@eventHistory.EventLocation, @eventHistory.EventCity</span>
+            </div>
+            <div class="shifts-list">
+                @foreach (var shift in eventHistory.Shifts)
+                {
+                    <div class="shift-item">
+                        <div class="shift-time">
+                            <i class="fas fa-clock"></i>
+                            <span>@shift.Start.ToString("h:mm tt") - @shift.End.ToString("h:mm tt")</span>
+                        </div>
+                        <div class="shift-status">
+                            @if (shift.ActualStart.HasValue && shift.ActualEnd.HasValue)
+                            {
+                                <span class="badge badge-success">Completed</span>
+                                <span class="hours-worked">@shift.HoursWorked.ToString("F1") hours</span>
+                            }
+                            else if (shift.ActualStart.HasValue)
+                            {
+                                <span class="badge badge-warning">In Progress</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-secondary">Scheduled</span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .volunteer-details-header {
+        margin-bottom: 2rem;
+    }
+
+    .header-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .header-row h1 {
+        margin: 0;
+    }
+
+    .back-link {
+        color: #6c757d;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .back-link:hover {
+        color: #6f42c1;
+    }
+
+    .volunteer-info-card {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .info-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-item .fas {
+        color: #6f42c1;
+        width: 20px;
+    }
+
+    .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .stat-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+    }
+
+    .stat-card .fas {
+        font-size: 1.5rem;
+        color: #6f42c1;
+    }
+
+    .stat-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-value {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #6f42c1;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+
+    .event-history-section {
+        margin-top: 2rem;
+    }
+
+    .event-history-section h2 {
+        margin-bottom: 1.5rem;
+        color: #6f42c1;
+    }
+
+    .event-card {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .event-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .event-header h3 {
+        margin: 0;
+        color: #6f42c1;
+    }
+
+    .event-date {
+        color: #6c757d;
+    }
+
+    .event-location {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+
+    .shifts-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .shift-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 0.25rem;
+    }
+
+    .shift-time {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .shift-time .fas {
+        color: #6f42c1;
+    }
+
+    .shift-status {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .hours-worked {
+        color: #28a745;
+        font-weight: 500;
+    }
+
+    .badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.875rem;
+    }
+
+    .badge-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .badge-warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-secondary {
+        background-color: #e9ecef;
+        color: #6c757d;
+    }
+</style> 

@@ -98,15 +98,15 @@
         </div>
     </div>
 
-    <div class="form-group mt-4">
-        <button type="submit" class="btn btn-primary">
-            <i class="bi bi-check-circle"></i> Save Changes
+    <div class="form-group">
+        <button type="submit" class="btn btn-success">
+            <img src="~/Images/save-changes-icon.png" alt="Save changes" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+            Save
         </button>
-        <a asp-action="Index" class="btn btn-secondary">
-            <img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-            Back to Events Page
-        </a>
     </div>
+    <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px">
+        <i class="bi bi-arrow-left"></i> Back to Events
+    </a>
 
     <!-- Date Configuration Modal -->
     <div class="modal fade" id="dateConfigModal" tabindex="-1" role="dialog">
