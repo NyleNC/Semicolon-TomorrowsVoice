@@ -54,11 +54,12 @@ namespace TomorrowsVoices.Data
                     SeedVolLocation(context);
                     SeedVolunteers(context);
                     SeedEvents(context);
-                    //SeedVolSchedules(context);
-           
+                    SeedVolSchedules(context);
+                    SeedVolAttendances(context);
                 }
             }
         }
+
 
         private static void SeedDirectors(TomorrowsVoicesContext context)
         {
@@ -104,7 +105,7 @@ namespace TomorrowsVoices.Data
                     {
                         FirstName = "Frances",
                         LastName = "Olson",
-                        dirPhoneNumber="9993456791",
+                        dirPhoneNumber = "9993456791",
                         Email = "folson@tv.com"
                     }
                 );
@@ -1605,116 +1606,654 @@ namespace TomorrowsVoices.Data
         {
             if (!context.Events.Any())
             {
+                // Get current date for reference
+                var today = DateTime.Today;
+
                 context.Events.AddRange(
-                   new Event
-                   {
-                       Name = "Community Cleanup",
-                      
-                       Address = "123 Test Street, A1B 1C2",
-                       Date = DateTime.Parse("2025-02-20"),
-                       Start = DateTime.Parse("2025-02-20 09:00 AM"),
-                       End = DateTime.Parse("2025-02-20 12:00 PM"),
-                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
-                       Notes = "2 volunteers were absent"
-                   },
-                   new Event
-                   {
-                       Name = "Food Drive",
-                       Address = "123 Hi Street, D4U 1C2",
-                       Date = DateTime.Parse("2025-03-10"),
-                       Start = DateTime.Parse("2025-03-10 10:00 AM"),
-                       End = DateTime.Parse("2025-03-10 02:00 PM"),
-                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
-                       Notes = "Volunteers collected 200 food items."
-                   },
-                   new Event
-                   {
-                       Name = "Blood Donation Camp",
-                       Address = "737 Check Street, L0U 7D5",
-                       Date = DateTime.Parse("2025-04-05"),
-                       Start = DateTime.Parse("2025-04-05 08:00 AM"),
-                       End = DateTime.Parse("2025-04-05 06:30 PM"),
-                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls").ID,
-                       Notes = "Volunteers assisted and 50 units of blood were collected."
-                   },
-                   new Event
-                   {
-                       Name = "Green Earth Cleanup",
-                       Address = "123 Greenway Ave, N2L 5G6",
-                       Date = DateTime.Parse("2025-05-12"),
-                       Start = DateTime.Parse("2025-05-12 09:00 AM"),
-                       End = DateTime.Parse("2025-05-12 04:00 PM"),
-                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "St. Catharines").ID,
-                       Notes = "Volunteers participated in a community park cleanup, collecting 200 lbs of waste and planting 30 trees."
-                   },
-                   new Event
-                   {
-                       Name = "Food for All Campaign",
-                       Address = "456 Hope Street, M3H 2T4",
-                       Date = DateTime.Parse("2025-06-20"),
-                       Start = DateTime.Parse("2025-06-20 10:30 AM"),
-                       End = DateTime.Parse("2025-06-20 05:00 PM"),
-                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Welland").ID,
-                       Notes = "A food drive event where volunteers helped distribute over 500 meal packages to families in need."
-                   },
-                   new Event
-                   {
-                       Name = "Hamilton Yearly Marathon",
-                       Address = "789 Care Blvd, L8W 1A5",
-                       Date = DateTime.Parse("2025-07-15"),
-                       Start = DateTime.Parse("2025-07-15 07:00 AM"),
-                       End = DateTime.Parse("2025-07-15 03:00 PM"),
-                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Hamilton").ID,
-                       Notes = "Volunteers assisted in a charity marathon, setting up water stations and guiding runners along the route."
-                   },
-                   new Event
-                   {
-                       Name = "Thorold Secondary School",
-                       Address = "321 Harmony Lane, K1A 3B2",
-                       Date = DateTime.Parse("2025-08-10"),
-                       Start = DateTime.Parse("2025-08-10 08:30 AM"),
-                       End = DateTime.Parse("2025-08-10 02:00 PM"),
-                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Thorold").ID,
-                       Notes = "Volunteers helped organize and distribute school supplies to over 200 students for the new academic year."
-                   },
-                   new Event
-                   {
-                       Name = "Port Colborne Senior Care",
-                       Address = "555 Compassion Road, P4N 8J6",
-                       Date = DateTime.Parse("2025-09-05"),
-                       Start = DateTime.Parse("2025-09-05 09:00 AM"),
-                       End = DateTime.Parse("2025-09-05 05:30 PM"),
-                       VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Port Colborne").ID,
-                       Notes = "Volunteers supported a senior care center by organizing activities and spending quality time with residents."
-                   }
+                    // Past Events
+                    new Event
+                    {
+                        Name = "Community Cleanup",
+                        Address = "123 Test Street, Toronto, A1B 1C2",
+                        Date = today.AddDays(-15),
+                        Start = today.AddDays(-15).AddHours(9),
+                        End = today.AddDays(-15).AddHours(12),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
+                        Notes = "Completed successfully with 12 volunteers. Collected 25 bags of trash."
+                    },
+                    new Event
+                    {
+                        Name = "Food Drive",
+                        Address = "123 Hi Street, Toronto, D4U 1C2",
+                        Date = today.AddDays(-7),
+                        Start = today.AddDays(-7).AddHours(10),
+                        End = today.AddDays(-7).AddHours(14),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
+                        Notes = "Volunteers collected 200 food items. Need more volunteers next time."
+                    },
+                    new Event
+                    {
+                        Name = "Winter Concert Support",
+                        Address = "555 Music Hall, Hamilton, M3M 4T5",
+                        Date = today.AddMonths(-2),
+                        Start = today.AddMonths(-2).AddHours(17),
+                        End = today.AddMonths(-2).AddHours(22),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Hamilton").ID,
+                        Notes = "Volunteers helped set up and tear down for the concert. Very successful event."
+                    },
+                    new Event
+                    {
+                        Name = "Holiday Food Bank",
+                        Address = "100 Charity Lane, St. Catharines, L5P 2R3",
+                        Date = today.AddMonths(-3),
+                        Start = today.AddMonths(-3).AddHours(8),
+                        End = today.AddMonths(-3).AddHours(16),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "St. Catharines").ID,
+                        Notes = "Served over 300 families. All volunteers attended as scheduled."
+                    },
+
+                    // Current/Today Events
+                    new Event
+                    {
+                        Name = "Today's School Workshop",
+                        Address = "200 Education Blvd, Niagara Falls, N1A 3C4",
+                        Date = today,
+                        Start = today.AddHours(10),
+                        End = today.AddHours(15),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls").ID,
+                        Notes = "Currently in progress. Need to confirm final attendance."
+                    },
+                    new Event
+                    {
+                        Name = "Evening Choir Practice",
+                        Address = "88 Music Avenue, Toronto, K7L 2T1",
+                        Date = today,
+                        Start = today.AddHours(18),
+                        End = today.AddHours(21),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
+                        Notes = "Regular weekly practice. Need to set up chairs by 17:30."
+                    },
+
+                    // Upcoming Events (Short-term)
+                    new Event
+                    {
+                        Name = "Blood Donation Camp",
+                        Address = "737 Check Street, Niagara Falls, L0U 7D5",
+                        Date = today.AddDays(5),
+                        Start = today.AddDays(5).AddHours(8),
+                        End = today.AddDays(5).AddHours(18.5),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Niagara Falls").ID,
+                        Notes = "Need 8 volunteers for morning shift and 10 for afternoon shift."
+                    },
+                    new Event
+                    {
+                        Name = "Weekend Park Cleanup",
+                        Address = "50 Nature Trail, Welland, P9K 4M2",
+                        Date = today.AddDays(3),
+                        Start = today.AddDays(3).AddHours(9),
+                        End = today.AddDays(3).AddHours(14),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Welland").ID,
+                        Notes = "Bring work gloves. Lunch will be provided for volunteers."
+                    },
+                    new Event
+                    {
+                        Name = "Senior Center Visit",
+                        Address = "120 Elder Street, Thorold, T5R 1S8",
+                        Date = today.AddDays(2),
+                        Start = today.AddDays(2).AddHours(13),
+                        End = today.AddDays(2).AddHours(16),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Thorold").ID,
+                        Notes = "Bringing music to seniors. Need 5 volunteers with musical abilities."
+                    },
+
+                    // Upcoming Events (Medium-term)
+                    new Event
+                    {
+                        Name = "Green Earth Cleanup",
+                        Address = "123 Greenway Ave, St. Catharines, N2L 5G6",
+                        Date = today.AddDays(14),
+                        Start = today.AddDays(14).AddHours(9),
+                        End = today.AddDays(14).AddHours(16),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "St. Catharines").ID,
+                        Notes = "Environmental cleanup event. Goal: collect 200 lbs of waste and plant 30 trees."
+                    },
+                    new Event
+                    {
+                        Name = "Downtown Music Festival",
+                        Address = "Main Street Plaza, Toronto, M5V 1K4",
+                        Date = today.AddDays(21),
+                        Start = today.AddDays(21).AddHours(10),
+                        End = today.AddDays(21).AddHours(22),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Toronto").ID,
+                        Notes = "All-day event, volunteers needed for setup, monitoring, and cleanup."
+                    },
+
+                    // Upcoming Events (Long-term)
+                    new Event
+                    {
+                        Name = "Summer Camp Preparation",
+                        Address = "456 Hope Street, Welland, M3H 2T4",
+                        Date = today.AddMonths(2),
+                        Start = today.AddMonths(2).AddHours(10.5),
+                        End = today.AddMonths(2).AddHours(17),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Welland").ID,
+                        Notes = "Preparing for summer camp programs. Need volunteers with childcare experience."
+                    },
+                    new Event
+                    {
+                        Name = "Hamilton Annual Marathon",
+                        Address = "789 Care Blvd, Hamilton, L8W 1A5",
+                        Date = today.AddMonths(3),
+                        Start = today.AddMonths(3).AddHours(7),
+                        End = today.AddMonths(3).AddHours(15),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Hamilton").ID,
+                        Notes = "Major event - need 50+ volunteers for water stations and runner support."
+                    },
+                    new Event
+                    {
+                        Name = "Back to School Drive",
+                        Address = "321 Harmony Lane, Thorold, K1A 3B2",
+                        Date = today.AddMonths(4),
+                        Start = today.AddMonths(4).AddHours(8.5),
+                        End = today.AddMonths(4).AddHours(14),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Thorold").ID,
+                        Notes = "Collecting school supplies for students in need. Target: help 200+ children."
+                    },
+                    new Event
+                    {
+                        Name = "Fall Senior Care Day",
+                        Address = "555 Compassion Road, Port Colborne, P4N 8J6",
+                        Date = today.AddMonths(5),
+                        Start = today.AddMonths(5).AddHours(9),
+                        End = today.AddMonths(5).AddHours(17.5),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "Port Colborne").ID,
+                        Notes = "Full day of activities for seniors. Need volunteers for morning and afternoon shifts."
+                    },
+
+                    // Multi-day Events
+                    new Event
+                    {
+                        Name = "Music Festival Day 1",
+                        Address = "99 Performance Place, St. Catharines, L3K 5M7",
+                        Date = today.AddDays(45),
+                        Start = today.AddDays(45).AddHours(16),
+                        End = today.AddDays(45).AddHours(23),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "St. Catharines").ID,
+                        Notes = "First day of weekend music festival. Setting up and evening performances."
+                    },
+                    new Event
+                    {
+                        Name = "Music Festival Day 2",
+                        Address = "99 Performance Place, St. Catharines, L3K 5M7",
+                        Date = today.AddDays(46),
+                        Start = today.AddDays(46).AddHours(10),
+                        End = today.AddDays(46).AddHours(23),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "St. Catharines").ID,
+                        Notes = "Second day - full day of performances. Need volunteers for all shifts."
+                    },
+                    new Event
+                    {
+                        Name = "Music Festival Day 3",
+                        Address = "99 Performance Place, St. Catharines, L3K 5M7",
+                        Date = today.AddDays(47),
+                        Start = today.AddDays(47).AddHours(10),
+                        End = today.AddDays(47).AddHours(20),
+                        VolLocationID = context.VolLocations.FirstOrDefault(v => v.City == "St. Catharines").ID,
+                        Notes = "Final day - performances and cleanup. Need extra volunteers for teardown."
+                    }
                 );
                 context.SaveChanges();
             }
-  
-
         }
 
-        //private static void SeedVolSchedules(TomorrowsVoicesContext context)
-        //{
-        //    if (!context.VolSchedules.Any())
-        //    {
-        //        context.VolSchedules.AddRange(
-        //            new VolSchedule { ShiftDate = DateTime.Parse("2025-02-20") ,ScheduledStart = DateTime.Parse("2025-02-20 09:00 AM"), ScheduledEnd = DateTime.Parse("2025-02-20 12:00 PM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID },
 
+        private static void SeedVolSchedules(TomorrowsVoicesContext context)
+        {
+            if (!context.VolSchedules.Any())
+            {
+                // Get current date for reference
+                var today = DateTime.Today;
 
+                context.VolSchedules.AddRange(
+                    // Past Events - Community Cleanup
+                    new VolSchedule
+                    {
+                        ShiftDate = today.AddDays(-15),
+                        ScheduledStart = today.AddDays(-15).AddHours(9),
+                        ScheduledEnd = today.AddDays(-15).AddHours(12),
+                        EventID = context.Events.FirstOrDefault(e => e.Name == "Community Cleanup").ID
+                    },
 
-        //            new VolSchedule { ShiftDate = DateTime.Parse("2025-04-05"),ScheduledStart = DateTime.Parse("2025-04-05 08:00 AM"), ScheduledEnd = DateTime.Parse("2025-04-05 11:30 AM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-        //            new VolSchedule { ShiftDate = DateTime.Parse("2025-04-05"),ScheduledStart = DateTime.Parse("2025-04-05 11:30 AM"), ScheduledEnd = DateTime.Parse("2025-04-05 03:30 PM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID },
-        //            new VolSchedule { ShiftDate = DateTime.Parse("2025-04-05"),ScheduledStart = DateTime.Parse("2025-04-05 03:30 PM"), ScheduledEnd = DateTime.Parse("2025-04-05 06:30 PM"), EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID }
+                    // Past Events - Food Drive (morning shift)
+                    new VolSchedule
+                    {
+                        ShiftDate = today.AddDays(-7),
+                        ScheduledStart = today.AddDays(-7).AddHours(10),
+                        ScheduledEnd = today.AddDays(-7).AddHours(12),
+                        EventID = context.Events.FirstOrDefault(e => e.Name == "Food Drive").ID
+                    },
 
+                    // Past Events - Food Drive (afternoon shift)
+                    new VolSchedule
+                    {
+                        ShiftDate = today.AddDays(-7),
+                        ScheduledStart = today.AddDays(-7).AddHours(12),
+                        ScheduledEnd = today.AddDays(-7).AddHours(14),
+                        EventID = context.Events.FirstOrDefault(e => e.Name == "Food Drive").ID
+                    },
 
-        //        );
-        //        context.SaveChanges();
-        //    }
-        //}
+                    // Past Events - Winter Concert Support
+                    new VolSchedule
+                    {
+                        ShiftDate = today.AddMonths(-2),
+                        ScheduledStart = today.AddMonths(-2).AddHours(17),
+                        ScheduledEnd = today.AddMonths(-2).AddHours(22),
+                        EventID = context.Events.FirstOrDefault(e => e.Name == "Winter Concert Support").ID
+                    },
 
+                    // Past Events - Holiday Food Bank (morning shift)
+                    new VolSchedule
+                    {
+                        ShiftDate = today.AddMonths(-3),
+                        ScheduledStart = today.AddMonths(-3).AddHours(8),
+                        ScheduledEnd = today.AddMonths(-3).AddHours(12),
+                        EventID = context.Events.FirstOrDefault(e => e.Name == "Holiday Food Bank").ID
+                    },
+
+                    // Past Events - Holiday Food Bank (afternoon shift)
+                    new VolSchedule
+                    {
+                        ShiftDate = today.AddMonths(-3),
+                        ScheduledStart = today.AddMonths(-3).AddHours(12),
+                        ScheduledEnd = today.AddMonths(-3).AddHours(16),
+                        EventID = context.Events.FirstOrDefault(e => e.Name == "Holiday Food Bank").ID
+                    },
+
+                    // Today's Events - School Workshop
+                    new VolSchedule
+                    {
+                        ShiftDate = today,
+                        ScheduledStart = today.AddHours(10),
+                        ScheduledEnd = today.AddHours(15),
+                        EventID = context.Events.FirstOrDefault(e => e.Name == "Today's School Workshop").ID
+                    },
+
+                    // Today's Events - Evening Choir Practice
+                    new VolSchedule
+                    {
+                        ShiftDate = today,
+                        ScheduledStart = today.AddHours(18),
+                        ScheduledEnd = today.AddHours(21),
+                        EventID = context.Events.FirstOrDefault(e => e.Name == "Evening Choir Practice").ID
+                    },
+
+                    // Upcoming Events - Blood Donation Camp (morning shift)
+                    new VolSchedule
+                    {
+                        ShiftDate = today.AddDays(5),
+                        ScheduledStart = today.AddDays(5).AddHours(8),
+                        ScheduledEnd = today.AddDays(5).AddHours(13),
+                        EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID
+                    },
+
+                    // Upcoming Events - Blood Donation Camp (afternoon shift)
+                    new VolSchedule
+                    {
+                        ShiftDate = today.AddDays(5),
+                        ScheduledStart = today.AddDays(5).AddHours(13),
+                        ScheduledEnd = today.AddDays(5).AddHours(18.5),
+                        EventID = context.Events.FirstOrDefault(e => e.Name == "Blood Donation Camp").ID
+                    },
+
+                    // Upcoming Events - Weekend Park Cleanup
+                    new VolSchedule
+                    {
+                        ShiftDate = today.AddDays(3),
+                        ScheduledStart = today.AddDays(3).AddHours(9),
+                        ScheduledEnd = today.AddDays(3).AddHours(14),
+                        EventID = context.Events.FirstOrDefault(e => e.Name == "Weekend Park Cleanup").ID
+                    }
+                );
+                context.SaveChanges();
+            }
+        }
+
+        private static void SeedVolAttendances(TomorrowsVoicesContext context)
+        {
+            if (!context.VolAttendances.Any())
+            {
+                var today = DateTime.Today;
+
+                // Get some volunteer IDs to use in our seed data
+                var johnId = context.Volunteers.FirstOrDefault(v => v.FirstName == "John" && v.LastName == "Doe")?.ID ?? 1;
+                var janeId = context.Volunteers.FirstOrDefault(v => v.FirstName == "Jane" && v.LastName == "Smith")?.ID ?? 2;
+                var aliceId = context.Volunteers.FirstOrDefault(v => v.FirstName == "Alice" && v.LastName == "Johnson")?.ID ?? 3;
+                var bobId = context.Volunteers.FirstOrDefault(v => v.FirstName == "Bob" && v.LastName == "Brown")?.ID ?? 4;
+                var charlieId = context.Volunteers.FirstOrDefault(v => v.FirstName == "Charlie" && v.LastName == "Davis")?.ID ?? 5;
+                var davidId = context.Volunteers.FirstOrDefault(v => v.FirstName == "David" && v.LastName == "Miller")?.ID ?? 6;
+
+                // Get schedule IDs
+                var cleanupScheduleId = context.VolSchedules.FirstOrDefault(s =>
+                    s.ShiftDate == today.AddDays(-15) &&
+                    s.Event.Name == "Community Cleanup")?.ID ?? 1;
+
+                var foodDriveMorningId = context.VolSchedules.FirstOrDefault(s =>
+                    s.ShiftDate == today.AddDays(-7) &&
+                    s.ScheduledStart.Hour == 10 &&
+                    s.Event.Name == "Food Drive")?.ID ?? 2;
+
+                var foodDriveAfternoonId = context.VolSchedules.FirstOrDefault(s =>
+                    s.ShiftDate == today.AddDays(-7) &&
+                    s.ScheduledStart.Hour == 12 &&
+                    s.Event.Name == "Food Drive")?.ID ?? 3;
+
+                var winterConcertId = context.VolSchedules.FirstOrDefault(s =>
+                    s.ShiftDate.Month == today.AddMonths(-2).Month &&
+                    s.Event.Name == "Winter Concert Support")?.ID ?? 4;
+
+                var foodBankMorningId = context.VolSchedules.FirstOrDefault(s =>
+                    s.ShiftDate.Month == today.AddMonths(-3).Month &&
+                    s.ScheduledStart.Hour == 8 &&
+                    s.Event.Name == "Holiday Food Bank")?.ID ?? 5;
+
+                var foodBankAfternoonId = context.VolSchedules.FirstOrDefault(s =>
+                    s.ShiftDate.Month == today.AddMonths(-3).Month &&
+                    s.ScheduledStart.Hour == 12 &&
+                    s.Event.Name == "Holiday Food Bank")?.ID ?? 6;
+
+                // Today's schedules
+                var workshopTodayId = context.VolSchedules.FirstOrDefault(s =>
+                    s.ShiftDate.Date == today.Date &&
+                    s.Event.Name == "Today's School Workshop")?.ID ?? 7;
+
+                var choirPracticeTodayId = context.VolSchedules.FirstOrDefault(s =>
+                    s.ShiftDate.Date == today.Date &&
+                    s.Event.Name == "Evening Choir Practice")?.ID ?? 8;
+
+                // Future schedules
+                var bloodDonationMorningId = context.VolSchedules.FirstOrDefault(s =>
+                    s.ShiftDate == today.AddDays(5) &&
+                    s.ScheduledStart.Hour == 8 &&
+                    s.Event.Name == "Blood Donation Camp")?.ID ?? 9;
+
+                var bloodDonationAfternoonId = context.VolSchedules.FirstOrDefault(s =>
+                    s.ShiftDate == today.AddDays(5) &&
+                    s.ScheduledStart.Hour == 13 &&
+                    s.Event.Name == "Blood Donation Camp")?.ID ?? 10;
+
+                var parkCleanupId = context.VolSchedules.FirstOrDefault(s =>
+                    s.ShiftDate == today.AddDays(3) &&
+                    s.Event.Name == "Weekend Park Cleanup")?.ID ?? 11;
+
+                context.VolAttendances.AddRange(
+                    // Past attendance records with completed shifts
+
+                    // Community Cleanup - John, Jane, Alice
+                    new VolAttendance
+                    {
+                        VolunteerID = johnId,
+                        VolScheduleID = cleanupScheduleId,
+                        Status = true,  // Confirmed attendance
+                        ActualStart = today.AddDays(-15).AddHours(8).AddMinutes(50),  // Arrived 10 min early
+                        ActualEnd = today.AddDays(-15).AddHours(12).AddMinutes(15),   // Stayed 15 min late
+                        
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = janeId,
+                        VolScheduleID = cleanupScheduleId,
+                        Status = true,
+                        ActualStart = today.AddDays(-15).AddHours(9).AddMinutes(5),   // 5 min late
+                        ActualEnd = today.AddDays(-15).AddHours(12),                  // Left on time
+                        
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = aliceId,
+                        VolScheduleID = cleanupScheduleId,
+                        Status = true,
+                        ActualStart = today.AddDays(-15).AddHours(9).AddMinutes(10),  // 10 min late
+                        ActualEnd = today.AddDays(-15).AddHours(12).AddMinutes(20),   // Stayed 20 min late
+                        
+                    },
+
+                    // Food Drive - Bob, Charlie, Jane (morning shift)
+                    new VolAttendance
+                    {
+                        VolunteerID = bobId,
+                        VolScheduleID = foodDriveMorningId,
+                        Status = true,
+                        ActualStart = today.AddDays(-7).AddHours(9).AddMinutes(45),   // 15 min early
+                        ActualEnd = today.AddDays(-7).AddHours(12).AddMinutes(10),    // 10 min late
+                        
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = charlieId,
+                        VolScheduleID = foodDriveMorningId,
+                        Status = true,
+                        ActualStart = today.AddDays(-7).AddHours(10),                 // On time
+                        ActualEnd = today.AddDays(-7).AddHours(12),                   // Left on time
+                      
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = janeId,
+                        VolScheduleID = foodDriveMorningId,
+                        Status = true,
+                        ActualStart = today.AddDays(-7).AddHours(10).AddMinutes(5),   // 5 min late
+                        ActualEnd = today.AddDays(-7).AddHours(12).AddMinutes(30),    // 30 min late
+      
+                    },
+
+                    // Food Drive - David, Alice (afternoon shift)
+                    new VolAttendance
+                    {
+                        VolunteerID = davidId,
+                        VolScheduleID = foodDriveAfternoonId,
+                        Status = true,
+                        ActualStart = today.AddDays(-7).AddHours(11).AddMinutes(45),  // 15 min early
+                        ActualEnd = today.AddDays(-7).AddHours(14).AddMinutes(15),    // 15 min late
+   
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = aliceId,
+                        VolScheduleID = foodDriveAfternoonId,
+                        Status = true,
+                        ActualStart = today.AddDays(-7).AddHours(12),                 // On time
+                        ActualEnd = today.AddDays(-7).AddHours(14),                   // Left on time
        
-    
+                    },
 
-}
+                    // Winter Concert - David, Charlie, John
+                    new VolAttendance
+                    {
+                        VolunteerID = davidId,
+                        VolScheduleID = winterConcertId,
+                        Status = true,
+                        ActualStart = today.AddMonths(-2).AddHours(16).AddMinutes(30), // 30 min early
+                        ActualEnd = today.AddMonths(-2).AddHours(22).AddMinutes(30),   // 30 min late
+          
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = charlieId,
+                        VolScheduleID = winterConcertId,
+                        Status = true,
+                        ActualStart = today.AddMonths(-2).AddHours(16).AddMinutes(45), // 15 min early
+                        ActualEnd = today.AddMonths(-2).AddHours(22).AddMinutes(15),   // 15 min late
+       
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = johnId,
+                        VolScheduleID = winterConcertId,
+                        Status = true,
+                        ActualStart = today.AddMonths(-2).AddHours(17),                // On time
+                        ActualEnd = today.AddMonths(-2).AddHours(22),                  // Left on time
+
+                    },
+
+                    // Holiday Food Bank - All volunteers (morning and afternoon shifts)
+
+                    // Morning shift
+                    new VolAttendance
+                    {
+                        VolunteerID = johnId,
+                        VolScheduleID = foodBankMorningId,
+                        Status = true,
+                        ActualStart = today.AddMonths(-3).AddHours(7).AddMinutes(45),  // 15 min early
+                        ActualEnd = today.AddMonths(-3).AddHours(12).AddMinutes(15),   // 15 min late
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = janeId,
+                        VolScheduleID = foodBankMorningId,
+                        Status = true,
+                        ActualStart = today.AddMonths(-3).AddHours(8),                 // On time
+                        ActualEnd = today.AddMonths(-3).AddHours(12),                  // Left on time
+
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = aliceId,
+                        VolScheduleID = foodBankMorningId,
+                        Status = true,
+                        ActualStart = today.AddMonths(-3).AddHours(8).AddMinutes(10), // 10 min late
+                        ActualEnd = today.AddMonths(-3).AddHours(12).AddMinutes(5),   // 5 min late
+                    },
+
+                    // Afternoon shift
+                    new VolAttendance
+                    {
+                        VolunteerID = bobId,
+                        VolScheduleID = foodBankAfternoonId,
+                        Status = true,
+                        ActualStart = today.AddMonths(-3).AddHours(11).AddMinutes(50), // 10 min early
+                        ActualEnd = today.AddMonths(-3).AddHours(16).AddMinutes(10),   // 10 min late
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = charlieId,
+                        VolScheduleID = foodBankAfternoonId,
+                        Status = true,
+                        ActualStart = today.AddMonths(-3).AddHours(12),                // On time
+                        ActualEnd = today.AddMonths(-3).AddHours(16),                  // Left on time
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = davidId,
+                        VolScheduleID = foodBankAfternoonId,
+                        Status = true,
+                        ActualStart = today.AddMonths(-3).AddHours(12).AddMinutes(5),  // 5 min late
+                        ActualEnd = today.AddMonths(-3).AddHours(16).AddMinutes(15),   // 15 min late
+                    },
+
+                    // Today's schedules - ongoing events
+
+                    // Today's School Workshop - John, Jane, Bob
+                    new VolAttendance
+                    {
+                        VolunteerID = johnId,
+                        VolScheduleID = workshopTodayId,
+                        Status = true,
+                        ActualStart = today.AddHours(9).AddMinutes(45), // Already checked in
+                        ActualEnd = null, // Not checked out yet
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = janeId,
+                        VolScheduleID = workshopTodayId,
+                        Status = true,
+                        ActualStart = today.AddHours(10),   // Just checked in
+                        ActualEnd = null,                   // Not checked out yet
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = bobId,
+                        VolScheduleID = workshopTodayId,
+                        Status = true,
+                        ActualStart = null,  // Hasn't checked in yet
+                        ActualEnd = null,    // Not checked out yet
+                    },
+
+                    // Evening Choir Practice - Not started yet
+                    new VolAttendance
+                    {
+                        VolunteerID = charlieId,
+                        VolScheduleID = choirPracticeTodayId,
+                        Status = true,
+                        ActualStart = null,  // Hasn't started yet
+                        ActualEnd = null,    // Not checked out yet
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = davidId,
+                        VolScheduleID = choirPracticeTodayId,
+                        Status = true,
+                        ActualStart = null,  // Hasn't started yet
+                        ActualEnd = null,    // Not checked out yet
+                    },
+
+                    // Future event registrations
+
+                    // Blood Donation Camp - Morning shift
+                    new VolAttendance
+                    {
+                        VolunteerID = johnId,
+                        VolScheduleID = bloodDonationMorningId,
+                        Status = true,
+                        ActualStart = null,  // Future event
+                        ActualEnd = null,    // Future event
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = aliceId,
+                        VolScheduleID = bloodDonationMorningId,
+                        Status = true,
+                        ActualStart = null,  // Future event
+                        ActualEnd = null,    // Future event
+                    },
+
+                    // Blood Donation Camp - Afternoon shift
+                    new VolAttendance
+                    {
+                        VolunteerID = bobId,
+                        VolScheduleID = bloodDonationAfternoonId,
+                        Status = true,
+                        ActualStart = null,  // Future event
+                        ActualEnd = null,    // Future event
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = charlieId,
+                        VolScheduleID = bloodDonationAfternoonId,
+                        Status = true,
+                        ActualStart = null,  // Future event
+                        ActualEnd = null,    // Future event
+                    },
+
+                    // Weekend Park Cleanup
+                    new VolAttendance
+                    {
+                        VolunteerID = janeId,
+                        VolScheduleID = parkCleanupId,
+                        Status = true,
+                        ActualStart = null,  // Future event
+                        ActualEnd = null,    // Future event
+                    },
+                    new VolAttendance
+                    {
+                        VolunteerID = davidId,
+                        VolScheduleID = parkCleanupId,
+                        Status = true,
+                        ActualStart = null,  // Future event
+                        ActualEnd = null,    // Future event
+                    }
+                );
+                context.SaveChanges();
+            }
+        }
+    }
 }

@@ -1,0 +1,149 @@
+﻿@model TomorrowsVoices.ViewModels.CheckInViewModel
+@{
+    ViewData["Title"] = "Check In";
+}
+
+<div class="volunteer-portal-header">
+    <h1>Check In</h1>
+    <p class="welcome-message">Welcome, @Model.VolunteerName</p>
+    <div class="portal-tabs">
+        <a class="portal-tab" href="@Url.Action("AvailableEvents")">Available Events</a>
+        <a class="portal-tab" href="@Url.Action("MyEvents")">My Events</a>
+    </div>
+</div>
+
+<div class="card check-in-card">
+    <div class="card-header">
+        <h2 class="card-title">@Model.EventName</h2>
+        <div class="event-location">
+            <i class="fas fa-map-marker-alt"></i> @Model.EventLocation, @Model.EventCity
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="check-in-details">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="detail-group">
+                        <label>Shift Date:</label>
+                        <p>@Model.ShiftDate</p>
+                    </div>
+                    <div class="detail-group">
+                        <label>Shift Time:</label>
+                        <p>@Model.ShiftTime</p>
+                    </div>
+                    <div class="detail-group">
+                        <label>Duration:</label>
+                        <p>@Model.Duration</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="detail-group">
+                        <label>Status:</label>
+                        <p>
+                            <span class="badge @(Model.Status == "Checked In" ? "badge-success" :
+                                               Model.Status == "In Progress" ? "badge-warning" :
+                                               Model.Status == "Completed" ? "badge-info" :
+                                               "badge-secondary")">
+                                @Model.Status
+                            </span>
+                        </p>
+                    </div>
+                    @if (Model.TimeUntilShift.TotalMinutes > 0)
+                    {
+                        <div class="detail-group">
+                            <label>Starts in:</label>
+                            <p id="countdownTimer" class="countdown-display">@Model.TimeUntilShiftDisplay</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="check-in-actions mt-4">
+                @if (!Model.ActualStart.HasValue && Model.CanCheckIn)
+                {
+                    <form asp-action="PerformCheckIn" method="post">
+                        <input type="hidden" name="id" value="@Model.AttendanceId" />
+                        <button type="submit" class="btn btn-lg btn-success" id="checkInButton">
+                            <i class="fas fa-check-circle"></i> Check In Now
+                        </button>
+
+                        <div class="check-in-info alert alert-info mt-3">
+                            <p>
+                                <i class="fas fa-info-circle"></i>
+                                You can check in up to 15 minutes before your scheduled start time.
+                            </p>
+                        </div>
+                    </form>
+                }
+                else if (Model.ActualStart.HasValue && !Model.ActualEnd.HasValue && Model.CanCheckOut)
+                {
+                    <form asp-action="PerformCheckOut" method="post">
+                        <input type="hidden" name="id" value="@Model.AttendanceId" />
+                        <div class="checked-in-time alert alert-success">
+                            <p>
+                                <i class="fas fa-clock"></i>
+                                You checked in at <strong>@Model.ActualStart.Value.ToString("h:mm tt")</strong>
+                            </p>
+                        </div>
+                        <button type="submit" class="btn btn-lg btn-info" id="checkOutButton">
+                            <i class="fas fa-sign-out-alt"></i> Check Out
+                        </button>
+                    </form>
+                }
+                else if (Model.ActualStart.HasValue && Model.ActualEnd.HasValue)
+                {
+                    <div class="completed-shift alert alert-success">
+                        <h4>Shift Completed!</h4>
+                        <p>
+                            <i class="fas fa-clock"></i>
+                            You checked in at <strong>@Model.ActualStart.Value.ToString("h:mm tt")</strong>
+                            and checked out at <strong>@Model.ActualEnd.Value.ToString("h:mm tt")</strong>
+                        </p>
+                        <p>
+                            <i class="fas fa-hourglass-end"></i>
+                            Total time: <strong>@((Model.ActualEnd.Value - Model.ActualStart.Value).TotalHours.ToString("0.0")) hours</strong>
+                        </p>
+                        <p>Thank you for volunteering!</p>
+                    </div>
+                }
+                else if (Model.Status == "Missed")
+                {
+                    <div class="missed-shift alert alert-warning">
+                        <h4>Missed Shift</h4>
+                        <p>
+                            <i class="fas fa-exclamation-triangle"></i>
+                            You missed this shift. Please contact the event organizer if this was a mistake.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <div class="upcoming-shift alert alert-info">
+                        <h4>Upcoming Shift</h4>
+                        <p>
+                            <i class="fas fa-info-circle"></i>
+                            You will be able to check in starting 15 minutes before your shift.
+                        </p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a href="@Url.Action("MyEvents")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to My Events
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/volunteer-portal.js"></script>
+    @if (Model.TimeUntilShift.TotalMinutes > 0 && Model.TimeUntilShift.TotalMinutes <= 15)
+    {
+        <script>
+            $(document).ready(function() {
+                startCheckInCountdown(@Model.TimeUntilShift.TotalSeconds);
+            });
+        </script>
+    }
+ }

@@ -54,6 +54,3 @@ namespace TomorrowsVoices.Models
     }
 }
 
-//Now for my volunteer i want to come up with a look up value Volunteer likr for example (How many events showed up, 
-//How many hours spent in events, while capturing some model properties: fullname, age, location, email) 
-//Something like this or may be something helpful to have an idea of what and how volunteer is doing for each Events on one page.

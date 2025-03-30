@@ -1,18 +1,30 @@
 ﻿@using TomorrowsVoices.ViewModels
-@model EventCreateVM
+@model EventEditVM
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit Event</h1>
+<!-- Required CSS Libraries -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="~/css/event-styles.css">
 
+<h1 class="mt-4">Edit Event</h1>
 
-<hr />
-<form id="eventForm" asp-action="Edit" method="post">
+<hr style="margin-bottom: 35px" />
+<form id="eventForm" asp-action="Edit" asp-method="post" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Event.ID" />
+    <input type="hidden" asp-for="Event.Start" id="Event_Start" />
+    <input type="hidden" asp-for="Event.End" id="Event_End" />
+
+    <!-- Event Details Section -->
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4 col-12">
+            <h3 class="calendar-title mb-3">
+                <i class="bi bi-info-circle"></i> Event Information
+            </h3>
             <div class="form-group">
                 <label asp-for="Event.Name" class="control-label"></label>
                 <input asp-for="Event.Name" class="form-control" id="eventName" />
@@ -24,88 +36,51 @@
                 <span asp-validation-for="Event.Location" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Event.Address" class="control-label"></label>
+                <textarea asp-for="Event.Address" class="form-control"></textarea>
+                <span asp-validation-for="Event.Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Event.VolLocationID" class="control-label"></label>
                 <select asp-for="Event.VolLocationID" class="form-control" asp-items="ViewBag.VolLocationID" required></select>
             </div>
-            <div class="form-group">
-                <label asp-for="Event.Start" class="control-label">Date*</label>
-                <input asp-for="Event.Start" type="date" class="form-control" required />
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Event.Start" class="control-label">Start Time*</label>
-                        <input asp-for="Event.Start" type="time" class="form-control" required />
-                    </div>
+        </div>
+        <div class="col-md-8 col-12">
+            <div id="multiDateSection">
+                <div class="calendar-header">
+                    <h3 class="calendar-title">
+                        <i class="bi bi-calendar-event"></i> Event Dates
+                    </h3>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Event.End" class="control-label">End Time*</label>
-                        <input asp-for="Event.End" type="time" class="form-control" required />
-                    </div>
-                </div>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="Event.Notes" class="control-label">Notes</label>
-                <textarea asp-for="Event.Notes" class="form-control"></textarea>
+                <div class="calendar-content">
+                    <div class="row">
+                        <!-- Calendar Column -->
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label for="datePicker">Select the dates the event will take place</label>
+                                <div id="datePicker" class="form-control" style="display: none"></div>
+                                <small class="form-text text-muted">Click dates to select/deselect them. Configure each selected date.</small>
+                            </div>
+                        </div>
+
+                        <!-- Selected Dates Column -->
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label>Selected Dates</label>
+                                <div id="selectedDatesContainer" class="border rounded p-3" style="min-height: 300px; max-height: 300px; overflow-y: auto;">
+                                    <div id="emptyDatesMessage" class="text-muted text-center py-5">
+                                        <i class="bi bi-calendar-plus"></i>
+                                        <p>No dates selected yet.<br>Click on the calendar to select dates.</p>
+                                    </div>
+                                    <div id="selectedDatesList" class="selected-dates"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <h3>Schedules <button type="button" id="newScheduleBtn" class="btn btn-sm btn-primary">+</button></h3>
-
-    <div id="scheduleTabs" class="mb-3">
-        <!-- Schedule tabs will be dynamically added here -->
-        @if (Model.ExistingSchedules != null && Model.ExistingSchedules.Any())
-        {
-            <ul class="nav nav-tabs" id="schedulesTab" role="tablist">
-                @for (int i = 0; i < Model.ExistingSchedules.Count; i++)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link @(i == 0 ? "active" : "")" id="schedule-@i-tab" data-toggle="tab"
-                           href="#schedule-@i" role="tab">
-                            Schedule @(i + 1)       
-                            <button type="button" class="btn btn-warning edit-schedule mx-2" data-schedule-index="@i">
-                                <img src="http://localhost:5091/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: 0px; margin-right: 8px">Edit
-                            </button>
-                            <button type="button" class="close remove-schedule" data-schedule-index="@i">&times;</button>
-                        </a>
-                    </li>
-                }
-            </ul>
-        }
-    </div>
-
-    <div id="scheduleContent" class="tab-content mb-4">
-        <!-- Schedule content will be dynamically added here -->
-        @if (Model.ExistingSchedules != null && Model.ExistingSchedules.Any())
-        {
-            @for (int i = 0; i < Model.ExistingSchedules.Count; i++)
-            {
-                <div class="tab-pane fade @(i == 0 ? "show active" : "")" id="schedule-@i" role="tabpanel">
-                    @Html.Hidden($"ExistingSchedules[{i}].ScheduleId", Model.ExistingSchedules[i].ScheduleID)
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Start Time</label>
-                                <input type="datetime-local" class="form-control"
-                                       name="ExistingSchedules[@i].ScheduledStart"
-                                       value="@Model.ExistingSchedules[i].ScheduledStart.ToString("yyyy-MM-ddTHH:mm")" />
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>End Time</label>
-                                <input type="datetime-local" class="form-control"
-                                       name="ExistingSchedules[@i].ScheduledEnd"
-                                       value="@Model.ExistingSchedules[i].ScheduledEnd.ToString("yyyy-MM-ddTHH:mm")" />
-                            </div>
-                        </div>
-                    </div>
-                  
-                </div>
-            }
-        }
     </div>
 
     <!-- Schedule Form Modal -->
@@ -114,7 +89,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Add Schedule</h5>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     @Html.Partial("_SchedulePartial", new ScheduleVM())
@@ -122,315 +97,754 @@
             </div>
         </div>
     </div>
- <div class="form-group">
-        <button type="submit" class="btn btn-success">
-            <img src="~/Images/save-changes-icon.png" alt="Save changes" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
-            Save
+
+    <div class="form-group mt-4">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> Save Changes
         </button>
-        <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Events Page</a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+            Back to Events Page
+        </a>
+    </div>
+
+    <!-- Date Configuration Modal -->
+    <div class="modal fade" id="dateConfigModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-calendar-check"></i> Configure Event for <span id="configModalDate"></span>
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="currentDateConfig" />
+
+                    <div class="modal-date-info">
+                        <i class="bi bi-info-circle"></i>
+                        Configure the event details and shifts for this specific date.
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="dateConfigStartTime">Event Start Time <span class="text-danger">*</span></label>
+                                <input type="time" id="dateConfigStartTime" name="dateConfigStartTime" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="dateConfigEndTime">Event End Time <span class="text-danger">*</span></label>
+                                <input type="time" id="dateConfigEndTime" name="dateConfigEndTime" class="form-control" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-check"></i> Shifts
+                        </h5>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-success" id="dateConfigGenerateShifts">
+                                <i class="bi bi-magic"></i> Generate Shifts
+                            </button>
+                            <button type="button" class="btn btn-sm btn-primary ml-2" id="dateConfigAddShift">
+                                <i class="bi bi-plus"></i> Add Shift
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="dateConfigShiftsContainer">
+                        <div id="dateConfigEmptyShifts" class="empty-state">
+                            <i class="bi bi-calendar-plus"></i>
+                            <p>No shifts added yet</p>
+                            <small>Use the buttons above to add shifts to this date</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveDateConfigBtn">
+                        <i class="bi bi-check2"></i> Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Shift Modal for Date Configuration -->
+    <div class="modal fade" id="addShiftModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-plus-circle"></i> Add Shift
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="shiftStartTime">Start Time <span class="text-danger">*</span></label>
+                            <input type="time" id="shiftStartTime" name="shiftStartTime" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="shiftEndTime">End Time <span class="text-danger">*</span></label>
+                            <input type="time" id="shiftEndTime" name="shiftEndTime" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="shiftCapacity">Capacity <span class="text-danger">*</span></label>
+                            <input type="number" id="shiftCapacity" class="form-control" value="1" min="1" max="100" required />
+                            <small class="form-text text-muted">Maximum number of volunteers for this shift</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="addShiftBtn">Add Shift</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Shifts Modal for Date Configuration -->
+    <div class="modal fade" id="generateShiftsModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #28a745;">
+                    <h5 class="modal-title">
+                        <i class="bi bi-magic"></i> Generate Shifts
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="shiftOption" id="optionDuration" value="duration" checked>
+                        <label class="form-check-label" for="optionDuration">
+                            By shift duration
+                        </label>
+                        <div class="mt-2 ml-4">
+                            <label for="shiftDuration">Duration (minutes):</label>
+                            <input type="number" class="form-control" id="shiftDuration" value="60" min="15" max="480">
+                        </div>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="shiftOption" id="optionCount" value="count">
+                        <label class="form-check-label" for="optionCount">
+                            By number of shifts
+                        </label>
+                        <div class="mt-2 ml-4">
+                            <label for="shiftCount">Number of shifts:</label>
+                            <input type="number" class="form-control" id="shiftCount" value="3" min="1" max="20">
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <label for="defaultCapacity">Default capacity per shift:</label>
+                        <input type="number" class="form-control" id="defaultCapacity" value="1" min="1" max="100">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="confirmGenerateShiftsBtn">Generate</button>
+                </div>
+            </div>
+        </div>
     </div>
 </form>
 
-
 @section Scripts {
+    <!-- Include Flatpickr for the calendar -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <script>
-        // Declare originalAvailOptions at a higher scope
-        let originalAvailOptions;
+        // Store configurations for multiple dates
+        const dateConfigurations = {};
+        let flatpickrCalendar;
 
         $(document).ready(function () {
-            // Store the original options when the document loads
-            originalAvailOptions = $("#availOptions").html();
+            // Get the existing event date from the hidden field
+            const existingEventDate = new Date($("#Event_Start").val());
 
-            // Add new schedule button event handler
-            $("#newScheduleBtn").click(function () {
-                $("input[name='NewSchedule.ScheduledStart']").val('');
-                $("input[name='NewSchedule.ScheduledEnd']").val('');
-
-                $("#availOptions").html(originalAvailOptions);
-                $("#selectedOptions").empty();
-
-                // Set modal title and button text for adding
-                $(".modal-title").text("Add Schedule");
-                $("#addScheduleBtn").text("Add Schedule").removeData("schedule-index");
-
-                $("#scheduleModal").modal("show");
-            });
-
-            // Move volunteers left to right (select)
-            $("#btnLeft").click(function () {
-                $("#availOptions option:selected").each(function () {
-                    $("#selectedOptions").append($(this));
-                });
-            });
-
-            // Move volunteers right to left (deselect)
-            $("#btnRight").click(function () {
-                $("#selectedOptions option:selected").each(function () {
-                    $("#availOptions").append($(this));
-                });
-            });
-
-            // Edit schedule button event handler - must use on() for dynamically created elements
-            $(document).on("click", ".edit-schedule", function(e) {
-                e.preventDefault();
-
-                const scheduleIndex = $(this).data("schedule-index");
-                const scheduleTab = $(`#schedule-${scheduleIndex}`);
-
-                // Extract current values
-                const scheduleId = scheduleTab.find("input[name$='.ScheduleId']").val();
-                const scheduledStart = scheduleTab.find("input[name$='.ScheduledStart']").val();
-                const scheduledEnd = scheduleTab.find("input[name$='.ScheduledEnd']").val();
-
-                // Set values in the modal
-                $("input[name='NewSchedule.ScheduledStart']").val(scheduledStart);
-                $("input[name='NewSchedule.ScheduledEnd']").val(scheduledEnd);
-
-                // Clear and repopulate volunteer selections
-                $("#selectedOptions").empty();
-                $("#availOptions").html(originalAvailOptions);
-
-                // Get selected volunteers from the schedule
-                const selectedVolunteerIds = [];
-                scheduleTab.find("input[name$='.VolunteerIds[]']").each(function() {
-                    selectedVolunteerIds.push($(this).val());
-                });
-
-                // Move volunteers from available to selected in the modal
-                selectedVolunteerIds.forEach(id => {
-                    const option = $(`#availOptions option[value='${id}']`);
-                    if (option.length > 0) {
-                        option.appendTo("#selectedOptions");
-                    }
-                });
-
-                // Change modal title and button text
-                $(".modal-title").text("Edit Schedule");
-                $("#addScheduleBtn").text("Update Schedule").data("schedule-index", scheduleIndex);
-
-                $("#scheduleModal").modal("show");
-            });
-
-            // Remove schedule button event handler - FIXED RENUMBERING LOGIC
-            $(document).on("click", ".remove-schedule", function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                const scheduleIndex = $(this).data("schedule-index");
-
-                // Remove the tab and its content
-                $(`#schedule-${scheduleIndex}-tab`).parent().remove();
-                $(`#schedule-${scheduleIndex}`).remove();
-
-                // If there are remaining tabs, activate the first one
-                if ($("#schedulesTab .nav-item").length > 0) {
-                    $("#schedulesTab .nav-link:first").tab("show");
+            // Initialize Flatpickr with multiple dates selection
+            flatpickrCalendar = flatpickr("#datePicker", {
+                mode: "multiple",
+                inline: true,
+                dateFormat: "Y-m-d",
+                minDate: "today",
+                defaultDate: existingEventDate,
+                onChange: function(selectedDates, dateStr, instance) {
+                    updateSelectedDatesList(selectedDates);
                 }
-
-                // Properly renumber the remaining tabs with correct index values
-                $("#schedulesTab .nav-item").each(function(i) {
-                    const link = $(this).find("a.nav-link");
-                    link.attr("id", `schedule-${i}-tab`);
-                    link.attr("href", `#schedule-${i}`);
-                    link.text(`Schedule ${i + 1}`);
-
-                    // Update all buttons with correct index
-                    link.find(".edit-schedule").attr("data-schedule-index", i);
-                    link.find(".remove-schedule").attr("data-schedule-index", i);
-
-                    // Remove and re-add with updated indexes
-                    link.find(".edit-schedule, .remove-schedule").remove();
-                    link.append(`
-                        <button type="button" class="btn btn-warning edit-schedule mx-2" data-schedule-index="${i}">
-                            <img src="/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: 0px; margin-right: 8px">Edit
-                        </button>
-                        <button type="button" class="close remove-schedule" data-schedule-index="${i}">&times;</button>
-                    `);
-                });
-
-                // Also renumber the content panes
-                $("#scheduleContent .tab-pane").each(function(i) {
-                    const pane = $(this);
-                    pane.attr("id", `schedule-${i}`);
-
-                    // Update all hidden fields and input names with the correct index
-                    pane.find(`input[name^='ExistingSchedules[']`).each(function() {
-                        const input = $(this);
-                        const name = input.attr('name');
-                        const newName = name.replace(/ExistingSchedules\[\d+\]/, `ExistingSchedules[${i}]`);
-                        input.attr('name', newName);
-                    });
-                });
             });
 
-            // Add schedule button event handler
-            $("#addScheduleBtn").click(function () {
-                const scheduledStart = $("input[name='NewSchedule.ScheduledStart']").val();
-                const scheduledEnd = $("input[name='NewSchedule.ScheduledEnd']").val();
-                const selectedVolunteers = $("#selectedOptions option").length > 0 ?
-                                          $("#selectedOptions option") : [];
+            // If there's an existing event date, add it to the configurations
+            if (existingEventDate && !isNaN(existingEventDate)) {
+                const dateStr = existingEventDate.toISOString().split('T')[0];
+                const startTime = new Date($("#Event_Start").val()).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+                const endTime = new Date($("#Event_End").val()).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
 
-                // Validation code
-                $(".schedule-form .error-message").remove();
-                let isValid = true;
+                // Add existing shifts to the configuration
+                const existingShifts = [];
+        @foreach (var schedule in Model.ExistingSchedules)
+        {
+            <text>
+                        existingShifts.push({
+                            startTime: '@schedule.ScheduledStart.ToString("HH:mm")',
+                            endTime: '@schedule.ScheduledEnd.ToString("HH:mm")',
+                            capacity: @schedule.Capacity,
+                            scheduleId: @schedule.ScheduleID
+                        });
+            </text>
+        }
 
-                if (!scheduledStart) {
-                    $("input[name='NewSchedule.ScheduledStart']").after('<div class="error-message text-danger">Start time is required</div>');
-                    isValid = false;
-                }
+                dateConfigurations[dateStr] = {
+                    startTime: startTime,
+                    endTime: endTime,
+                    shifts: existingShifts
+                };
 
-                if (!scheduledEnd) {
-                    $("input[name='NewSchedule.ScheduledEnd']").after('<div class="error-message text-danger">End time is required</div>');
-                    isValid = false;
-                }
+                // Update the UI to show the configured date
+                updateSelectedDatesList([existingEventDate]);
+            }
 
-                if (selectedVolunteers.length === 0) {
-                    $("#selectedOptions").after('<div class="error-message text-danger">At least one volunteer must be selected</div>');
-                    isValid = false;
-                }
+            // Function to update the selected dates list display
+            function updateSelectedDatesList(dates) {
+                const container = $("#selectedDatesList");
+                const emptyMessage = $("#emptyDatesMessage");
 
-                if (!isValid) {
+                if (dates.length === 0) {
+                    container.empty();
+                    emptyMessage.show();
                     return;
                 }
 
-                // Check if we're editing or adding
-                const isEdit = $(this).text() === "Update Schedule";
-                const scheduleIndex = isEdit ? $(this).data("schedule-index") : $(".nav-tabs .nav-item").length;
+                emptyMessage.hide();
+                container.empty();
 
-                // Create HTML for volunteers
-                let volunteersHtml = '';
-                let volunteerIdsHtml = '';
+                dates.forEach(date => {
+                    const dateStr = date.toISOString().split('T')[0];
+                    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric'
+                    });
 
-                selectedVolunteers.each(function () {
-                    volunteersHtml += `<div>${$(this).text()}</div>`;
-                    volunteerIdsHtml += `<input type="hidden" name="ExistingSchedules[${scheduleIndex}].VolunteerIds[]" value="${$(this).val()}" />`;
+                    // Check if this date has been configured
+                    const isConfigured = dateConfigurations[dateStr] !== undefined;
+                    const statusClass = isConfigured ? 'configured' : 'not-configured';
+                    const statusText = isConfigured ? 'Configured' : 'Not Configured';
+
+                    const datePill = $(`
+                        <div class="date-pill ${statusClass}" data-date="${dateStr}">
+                            <span class="date-pill-status ${statusClass}">${statusText}</span>
+                            <span class="date-pill-text">${formattedDate}</span>
+                            <div class="date-pill-actions">
+                                <button type="button" class="date-pill-action configure" title="Configure this date">
+                                    <i class="bi bi-gear-fill"></i>
+                                </button>
+                                <button type="button" class="date-pill-action remove" title="Remove this date">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `);
+
+                    container.append(datePill);
+                });
+            }
+
+            // Handle clicking on configure button for a date
+            $(document).on("click", ".date-pill-action.configure", function() {
+                const dateStr = $(this).closest(".date-pill").data("date");
+                openDateConfigModal(dateStr);
+            });
+
+            // Handle removing a date
+            $(document).on("click", ".date-pill-action.remove", function() {
+                const dateStr = $(this).closest(".date-pill").data("date");
+
+                // Remove from flatpickr selection
+                const currentDates = flatpickrCalendar.selectedDates;
+                const updatedDates = currentDates.filter(d =>
+                    d.toISOString().split('T')[0] !== dateStr
+                );
+
+                // Remove date configuration if exists
+                delete dateConfigurations[dateStr];
+
+                // Update flatpickr
+                flatpickrCalendar.setDate(updatedDates);
+
+                // Update the display
+                updateSelectedDatesList(updatedDates);
+            });
+
+            // Function to open date configuration modal
+            function openDateConfigModal(dateStr) {
+                const date = new Date(dateStr);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
                 });
 
-                if (isEdit) {
-                    // Update existing tab content
-                    const scheduleId = $(`#schedule-${scheduleIndex} input[name$='.ScheduleId']`).val();
+                // Set the date in the modal
+                $("#configModalDate").text(formattedDate);
+                $("#currentDateConfig").val(dateStr);
 
-                    const tabContent = `
-                        <input type="hidden" name="ExistingSchedules[${scheduleIndex}].ScheduleId" value="${scheduleId}" />
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Start Time</label>
-                                    <input type="datetime-local" class="form-control"
-                                           name="ExistingSchedules[${scheduleIndex}].ScheduledStart"
-                                           value="${scheduledStart}" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>End Time</label>
-                                    <input type="datetime-local" class="form-control"
-                                           name="ExistingSchedules[${scheduleIndex}].ScheduledEnd"
-                                           value="${scheduledEnd}" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Selected Volunteers</label>
-                            <div class="selected-volunteers">
-                                ${volunteersHtml}
-                            </div>
-                            <div class="selected-volunteer-ids">
-                                ${volunteerIdsHtml}
-                            </div>
-                        </div>
-                    `;
+                // Fill in the form with existing configuration or defaults
+                if (dateConfigurations[dateStr]) {
+                    const config = dateConfigurations[dateStr];
+                    $("#dateConfigStartTime").val(config.startTime);
+                    $("#dateConfigEndTime").val(config.endTime);
 
-                    $(`#schedule-${scheduleIndex}`).html(tabContent);
+                    // Render existing shifts
+                    renderShiftsInModal(config.shifts || []);
                 } else {
-                    // Code for adding a new schedule
-                    const tabItem = `
-                        <li class="nav-item">
-                            <a class="nav-link ${scheduleIndex === 0 ? 'active' : ''}"
-                               id="schedule-${scheduleIndex}-tab"
-                               data-toggle="tab"
-                               href="#schedule-${scheduleIndex}" role="tab">
-                                Schedule ${scheduleIndex + 1}
-                                <button type="button" class="btn btn-warning edit-schedule mx-2" data-schedule-index="${scheduleIndex}">
-                                    <img src="/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: 0px; margin-right: 8px">Edit
-                                </button>
-                                <button type="button" class="close remove-schedule" data-schedule-index="${scheduleIndex}">&times;</button>
-                            </a>
-                        </li>
-                    `;
+                    // Use the main event times as default
+                    $("#dateConfigStartTime").val($("#Event_Start").val());
+                    $("#dateConfigEndTime").val($("#Event_End").val());
 
-                    const tabContent = `
-                        <div class="tab-pane fade ${scheduleIndex === 0 ? 'show active' : ''}"
-                             id="schedule-${scheduleIndex}" role="tabpanel">
-                            <input type="hidden" name="ExistingSchedules[${scheduleIndex}].ScheduleId" value="" />
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Start Time</label>
-                                        <input type="datetime-local" class="form-control"
-                                               name="ExistingSchedules[${scheduleIndex}].ScheduledStart"
-                                               value="${scheduledStart}" />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>End Time</label>
-                                        <input type="datetime-local" class="form-control"
-                                               name="ExistingSchedules[${scheduleIndex}].ScheduledEnd"
-                                               value="${scheduledEnd}" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Selected Volunteers</label>
-                                <div class="selected-volunteers">
-                                    ${volunteersHtml}
-                                </div>
-                                <div class="selected-volunteer-ids">
-                                    ${volunteerIdsHtml}
-                                </div>
-                            </div>
+                    // Show empty shifts message
+                    $("#dateConfigShiftsContainer").html(`
+                        <div id="dateConfigEmptyShifts" class="empty-state">
+                            <i class="bi bi-calendar-plus"></i>
+                            <p>No shifts added yet</p>
+                            <small>Use the buttons above to add shifts to this date</small>
                         </div>
-                    `;
-
-                    if (scheduleIndex === 0) {
-                        $("#scheduleTabs").html(`<ul class="nav nav-tabs" id="schedulesTab" role="tablist">${tabItem}</ul>`);
-                    } else {
-                        $("#schedulesTab").append(tabItem);
-                    }
-
-                    $("#scheduleContent").append(tabContent);
+                    `);
                 }
 
-                // Show the tab for the schedule we just added/edited
-                $(`#schedule-${scheduleIndex}-tab`).tab("show");
+                // Show the modal
+                $("#dateConfigModal").modal("show");
+            }
 
-                // Hide the modal
-                $("#scheduleModal").modal("hide");
+            // Function to render shifts in the date configuration modal
+            function renderShiftsInModal(shifts) {
+                const container = $("#dateConfigShiftsContainer");
 
-                // Reset the modal for next use
-                $(".modal-title").text("Add Schedule");
-                $("#addScheduleBtn").text("Add Schedule").removeData("schedule-index");
+                if (!shifts || shifts.length === 0) {
+                    container.html(`
+                        <div id="dateConfigEmptyShifts" class="empty-state">
+                            <i class="bi bi-calendar-plus"></i>
+                            <p>No shifts added yet</p>
+                            <small>Use the buttons above to add shifts to this date</small>
+                        </div>
+                    `);
+                    return;
+                }
+
+                container.empty();
+
+                shifts.forEach((shift, index) => {
+                    // Format times for display
+                    const startTime = new Date(`2000-01-01T${shift.startTime}`);
+                    const endTime = new Date(`2000-01-01T${shift.endTime}`);
+
+                    const formattedStart = startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const formattedEnd = endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                    const shiftCard = $(`
+                        <div class="shift-card" data-index="${index}" data-start="${shift.startTime}" data-end="${shift.endTime}" data-capacity="${shift.capacity}" data-schedule-id="${shift.scheduleId || ''}">
+                            <div class="shift-card-header">
+                                <div>
+                                    <div class="shift-time">
+                                        <i class="bi bi-clock"></i>
+                                        <span>${formattedStart} - ${formattedEnd}</span>
+                                    </div>
+                                    <div class="shift-capacity">
+                                        <i class="bi bi-people-fill"></i>
+                                        <span>Capacity: ${shift.capacity}</span>
+                                    </div>
+                                </div>
+                                <div class="shift-actions">
+                                    <button type="button" class="shift-action remove" title="Remove shift" data-index="${index}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+
+                    container.append(shiftCard);
+                });
+            }
+
+            // Save date configuration button
+            $("#saveDateConfigBtn").click(function() {
+                const dateStr = $("#currentDateConfig").val();
+                const startTime = $("#dateConfigStartTime").val();
+                const endTime = $("#dateConfigEndTime").val();
+
+                // Validate inputs
+                if (!startTime || !endTime) {
+                    alert("Please set both start and end times for this date.");
+                    return;
+                }
+
+                // Get all shifts from the modal
+                const shifts = [];
+                $(".shift-card").each(function() {
+                    const card = $(this);
+                    shifts.push({
+                        startTime: card.attr("data-start"),
+                        endTime: card.attr("data-end"),
+                        capacity: parseInt(card.attr("data-capacity")),
+                        scheduleId: card.attr("data-schedule-id")
+                    });
+                });
+
+                // Save the configuration
+                dateConfigurations[dateStr] = {
+                    startTime: startTime,
+                    endTime: endTime,
+                    shifts: shifts
+                };
+
+                // Update the UI
+                updateSelectedDatesList(flatpickrCalendar.selectedDates);
+
+                // Close the modal
+                $("#dateConfigModal").modal("hide");
             });
+
+            // Add shift button in date config modal
+            $("#dateConfigAddShift").click(function() {
+                // Reset the form
+                $("#shiftStartTime").val("");
+                $("#shiftEndTime").val("");
+                $("#shiftCapacity").val("1");
+
+                // Show the modal
+                $("#addShiftModal").modal("show");
+            });
+
+            // Add shift to date configuration
+            $("#addShiftBtn").click(function() {
+                const startTime = $("#shiftStartTime").val();
+                const endTime = $("#shiftEndTime").val();
+                const capacity = $("#shiftCapacity").val();
+
+                // Validate
+                if (!startTime || !endTime) {
+                    alert("Please enter both start and end times.");
+                    return;
+                }
+
+                if (!capacity || capacity < 1) {
+                    alert("Please enter a valid capacity (minimum 1).");
+                    return;
+                }
+
+                // Get existing shifts
+                let shifts = [];
+
+                $(".shift-card").each(function() {
+                    const card = $(this);
+                    shifts.push({
+                        startTime: card.attr("data-start"),
+                        endTime: card.attr("data-end"),
+                        capacity: parseInt(card.attr("data-capacity")),
+                        scheduleId: card.attr("data-schedule-id")
+                    });
+                });
+
+                // Add new shift
+                shifts.push({
+                    startTime: startTime,
+                    endTime: endTime,
+                    capacity: parseInt(capacity),
+                    scheduleId: ""
+                });
+
+                // Re-render shifts
+                renderShiftsInModal(shifts);
+
+                // Close modal
+                $("#addShiftModal").modal("hide");
+            });
+
+            // Remove shift from modal
+            $(document).on("click", ".shift-action.remove", function() {
+                const index = $(this).data("index");
+                const card = $(this).closest(".shift-card");
+
+                card.remove();
+
+                // Renumber remaining shifts
+                $(".shift-card").each(function(i) {
+                    $(this).attr("data-index", i);
+                    $(this).find(".shift-action.remove").attr("data-index", i);
+                });
+
+                // Show empty state if no shifts
+                if ($(".shift-card").length === 0) {
+                    $("#dateConfigShiftsContainer").html(`
+                        <div id="dateConfigEmptyShifts" class="empty-state">
+                            <i class="bi bi-calendar-plus"></i>
+                            <p>No shifts added yet</p>
+                            <small>Use the buttons above to add shifts to this date</small>
+                        </div>
+                    `);
+                }
+            });
+
+            // Generate shifts for date config
+            $("#dateConfigGenerateShifts").click(function() {
+                const startTime = $("#dateConfigStartTime").val();
+                const endTime = $("#dateConfigEndTime").val();
+
+                if (!startTime || !endTime) {
+                    alert("Please set event start and end times first.");
+                    return;
+                }
+
+                // Reset the generate shifts modal
+                $("#optionDuration").prop("checked", true);
+                $("#shiftDuration").val("60");
+                $("#shiftCount").val("3");
+                $("#defaultCapacity").val("1");
+
+                // Show the modal
+                $("#generateShiftsModal").modal("show");
+            });
+
+            // Confirm generate shifts for date config
+            $("#confirmGenerateShiftsBtn").click(function() {
+                const startTime = $("#dateConfigStartTime").val();
+                const endTime = $("#dateConfigEndTime").val();
+                const option = $("input[name='shiftOption']:checked").val();
+                const defaultCapacity = parseInt($("#defaultCapacity").val()) || 1;
+
+                let shiftDuration = 0;
+                let numberOfShifts = 0;
+
+                if (option === "duration") {
+                    shiftDuration = parseInt($("#shiftDuration").val());
+                    if (isNaN(shiftDuration) || shiftDuration <= 0) {
+                        alert("Please enter a valid shift duration.");
+                        return;
+                    }
+                } else {
+                    numberOfShifts = parseInt($("#shiftCount").val());
+                    if (isNaN(numberOfShifts) || numberOfShifts <= 0) {
+                        alert("Please enter a valid number of shifts.");
+                        return;
+                    }
+                }
+
+                // Convert times to minutes for calculations
+                const [startHour, startMinute] = startTime.split(':').map(Number);
+                const [endHour, endMinute] = endTime.split(':').map(Number);
+
+                const startMinutes = startHour * 60 + startMinute;
+                const endMinutes = endHour * 60 + endMinute;
+
+                // Handle the case where end time is on the next day
+                const totalEventMinutes = endMinutes >= startMinutes ?
+                    endMinutes - startMinutes :
+                    (endMinutes + 24 * 60) - startMinutes;
+
+                // Calculate shift endpoints
+                let shiftEndPoints = [];
+
+                if (numberOfShifts > 0) {
+                    // By number of shifts
+                    shiftDuration = Math.floor(totalEventMinutes / numberOfShifts);
+
+                    for (let i = 0; i < numberOfShifts; i++) {
+                        const shiftEnd = startMinutes + (i + 1) * shiftDuration;
+                        shiftEndPoints.push(shiftEnd);
+                    }
+
+                    // Ensure the last shift ends exactly at the event end time
+                    shiftEndPoints[shiftEndPoints.length - 1] = startMinutes + totalEventMinutes;
+                } else {
+                    // By shift duration
+                    let currentMinute = startMinutes;
+
+                    while (currentMinute < startMinutes + totalEventMinutes) {
+                        currentMinute += shiftDuration;
+
+                        // Cap at event end time
+                        if (currentMinute > startMinutes + totalEventMinutes) {
+                            currentMinute = startMinutes + totalEventMinutes;
+                        }
+
+                        shiftEndPoints.push(currentMinute);
+
+                        // Break if we've reached the end time
+                        if (currentMinute >= startMinutes + totalEventMinutes) {
+                            break;
+                        }
+                    }
+                }
+
+                // Generate the shifts
+                let shifts = [];
+                let currentStart = startMinutes;
+
+                for (let i = 0; i < shiftEndPoints.length; i++) {
+                    const shiftStartMin = currentStart;
+                    const shiftEndMin = shiftEndPoints[i];
+
+                    // Convert minutes back to HH:MM format
+                    const startHours = Math.floor(shiftStartMin / 60) % 24;
+                    const startMins = shiftStartMin % 60;
+                    const endHours = Math.floor(shiftEndMin / 60) % 24;
+                    const endMins = shiftEndMin % 60;
+
+                    const formattedStartTime = `${String(startHours).padStart(2, '0')}:${String(startMins).padStart(2, '0')}`;
+                    const formattedEndTime = `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
+
+                    shifts.push({
+                        startTime: formattedStartTime,
+                        endTime: formattedEndTime,
+                        capacity: defaultCapacity,
+                        scheduleId: ""
+                    });
+
+                    // Move to next shift
+                    currentStart = shiftEndMin;
+                }
+
+                // Render the shifts
+                renderShiftsInModal(shifts);
+
+                // Close the modal
+                $("#generateShiftsModal").modal("hide");
+            });
+
+              // Form submission - handle multi-date events
+        $("#eventForm").on("submit", function(e) {
+            // If we have selected dates
+            if (flatpickrCalendar.selectedDates.length > 0 && Object.keys(dateConfigurations).length > 0) {
+                e.preventDefault();
+
+                console.log("Form submit triggered for multi-date event");
+                console.log("Selected dates:", flatpickrCalendar.selectedDates);
+                console.log("Date configurations:", dateConfigurations);
+
+                // Serialize multi-date configurations
+                let configIndex = 0;
+
+                for (const [dateStr, config] of Object.entries(dateConfigurations)) {
+                    // Add date
+                    $("<input>").attr({
+                        type: "hidden",
+                        name: `MultiDateEvents[${configIndex}].Date`,
+                        value: dateStr
+                    }).appendTo(this);
+
+                    // Add start & end times
+                    $("<input>").attr({
+                        type: "hidden",
+                        name: `MultiDateEvents[${configIndex}].StartTime`,
+                        value: config.startTime
+                    }).appendTo(this);
+
+                    $("<input>").attr({
+                        type: "hidden",
+                        name: `MultiDateEvents[${configIndex}].EndTime`,
+                        value: config.endTime
+                    }).appendTo(this);
+
+                    // Add shifts
+                    if (config.shifts && config.shifts.length > 0) {
+                        config.shifts.forEach((shift, shiftIdx) => {
+                            console.log(`Adding shift ${shiftIdx} for date ${dateStr}`);
+
+                            $("<input>").attr({
+                                type: "hidden",
+                                name: `MultiDateEvents[${configIndex}].Shifts[${shiftIdx}].ScheduledStart`,
+                                value: shift.startTime
+                            }).appendTo(this);
+
+                            $("<input>").attr({
+                                type: "hidden",
+                                name: `MultiDateEvents[${configIndex}].Shifts[${shiftIdx}].ScheduledEnd`,
+                                value: shift.endTime
+                            }).appendTo(this);
+
+                            $("<input>").attr({
+                                type: "hidden",
+                                name: `MultiDateEvents[${configIndex}].Shifts[${shiftIdx}].Capacity`,
+                                value: shift.capacity
+                            }).appendTo(this);
+
+                            // Add schedule ID if it exists
+                            if (shift.scheduleId) {
+                                $("<input>").attr({
+                                    type: "hidden",
+                                    name: `MultiDateEvents[${configIndex}].Shifts[${shiftIdx}].ScheduleID`,
+                                    value: shift.scheduleId
+                                }).appendTo(this);
+                            }
+                        });
+                    }
+
+                    configIndex++;
+                }
+
+                // Submit the form
+                this.submit();
+            }
+            // If we're using regular shifts without multi-dates
+            else if ($(".shift-card").length > 0) {
+                e.preventDefault();
+
+                console.log("Form submit for single event with shifts");
+
+                // Get all shift data
+                $(".shift-card").each(function(idx) {
+                    const card = $(this);
+                    const startTime = card.attr("data-start");
+                    const endTime = card.attr("data-end");
+                    const capacity = card.attr("data-capacity");
+                    const scheduleId = card.attr("data-schedule-id") || "";
+
+                    console.log(`Adding existing schedule ${idx}:`, { scheduleId, startTime, endTime, capacity });
+
+                    // Add to form
+                    $("<input>").attr({
+                        type: "hidden",
+                        name: `ExistingSchedules[${idx}].ScheduleID`,
+                        value: scheduleId
+                    }).appendTo($("#eventForm"));
+
+                    $("<input>").attr({
+                        type: "hidden",
+                        name: `ExistingSchedules[${idx}].ScheduledStart`,
+                        value: startTime
+                    }).appendTo($("#eventForm"));
+
+                    $("<input>").attr({
+                        type: "hidden",
+                        name: `ExistingSchedules[${idx}].ScheduledEnd`,
+                        value: endTime
+                    }).appendTo($("#eventForm"));
+
+                    $("<input>").attr({
+                        type: "hidden",
+                        name: `ExistingSchedules[${idx}].Capacity`,
+                        value: capacity
+                    }).appendTo($("#eventForm"));
+                });
+
+                // Submit the form
+                this.submit();
+            }
+            // Otherwise just let the normal submission happen
+        });
 
             // Ensure tab functionality works for dynamically created tabs
             $(document).on("click", "a[data-toggle='tab']", function (e) {
                 e.preventDefault();
                 $(this).tab("show");
-            });
-
-            // Make sure form submission includes the Event.ID
-            $("#eventForm").submit(function(e) {
-                // Make sure all selected volunteers in the modal are properly selected before submission
-                $("#selectedOptions option").prop("selected", true);
-
-                // Ensure the Event.ID is included
-                if (!$("input[name='Event.ID']").length) {
-                    $(this).append(`<input type="hidden" name="Event.ID" value="${@Model.Event.ID}" />`);
-                }
-
-                console.log("Form is being submitted with Event ID: " + @Model.Event.ID);
-                return true;
             });
         });
     </script>
