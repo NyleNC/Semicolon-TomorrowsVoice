@@ -11,43 +11,85 @@
 </div>
 <p>Review and approve pending volunteer applications.</p>
 
-<div class="card">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Location</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var volunteer in Model.PendingVolunteers)
-                    {
+<form method="post" id="bulkActionForm">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="selectAll">
+                <label class="form-check-label" for="selectAll">
+                    Select All
+                </label>
+            </div>
+            <div>
+                <button type="submit" asp-page-handler="ApproveSelected" class="btn btn-success btn-sm me-2">
+                    <i class="bi bi-check-circle"></i> Approve Selected
+                </button>
+                <button type="submit" asp-page-handler="RejectSelected" class="btn btn-danger btn-sm">
+                    <i class="bi bi-x-circle"></i> Reject Selected
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
                         <tr>
-                            <td>@volunteer.FullName</td>
-                            <td>@volunteer.Email</td>
-                            <td>@volunteer.VolLocation?.City</td>
-                            <td>
-                                <form method="post" class="d-inline">
+                            <th style="width: 40px;"></th>
+                            <th>Name</th>
+                            <th>Email</th>
+                     
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (var i = 0; i < Model.PendingVolunteers.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input volunteer-checkbox"
+                                           name="SelectedVolunteers" value="@Model.PendingVolunteers[i].ID" />
+                                </td>
+                                <td>@Model.PendingVolunteers[i].FullName</td>
+                                <td>@Model.PendingVolunteers[i].Email</td>
+                              
+                                <td>
                                     <button type="submit" asp-page-handler="Approve"
-                                            asp-route-volunteerId="@volunteer.ID"
-                                            class="btn btn-success btn-sm">
+                                            asp-route-volunteerId="@Model.PendingVolunteers[i].ID"
+                                            class="btn btn-success btn-sm me-1">
                                         <i class="bi bi-check-circle"></i> Approve
                                     </button>
                                     <button type="submit" asp-page-handler="Reject"
-                                            asp-route-volunteerId="@volunteer.ID"
+                                            asp-route-volunteerId="@Model.PendingVolunteers[i].ID"
                                             class="btn btn-danger btn-sm">
                                         <i class="bi bi-x-circle"></i> Reject
                                     </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
+</form>
+
+@section Scripts {
+    <script>
+        // Select all checkbox functionality
+        document.getElementById('selectAll').addEventListener('change', function(e) {
+            const checkboxes = document.querySelectorAll('.volunteer-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = e.target.checked;
+            });
+        });
+
+        // Ensure at least one volunteer is selected for bulk actions
+        document.getElementById('bulkActionForm').addEventListener('submit', function(e) {
+            const checkedBoxes = document.querySelectorAll('.volunteer-checkbox:checked');
+            if (checkedBoxes.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one volunteer to perform this action.');
+            }
+        });
+    </script>
+}

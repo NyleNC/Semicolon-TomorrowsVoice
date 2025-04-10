@@ -14,7 +14,7 @@ using OfficeOpenXml;
 
 namespace TomorrowsVoices.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "ApprovedVolunteer")]
     public class VolunteerPortalController : Controller
     {
         private readonly TomorrowsVoicesContext _context;

@@ -113,12 +113,12 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            [Required(ErrorMessage = "Please select your city")]
-            [Display(Name = "City")]
-            public int VolLocationID { get; set; }
+            //[Required(ErrorMessage = "Please select your city")]
+            //[Display(Name = "City")]
+            //public int VolLocationID { get; set; }
 
-            // Property to hold the select list options
-            public SelectList CityOptions { get; set; }
+            //// Property to hold the select list options
+            //public SelectList CityOptions { get; set; }
 
             [Display(Name = "Phone Number")]
             [Required(ErrorMessage = "Phone number is required.")]
@@ -130,15 +130,15 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
         }
 
 
-        public async Task OnGetAsync(string returnUrl = null)
-        {
-            ReturnUrl = returnUrl;
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            Input = new InputModel
-            {
-                CityOptions = new SelectList(await _context.VolLocations.ToListAsync(), "ID", "City")
-            };
-        }
+        //public async Task OnGetAsync(string returnUrl = null)
+        //{
+        //    ReturnUrl = returnUrl;
+        //    ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        //    Input = new InputModel
+        //    {
+        //        CityOptions = new SelectList(await _context.VolLocations.ToListAsync(), "ID", "City")
+        //    };
+        //}
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
@@ -146,6 +146,11 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
+                if (await _userManager.FindByEmailAsync(Input.Email) != null)
+                {
+                    ModelState.AddModelError(string.Empty, "Email is already registered.");
+                    return Page();
+                }
                 var user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
@@ -164,7 +169,7 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
                         LastName = Input.LastName,
                         Email = Input.Email,
                         Phone = Input.Phone,
-                        VolLocationID = Input.VolLocationID,
+                        UserId = user.Id,
                         Status = ApprovalStatus.Pending,
 
                     };

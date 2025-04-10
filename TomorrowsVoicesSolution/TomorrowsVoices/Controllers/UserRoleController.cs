@@ -29,10 +29,11 @@ namespace TomorrowsVoices.Controllers
             foreach (var u in users)
             {
                 var user = await _userManager.FindByIdAsync(u.Id);
-                u.UserRoles = (List<string>)await _userManager.GetRolesAsync(user);
-                //Note: we needed the explicit cast above because GetRolesAsync() returns an IList<string>
+                u.UserRoles = (await _userManager.GetRolesAsync(user)).ToList();
+
+
             }
-            ;
+            
             return View(users);
         }
 
@@ -64,19 +65,52 @@ namespace TomorrowsVoices.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string Id, string[] selectedRoles)
         {
-            var _user = await _userManager.FindByIdAsync(Id);//IdentityRole
+            var _user = await _userManager.FindByIdAsync(Id); // IdentityUser
+            if (_user == null)
+            {
+                return NotFound();
+            }
+
             UserVM user = new UserVM
             {
                 Id = _user.Id,
                 UserName = _user.UserName,
                 UserRoles = (List<string>)await _userManager.GetRolesAsync(_user)
             };
-            if (_user.Id == _userManager.GetUserId(User) && !selectedRoles.Contains("Admin"))
+
+
+            var currentUserId = _userManager.GetUserId(User);
+
+            //hardcoded superAdminUser
+            var superAdminUser = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.UserName == "admin@outlook.com"); 
+
+            // Ensure that only the super admin can assign the Admin role
+            if (superAdminUser != null && superAdminUser.Id != currentUserId)
             {
-                ModelState.AddModelError("", "You cannot remove your own Admin role.");
-                PopulateAssignedRoleData(user);
-                return View(user);
+               
+                if (selectedRoles.Contains("Admin") || user.UserRoles.Contains("Admin"))
+                {
+                    ModelState.AddModelError("", "Only the super admin can assign or remove the Admin role.");
+                    PopulateAssignedRoleData(user);
+                    return View(user);
+                }
             }
+
+            // Prevent users from removing their own Admin role
+            if (_user.Id == currentUserId)
+            {
+                bool isAdmin = user.UserRoles.Contains("Admin");
+
+      
+                if (isAdmin && !selectedRoles.Contains("Admin"))
+                {
+                    ModelState.AddModelError("", "You cannot remove your own Admin role.");
+                    PopulateAssignedRoleData(user);
+                    return View(user);
+                }
+            }
+
             try
             {
                 await UpdateUserRoles(selectedRoles, user);
@@ -84,15 +118,16 @@ namespace TomorrowsVoices.Controllers
             }
             catch (Exception)
             {
-                ModelState.AddModelError(string.Empty,
-                                "Unable to save changes.");
+                ModelState.AddModelError(string.Empty, "Unable to save changes.");
             }
+
             PopulateAssignedRoleData(user);
             return View(user);
         }
 
+
         private void PopulateAssignedRoleData(UserVM user)
-        {//Prepare checkboxes for all Roles
+        {
             var allRoles = _context.Roles;
             var currentRoles = user.UserRoles;
             var viewModel = new List<RoleVM>();
@@ -110,12 +145,12 @@ namespace TomorrowsVoices.Controllers
 
         private async Task UpdateUserRoles(string[] selectedRoles, UserVM userToUpdate)
         {
-            var UserRoles = userToUpdate.UserRoles;//Current roles use is in
+            var UserRoles = userToUpdate.UserRoles;
             var _user = await _userManager.FindByIdAsync(userToUpdate.Id);//IdentityUser
 
             if (selectedRoles == null)
             {
-                //No roles selected so just remove any currently assigned
+          
                 foreach (var r in UserRoles)
                 {
                     await _userManager.RemoveFromRoleAsync(_user, r);
@@ -124,7 +159,7 @@ namespace TomorrowsVoices.Controllers
             else
             {
 
-                IList<IdentityRole> allRoles = _context.Roles.ToList<IdentityRole>();
+                IList<IdentityRole> allRoles = await _context.Roles.ToListAsync();
 
                 foreach (var r in allRoles)
                 {
@@ -151,7 +186,7 @@ namespace TomorrowsVoices.Controllers
             if (disposing)
             {
                 _context.Dispose();
-                _userManager.Dispose();
+        
             }
             base.Dispose(disposing);
         }

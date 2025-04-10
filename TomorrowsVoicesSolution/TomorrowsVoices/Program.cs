@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using TomorrowsVoices.Data;
+using TomorrowsVoices.Models;
 using TomorrowsVoices.Utilities;
 using TomorrowsVoices.ViewModels;
 using static TomorrowsVoices.Utilities.EmailService;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +58,27 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ApprovedVolunteer", policy =>
+        policy.RequireAssertion(async context =>
+        {
+            if (context.User.IsInRole("Admin"))
+                return true;
 
+            var httpContext = context.Resource as HttpContext;
+            if (httpContext == null) return false;
+
+            var dbContext = httpContext.RequestServices.GetRequiredService<TomorrowsVoicesContext>();
+            var userManager = httpContext.RequestServices.GetRequiredService<UserManager<IdentityUser>>();
+
+            var user = await userManager.GetUserAsync(context.User);
+            if (user == null) return false;
+
+            var volunteer = await dbContext.Volunteers.FirstOrDefaultAsync(v => v.Email == user.Email);
+            return volunteer?.Status == ApprovalStatus.Approved;
+        }));
+});
 //For the Identity System
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 

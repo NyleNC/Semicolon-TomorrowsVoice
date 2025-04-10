@@ -41,7 +41,7 @@ namespace TomorrowsVoices.Models
         public string? Email { get; set; } = null;
 
 
-        public int VolLocationID { get; set; }
+        public int? VolLocationID { get; set; }
 
         [Display(Name = "Location")]
         public VolLocation? VolLocation { get; set; }
@@ -51,6 +51,8 @@ namespace TomorrowsVoices.Models
 
        public int ApproveID { get; set; }
         public ApprovalStatus Status{ get; set; } = ApprovalStatus.Pending;
+        public string? UserId { get; internal set; }
+
     }
 }
 

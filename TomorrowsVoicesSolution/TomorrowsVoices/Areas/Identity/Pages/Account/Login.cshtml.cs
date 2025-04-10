@@ -14,18 +14,27 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using TomorrowsVoices.Models;
+using TomorrowsVoices.Data;
 
 namespace TomorrowsVoices.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
-    {
+    {  
+
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly TomorrowsVoicesContext _context;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(
+            SignInManager<IdentityUser> signInManager,
+            ILogger<LoginModel> logger,
+            TomorrowsVoicesContext context)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _context = context;
         }
 
         /// <summary>
@@ -104,23 +113,59 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+
+                    // Get the logged-in user
+                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+
+                    // If user is an admin, allow access immediately
+                    if (await _signInManager.UserManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        return LocalRedirect(returnUrl);
+                    }
+
+                    // Check if the user is a volunteer and approved
+                    var volunteer = await _context.Volunteers.FirstOrDefaultAsync(v => v.UserId == user.Id);
+
+                    if (volunteer == null)
+                    {
+                        // User is not a volunteer (maybe a regular user)
+                        return LocalRedirect(returnUrl);
+                    }
+
+                    // Handle different approval statuses
+                    switch (volunteer.Status)
+                    {
+                        case ApprovalStatus.Approved:
+                            return LocalRedirect(returnUrl);
+
+                        case ApprovalStatus.Pending:
+                            TempData["ErrorMessage"] = "Your account is pending approval. You cannot access certain features until an admin approves your request.";
+                            return RedirectToPage("/Account/AccessDenied");
+
+                        case ApprovalStatus.Rejected:
+                            TempData["ErrorMessage"] = "Your volunteer application has been rejected. Please contact support if you believe this is an error.";
+                            return RedirectToPage("/Account/AccessDenied");
+
+                        default:
+                            TempData["ErrorMessage"] = "Your account status is invalid. Please contact support.";
+                            return RedirectToPage("/Account/AccessDenied");
+                    }
                 }
+
                 if (result.RequiresTwoFactor)
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
+
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
@@ -133,8 +178,9 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
                 }
             }
 
-            // If we got this far, something failed, redisplay form
             return Page();
         }
+
+
     }
 }

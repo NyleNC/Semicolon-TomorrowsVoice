@@ -27,7 +27,7 @@ namespace TomorrowsVoices.Controllers
                 .Where(v => v.IsArchived == archived)
                 .Include(v => v.VolLocation)
                 .AsNoTracking();
-            if (!User.IsInRole("Admin"))
+            if (!User.IsInRole("Admin") && !User.IsInRole("Director"))
             {
                 var currentVolunteer = await GetCurrentVolunteerAsync();
                 if (currentVolunteer != null)
@@ -40,7 +40,7 @@ namespace TomorrowsVoices.Controllers
                     volunteers = volunteers.Where(v => false);
                 }
             }
-            if (!User.IsInRole("Admin") /*&& !User.IsInRole("Director")*/)
+            if (!User.IsInRole("Admin") && !User.IsInRole("Director"))
             {
                 volunteers = volunteers.Where(v => v.Status == ApprovalStatus.Approved);
             }
@@ -636,7 +636,7 @@ namespace TomorrowsVoices.Controllers
             }
 
             // Admins see all records
-            if (User.IsInRole("Admin"))
+            if (User.IsInRole("Admin") && User.IsInRole("Director"))
             {
                 return null;
             }

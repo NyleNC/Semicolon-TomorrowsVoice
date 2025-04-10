@@ -364,7 +364,7 @@
                             @Html.DisplayFor(modelItem => item.Email)
                         </td>
                         <td style="padding-left: 10px;">
-                            @Html.DisplayFor(modelItem => item.VolLocation.City)
+                            @(item.VolLocation?.City ?? "N/A")
                         </td>
                         <td>
                             <!-- Desktop View (Buttons) -->
