@@ -102,6 +102,7 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
+            
             public string Password { get; set; }
 
             /// <summary>
@@ -151,6 +152,17 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, "Email is already registered.");
                     return Page();
                 }
+                if (await _context.Volunteers.AnyAsync(v => v.Phone == Input.Phone))
+                {
+                    ModelState.AddModelError(string.Empty, "Phone number is already registered.");
+                    return Page();
+                }
+                if (await _context.Volunteers.AnyAsync(v => v.Email == Input.Email))
+                {
+                    ModelState.AddModelError(string.Empty, "Email is already registered.");
+                    return Page();
+                }
+
                 var user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);

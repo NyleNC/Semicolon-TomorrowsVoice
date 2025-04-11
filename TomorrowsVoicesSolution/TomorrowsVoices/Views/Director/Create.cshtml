@@ -1,174 +1,351 @@
 @model TomorrowsVoices.Models.Director
 
+
+
 @{
+
     ViewData["Title"] = "Create";
+
 }
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+
 
 <h1>Create Director</h1>
+
 <hr />
+
 <p class="mb-4 " style="font-weight: 700">Fields marked <span style="color: red">*</span> are required.</p>
+
 <div class="row">
+
     <div class="col-md-4">
+
         <form asp-action="Create">
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
+
+
 
                 <label asp-for="FirstName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+
                 <input asp-for="FirstName" class="form-control" placeholder="John" />
 
+
+
                 <span asp-validation-for="FirstName" class="text-danger"></span>
+
             </div>
+
             <div class="form-group">
+
                 <label asp-for="LastName" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+
                 <input asp-for="LastName" class="form-control" placeholder="Doe" />
+
                 <span asp-validation-for="LastName" class="text-danger"></span>
+
             </div>
+
             <div class="form-group">
+
                 <label asp-for="DirectorLocations.FirstOrDefault().LocationID" class="control-label" style="font-weight: 700">City</label><span style="color: red">*</span>
-                <select asp-for="DirectorLocations.FirstOrDefault().LocationID" class="form-control city-dropdown" asp-items="ViewBag.CityList">
-                    <option>Find the City or add a new one</option>
+
+                <select name="locationId"
+                        class="form-control city-dropdown"
+                        asp-items="ViewBag.CityList">
+     
                 </select>
+
                 <span asp-validation-for="DirectorLocations.FirstOrDefault().LocationID" class="text-danger"></span>
+
             </div>
+
             <div class="form-group">
+
                 <label asp-for="dirPhoneNumber" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
-                <input asp-for="dirPhoneNumber" class="form-control" placeholder="9999999999"/>
+
+                <input asp-for="dirPhoneNumber" class="form-control" placeholder="(905)-304-0000" />
+
                 <span asp-validation-for="dirPhoneNumber" class="text-danger"></span>
+
             </div>
+
             <div class="form-group">
+
                 <label asp-for="Email" class="control-label" style="font-weight: 700"></label><span style="color: red">*</span>
+
                 <input asp-for="Email" class="form-control" placeholder="example@tv.com" />
+
                 <span asp-validation-for="Email" class="text-danger"></span>
+
             </div>
+
+
 
             <div class="form-group d-flex gap-2">
+
                 <div class="form-group">
+
                     <button type="submit" class="btn btn-primary">
+
                         <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+
                         Create
 
+
+
                     </button>
+
                 </div>
+
                 <div class="form-group">
+
                     <button type="button" id="fillPresetButton" class="btn btn-secondary" style="background-color: navy;">Fill Preset Values</button>
+
                 </div>
+
             </div>
+
             <a asp-action="Index" class="btn btn-secondary"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Director Page</a>
+
         </form>
+
     </div>
+
 </div>
 
 
+
+
+
 @section Scripts {
+
     @{
+
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
     }
-}
-<script>
-       $(document).ready(function () {
-        // Initialize the select2 dropdown with AJAX search
-        $(".city-dropdown").select2({
-            placeholder: "Type the City or Add a new city",
-            allowClear: true,
-            minimumInputLength: 0,  // Start searching after typing 1 character
-            ajax: {
-                url: '@Url.Action("CitySuggestions", "Director")',  // Your CitySuggestions action
-                dataType: "json",
-                delay: 250,
-                data: function (params) {
-                    return { term: params.term }; // Pass the search term
-                },
-                    processResults: function (data, params) {
-                    var results = $.map(data, function (item) {
-                        return { id: item.id, text: item.text };
-                    });
-                    if (params.term && results.length === 0) {
-                        results.push({
-                            id: "add_new_city",
-                            text: `Add new City: "${params.term}"`,
-                            newCityName: params.term
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+
+
+    <script>
+
+           $(document).ready(function () {
+
+            // Initialize the select2 dropdown with AJAX search
+
+            $(".city-dropdown").select2({
+
+                placeholder: "Type the City or Add a new city",
+
+                allowClear: true,
+
+                minimumInputLength: 0,  // Start searching after typing 1 character
+
+                ajax: {
+
+                    url: '@Url.Action("CitySuggestions", "Director")',  // Your CitySuggestions action
+
+                    dataType: "json",
+
+                    delay: 250,
+
+                    data: function (params) {
+
+                        return { term: params.term }; // Pass the search term
+
+                    },
+
+                        processResults: function (data, params) {
+
+                        var results = $.map(data, function (item) {
+
+                            return { id: item.id, text: item.text };
 
                         });
 
+                        if (params.term && results.length === 0) {
+
+                            results.push({
+
+                                id: "add_new_city",
+
+                                text: `Add new City: "${params.term}"`,
+
+                                newCityName: params.term
+
+
+
+                            });
+
+
+
+                        }
+
+                        return { results: results };
+
                     }
-                    return { results: results };
+
                 }
+
+            });
+
+
+
+
+
+            // Handle selecting or typing a new city
+
+            $(".city-dropdown").on("select2:select", function (e) {
+
+                var newCityName = e.params.data.newCityName;
+
+
+
+                // If "Add new City" was selected, add it
+
+                if (e.params.data.id === "add_new_city" && newCityName) {
+
+                    addNewCity(newCityName);
+
+                }
+
+            }).on("select2:open", function () {
+
+                var searchInput = $(".select2-search__field");
+
+                searchInput.off("keydown").on("keydown", function (e) {
+
+                    if (e.key === "Enter") {
+
+                        var currentValue = $(this).val();
+
+                        if (currentValue) {
+
+                            addNewCity(currentValue);
+
+                        }
+
+                    }
+
+                });
+
+            });
+
+
+
+            // Function to add a new city
+
+            function addNewCity(cityName) {
+
+                $.ajax({
+
+                    url: '@Url.Action("AddCity", "Director")',
+
+                    type: "POST",
+
+                    data: { cityName: cityName },
+
+                    success: function (response) {
+
+                        if (response.success) {
+
+                            alert(`${cityName} has been added to the list!`);
+
+
+
+                            // Append the new city to the dropdown list
+
+                            var cityDropdown = $(".city-dropdown");
+
+                            var newOption = new Option(cityName, response.cityId, true, true);
+
+                            cityDropdown.append(newOption).trigger("change"); // Append and trigger change event
+
+                        } else {
+
+                            alert("Error: " + response.message);
+
+                        }
+
+                    },
+
+                    error: function () {
+
+                        alert("An error occurred while adding the city.");
+
+                    }
+
+                });
+
             }
+
         });
 
 
-        // Handle selecting or typing a new city
-        $(".city-dropdown").on("select2:select", function (e) {
-            var newCityName = e.params.data.newCityName;
 
-            // If "Add new City" was selected, add it
-            if (e.params.data.id === "add_new_city" && newCityName) {
-                addNewCity(newCityName);
+    </script>
+
+
+
+
+
+
+
+    <script>
+
+        document.getElementById("fillPresetButton").addEventListener("click", function () {
+
+            // Preset Values
+
+            let defaultValues = {
+
+                FirstName: "John",
+
+                LastName: "Williams",
+
+                City: "Toronto",
+
+                Email: "jwilliams@tv.com"
+
+            };
+
+
+
+            // Only set fields that are empty
+
+            if (!document.getElementById("FirstName").value) {
+
+                document.getElementById("FirstName").value = defaultValues.FirstName;
+
             }
-        }).on("select2:open", function () {
-            var searchInput = $(".select2-search__field");
-            searchInput.off("keydown").on("keydown", function (e) {
-                if (e.key === "Enter") {
-                    var currentValue = $(this).val();
-                    if (currentValue) {
-                        addNewCity(currentValue);
-                    }
-                }
-            });
+
+            if (!document.getElementById("LastName").value) {
+
+                document.getElementById("LastName").value = defaultValues.LastName;
+
+            }
+
+            if (!document.getElementById("Email").value) {
+
+                document.getElementById("Email").value = defaultValues.Email;
+
+            }
+
         });
 
-        // Function to add a new city
-        function addNewCity(cityName) {
-            $.ajax({
-                url: '@Url.Action("AddCity", "Director")',
-                type: "POST",
-                data: { cityName: cityName },
-                success: function (response) {
-                    if (response.success) {
-                        alert(`${cityName} has been added to the list!`);
 
-                        // Append the new city to the dropdown list
-                        var cityDropdown = $(".city-dropdown");
-                        var newOption = new Option(cityName, response.cityId, true, true);
-                        cityDropdown.append(newOption).trigger("change"); // Append and trigger change event
-                    } else {
-                        alert("Error: " + response.message);
-                    }
-                },
-                error: function () {
-                    alert("An error occurred while adding the city.");
-                }
-            });
-        }
-    });
 
-</script>
+    </script>
 
 
 
-<script>
-    document.getElementById("fillPresetButton").addEventListener("click", function () {
-        // Preset Values
-        let defaultValues = {
-            FirstName: "John",
-            LastName: "Williams",
-            City: "Toronto",
-            Email: "jwilliams@tv.com"
-        };
-
-        // Only set fields that are empty
-        if (!document.getElementById("FirstName").value) {
-            document.getElementById("FirstName").value = defaultValues.FirstName;
-        }
-        if (!document.getElementById("LastName").value) {
-            document.getElementById("LastName").value = defaultValues.LastName;
-        }
-        if (!document.getElementById("Email").value) {
-            document.getElementById("Email").value = defaultValues.Email;
-        }
-    });
-
-</script>
+}

@@ -378,10 +378,19 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("VolLocationID")
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("VolLocationID")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Phone")
+                        .IsUnique();
 
                     b.HasIndex("VolLocationID");
 
@@ -504,8 +513,7 @@ namespace TomorrowsVoices.Data.TVMigrations
                     b.HasOne("TomorrowsVoices.Models.VolLocation", "VolLocation")
                         .WithMany("Volunteers")
                         .HasForeignKey("VolLocationID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("VolLocation");
                 });

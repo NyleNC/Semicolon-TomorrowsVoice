@@ -109,3 +109,27 @@ H:\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\obj\project.
 H:\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\obj\project.nuget.cache
 H:\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\obj\TomorrowsVoices.csproj.nuget.dgspec.json
 H:\Semicolon-TomorrowsVoice\TomorrowsVoicesSolution\TomorrowsVoices\obj\TomorrowsVoices.csproj.nuget.g.props
+*.json
+*.json
+TomorrowsVoicesSolution/TomorrowsVoices/TomorrowsVoices.csproj.user
+TomorrowsVoicesSolution/TomorrowsVoices/Properties/serviceDependencies.json
+TomorrowsVoicesSolution/TomorrowsVoices/Properties/PublishProfiles/TomorrowsVoices - Web Deploy.pubxml
+TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/TomorrowsVoicesContextModelSnapshot.cs
+TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250409204710_madeVolLocatonIDNullable.Designer.cs
+TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250409204710_madeVolLocatonIDNullable.cs
+TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250409202616_madeuserIDnullable.Designer.cs
+TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250409202616_madeuserIDnullable.cs
+TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250409202504_addedUserIDonVolunteer.Designer.cs
+TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/20250409202504_addedUserIDonVolunteer.cs
+TomorrowsVoicesSolution/TomorrowsVoices/appsettings.json
+TomorrowsVoicesSolution/TomorrowsVoices/appsettings.json
+TomorrowsVoicesSolution/TomorrowsVoices/Data/TVMigrations/TomorrowsVoicesContextModelSnapshot.cs
+TomorrowsVoicesSolution/TomorrowsVoices/Properties/serviceDependencies.json
+TomorrowsVoicesSolution/TomorrowsVoices/TomorrowsVoices.csproj.user
+*.cs
+*.user
+TomorrowsVoicesSolution/TomorrowsVoices/TomorrowsVoices.csproj.user
+TomorrowsVoicesSolution/TomorrowsVoices/appsettings.json
+*.cs
+*.json
+TomorrowsVoicesSolution/TomorrowsVoices/appsettings.json

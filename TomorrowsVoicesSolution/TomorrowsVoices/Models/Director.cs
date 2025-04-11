@@ -38,11 +38,11 @@ namespace TomorrowsVoices.Models
 
         [Required(ErrorMessage = "Please Pick a city from the dropdown or add what you want")]
 
-        public ICollection<DirectorLocation> DirectorLocations { get; set; } = new HashSet<DirectorLocation>();
+        public ICollection<DirectorLocation>? DirectorLocations { get; set; } = new HashSet<DirectorLocation>();
 
         [Display(Name = "Director Phone Number")]
         [Required(ErrorMessage = "Phone number is required.")]
-        [RegularExpression("^\\d{10}$", ErrorMessage = "Please enter a valid 10-digit phone number (no space).")]
+        [RegularExpression("^\\d{10}$", ErrorMessage = "Please enter a valid 10-digit phone number (no space or dashes)example 9009990000.")]
         [DisplayFormat(DataFormatString = "{0:(###) ###-####}")]
         [DataType(DataType.PhoneNumber)]
         [MaxLength(10)]

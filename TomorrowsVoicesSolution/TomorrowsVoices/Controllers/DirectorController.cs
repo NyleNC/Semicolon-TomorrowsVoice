@@ -226,11 +226,25 @@ namespace TomorrowsVoices.Controllers
         // GET: Director/Create
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
+
         {
-            Director director = new Director();
+
+            var director = new Director
+
+            {
+
+                DirectorLocations = new List<DirectorLocation> { new DirectorLocation() }
+
+            };
+
+
+
             ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
+
             PopulateDropDownLists();
-            return View();
+
+            return View(director);
+
         }
 
         // POST: Director/Create
@@ -276,8 +290,10 @@ namespace TomorrowsVoices.Controllers
 
                     _context.Add(director);
                     await _context.SaveChangesAsync();
-
-                    TempData["SuccessMessage"] = $"{director.DirectorFullName} successfully added to the city of {director.DirectorLocations.FirstOrDefault().Location.City}.";
+                    TempData["SuccessMessage"] = $"{director.DirectorFullName} successfully added" +
+                        (director.DirectorLocations?.FirstOrDefault()?.Location?.City != null
+                         ? $" to the city of {director.DirectorLocations.FirstOrDefault().Location.City}."
+                         : ".");
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException dex)
@@ -396,9 +412,18 @@ namespace TomorrowsVoices.Controllers
                         throw;
                     }
                 }
-                catch (DbUpdateException)
+                catch (DbUpdateException dex)
                 {
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, contact support.");
+                    var baseMessage = dex.GetBaseException().Message;
+
+                    if (baseMessage.Contains("UNIQUE constraint failed"))
+                    {
+                        ModelState.AddModelError("Email", "Unable to save changes. The email already exists and its connected to a director.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    }
                 }
             }
 
