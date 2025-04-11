@@ -4,18 +4,29 @@
     ViewData["Title"] = "Log out";
 }
 
-<header>
-    <h1>@ViewData["Title"]</h1>
-    @{
-        if (User.Identity?.IsAuthenticated ?? false)
-        {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
-            </form>
-        }
-        else
-        {
-            <p>You have successfully logged out of the application.</p>
-        }
-    }
-</header>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            @if (User.Identity?.IsAuthenticated ?? false)
+            {
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5>Confirm Logout</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Are you sure you want to logout?</p>
+                        <div class="d-flex justify-content-between">
+                            <form method="post">
+                                <button type="submit" class="btn btn-danger">Yes, Logout</button>
+                            </form>
+                            <a href="/" class="btn btn-secondary">Cancel</a>
+                        
+                        </div>
+                    </div>
+                </div>
+            }
+          
+        </div>
+    </div>
+
+</div>
