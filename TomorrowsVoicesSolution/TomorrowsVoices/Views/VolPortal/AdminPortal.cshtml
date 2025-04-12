@@ -10,10 +10,10 @@
     <div class="header-content">
         <h1 class="mt-4">Admin Portal</h1>
         <div class="portal-tabs">
-            <a class="portal-tab @(isEventView ? "active" : "")" href="@Url.Action("AdminPortal", new { viewType = "event" })">
+            <a class="portal-tab @(isEventView ? "active" : "")" href="@Url.Action("AdminPortal", new { viewType = "event" })" title="View all events">
                 Event View
             </a>
-            <a class="portal-tab @(!isEventView ? "active" : "")" href="@Url.Action("AdminPortal", new { viewType = "volunteer" })">
+            <a class="portal-tab @(!isEventView ? "active" : "")" href="@Url.Action("AdminPortal", new { viewType = "volunteer" })" title="View all volunteers">
                 Volunteer View
             </a>
         </div>
@@ -74,7 +74,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a href="@Url.Action("EventDetails", new { id = evt.EventId })" class="btn btn-primary">
+                        <a href="@Url.Action("EventDetails", new { id = evt.EventId })" class="btn btn-primary" title="View details of the event">
                             <i class="fas fa-info-circle"></i> View Details
                         </a>
                     </div>
@@ -119,10 +119,10 @@ else
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a href="@Url.Action("VolunteerDetails", new { id = volunteer.VolunteerId })" class="btn btn-primary">
+                        <a href="@Url.Action("VolunteerDetails", new { id = volunteer.VolunteerId })" class="btn btn-primary" title="View volunteer profile details">
                             <i class="fas fa-user"></i> View Profile
                         </a>
-                        <a href="@Url.Action("ExportVolunteerHistory", new { id = volunteer.VolunteerId })" class="btn btn-white">
+                        <a href="@Url.Action("ExportVolunteerHistory", new { id = volunteer.VolunteerId })" class="btn btn-white" title="Export volunteer history">
                             <i class="fas fa-download"></i> Export History
                         </a>
                     </div>

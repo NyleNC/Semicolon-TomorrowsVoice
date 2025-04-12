@@ -533,7 +533,7 @@ namespace TomorrowsVoices.Controllers
         }
         private void PopulateAssignedSingerData(Session session)
         {
-            var allOptions = _context.Singers.Include(s => s.Location);
+            var allOptions = _context.Singers.Include(s => s.Location).Where(s => s.LocationID == session.LocationID);
             var currentOptionsHS = new HashSet<int>(session.Attendance
                 .Where(a => a.Status == true)
                 .Select(a => a.SingerID));
