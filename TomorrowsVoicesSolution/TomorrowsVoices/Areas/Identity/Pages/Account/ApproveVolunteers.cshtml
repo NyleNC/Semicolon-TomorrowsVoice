@@ -77,7 +77,7 @@
                                     <th style="width: 40px;"></th>
                                     <th>Name</th>
                                     <th>Email</th>
-                                    <th>Actions</th>
+                                
                        
                                 </tr>
                             </thead>
@@ -92,18 +92,7 @@
                                         <td>@Model.PendingVolunteers[i].FullName</td>
                                         <td>@Model.PendingVolunteers[i].Email</td>
                                  
-                                        <td>
-                                            <button type="submit" asp-page-handler="Approve"
-                                                    asp-route-volunteerId="@Model.PendingVolunteers[i].ID"
-                                                    class="btn btn-success btn-sm me-1">
-                                                <i class="bi bi-check-circle"></i> Approve
-                                            </button>
-                                            <button type="submit" asp-page-handler="Reject"
-                                                    asp-route-volunteerId="@Model.PendingVolunteers[i].ID"
-                                                    class="btn btn-danger btn-sm">
-                                                <i class="bi bi-x-circle"></i> Reject
-                                            </button>
-                                        </td>
+                                
                                     </tr>
                                 }
                                 @if (Model.PendingVolunteers.Count == 0)

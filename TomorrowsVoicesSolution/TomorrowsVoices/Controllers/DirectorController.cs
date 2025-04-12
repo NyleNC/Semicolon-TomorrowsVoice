@@ -4,8 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,6 +20,7 @@ using TomorrowsVoices.Data;
 
 using TomorrowsVoices.Models;
 using TomorrowsVoices.Utilities;
+using static TomorrowsVoices.Utilities.EmailService;
 
 
 namespace TomorrowsVoices.Controllers
@@ -24,10 +29,14 @@ namespace TomorrowsVoices.Controllers
     public class DirectorController : Controller
     {
         private readonly TomorrowsVoicesContext _context;
-
-        public DirectorController(TomorrowsVoicesContext context)
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IEmailSender _emailSender;
+        public DirectorController(TomorrowsVoicesContext context, UserManager<IdentityUser> userManager,
+    IEmailSender emailSender)
         {
             _context = context;
+            _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         // GET: Director
@@ -259,7 +268,7 @@ namespace TomorrowsVoices.Controllers
             {
                 try
                 {
-                    // Check if the phone number is already in use
+                  
                     bool phoneExists = await _context.Directors.AnyAsync(d => d.dirPhoneNumber == director.dirPhoneNumber);
                     if (phoneExists)
                     {
@@ -267,7 +276,36 @@ namespace TomorrowsVoices.Controllers
                         ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
                         return View(director);
                     }
-                    // Fetch the selected location from the database
+
+               
+                    var user = new IdentityUser
+                    {
+                        UserName = director.Email,
+                        Email = director.Email,
+                        EmailConfirmed = true
+                    };
+
+                    const string defaultPassword = "Password.1";
+                    var result = await _userManager.CreateAsync(user, defaultPassword);
+
+                    if (!result.Succeeded)
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+                        ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
+                        return View(director);
+                    }
+
+                 
+                    await _userManager.AddToRoleAsync(user, "Director");
+                    await _userManager.AddClaimAsync(user, new Claim("ForcePasswordChange", "true"));
+
+                   
+                    // director.IdentityUserId = user.Id;
+
+         
                     if (locationId.HasValue)
                     {
                         var location = await _context.Locations.FindAsync(locationId.Value);
@@ -278,22 +316,34 @@ namespace TomorrowsVoices.Controllers
                             return View(director);
                         }
 
-                        // Initialize the DirectorLocations collection and add the selected location
                         director.DirectorLocations = new List<DirectorLocation>
                 {
-                    new DirectorLocation
-                    {
-                        Location = location
-                    }
+                    new DirectorLocation { Location = location }
                 };
                     }
 
+           
                     _context.Add(director);
                     await _context.SaveChangesAsync();
+
+        
+                    var callbackUrl = Url.Page(
+                        "/Account/Login", null,
+                        new { area = "Identity" },
+                        Request.Scheme);
+
+                    await _emailSender.SendEmailAsync(
+                        director.Email,
+                        "Your Director Account Created",
+                        $"Your account has been created. Your temporary password is <strong>Password.1</strong><br><br>" +
+                        $"Please <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>login</a> and change your password."
+                    );
+
                     TempData["SuccessMessage"] = $"{director.DirectorFullName} successfully added" +
                         (director.DirectorLocations?.FirstOrDefault()?.Location?.City != null
                          ? $" to the city of {director.DirectorLocations.FirstOrDefault().Location.City}."
                          : ".");
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException dex)
@@ -302,19 +352,20 @@ namespace TomorrowsVoices.Controllers
 
                     if (baseMessage.Contains("UNIQUE constraint failed"))
                     {
-                        ModelState.AddModelError("Email", "Unable to save changes. The email already exists and its connected to a director.");
+                        ModelState.AddModelError("Email", "Unable to save changes. The email already exists and is connected to another director.");
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
                     }
                 }
             }
 
-            // Repopulate the locations dropdown in case of validation errors
+ 
             ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
             return View(director);
         }
+
         // GET: Director/Edit/5
         [Authorize(Roles = "Admin,Director")]
         public async Task<IActionResult> Edit(int? id)

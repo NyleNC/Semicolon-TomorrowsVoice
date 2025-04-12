@@ -18,10 +18,10 @@
                 <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout">Logout</a></li>
-                @if (User.IsInRole("Admin"))
+         @*        @if (User.IsInRole("Admin"))
                 {
                     <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/RegisterDirector"><span class="ms-1">Register a Director?</span></a></li>
-                }
+                } *@
             </ul>
 
         }
