@@ -16,7 +16,7 @@
         <div class="btn-group">
             @if (User.IsInRole("Admin"))
             {
-            <a asp-action="Create" class="btn btn-primary">
+                <a asp-action="Create" class="btn btn-primary" title="Create a new Director">
                 <img src="~/Images/create-icon.png" alt="add-event-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New
             </a>
 
@@ -26,7 +26,7 @@
 
             <ul class="dropdown-menu" style="border-radius: 10px">
                 <li style="margin-right: 18px">
-                    <button type="button" class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#importExcelModal">
+                        <button type="button" class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#importExcelModal" title="Import from Excel file">
                         <img src="~/Images/import.png" alt="import icon" style="height: 24px; width: auto; margin-right: 8px" />
                         Bulk Import Excel
                     </button>
@@ -44,7 +44,7 @@
 @if (User.IsInRole("Admin"))
 {
     <div class="nav-container mb-3">
-        <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
+        <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")" title="View Active Directors"
         asp-action="Index" asp-route-archived="false">
             Active
             @if (ViewData["numberofActive"] != null && (int)ViewData["numberofActive"] == 0)
@@ -56,7 +56,7 @@
                 <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">@ViewData["numberofActive"]</span>
             }
         </a>
-        <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
+        <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")" title="View Archived Directors"
         asp-action="Index" asp-route-archived="true">
             Archive
             @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
@@ -156,14 +156,14 @@
 
                 <div>
                     <button class="btn btn-white mb-3 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
-                    data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                    data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" title="Open filter pane">
                         <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
                         Filter (@ViewData["numberFilters"])
                     </button>
                     <!-- Clear button -->
                     @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
                     {
-                        <a asp-action="Index" class="mb-3 ms-1 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px;">
+                        <a asp-action="Index" class="mb-3 ms-1 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px;" title="Clear all applied filters">
                             <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
                             Clear
                         </a>
@@ -273,7 +273,7 @@
             <thead>
                 <tr>
                     <th>
-                        <button type="submit" name="actionButton" value="Director" data-sort="true" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Director')">
+                        <button type="submit" name="actionButton" value="Director" data-sort="true" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'Director')" title="Sort by Director name">
                             Director
                             @if (ViewData["sortField"]?.ToString() == "Director")
                             {
@@ -299,7 +299,7 @@
                         </button>
                     </th>
                     <th>
-                        <button type="button" name="actionButton" value="City" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'City')">
+                        <button type="button" name="actionButton" value="City" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'City')" title="Sort by City">
                             Chapter
                             @if (ViewData["sortField"]?.ToString() == "City")
                             {
@@ -325,7 +325,7 @@
                         </button>
                     </th>
                     <th>
-                        <button type="button" name="actionButton" value="Email" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'Email')">
+                        <button type="button" name="actionButton" value="Email" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'Email')" title="Sort by Email">
                             Email
                             @if (ViewData["sortField"]?.ToString() == "Email")
                             {
@@ -351,7 +351,7 @@
                         </button>
                     </th>
                     <th>
-                        <button type="button" name="actionButton" value="dirPhoneNumber" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'Phone')">
+                        <button type="button" name="actionButton" value="dirPhoneNumber" data-sort="true" class="btn btn-toolbar text-white  d-inline" onclick="handleSort(event, 'Phone')" title="Sort by Phone number">
                             Phone Number
                             @if (ViewData["sortField"]?.ToString() == "Phone")
                             {
@@ -418,7 +418,7 @@
                     {
                         <div class="d-inline-flex align-items-center m-0 p-0">
 
-                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning" title="Edit this director">
                                 <img src="~/Images/icons8-edit-48 (1).png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
                             </a>
                             <div style="margin-left: 3px"> | </div>
@@ -436,7 +436,7 @@
                             {
                                 <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
                                     <input type="hidden" name="id" value="@item.ID" />
-                                    <button type="submit" class="btn btn-sm btn-danger">
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Archive this director">
                                         <img src="~/Images/icons8-box-48.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                         Archive
                                     </button>
@@ -446,7 +446,7 @@
                             {
                                 <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
                                     <input type="hidden" name="id" value="@item.ID" />
-                                    <button type="submit" class="btn btn-sm btn-restore">
+                                    <button type="submit" class="btn btn-sm btn-restore" title="Restore this director to active directors">
                                         <img src="~/Images/unarchive-value.png" alt="Unarchive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                         Restore
                                     </button>

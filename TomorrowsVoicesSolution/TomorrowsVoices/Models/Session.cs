@@ -9,7 +9,7 @@ namespace TomorrowsVoices.Models
  
 
         [Required(ErrorMessage = "You must select the session date")]
-        [Range(typeof(DateTime), "1/1/2000", nameof(DateTime.Today), ErrorMessage = "Date cannot be in the future.")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime? Date{ get; set; }
 

@@ -63,7 +63,7 @@
     <div class="mb-3">
         @if (!Model.IsArchived)
         {
-            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning" style="width: 188px;">
+            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning" style="width: 188px;" title="Edit this volunteer">
                 <img src="~/Images/icons8-edit-48 (1).png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
             </a>
         }
@@ -74,7 +74,7 @@
             </button>
         }
     </div>
-    <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px; width: auto;">
+    <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px; width: auto;" title="Go back to Volunteers Index Page">
         <i class="bi bi-arrow-left"></i> Back to Volunteers
     </a>
 </p>

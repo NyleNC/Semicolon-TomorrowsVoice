@@ -102,7 +102,7 @@
     <div class="mb-3">
         @if (!Model.IsArchived)
         {
-            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning">
+            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning" title="Edit this session">
                 <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
             </a>
         }
@@ -113,7 +113,9 @@
             </button>
         }
     </div>
-    <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 226px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Attendance Page</a>
+    <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 226px" title="Go back to Sessions Index Page">
+        <img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px"  />
+    Back to Attendance Page</a>
 
 </div>
 

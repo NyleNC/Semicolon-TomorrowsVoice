@@ -15,14 +15,14 @@
 
     </div>
     <div>
-        <a href="@Url.Action("AttendanceReportExport", "Session")" class="btn btn-white me-2">
+        <a href="@Url.Action("AttendanceReportExport", "Session")" class="btn btn-white me-2" title="Export all sessions to Excel file">
             <img src="~/Images/dark-export-icon.png" alt="export-icon" style="height: 24px; width: auto; margin-right: 10px" />
             Export
         </a>
-        <button id="filteredExportBtn" class="btn btn-white me-2">
+        <button id="filteredExportBtn" class="btn btn-white me-2" title="Export all the filtered sessions">
             <img src="~/Images/dark-export-icon.png" alt="export-icon" style="height: 24px; width: auto; margin-right: 10px" />Export Filtered
         </button>
-        <a asp-action="Create" class="btn btn-primary float-end"><img src="~/Images/create-icon.png" alt="add-attendance-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New</a>
+        <a asp-action="Create" class="btn btn-primary float-end" title="Create a new attendance"><img src="~/Images/create-icon.png" alt="add-attendance-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New</a>
     </div>
 </div>
 <p>View your Session Attendance records.</p>
@@ -47,7 +47,7 @@
 
 @* Container for all tabs *@
 <div class="nav-container mb-3">
-    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
+    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")" title="View Active Sessions"
        asp-action="Index" asp-route-archived="false">
         Active
         @if (ViewData["numberofActive"] != null && (int)ViewData["numberofActive"] == 0)
@@ -59,7 +59,7 @@
             <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">@ViewData["numberofActive"]</span>
         }
     </a>
-    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
+    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")" title="View Archived Sessions"
        asp-action="Index" asp-route-archived="true">
         Archive
         @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
@@ -85,20 +85,20 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex">
                     <button class="btn btn-white mb-3 ms-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle"
-                            data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                            data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" title="Open filter pane">
                         <img src="~/Images/dark-filter-icon.png" alt="filter-search-icon" style="height: 24px; width: auto; margin-right: 10px" />
                         Filter (@ViewData["numberFilters"])
                     </button>
                     <!-- Conditionally render the "Clear" button -->
                     @if (ViewData["numberFilters"] != null && (int)ViewData["numberFilters"] > 0)
                     {
-                        <a asp-action="Index" class="mb-3 ms-2 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px">
+                        <a asp-action="Index" class="mb-3 ms-2 btn text-white" style="background-color: indianred; padding: 11px; border-radius: 10px" title="Clear all applied filters">
                             <img src="~/Images/clear-icon.png" alt="Clear filters icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
                             Clear
                         </a>
                     }
                 </div>
-                <a asp-action="Calendar" class="btn btn-primary mb-3"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px" />Calendar View</a>
+                <a asp-action="Calendar" class="btn btn-primary mb-3" title="View sessions in calendar view"><img src="~/Images/calendar-icon.png" alt="calendar-icon" style="height: 24px; width: auto; margin-right: 10px" />Calendar View</a>
             </div>
         </div>
     </div>
@@ -291,7 +291,7 @@
             <thead>
                 <tr>
                     <th>
-                        <button type="button" class="btn btn-toolbar d-inline" onclick="handleSort(event, 'Date')">
+                        <button type="button" class="btn btn-toolbar d-inline" onclick="handleSort(event, 'Date')" title="Sort by date">
                             Date
                             @if (ViewData["sortField"]?.ToString() == "Date")
                             {
@@ -320,7 +320,7 @@
                     </th>
                     
                     <th>
-                        <button type="button" class="btn btn-toolbard-inline" onclick="handleSort(event, 'City')">
+                        <button type="button" class="btn btn-toolbard-inline" onclick="handleSort(event, 'City')" title="Sort by city">
                             City
                             @if (ViewData["sortField"]?.ToString() == "City")
                             {
@@ -349,7 +349,7 @@
                     </th>
                     
                     <th>
-                        <button type="button" class="btn btn-toolbar d-inline" onclick="handleSort(event, 'Attendance')">
+                        <button type="button" class="btn btn-toolbar d-inline" onclick="handleSort(event, 'Attendance')" title="Sort by attendance count">
                             Attendance
                             @if (ViewData["sortField"]?.ToString() == "Attendance")
                             {
@@ -377,7 +377,7 @@
                         </button>
                     </th>
                     <th>
-                        <button type="button" class="btn btn-toolbar d-inline" onclick="handleSort(event, 'Director')">
+                        <button type="button" class="btn btn-toolbar d-inline" onclick="handleSort(event, 'Director')" title="Sort by director name">
                             Director
                             @if (ViewData["sortField"]?.ToString() == "Director")
                             {
@@ -457,14 +457,14 @@
                                 {
                                     <div class="d-inline-flex align-items-center m-0 p-0">
 
-                                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
+                                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning" title="Edit this session">
                                             <img src="~/Images/icons8-edit-48 (1).png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
                                         </a>
                                         <div style="margin-left: 3px"> | </div>
                                     </div>
                                 }
 
-                                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">
+                                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info" title="View details of this session">
                                     <img src="~/Images/icons8-document-48.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
                                 </a> |
                                 <div class="btn-group">
@@ -472,7 +472,7 @@
                                     {
                                         <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
                                             <input type="hidden" name="id" value="@item.ID" />
-                                            <button type="submit" class="btn btn-sm btn-danger">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Archive this session">
                                                 <img src="~/Images/icons8-box-48.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                                 Archive
                                             </button>
@@ -482,7 +482,7 @@
                                     {
                                         <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
                                             <input type="hidden" name="id" value="@item.ID" />
-                                            <button type="submit" class="btn btn-sm btn-restore">
+                                            <button type="submit" class="btn btn-sm btn-restore" title="Restore this session to active sessions">
                                                 <img src="~/Images/unarchive-value.png" alt="Unarchive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                                 Restore
                                             </button>

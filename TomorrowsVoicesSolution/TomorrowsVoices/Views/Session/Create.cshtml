@@ -43,7 +43,11 @@
 
             <div class="form-group">
                 <label asp-for="Date" class="control-label" style="font-weight: 700">Session Date</label><span style="color: red">*</span>
-                <input asp-for="Date" class="form-control" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                <input asp-for="Date"
+                       type="date"
+                       class="form-control"
+                       value="@DateTime.Now.ToString("yyyy-MM-dd")"
+                       max="@DateTime.Today.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
 
@@ -57,7 +61,7 @@
             <div class="col-md-12">
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="control-label" style="font-weight: 700"> Choose Singers</label> <button type="button" id="btnLeft" class="btn btn-success btn-sm">
+                        <label class="control-label" style="font-weight: 700"> Choose Singers</label> <button type="button" id="btnLeft" class="btn btn-success btn-sm" title="Add selected singers to attendance">
                             <strong>+</strong>
                         </button>&nbsp;&nbsp;
                         @Html.ListBox("availOptions", (MultiSelectList)ViewBag.availOpts,
@@ -65,7 +69,7 @@
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label class="control-label" style="font-weight: 700"> Singers Attended</label> <button type="button" id="btnRight" class="btn btn-danger btn-sm">
+                        <label class="control-label" style="font-weight: 700"> Singers Attended</label> <button type="button" id="btnRight" class="btn btn-danger btn-sm" title="Remove selected singers to attenders">
                             <strong>-</strong>
                         </button>
                         @Html.ListBox("selectedOptions", (MultiSelectList)ViewBag.selOpts,
@@ -79,16 +83,17 @@
     <div class="col-md-4">
         <div class="form-group d-flex gap-2">
             <div class="form-group">
-                <button type="submit" id="btnSubmit" class="btn btn-primary">
+                <button type="submit" id="btnSubmit" class="btn btn-primary" title="Create a new Attendance">
                     <img src="~/Images/create-icon.png" alt="Create icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
                     Create
                 </button>
             </div>
             <div class="form-group">
-                <button type="button" id="fillPresetButton" class="btn btn-secondary fill-btn" style="background-color: navy;">Fill Preset Values</button>
+                <button type="button" id="fillPresetButton" class="btn btn-secondary fill-btn" style="background-color: navy;" title="(Demo) Fill fields with preset values">Fill Preset Values</button>
             </div>
         </div>
-        <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px"><img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Attendance Page</a>
+        <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 100px" title="Go back to Sessions Index Page">
+        <img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Back to Attendance Page</a>
     </div>
 </form>
 

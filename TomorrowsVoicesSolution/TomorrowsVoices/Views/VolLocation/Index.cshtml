@@ -11,7 +11,7 @@
     </div>
     <div class="float-end">
         <div class="btn-group">
-            <a asp-action="Create" class="btn btn-primary">
+            <a asp-action="Create" class="btn btn-primary" title="Create a new location">
                 <img src="~/Images/create-icon.png" alt="add-event-icon" style="height: 24px; width: auto; margin-right: 8px" />Add New
             </a>
           
@@ -21,7 +21,7 @@
 <p>View your Location records.</p>
 @* Container for all tabs *@
 <div class="nav-container mb-3">
-    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")"
+    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")" title="View Active Locations"
        asp-action="Index" asp-route-archived="false">
         Active
         @if (ViewData["numberofActive"] != null && (int)ViewData["numberofActive"] == 0)
@@ -33,7 +33,7 @@
             <span class="nav-tab-count  @(ViewData["ActiveTab"]?.ToString() == "active" ? "active" : "")">@ViewData["numberofActive"]</span>
         }
     </a>
-    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")"
+    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "archived" ? "active" : "")" title="View Archived Locations"
        asp-action="Index" asp-route-archived="true">
         Archive
         @if (ViewData["numberofArchive"] != null && (int)ViewData["numberofArchive"] == 0)
@@ -55,7 +55,7 @@
                     <thead>
                         <tr>
                             <th class="w-50">
-                                <button  type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')">
+                                <button  type="button" class="btn btn-toolbar text-white d-inline" onclick="handleSort(event, 'City')" title="Sort by city">
                                     City
                                 </button>
                             </th>
@@ -86,7 +86,7 @@
                     {
                         <div class="d-inline-flex align-items-center m-0 p-0">
 
-                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning">
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-warning" title="Edit this location">
                                 <img src="~/Images/icons8-edit-48 (1).png" alt="edit-icon" style="height: 24px; width: auto; margin-right: 10px" />Edit
                             </a>
                             <div style="margin-left: 3px"> | </div>
@@ -101,7 +101,7 @@
                         {
                             <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');" class="d-inline">
                                 <input type="hidden" name="id" value="@item.ID" />
-                                <button type="submit" class="btn btn-sm btn-danger">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Archive this location">
                                     <img src="~/Images/icons8-box-48.png" alt="Archive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                     Archive
                                 </button>
@@ -111,7 +111,7 @@
                         {
                             <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');" class="d-inline">
                                 <input type="hidden" name="id" value="@item.ID" />
-                                <button type="submit" class="btn btn-sm btn-restore">
+                                <button type="submit" class="btn btn-sm btn-restore" title="Restore this location to active locations">
                                     <img src="~/Images/unarchive-value.png" alt="Unarchive-icon" style="height: 24px; width: auto; margin-right: 10px;" />
                                     Restore
                                 </button>
@@ -127,7 +127,7 @@
                                     </button>
                                     <ul class="dropdown-menu " style="background-color:white">
                                         <li>
-                                            <a class="dropdown-item text-black" asp-action="Edit" asp-route-id="@item.ID">
+                                <a class="dropdown-item text-black" asp-action="Edit" asp-route-id="@item.ID" title="Edit this location">
                                                 <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
                                             </a>
                                         </li>
@@ -137,7 +137,7 @@
                                             {
                                                 <form asp-action="Archive" method="post" onsubmit="return confirm('Are you sure you want to archive this item?');">
                                                     <input type="hidden" name="id" value="@item.ID" />
-                                        <button type="submit" class="dropdown-item" style=" font-size: 1rem">
+                                        <button type="submit" class="dropdown-item" style=" font-size: 1rem" title="Archive this location">
                                                         <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Archive
                                                     </button>
                                                 </form>
@@ -146,7 +146,7 @@
                                             {
                                                 <form asp-action="Unarchive" method="post" onsubmit="return confirm('Are you sure you want to restore this item?');">
                                                     <input type="hidden" name="id" value="@item.ID" />
-                                        <button type="submit" class="dropdown-item" style=" font-size: 1rem">
+                                        <button type="submit" class="dropdown-item" style=" font-size: 1rem" title="Restore this location to active locations">
                                                         <img src="~/Images/Archive.png" alt="Archive-icon" style="height: 18px; width: auto; margin-right: 5px" /> Restore
                                                     </button>
                                                 </form>

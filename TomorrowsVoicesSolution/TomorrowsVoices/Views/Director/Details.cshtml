@@ -39,7 +39,7 @@
 <div class="mb-3">
     @if (!Model.IsArchived)
     {
-        <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning">
+        <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning" title="Edit this director">
             <img src="~/Images/edit-value.png" alt="Edit Values" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />Edit
         </a>
     }
@@ -50,6 +50,6 @@
         </button>
     }
 </div>
-<a asp-action="Index" class="btn btn-secondary">
+<a asp-action="Index" class="btn btn-secondary" title="Go back to Director Index Page">
     <i class="bi bi-arrow-left"></i> Back to Directors
 </a>
