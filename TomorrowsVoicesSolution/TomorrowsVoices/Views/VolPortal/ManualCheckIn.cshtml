@@ -1,0 +1,58 @@
+@model TomorrowsVoices.ViewModels.ManualCheckInViewModel
+@{
+    ViewData["Title"] = "Manual Check-In/Check-Out";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Manual Check-In/Check-Out</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Volunteer Information</h4>
+                    <p><strong>Name:</strong> @Model.VolunteerName</p>
+                    <p><strong>Event:</strong> @Model.EventName</p>
+                    <p><strong>Shift Start:</strong> @Model.ScheduleStart.ToString("MMM dd, yyyy h:mm tt")</p>
+                    <p><strong>Shift End:</strong> @Model.ScheduleEnd.ToString("MMM dd, yyyy h:mm tt")</p>
+                    <p><strong>Current Status:</strong> <span class="badge @(Model.CurrentStatus == "Not Checked In" ? "bg-danger" : Model.CurrentStatus == "Checked In" ? "bg-warning" : "bg-success")">@Model.CurrentStatus</span></p>
+                </div>
+                <div class="col-md-6">
+                    <h4>Actions</h4>
+                    @if (Model.CurrentStatus == "Not Checked In")
+                    {
+                        <form asp-action="PerformManualCheckIn" method="post">
+                            <input type="hidden" name="attendanceId" value="@Model.AttendanceId" />
+                            <input type="hidden" name="action" value="checkin" />
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-sign-in-alt"></i> Check In
+                            </button>
+                        </form>
+                    }
+                    else if (Model.CurrentStatus == "Checked In")
+                    {
+                        <form asp-action="PerformManualCheckIn" method="post">
+                            <input type="hidden" name="attendanceId" value="@Model.AttendanceId" />
+                            <input type="hidden" name="action" value="checkout" />
+                            <button type="submit" class="btn btn-info">
+                                <i class="fas fa-sign-out-alt"></i> Check Out
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> Shift completed
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="@Url.Action("EventDetails", new { id = Model.EventID })" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Event
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,118 @@
+@{
+    ViewData["Title"] = "Scan QR Code";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Scan QR Code</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="reader" style="width: 100%;"></div>
+                </div>
+                <div class="col-md-6">
+                    <div id="result" class="alert" style="display: none;"></div>
+                    <div id="status" class="alert alert-info" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script>
+        let isProcessing = false;
+        let lastScanTime = 0;
+        const MIN_SCAN_INTERVAL = 5000; // 5 seconds between scans
+
+        function onScanSuccess(decodedText, decodedResult) {
+            const now = Date.now();
+            
+            // Prevent multiple scans within the minimum interval
+            if (isProcessing || (now - lastScanTime) < MIN_SCAN_INTERVAL) {
+                return;
+            }
+
+            isProcessing = true;
+            lastScanTime = now;
+
+            // Show scanning status
+            $('#status')
+                .removeClass('alert-danger alert-success')
+                .addClass('alert-info')
+                .html('Processing QR code...')
+                .show();
+
+            // Send the QR code to the server
+            $.ajax({
+                url: '@Url.Action("ProcessQRCode")',
+                type: 'POST',
+                data: { qrCode: decodedText },
+                success: function(response) {
+                    if (response.success) {
+                        $('#result')
+                            .removeClass('alert-danger')
+                            .addClass('alert-success')
+                            .html(response.message || `Successfully ${response.action} at ${new Date(response.time).toLocaleTimeString()}`)
+                            .show();
+                        
+                        $('#status').hide();
+                        
+                        // If checked in, show a countdown for check-out
+                        if (response.action === 'checkin') {
+                            let countdown = 5; // 5 minutes
+                            const countdownInterval = setInterval(() => {
+                                $('#status')
+                                    .removeClass('alert-danger alert-success')
+                                    .addClass('alert-info')
+                                    .html(`You can check out in ${countdown} minutes`)
+                                    .show();
+                                
+                                if (countdown <= 0) {
+                                    clearInterval(countdownInterval);
+                                    $('#status')
+                                        .removeClass('alert-info')
+                                        .addClass('alert-success')
+                                        .html('You can now check out')
+                                        .show();
+                                }
+                                countdown--;
+                            }, 60000); // Update every minute
+                        }
+                    } else {
+                        $('#result')
+                            .removeClass('alert-success')
+                            .addClass('alert-danger')
+                            .html(response)
+                            .show();
+                        $('#status').hide();
+                    }
+                },
+                error: function(xhr) {
+                    $('#result')
+                        .removeClass('alert-success')
+                        .addClass('alert-danger')
+                        .html(xhr.responseText)
+                        .show();
+                    $('#status').hide();
+                },
+                complete: function() {
+                    isProcessing = false;
+                }
+            });
+        }
+
+        function onScanFailure(error) {
+            console.warn(`Code scan error = ${error}`);
+        }
+
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader",
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            /* verbose= */ false);
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    </script>
+}

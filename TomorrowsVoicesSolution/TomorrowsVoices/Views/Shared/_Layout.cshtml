@@ -352,6 +352,9 @@
                         {
                             <a class="nav-link" asp-controller="VolunteerPortal" asp-action="AvailableEvents">Available Events</a>
                             <a class="nav-link" asp-controller="VolunteerPortal" asp-action="MyEvents">My Events</a>
+                            <a class="nav-link" asp-controller="VolunteerPortal" asp-action="ScanQRCode">
+                                <i class="bi bi-qr-code-scan"></i> <span>Scan QR Code</span>
+                            </a>
                         }
                     </div>
                 </div>
@@ -472,26 +475,21 @@
                             }
                             @if (User.IsInRole("Volunteer"))
                             {
-                                <div class="menu-section">
-                                    <div class="menu-section-title" data-bs-toggle="collapse" href="#submenu4" role="button" aria-expanded="true">
-                                        <span>Volunteer Portal</span>
-                                        <i class="bi bi-chevron-down"></i>
-                                    </div>
-                                    <div class="collapse show" id="submenu4">
-                                        <li class="nav-item w-100">
-                                            <a class="nav-link" asp-controller="VolunteerPortal" asp-action="AvailableEvents">
-                                                <i class="bi bi-calendar-plus"></i>
-                                                <span>Available Events</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item w-100">
-                                            <a class="nav-link" asp-controller="VolunteerPortal" asp-action="MyEvents">
-                                                <i class="bi bi-calendar-check"></i>
-                                                <span>My Events</span>
-                                            </a>
-                                        </li>
-                                    </div>
-                                </div>
+                                <li class="nav-item w-100">
+                                    <a class="nav-link" asp-controller="VolunteerPortal" asp-action="AvailableEvents">
+                                        <i class="bi bi-calendar-plus"></i> <span>Available Events</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item w-100">
+                                    <a class="nav-link" asp-controller="VolunteerPortal" asp-action="MyEvents">
+                                        <i class="bi bi-calendar-check"></i> <span>My Events</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item w-100">
+                                    <a class="nav-link" asp-controller="VolunteerPortal" asp-action="ScanQRCode">
+                                        <i class="bi bi-qr-code-scan"></i> <span>Scan QR Code</span>
+                                    </a>
+                                </li>
                             }
                         </ul>
                     </div>
