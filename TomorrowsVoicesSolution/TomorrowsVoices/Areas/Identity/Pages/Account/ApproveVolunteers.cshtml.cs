@@ -21,6 +21,8 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
         }
 
         public List<Volunteer> PendingVolunteers { get; set; }
+        public List<Volunteer> ApprovedVolunteers { get; set; }
+        public List<Volunteer> RejectedVolunteers { get; set; }
 
         [BindProperty]
         public List<int> SelectedVolunteers { get; set; } = new List<int>();
@@ -31,22 +33,35 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
                 .Include(v => v.VolLocation)
                 .Where(v => v.Status == ApprovalStatus.Pending)
                 .ToListAsync();
+
+            ApprovedVolunteers = await _context.Volunteers
+                .Include(v => v.VolLocation)
+                .Where(v => v.Status == ApprovalStatus.Approved)
+                .ToListAsync();
+
+            RejectedVolunteers = await _context.Volunteers
+                .Include(v => v.VolLocation)
+                .Where(v => v.Status == ApprovalStatus.Rejected)
+                .ToListAsync();
         }
 
-        // Existing single-action methods
+        // Single-action methods
         public async Task<IActionResult> OnPostApproveAsync(int volunteerId)
         {
             await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Approved);
+           
+            TempData["ApprovedSuccess"] = true;
             return RedirectToPage();
         }
 
         public async Task<IActionResult> OnPostRejectAsync(int volunteerId)
         {
             await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Rejected);
+            TempData["Rejected"] = true;
             return RedirectToPage();
         }
 
-        // New bulk-action methods
+        // Bulk-action methods
         public async Task<IActionResult> OnPostApproveSelectedAsync()
         {
             if (SelectedVolunteers != null && SelectedVolunteers.Any())
@@ -56,6 +71,7 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
                     await UpdateVolunteerStatus(id, ApprovalStatus.Approved);
                 }
             }
+            TempData["ApprovedBulk"] = true;
             return RedirectToPage();
         }
 
@@ -68,6 +84,20 @@ namespace TomorrowsVoices.Areas.Identity.Pages.Account
                     await UpdateVolunteerStatus(id, ApprovalStatus.Rejected);
                 }
             }
+            TempData["RejectedBulk"] = true;
+            return RedirectToPage();
+        }
+
+        // Methods for approved/rejected tabs
+        public async Task<IActionResult> OnPostRevokeApprovalAsync(int volunteerId)
+        {
+            await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Pending);
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostReconsiderAsync(int volunteerId)
+        {
+            await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Pending);
             return RedirectToPage();
         }
 
