@@ -11,6 +11,183 @@
         You have been successfully logged out.
     </div>
 }
+
+<style>
+    .background-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .floating-element {
+        position: absolute;
+        opacity: 0.15;
+        animation: float 20s infinite linear;
+        filter: blur(1px);
+    }
+
+    .floating-element.choir {
+        background-color: #6D28E3;
+        border-radius: 50%;
+    }
+
+    .floating-element.event {
+        background-color: #1D4ED8;
+        border-radius: 10px;
+    }
+
+    .floating-element.volunteer {
+        background-color: #B45309;
+        border-radius: 5px;
+    }
+
+    @@keyframes float {
+        0% {
+            transform: translate(0, 0) rotate(0deg);
+        }
+        25% {
+            transform: translate(50px, 50px) rotate(90deg);
+        }
+        50% {
+            transform: translate(0, 100px) rotate(180deg);
+        }
+        75% {
+            transform: translate(-50px, 50px) rotate(270deg);
+        }
+        100% {
+            transform: translate(0, 0) rotate(360deg);
+        }
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        border-radius: 15px;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-primary {
+        background: rgba(109, 40, 227, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: rgba(109, 40, 227, 0.9);
+        color: white;
+    }
+
+    .btn-primary:focus {
+        background: rgba(109, 40, 227, 0.9);
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 0 0 0.25rem rgba(109, 40, 227, 0.25);
+        color: white;
+    }
+
+    .btn-role-admin, .btn-role-director, .btn-role-volunteer {
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-role-admin {
+        background-color: #F3EEFE;
+        border-color: #6D28E3;
+        color: #6D28E3;
+    }
+    .btn-role-admin:hover {
+        background-color: #E6DDFD;
+        border-color: #5B1FC7;
+        color: #5B1FC7;
+    }
+
+    .btn-role-director {
+        background-color: #E6F2FF;
+        border-color: #1D4ED8;
+        color: #1D4ED8;
+    }
+    .btn-role-director:hover {
+        background-color: #DBEAFE;
+        border-color: #1E40AF;
+        color: #1E40AF;
+    }
+
+    .btn-role-volunteer {
+        background-color: #FFFBEB;
+        border-color: #B45309;
+        color: #B45309;
+    }
+    .btn-role-volunteer:hover {
+        background-color: #FEF3C7;
+        border-color: #92400E;
+        color: #92400E;
+    }
+
+    .sidebar.collapsed {
+        width: 60px;
+    }
+
+    .sidebar.collapsed .nav-link {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+    }
+
+    .menu-section:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        bottom: -0.75rem;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 2px;
+        background-color: rgba(0, 0, 0, 0.15);
+        width: 80%;
+    }
+</style>
+
+<div class="background-animation">
+    <!-- Choir elements -->
+    <div class="floating-element choir" style="width: 80px; height: 80px; left: 20%; top: 30%; animation-delay: 0s;"></div>
+    <div class="floating-element choir" style="width: 60px; height: 60px; left: 70%; top: 50%; animation-delay: -10s;"></div>
+    
+    <!-- Event elements -->
+    <div class="floating-element event" style="width: 120px; height: 60px; left: 10%; top: 60%; animation-delay: -2s;"></div>
+    <div class="floating-element event" style="width: 90px; height: 45px; left: 60%; top: 20%; animation-delay: -7s;"></div>
+    <div class="floating-element event" style="width: 100px; height: 50px; left: 40%; top: 70%; animation-delay: -12s;"></div>
+    
+    <!-- Volunteer elements -->
+    <div class="floating-element volunteer" style="width: 70px; height: 35px; left: 30%; top: 10%; animation-delay: -3s;"></div>
+    <div class="floating-element volunteer" style="width: 50px; height: 25px; left: 80%; top: 40%; animation-delay: -8s;"></div>
+    <div class="floating-element volunteer" style="width: 60px; height: 30px; left: 50%; top: 80%; animation-delay: -15s;"></div>
+</div>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
@@ -38,29 +215,59 @@
                                         @Html.DisplayNameFor(m => m.Input.RememberMe)
                                     </label>
                                 </div>
-                                <a id="forgot-password" asp-page="./ForgotPassword" class="link-primary text-decoration-none">Forgot your password?</a>
                             </div>
                             <div class="d-flex justify-content-center mb-3">
                                 <button id="login-submit" type="submit" class="w-75 btn btn-primary">Log in</button>
                             </div>
                             <div class="text-center">
-
                                 <p>
-                                    Dont have an account? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Sign Up</a>
+                                    Dont have an account? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none">Sign Up</a>
                                 </p>
                                 <p>
-                                    <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                                    <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none">Forgot your password?</a>
+                                </p>
+                                <p>
+                                    <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="text-decoration-none">Resend email confirmation</a>
                                 </p>
                             </div>
                         </fieldset>
                     </form>
+
+                    <!-- Role-based login shortcuts -->
+                    <div class="role-shortcuts mt-4">
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <button type="button" class="btn btn-role-admin w-100 d-flex align-items-center justify-content-center" onclick="fillCredentials('admin@outlook.com', 'Password.1')">
+                                    <i class="bi bi-shield-lock me-2"></i>
+                                    Admin
+                                </button>
+                            </div>
+                            <div class="col-4">
+                                <button type="button" class="btn btn-role-director w-100 d-flex align-items-center justify-content-center" onclick="fillCredentials('averdecchia@tv.com', 'Password.1')">
+                                    <i class="bi bi-person-badge me-2"></i>
+                                    Director
+                                </button>
+                            </div>
+                            <div class="col-4">
+                                <button type="button" class="btn btn-role-volunteer w-100 d-flex align-items-center justify-content-center" onclick="fillCredentials('john.doe@gmail.com', 'Password.1')">
+                                    <i class="bi bi-people me-2"></i>
+                                    Volunteer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            </div>
-            </div>
-            </div>
-
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function fillCredentials(email, password) {
+            document.getElementById('Input_Email').value = email;
+            document.getElementById('Input_Password').value = password;
+        }
+    </script>
 }
