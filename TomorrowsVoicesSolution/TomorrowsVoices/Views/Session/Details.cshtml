@@ -2,17 +2,13 @@
 
 @{
     ViewData["Title"] = "Details";
-    var presentSingersCount = ViewBag.PresentSingersCount ?? "0/0";
-    var absentSingersCount = ViewBag.AbsentSingersCount ?? "0/0";
 }
-
 
 <h1>Session Attendance Details</h1>
 
 <div>
     <hr />
     <dl class="row">
-
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Location.City)
         </dt>
@@ -44,19 +40,17 @@
             @Html.DisplayFor(model => model.Date)
         </dd>
 
-
         <div class="col-md-6 mt-4">
-
             <table class="table table-striped table-custom">
                 <thead class="bg-dark text-white">
                     <tr>
                         <th class="text-white">
-                            <label class=" d-inline" for="presentSingersCount" style="font-weight: 700">Present Singers</label>
+                            <label class="d-inline" style="font-weight: 700">Present Singers (@Model.Attendance.Count(a => a.Status))</label>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Attendance.Where(a => a.Status))
+                    @foreach (var item in Model.Attendance.Where(a => a.Status).OrderBy(a => a.Singer?.FullName))
                     {
                         <tr>
                             <td>
@@ -73,13 +67,12 @@
                 <thead class="bg-dark text-white">
                     <tr>
                         <th class="text-white">
-                            <label class=" d-inline" for="absentSingersCount" style="font-weight: 700">Absent Singers</label>
+                            <label class="d-inline" style="font-weight: 700">Absent Singers (@Model.Attendance.Count(a => !a.Status))</label>
                         </th>
-
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Attendance.Where(a => a.Status == false))
+                    @foreach (var item in Model.Attendance.Where(a => !a.Status).OrderBy(a => a.Singer?.FullName))
                     {
                         <tr>
                             <td>
@@ -90,7 +83,6 @@
                 </tbody>
             </table>
         </div>
-
 
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Notes)
@@ -99,6 +91,7 @@
             @Html.DisplayFor(model => model.Notes)
         </dd>
     </dl>
+
     <div class="mb-3">
         @if (!Model.IsArchived)
         {
@@ -114,8 +107,8 @@
         }
     </div>
     <a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 226px" title="Go back to Sessions Index Page">
-        <img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px"  />
-    Back to Attendance Page</a>
-
+        <img src="~/Images/previous-page-icon.png" alt="go to previous page icon" style="height: 20px; width: auto; margin-bottom: 3px; margin-left: -4px; margin-right: 6px" />
+        Back to Attendance Page
+    </a>
 </div>
 

@@ -1,8 +1,6 @@
 ﻿@model TomorrowsVoices.Models.Session
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
 @{
     ViewData["Title"] = "Edit";
     // var presentSingersCount = ViewBag.PresentSingersCount ?? "0/0";
@@ -19,6 +17,8 @@
 <form asp-action="Edit">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="ID" />
+    <input type="hidden" name="selectedOptions" id="selectedOptionsInput" />
+    <input type="hidden" name="removedOptions" id="removedOptionsInput" />
     <div class="mt-4 row">
         <div class="col-md-4">
             <div class="row">
@@ -41,6 +41,12 @@
                         <label for="DirectorDropDown" style="font-weight: 700">Director in Charge</label>
                         <select asp-for="Location.DirectorLocations.FirstOrDefault().DirectorID" class="form-control" id="DirectorDropDown">
                             <option value="">Select a director</option>
+                            @if (Model.Location?.DirectorLocations?.FirstOrDefault() != null)
+                            {
+                                <option value="@Model.Location.DirectorLocations.FirstOrDefault().DirectorID" selected>
+                                    @Model.Location.DirectorLocations.FirstOrDefault().Director.DirectorFullName
+                                </option>
+                            }
                         </select>
                         <span asp-validation-for="Location.DirectorLocations.FirstOrDefault().DirectorID" class="text-danger"></span>
                     </div>
@@ -81,7 +87,8 @@
             <div class="col-md-12">
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="control-label" style="font-weight: 700"> Choose Singers</label> <button type="button" id="btnLeft" class="btn btn-success btn-sm" title="Add selected singers to attendance">
+                        <label class="control-label" style="font-weight: 700"> Choose Singers</label> 
+                        <button type="button" id="btnLeft" class="btn btn-success btn-sm" title="Add selected singers to attendance">
                             <strong>+</strong>
                         </button>&nbsp;&nbsp;
                         @*
@@ -98,10 +105,11 @@
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label class="control-label" style="font-weight: 700"> Singers Attended</label> <button type="button" id="btnRight" class="btn btn-danger btn-sm" title="Remove selected singers to attendance">
+                        <label class="control-label" style="font-weight: 700"> Singers Attended</label> 
+                        <button type="button" id="btnRight" class="btn btn-danger btn-sm" title="Remove selected singers to attendance">
                             <strong>-</strong>
                         </button>
-                        @Html.ListBox("selectedOptions", (MultiSelectList)ViewBag.selOpts,
+                        @Html.ListBox("attendingOptions", (MultiSelectList)ViewBag.selOpts,
                                  new { @size = 10, @class = "form-control", @style = "margin-top: 0.5rem;" })
                     </div>
 
@@ -129,129 +137,166 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <!-- Load jQuery first -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Then load Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <!-- Then load our custom scripts -->
     <script>
+        // Global variables to track selected and removed singers
+        var selectedSingers = new Set();
+        var removedSingers = new Set();
+
         $(document).ready(function () {
-            // Add/Remove buttons logic
-            $('#btnLeft').click(function () {
-                $('#availOptions option:selected').appendTo('#selectedOptions');
+            // Initialize Select2
+            $('.city-dropdown').select2({
+                placeholder: "Select a city",
+                allowClear: true
             });
 
-            $('#btnRight').click(function () {
-                $('#selectedOptions option:selected').appendTo('#availOptions');
+            // Get the current location ID from the model
+            var currentLocationId = '@Model.LocationID';
+            var currentDirectorId = '@(Model.Location?.DirectorLocations?.FirstOrDefault()?.DirectorID)';
+
+            // Initialize with current attending singers
+            $('#attendingOptions option').each(function() {
+                selectedSingers.add($(this).val());
             });
 
-            // Ensure all selectedOptions are submitted
-            $('form').submit(function () {
-                $('#selectedOptions option').prop('selected', true);
-            });
-        });
-    </script>
-}
-<script src="~/js/multiselect.js"></script>
-<script>
-    $(document).ready(function () {
-        $("#City").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '@Url.Action("CitySuggestions", "Director")',
-                    type: "GET",
-                    dataType: "json",
-                    data: { term: request.term },
-                    success: function (data) {
-                        response($.map(data, function (item) {
-                            return { label: item, value: item };
-                        }));
-                    }
+            // If there's a location selected, update the director and singers
+            if (currentLocationId && currentLocationId !== '0') {
+                $('#LocationID').val(currentLocationId).trigger('change');
+                if (currentDirectorId) {
+                    $('#DirectorDropDown').val(currentDirectorId).trigger('change');
+                }
+                updateDirectorAndSingers(currentLocationId);
+            }
+
+            // Handle moving singers from available to attending
+            $('#btnLeft').click(function() {
+                var selectedItems = $('#availOptions option:selected');
+                if (selectedItems.length === 0) {
+                    alert("Please select singers to add");
+                    return;
+                }
+                selectedItems.each(function() {
+                    var value = $(this).val();
+                    selectedSingers.add(value);
+                    removedSingers.delete(value);
                 });
-            },
-            minLength: 1,
-            messages: {
-                noResults: "No cities found",
-                results: function () { return ""; }
-            },
-            open: function () {
-                var autocompleteList = $(".ui-autocomplete");
-                autocompleteList.css({
-                    "max-height": "200px",
-                    "overflow-y": "auto",
-                    "overflow-x": "hidden"
+                selectedItems.appendTo('#attendingOptions');
+                updateHiddenInputs();
+            });
+
+            // Handle moving singers from attending to available
+            $('#btnRight').click(function() {
+                var selectedItems = $('#attendingOptions option:selected');
+                if (selectedItems.length === 0) {
+                    alert("Please select singers to remove");
+                    return;
+                }
+                selectedItems.each(function() {
+                    var value = $(this).val();
+                    selectedSingers.delete(value);
+                    removedSingers.add(value);
+                    $(this).remove(); // Remove from attending list
+                });
+                // Add to available list
+                selectedItems.appendTo('#availOptions');
+                updateHiddenInputs();
+            });
+
+            // Update hidden inputs before form submission
+            function updateHiddenInputs() {
+                // Remove all existing hidden inputs
+                $('input[name="selectedOptions"]').remove();
+                $('input[name="removedOptions"]').remove();
+                
+                // Add new hidden inputs for selected singers
+                Array.from(selectedSingers).forEach(function(value) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'selectedOptions',
+                        value: value
+                    }).appendTo('form');
+                });
+                
+                // Add new hidden inputs for removed singers
+                Array.from(removedSingers).forEach(function(value) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'removedOptions',
+                        value: value
+                    }).appendTo('form');
                 });
             }
-        });
-        $('.city-dropdown').select2({
-            placeholder: "Select a city",
-            allowClear: true
-        });
-    });
-</script>
 
-<script>
-     function updateDirectorAndSingers(locationId) {
-            let directorDropdown = $("#DirectorDropDown");
-            let availableSingers = $("#availOptions");
+            // Ensure hidden inputs are updated before form submission
+            $('form').submit(function() {
+                updateHiddenInputs();
+            });
 
-            if (!locationId) {
-                directorDropdown.empty().append('<option value="">Select a director</option>');
-                availableSingers.empty();
-                availableSingers.append(`<option disabled style="white-space: normal; word-wrap: break-word;">Select a City to see the corresponding list of Singers.</option>`);
+            // Initialize hidden inputs
+            updateHiddenInputs();
+        });
+
+        function updateDirectorAndSingers(locationId) {
+            if (!locationId || locationId === '0') {
+                $('#DirectorDropDown').empty().append('<option value="">Select a director</option>');
+                $('#availOptions').empty().append('<option disabled>Select a City first</option>');
+                $('#attendingOptions').empty();
                 return;
             }
 
-            fetch(`/Session/GetDirectorAndSingersByLocation?locationId=${locationId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Populate the directors dropdown
-                    directorDropdown.empty();
-                    if (data.directors.length === 0) {
+            $.ajax({
+                url: `/Session/GetDirectorAndSingersByLocation?locationId=${locationId}`,
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    // Handle directors
+                    let directorDropdown = $('#DirectorDropDown');
+                    let currentOptions = directorDropdown.find('option[value!=""]');
+
+                    if (data.directors && data.directors.length > 0) {
+                        data.directors.forEach(function(director) {
+                            if (!directorDropdown.find(`option[value="${director.id}"]`).length) {
+                                directorDropdown.append($('<option></option>').val(director.id).text(director.name));
+                            }
+                        });
+
+                        let currentSelected = directorDropdown.val();
+                        if (!currentSelected && '@Model.Location?.DirectorLocations?.FirstOrDefault()?.DirectorID') {
+                            directorDropdown.val('@Model.Location?.DirectorLocations?.FirstOrDefault()?.DirectorID');
+                        }
+                    } else if (currentOptions.length === 0) {
                         directorDropdown.append('<option value="">No directors available</option>');
-                    } else {
-                        data.directors.forEach(director => {
-                            directorDropdown.append(`<option value="${director.id}">${director.name}</option>`);
-                        });
                     }
 
-                    // Populate the singers list
+                    // Handle singers
+                    let availableSingers = $('#availOptions');
+                    let attendingSingers = $('#attendingOptions');
                     availableSingers.empty();
-                    if (data.singers.length === 0) {
-                        availableSingers.append(`<option disabled>No singers available for ${$("#LocationDropDown option:selected").text()}</option>`);
-                    } else {
-                        data.singers.forEach(singer => {
-                            availableSingers.append(`<option value="${singer.id}">${singer.name}</option>`);
+                    attendingSingers.empty();
+
+                    if (data.singers && data.singers.length > 0) {
+                        data.singers.forEach(function(singer) {
+                            if (selectedSingers.has(singer.id.toString())) {
+                                attendingSingers.append($('<option></option>').val(singer.id).text(singer.name));
+                            } else {
+                                availableSingers.append($('<option></option>').val(singer.id).text(singer.name));
+                            }
                         });
+                    } else {
+                        availableSingers.append('<option disabled>No singers available for this location</option>');
                     }
-                })
-                .catch(error => console.error('Error fetching director and singers:', error));
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching director and singers:', error);
+                }
+            });
         }
-
-    $(document).ready(function () {
-        $('.city-dropdown').select2({
-            placeholder: "Select a city",
-            allowClear: true
-        });
-        $(".city-dropdown").val("").trigger("change");
-
-        // Set initial state of the "Choose Singers" list
-        let availableSingers = $("#availOptions");
-        availableSingers.empty();
-        availableSingers.append(`<option disabled>
-            Select a City to see the corresponding list of Singers.</option>`);
-
-        $("#btnLeft").click(function () {
-            $("#availOptions option:selected").each(function () {
-                $("#selectedOptions").append($(this));
-            });
-        });
-
-        $("#btnRight").click(function () {
-            $("#selectedOptions option:selected").each(function () {
-                $("#availOptions").append($(this));
-            });
-        });
-    });
-</script>
-
-
-
+    </script>
+}
 
 @if (TempData["SuccessMessage"] != null)
 {

@@ -101,6 +101,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="~/js/multiselect.js"></script>
     <script>
         document.getElementById("fillPresetButton").addEventListener("click", function () {
             // Preset Values
@@ -142,27 +143,19 @@
             availableSingers.empty();
             availableSingers.append(`<option disabled style="white-space: normal; word-wrap: break-word;">Select a City to see the corresponding list of Singers.</option>`);
 
-            // Call updateDirectorAndSingers on page load with the current value of the dropdown
+            // Call updateDirectorAndSingers on page load if there's a value
             let initialLocationId = $("#LocationDropDown").val();
             if (initialLocationId) {
                 updateDirectorAndSingers(initialLocationId);
             }
 
-            // Move selected options between list boxes
-            $("#btnLeft").click(function () {
-                $("#availOptions option:selected").each(function () {
-                    $("#selectedOptions").append($(this));
-                });
-            });
-
-            $("#btnRight").click(function () {
-                $("#selectedOptions option:selected").each(function () {
-                    $("#availOptions").append($(this));
-                });
+            // Ensure form submission handles selected options
+            $('form').submit(function() {
+                $('#selectedOptions option').prop('selected', true);
             });
         });
 
-              function updateDirectorAndSingers(locationId) {
+        function updateDirectorAndSingers(locationId) {
             let directorDropdown = $("#DirectorDropDown");
             let availableSingers = $("#availOptions");
 
