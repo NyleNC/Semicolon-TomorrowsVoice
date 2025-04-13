@@ -112,6 +112,8 @@ namespace TomorrowsVoices.ViewModels
 
         public bool CanCheckIn { get; set; }
 
+        public bool CanCheckOut { get; set; }
+
         // Helper properties
         public string ShiftTime => $"{ShiftStart.ToString("h:mm tt")} - {ShiftEnd.ToString("h:mm tt")}";
 

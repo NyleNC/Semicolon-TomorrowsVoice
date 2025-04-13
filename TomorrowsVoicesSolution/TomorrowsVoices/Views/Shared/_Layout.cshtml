@@ -522,61 +522,64 @@
 
     <script>    
         document.addEventListener('DOMContentLoaded', function () {
-            // Get current path
+            // Get current path and split it into segments
             let currentPath = window.location.pathname.toLowerCase();
+            let currentPathSegments = currentPath.split('/').filter(Boolean);
 
             // Find matching link and add 'active-page' class
             document.querySelectorAll(".nav-link").forEach(link => {
                 let linkPath = link.getAttribute("href")?.toLowerCase();
-                if (linkPath && currentPath.includes(linkPath)) {
-                    link.classList.add("active-page");
+                if (linkPath) {
+                    let linkPathSegments = linkPath.split('/').filter(Boolean);
+                    
+                    // Check if both controller and action match
+                    let isExactMatch = false;
+                    if (linkPathSegments.length >= 2 && currentPathSegments.length >= 2) {
+                        isExactMatch = linkPathSegments[0] === currentPathSegments[0] && 
+                                     linkPathSegments[1] === currentPathSegments[1];
+                    } else {
+                        isExactMatch = linkPath === currentPath;
+                    }
+                    
+                    if (isExactMatch) {
+                        link.classList.add("active-page");
+                    }
                 }
             });
+
             const sidebar = document.querySelector('.sidebar');
             const toggleBtn = document.getElementById('btn');
 
+            // Load saved state
+            const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isSidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                updateSidebarElements(true);
+            }
+
             // Toggle sidebar collapse and hide/show text
             toggleBtn.addEventListener('click', function () {
+                const willCollapse = !sidebar.classList.contains('collapsed');
                 sidebar.classList.toggle('collapsed');
+                updateSidebarElements(willCollapse);
+                
+                // Save state
+                localStorage.setItem('sidebarCollapsed', willCollapse);
+            });
 
+            function updateSidebarElements(isCollapsed) {
                 // Toggle text visibility
                 const spans = sidebar.querySelectorAll('.nav-link span');
                 spans.forEach(span => {
-                    span.style.display = sidebar.classList.contains('collapsed') ? 'none' : 'inline';
+                    span.style.display = isCollapsed ? 'none' : 'inline';
                 });
 
                 // Toggle dropdown icons visibility
                 const dropdownIcons = sidebar.querySelectorAll('.bi-chevron-down');
                 dropdownIcons.forEach(icon => {
-                    icon.style.display = sidebar.classList.contains('collapsed') ? 'none' : 'inline';
+                    icon.style.display = isCollapsed ? 'none' : 'inline';
                 });
-
-                // Toggle section titles visibility
-                const sectionTitles = sidebar.querySelectorAll('.menu-section-title');
-                sectionTitles.forEach(title => {
-                    title.style.display = sidebar.classList.contains('collapsed') ? 'none' : 'flex';
-                });
-
-                // Show all submenus when collapsed
-                const submenus = sidebar.querySelectorAll('.collapse');
-                submenus.forEach(submenu => {
-                    if (sidebar.classList.contains('collapsed')) {
-                        submenu.classList.add('show');
-                    }
-                });
-            });
-
-            // Track submenu state changes for arrow rotation
-            const submenus = document.querySelectorAll('[data-bs-toggle="collapse"]');
-            submenus.forEach(menu => {
-                menu.addEventListener('click', function() {
-                    // Update aria-expanded attribute after a short delay to catch the toggle
-                    setTimeout(() => {
-                        const isExpanded = this.getAttribute('aria-expanded') === 'true';
-                        this.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
-                    }, 50);
-                });
-            });
+            }
         });
     </script>
   

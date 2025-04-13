@@ -142,7 +142,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    TomorrowsVoicesInitializer.Initialize(serviceProvider: services, DeleteDatabase: true,
+    TomorrowsVoicesInitializer.Initialize(serviceProvider: services, DeleteDatabase: false,
         UseMigrations: true, SeedSampleData: true);
 
     ApplicationDbInitializer.Initialize(serviceProvider: services,

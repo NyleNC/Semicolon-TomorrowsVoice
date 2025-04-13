@@ -68,7 +68,7 @@ else
                 <div class="card event-card h-100 @(eventItem.IsRegistered ? "registered" : "")">
                     <div class="card-header">
                         <h5 class="card-title">@eventItem.Title</h5>
-                        <span class="badge @(eventItem.IsUpcoming ? "badge-primary" : eventItem.IsInProgress ? "badge-success" : "badge-secondary")">
+                        <span class="badge text-dark @(eventItem.IsUpcoming ? "badge-primary" : eventItem.IsInProgress ? "badge-success" : "badge-secondary")">
                             @(eventItem.IsUpcoming ? "Upcoming" : eventItem.IsInProgress ? "In Progress" : "Past")
                         </span>
                         @if (eventItem.IsRegistered)
@@ -98,27 +98,29 @@ else
                                 <ul class="shift-list">
                                     @foreach (var shift in eventItem.Schedules)
                                     {
-                                        <li class="shift-item @(shift.IsRegistered ? "registered" : "")">
-                                            <div class="shift-info">
-                                                <span>@shift.TimeSlot</span>
-                                                <span class="shift-duration">(@shift.Duration)</span>
-                                            </div>
-                                            <div class="shift-actions">
-                                                @if (shift.IsRegistered)
-                                                {
-                                                    <span class="text-success">Registered</span>
-                                                }
-                                                else if (shift.Start > DateTime.Now)
-                                                {
-                                                    <form asp-action="SignUpForShift" method="post" onsubmit="return confirm('Are you sure you want to sign up for this shift?');">
-                                                        <input type="hidden" name="scheduleId" value="@shift.ScheduleId" />
-                                                        <button type="submit" class="btn btn-sm btn-primary">Sign Up</button>
-                                                    </form>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">Past</span>
-                                                }
+                                        <li class="shift-item @(shift.IsRegistered ? "registered rounded" : "")">
+                                            <div class="shift-info d-flex justify-content-between align-items-center w-100 px-3">
+                                                <div>
+                                                    <span>@shift.TimeSlot</span>
+                                                    <span class="shift-duration">(@shift.Duration)</span>
+                                                </div>
+                                                <div>
+                                                    @if (shift.IsRegistered)
+                                                    {
+                                                        <span class="text-success text-dark">Registered</span>
+                                                    }
+                                                    else if (shift.Start > DateTime.Now)
+                                                    {
+                                                        <form asp-action="SignUpForShift" method="post" onsubmit="return confirm('Are you sure you want to sign up for this shift?');">
+                                                            <input type="hidden" name="scheduleId" value="@shift.ScheduleId" />
+                                                            <button type="submit" class="btn btn-sm btn-primary">Sign Up</button>
+                                                        </form>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">Past</span>
+                                                    }
+                                                </div>
                                             </div>
                                         </li>
                                     }

@@ -53,10 +53,29 @@
         max-width: 400px;
         margin: 20px 0;
         padding: 10px;
+        border: 2px solid #6423e7;
+        border-radius: 10px;
     }
     #result, #status {
         width: 100%;
         max-width: 400px;
+    }
+    .back-button {
+        margin-top: 20px;
+        padding: 8px 16px;
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .back-button:hover {
+        background-color: #5a6268;
+        color: white;
+        text-decoration: none;
     }
 </style>
 
@@ -64,11 +83,14 @@
     <div class="content-box">
         <h2 class="animated fadeIn">Scan QR Code</h2>
         <div class="alert alert-info fade show" role="alert">
-            <strong>Note for Volunteers:</strong> Please ask for the QR code through the event manager or representative.
+            <strong>Instructions:</strong> Please scan the QR code provided by the event organizer to check in/out.
         </div>
-        <div id="reader" style="border: none"></div>
+        <div id="reader"></div>
         <div id="result" class="alert" style="display: none;"></div>
         <div id="status" class="alert alert-info" style="display: none;"></div>
+        <a href="@Url.Action("MyEvents")" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to My Events
+        </a>
     </div>
 </div>
 
@@ -108,34 +130,17 @@
                         
                         $('#status').hide();
                         
-                        // If checked in, show a countdown for check-out
-                        if (response.action === 'checkin') {
-                            let countdown = 5; // 5 minutes
-                            const countdownInterval = setInterval(() => {
-                                $('#status')
-                                    .removeClass('alert-danger alert-success')
-                                    .addClass('alert-info')
-                                    .html(`You can check out in ${countdown} minutes`)
-                                    .show();
-                                
-                                if (countdown <= 0) {
-                                    clearInterval(countdownInterval);
-                                    $('#status')
-                                        .removeClass('alert-info')
-                                        .addClass('alert-success')
-                                        .html('You can now check out')
-                                        .show();
-                                }
-                                countdown--;
-                            }, 60000); // Update every minute
-                        }
+                        // Redirect to MyEvents page after successful check-in/out
+                        setTimeout(() => {
+                            window.location.href = '@Url.Action("MyEvents")';
+                        }, 2000);
                     } else {
-                        showAlert('#result', response, false);
+                        showAlert('#result', response.message || 'Invalid QR code', false);
                         $('#status').hide();
                     }
                 },
                 error: function(xhr) {
-                    showAlert('#result', xhr.responseText, false);
+                    showAlert('#result', xhr.responseText || 'Error processing QR code', false);
                     $('#status').hide();
                 },
                 complete: function() {
@@ -160,9 +165,7 @@
                 .removeClass('alert-danger alert-success')
                 .addClass(isSuccess ? 'alert-success' : 'alert-danger')
                 .html(message)
-                .fadeIn(300)
-                .delay(3000)
-                .fadeOut(300);
+                .fadeIn(300);
         }
     </script>
 }

@@ -147,7 +147,10 @@ namespace TomorrowsVoices.Controllers
                         TimeUntilShift = a.VolSchedule.ScheduledStart - DateTime.Now,
                         CanCheckIn = a.VolSchedule.ScheduledStart.AddMinutes(-15) <= DateTime.Now &&
                                     a.VolSchedule.ScheduledEnd >= DateTime.Now &&
-                                    a.ActualStart == null
+                                    a.ActualStart == null,
+                        CanCheckOut = a.ActualStart.HasValue &&
+                                    !a.ActualEnd.HasValue &&
+                                    a.VolSchedule.ScheduledEnd.AddMinutes(30) >= DateTime.Now
                     }).ToList()
                 })
                 .OrderBy(e => e.EventStart)
@@ -733,18 +736,20 @@ namespace TomorrowsVoices.Controllers
         {
             if (string.IsNullOrEmpty(qrCode))
             {
-                return BadRequest("QR code is required");
+                return Json(new { success = false, message = "QR code is required" });
             }
 
             var currentVolunteer = await GetCurrentVolunteerAsync();
             if (currentVolunteer == null && !User.IsInRole("Admin"))
             {
-                return BadRequest("Volunteer not found");
+                return Json(new { success = false, message = "Volunteer not found" });
             }
 
             var qrCheckIn = await _context.QRCheckIns
                 .Include(q => q.Schedule)
                     .ThenInclude(s => s.Event)
+                .Include(q => q.Schedule)
+                    .ThenInclude(s => s.VolAttendances)
                 .FirstOrDefaultAsync(q => q.QRCode == qrCode && 
                                        q.IsActive && 
                                        q.ValidFrom <= DateTime.Now && 
@@ -752,52 +757,65 @@ namespace TomorrowsVoices.Controllers
 
             if (qrCheckIn == null)
             {
-                return BadRequest("Invalid or expired QR code");
+                return Json(new { success = false, message = "Invalid or expired QR code" });
             }
 
             if (qrCheckIn.Schedule == null)
             {
-                return BadRequest("Invalid schedule associated with QR code");
+                return Json(new { success = false, message = "Invalid schedule associated with QR code" });
             }
 
             var attendance = await _context.VolAttendances
                 .FirstOrDefaultAsync(a => a.VolScheduleID == qrCheckIn.ScheduleID && 
-                                        a.VolunteerID == (currentVolunteer != null ? currentVolunteer.ID : 0));
+                                        a.VolunteerID == currentVolunteer.ID);
 
             if (attendance == null)
             {
-                return BadRequest("You are not registered for this event");
+                return Json(new { success = false, message = "You are not registered for this event" });
             }
 
-            // Check if there's a minimum time between check-in and check-out (5 minutes)
-            var minCheckInDuration = TimeSpan.FromMinutes(5);
-
+            // Check if volunteer can check in/out
             if (!attendance.ActualStart.HasValue)
             {
-                // Check in
+                // Check-in logic
+                if (DateTime.Now < qrCheckIn.Schedule.ScheduledStart.AddMinutes(-15))
+                {
+                    return Json(new { success = false, message = "You cannot check in yet. Check-in opens 15 minutes before your shift." });
+                }
+
+                if (DateTime.Now > qrCheckIn.Schedule.ScheduledEnd)
+                {
+                    return Json(new { success = false, message = "This shift has already ended" });
+                }
+
                 attendance.ActualStart = DateTime.Now;
                 _context.Update(attendance);
                 await _context.SaveChangesAsync();
+
                 return Json(new { 
                     success = true, 
                     action = "checkin", 
                     time = DateTime.Now,
-                    message = "Successfully checked in! You can check out after 5 minutes."
+                    message = "Successfully checked in! You can check out after your shift."
                 });
             }
             else if (!attendance.ActualEnd.HasValue)
             {
-                // Check if enough time has passed since check-in
+                // Check-out logic
+                var minCheckInDuration = TimeSpan.FromMinutes(5);
                 if (DateTime.Now - attendance.ActualStart.Value < minCheckInDuration)
                 {
                     var remainingTime = minCheckInDuration - (DateTime.Now - attendance.ActualStart.Value);
-                    return BadRequest($"Please wait {Math.Ceiling(remainingTime.TotalMinutes)} more minutes before checking out.");
+                    return Json(new { 
+                        success = false, 
+                        message = $"Please wait {Math.Ceiling(remainingTime.TotalMinutes)} more minutes before checking out" 
+                    });
                 }
 
-                // Check out
                 attendance.ActualEnd = DateTime.Now;
                 _context.Update(attendance);
                 await _context.SaveChangesAsync();
+
                 return Json(new { 
                     success = true, 
                     action = "checkout", 
@@ -807,7 +825,7 @@ namespace TomorrowsVoices.Controllers
             }
             else
             {
-                return BadRequest("You have already completed this shift");
+                return Json(new { success = false, message = "You have already completed this shift" });
             }
         }
 

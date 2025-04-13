@@ -61,34 +61,28 @@
             <div class="check-in-actions mt-4">
                 @if (!Model.ActualStart.HasValue && Model.CanCheckIn)
                 {
-                    <form asp-action="PerformCheckIn" method="post">
-                        <input type="hidden" name="id" value="@Model.AttendanceId" />
-                        <button type="submit" class="btn btn-lg btn-success" id="checkInButton">
-                            <i class="fas fa-check-circle"></i> Check In Now
-                        </button>
+                    <a href="@Url.Action("ScanQRCode")" class="btn btn-lg btn-success" id="checkInButton">
+                        <i class="fas fa-qr-code"></i> Scan QR Code to Check In
+                    </a>
 
-                        <div class="check-in-info alert alert-info mt-3">
-                            <p>
-                                <i class="fas fa-info-circle"></i>
-                                You can check in up to 15 minutes before your scheduled start time.
-                            </p>
-                        </div>
-                    </form>
+                    <div class="check-in-info alert alert-info mt-3">
+                        <p>
+                            <i class="fas fa-info-circle"></i>
+                            Please scan the QR code provided by the event organizer to check in.
+                        </p>
+                    </div>
                 }
                 else if (Model.ActualStart.HasValue && !Model.ActualEnd.HasValue && Model.CanCheckOut)
                 {
-                    <form asp-action="PerformCheckOut" method="post">
-                        <input type="hidden" name="id" value="@Model.AttendanceId" />
-                        <div class="checked-in-time alert alert-success">
-                            <p>
-                                <i class="fas fa-clock"></i>
-                                You checked in at <strong>@Model.ActualStart.Value.ToString("h:mm tt")</strong>
-                            </p>
-                        </div>
-                        <button type="submit" class="btn btn-lg btn-info" id="checkOutButton">
-                            <i class="fas fa-sign-out-alt"></i> Check Out
-                        </button>
-                    </form>
+                    <a href="@Url.Action("ScanQRCode")" class="btn btn-lg btn-info" id="checkOutButton">
+                        <i class="fas fa-qr-code"></i> Scan QR Code to Check Out
+                    </a>
+                    <div class="checked-in-time alert alert-success">
+                        <p>
+                            <i class="fas fa-clock"></i>
+                            You checked in at <strong>@Model.ActualStart.Value.ToString("h:mm tt")</strong>
+                        </p>
+                    </div>
                 }
                 else if (Model.ActualStart.HasValue && Model.ActualEnd.HasValue)
                 {

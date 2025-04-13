@@ -65,7 +65,7 @@ else
                 Upcoming
                 @if (upcomingEvents.Count > 0)
                 {
-                    <span class="badge badge-primary">@upcomingEvents.Count</span>
+                    <span class="badge badge-primary text-dark">@upcomingEvents.Count</span>
                 }
             </a>
         </li>
@@ -74,7 +74,7 @@ else
                 Today
                 @if (currentEvents.Count > 0)
                 {
-                    <span class="badge badge-success">@currentEvents.Count</span>
+                    <span class="badge badge-primary text-dark">@currentEvents.Count</span>
                 }
             </a>
         </li>
@@ -83,7 +83,7 @@ else
                 Past
                 @if (pastEvents.Count > 0)
                 {
-                    <span class="badge badge-secondary">@pastEvents.Count</span>
+                    <span class="badge badge-primary text-dark">@pastEvents.Count</span>
                 }
             </a>
         </li>
@@ -107,11 +107,11 @@ else
                         <div class="card my-event-card mb-4">
                             <div class="card-header">
                                 <h5 class="card-title">@eventItem.Title</h5>
-                                <span class="badge badge-primary">Upcoming</span>
+                                <span class="badge badge-primary text-dark">Upcoming</span>
                             </div>
                             <div class="card-body">
                                 <div class="event-info">
-                                    <p><i class="fas fa-map-marker-alt"></i> @eventItem.Address</p>
+                                    <p><i class="fas fa-map-marker-alt"></i> @eventItem.Address, @eventItem.City</p>
                                     <p><i class="fas fa-calendar-alt"></i> @eventItem.EventDate</p>
                                     <p><i class="fas fa-clock"></i> @eventItem.EventTime</p>
                                 </div>
@@ -141,7 +141,7 @@ else
                                                         {
                                                             <a href="@Url.Action("CheckIn", new { id = shift.AttendanceId })"
                                                                class="btn btn-sm btn-success">
-                                                                Check In
+                                                                <i class="fas fa-sign-in-alt"></i> Check In
                                                             </a>
                                                         }
                                                         else if (shift.ShiftStart > DateTime.Now.AddHours(1))
@@ -177,10 +177,10 @@ else
                 <div class="my-events-list">
                     @foreach (var eventItem in currentEvents)
                     {
-                        <div class="card my-event-card mb-4 border-success">
-                            <div class="card-header bg-success text-white">
+                        <div class="card my-event-card mb-4">
+                            <div class="card-header">
                                 <h5 class="card-title">@eventItem.Title</h5>
-                                <span class="badge badge-light">In Progress</span>
+                                <span class="badge badge-primary text-dark">Today</span>
                             </div>
                             <div class="card-body">
                                 <div class="event-info">
@@ -217,15 +217,21 @@ else
                                                         {
                                                             <a href="@Url.Action("CheckIn", new { id = shift.AttendanceId })"
                                                                class="btn btn-sm btn-success">
-                                                                Check In
+                                                                <i class="fas fa-sign-in-alt"></i> Check In
                                                             </a>
                                                         }
-                                                        else if (shift.ActualStart.HasValue && !shift.ActualEnd.HasValue)
+                                                        else if (shift.CanCheckOut)
                                                         {
                                                             <a href="@Url.Action("CheckIn", new { id = shift.AttendanceId })"
                                                                class="btn btn-sm btn-info">
-                                                                Check Out
+                                                                <i class="fas fa-sign-out-alt"></i> Check Out
                                                             </a>
+                                                        }
+                                                        else if (shift.ActualStart.HasValue && shift.ActualEnd.HasValue)
+                                                        {
+                                                            <span class="badge bg-success">
+                                                                <i class="fas fa-check"></i> Completed
+                                                            </span>
                                                         }
                                                     </td>
                                                 </tr>
@@ -253,10 +259,10 @@ else
                 <div class="my-events-list">
                     @foreach (var eventItem in pastEvents.OrderByDescending(e => e.EventStart).Take(10))
                     {
-                        <div class="card my-event-card mb-4 border-secondary">
-                            <div class="card-header bg-secondary text-white">
+                        <div class="card my-event-card mb-4">
+                            <div class="card-header">
                                 <h5 class="card-title">@eventItem.Title</h5>
-                                <span class="badge badge-light">Past</span>
+                                <span class="badge badge-primary text-dark">Past</span>
                             </div>
                             <div class="card-body">
                                 <div class="event-info">
@@ -306,7 +312,7 @@ else
                                                         }
                                                     </td>
                                                     <td>
-                                                        <span class="badge @(shift.Status == "Completed" ? "badge-success" :
+                                                        <span class="badge text-dark @(shift.Status == "Completed" ? "badge-success" :
                                                                          shift.Status == "Checked In" ? "badge-warning" :
                                                                          "badge-danger")">
                                                             @shift.Status

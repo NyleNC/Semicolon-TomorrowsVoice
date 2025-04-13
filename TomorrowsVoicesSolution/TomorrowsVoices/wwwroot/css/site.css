@@ -18,25 +18,53 @@ nav {
 }
 
 .nav-link.active {
-    color: #0400fa !important;
+    color: #6D28E3 !important;
     background-color: transparent !important;
+    font-weight: 500;
 }
+
 /* Remove blue color from hovered links */
 .nav-link:hover {
-    color: #6D28E3 !important; /* Use the default text color */
-    background-color: transparent !important; /* Remove background color */
+    color: #5B1FC7 !important;
+    background-color: transparent !important;
+}
+
+.nav-link {
+    color: #64748b;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+/* Remove the underline effects */
+.nav-link.active::after,
+.nav-link:hover::after {
+    display: none;
+}
+
+/* Glassy effect for active nav items */
+.nav-link.active,
+.nav-link.active-page {
+    background: rgba(109, 40, 227, 0.1) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(109, 40, 227, 0.2);
+    box-shadow: 0 4px 6px rgba(109, 40, 227, 0.1);
+    color: #6D28E3 !important;
 }
 
 .sidebar {
     width: 250px;
     transition: all 0.3s;
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-right: 1px solid #e9ecef;
+    border-right: 1px solid rgba(109, 40, 227, 0.1);
 }
 
 .sidebar.collapsed {
     width: 80px;
+    transition: width 0.3s ease;
 }
 
 .sidebar .nav-link {
@@ -51,12 +79,16 @@ nav {
 
 .sidebar .nav-link:hover {
     color: #6D28E3;
-    background-color: #f8f9fa;
+    background: rgba(109, 40, 227, 0.05);
 }
 
 .sidebar .nav-link.active-page {
-    color: #ffffff;
-    background-color: #6D28E3;
+    color: #6D28E3 !important;
+    background: rgba(109, 40, 227, 0.1) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(109, 40, 227, 0.2);
+    box-shadow: 0 4px 6px rgba(109, 40, 227, 0.1);
 }
 
 .sidebar .nav-link i {
@@ -70,23 +102,22 @@ nav {
     transition: opacity 0.3s;
 }
 
-.sidebar.collapsed .nav-link span {
+.sidebar.collapsed .nav-link span,
+.sidebar.collapsed .menu-section-title,
+.sidebar.collapsed .bi-chevron-down {
+    display: none !important;
     opacity: 0;
     visibility: hidden;
 }
 
-.sidebar .nav-link .bi-chevron-down {
-    margin-left: auto;
-    transition: transform 0.2s;
+.sidebar.collapsed .nav-link i,
+.sidebar.collapsed .nav-link img {
+    margin-right: 0;
 }
 
-.sidebar .nav-link[aria-expanded="true"] .bi-chevron-down {
-    transform: rotate(180deg);
-}
-
-.sidebar .collapse .nav-link {
-    padding-left: 2rem;
-    font-size: 0.95rem;
+.sidebar.collapsed .nav-link {
+    padding: 0.75rem 0.5rem;
+    justify-content: center;
 }
 
 .toggle-btn {
@@ -1135,7 +1166,6 @@ label.required:after {
     margin-top: 20px;
     margin-bottom:30px;
 
-<<<<<<< Updated upstream
 }
 .user-menu {
     position: absolute;
