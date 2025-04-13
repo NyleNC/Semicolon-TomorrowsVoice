@@ -1,114 +1,106 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using TomorrowsVoices.Data;
 using TomorrowsVoices.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace TomorrowsVoices.Areas.Identity.Pages.Account
+[Authorize(Roles = "Admin")]
+public class ApproveVolunteersModel : PageModel
 {
-    [Authorize(Roles = "Admin")]
-    public class ApproveVolunteersModel : PageModel
+    private readonly TomorrowsVoicesContext _context;
+
+    public ApproveVolunteersModel(TomorrowsVoicesContext context)
     {
-        private readonly TomorrowsVoicesContext _context;
+        _context = context;
+    }
 
-        public ApproveVolunteersModel(TomorrowsVoicesContext context)
+    public List<Volunteer> PendingVolunteers { get; set; }
+    public List<Volunteer> ApprovedVolunteers { get; set; }
+    public List<Volunteer> RejectedVolunteers { get; set; }
+
+    [BindProperty]
+    public List<int> SelectedVolunteers { get; set; } = new List<int>();
+
+    public async Task OnGetAsync(string tab = "pending")
+    {
+        ViewData["ActiveTab"] = tab;
+
+        PendingVolunteers = await _context.Volunteers
+            .Include(v => v.VolLocation)
+            .Where(v => v.Status == ApprovalStatus.Pending)
+            .ToListAsync();
+
+        ApprovedVolunteers = await _context.Volunteers
+            .Include(v => v.VolLocation)
+            .Where(v => v.Status == ApprovalStatus.Approved)
+            .ToListAsync();
+
+        RejectedVolunteers = await _context.Volunteers
+            .Include(v => v.VolLocation)
+            .Where(v => v.Status == ApprovalStatus.Rejected)
+            .ToListAsync();
+    }
+
+    public async Task<IActionResult> OnPostApproveAsync(int volunteerId, string currentTab)
+    {
+        await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Approved);
+        TempData["ApprovedSuccess"] = true;
+        return RedirectToPage(new { tab = currentTab });
+    }
+
+    public async Task<IActionResult> OnPostRejectAsync(int volunteerId, string currentTab)
+    {
+        await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Rejected);
+        TempData["Rejected"] = true;
+        return RedirectToPage(new { tab = currentTab });
+    }
+
+    public async Task<IActionResult> OnPostApproveSelectedAsync(string currentTab)
+    {
+        if (SelectedVolunteers != null && SelectedVolunteers.Any())
         {
-            _context = context;
-        }
-
-        public List<Volunteer> PendingVolunteers { get; set; }
-        public List<Volunteer> ApprovedVolunteers { get; set; }
-        public List<Volunteer> RejectedVolunteers { get; set; }
-
-        [BindProperty]
-        public List<int> SelectedVolunteers { get; set; } = new List<int>();
-
-        public async Task OnGetAsync()
-        {
-            PendingVolunteers = await _context.Volunteers
-                .Include(v => v.VolLocation)
-                .Where(v => v.Status == ApprovalStatus.Pending)
-                .ToListAsync();
-
-            ApprovedVolunteers = await _context.Volunteers
-                .Include(v => v.VolLocation)
-                .Where(v => v.Status == ApprovalStatus.Approved)
-                .ToListAsync();
-
-            RejectedVolunteers = await _context.Volunteers
-                .Include(v => v.VolLocation)
-                .Where(v => v.Status == ApprovalStatus.Rejected)
-                .ToListAsync();
-        }
-
-        // Single-action methods
-        public async Task<IActionResult> OnPostApproveAsync(int volunteerId)
-        {
-            await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Approved);
-           
-            TempData["ApprovedSuccess"] = true;
-            return RedirectToPage();
-        }
-
-        public async Task<IActionResult> OnPostRejectAsync(int volunteerId)
-        {
-            await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Rejected);
-            TempData["Rejected"] = true;
-            return RedirectToPage();
-        }
-
-        // Bulk-action methods
-        public async Task<IActionResult> OnPostApproveSelectedAsync()
-        {
-            if (SelectedVolunteers != null && SelectedVolunteers.Any())
+            foreach (var id in SelectedVolunteers)
             {
-                foreach (var id in SelectedVolunteers)
-                {
-                    await UpdateVolunteerStatus(id, ApprovalStatus.Approved);
-                }
+                await UpdateVolunteerStatus(id, ApprovalStatus.Approved);
             }
-            TempData["ApprovedBulk"] = true;
-            return RedirectToPage();
         }
+        TempData["ApprovedBulk"] = true;
+        return RedirectToPage(new { tab = currentTab });
+    }
 
-        public async Task<IActionResult> OnPostRejectSelectedAsync()
+    public async Task<IActionResult> OnPostRejectSelectedAsync(string currentTab)
+    {
+        if (SelectedVolunteers != null && SelectedVolunteers.Any())
         {
-            if (SelectedVolunteers != null && SelectedVolunteers.Any())
+            foreach (var id in SelectedVolunteers)
             {
-                foreach (var id in SelectedVolunteers)
-                {
-                    await UpdateVolunteerStatus(id, ApprovalStatus.Rejected);
-                }
+                await UpdateVolunteerStatus(id, ApprovalStatus.Rejected);
             }
-            TempData["RejectedBulk"] = true;
-            return RedirectToPage();
         }
+        TempData["RejectedBulk"] = true;
+        return RedirectToPage(new { tab = currentTab });
+    }
 
-        // Methods for approved/rejected tabs
-        public async Task<IActionResult> OnPostRevokeApprovalAsync(int volunteerId)
-        {
-            await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Pending);
-            return RedirectToPage();
-        }
+    public async Task<IActionResult> OnPostRevokeApprovalAsync(int volunteerId, string currentTab)
+    {
+        await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Pending);
+        return RedirectToPage(new { tab = currentTab });
+    }
 
-        public async Task<IActionResult> OnPostReconsiderAsync(int volunteerId)
-        {
-            await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Pending);
-            return RedirectToPage();
-        }
+    public async Task<IActionResult> OnPostReconsiderAsync(int volunteerId, string currentTab)
+    {
+        await UpdateVolunteerStatus(volunteerId, ApprovalStatus.Pending);
+        return RedirectToPage(new { tab = currentTab });
+    }
 
-        private async Task UpdateVolunteerStatus(int volunteerId, ApprovalStatus status)
+    private async Task UpdateVolunteerStatus(int volunteerId, ApprovalStatus status)
+    {
+        var volunteer = await _context.Volunteers.FindAsync(volunteerId);
+        if (volunteer != null)
         {
-            var volunteer = await _context.Volunteers.FindAsync(volunteerId);
-            if (volunteer != null)
-            {
-                volunteer.Status = status;
-                await _context.SaveChangesAsync();
-            }
+            volunteer.Status = status;
+            await _context.SaveChangesAsync();
         }
     }
 }
