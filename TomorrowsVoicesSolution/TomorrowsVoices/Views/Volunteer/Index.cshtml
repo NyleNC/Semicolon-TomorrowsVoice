@@ -7,6 +7,24 @@
     bool isArchived = ViewData["IsArchived"] as bool? ?? false;
 }
 
+@functions {
+    public string FormatPhoneNumber(string phoneNumber)
+    {
+        if (string.IsNullOrEmpty(phoneNumber))
+            return "N/A"; // Return a placeholder if the phone number is empty
+
+        // Remove any non-numeric characters
+        var digits = new string(phoneNumber.Where(char.IsDigit).ToArray());
+
+        // Format the phone number
+        if (digits.Length == 10)
+        {
+            return $"({digits.Substring(0, 3)}) {digits.Substring(3, 3)}-{digits.Substring(6)}";
+        }
+        return phoneNumber; // Return the original if it doesn't match the expected format
+    }
+}
+
 <div class="d-flex align-items-center justify-content-between mb-2 g-2 mt-2">
     <!-- Sessions Heading -->
     <div class="d-flex mt-0">
@@ -243,10 +261,6 @@
                     @Html.TextBox("SearchString", Context.Request.Query["SearchString"], new { @class = "form-control" })
                 </div>
                 <div class="form-group col-md-3">
-                    <label class="control-label">Filter by City:</label>
-                    @Html.DropDownList("SearchCity", (IEnumerable<SelectListItem>)ViewData["SearchCity"], new { @class = "form-control" })
-                </div>
-                <div class="form-group col-md-3">
                     <label class="control-label">Filter by Email:</label>
                     @Html.TextBox("SearchEmail", Context.Request.Query["SearchEmail"], new { @class = "form-control" })
                 </div>
@@ -320,35 +334,14 @@
                         </button>
                     </th>
                     <th>
-                        <button type="submit" name="actionButton" value="City" class="btn btn-toolbar d-inline" onclick="handleSort(event, 'City')" title="Sort by city">
-                            City
-                            @if (ViewData["sortField"]?.ToString() == "City")
-                            {
-                                if (ViewData["sortDirection"]?.ToString() == "asc")
-                                {
-                                    <div style="position: relative; display: inline-block;">
-                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                        <i class="fa-solid fa-sort-up fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div style="position: relative; display: inline-block;">
-                                        <i class="fas fa-sort fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px; top: -6px; color: #737373;"></i>
-                                        <i class="fa-solid fa-sort-down fa-sm d-inline" style="margin: 0;position: absolute; left: 2.7px;top: -6px; color: #fff;"></i>
-                                    </div>
-                                }
-                            }
-                            else
-                            {
-                                <i class="fas fa-sort fa-sm d-inline" style="color: #ababab; margin-left: 2.7px"></i>
-                            }
+                        <button type="submit" name="actionButton" value="Phone" class="btn btn-toolbar d-inline" title="Sort by phone number">
+                            Phone
+                                <i class="fas fa-sort fa-sm d-inline" style="color: #ababab; margin-left: 2.7px"></i>                   
                         </button>
                     </th>
-
-                <th>
-                    <button style="cursor: default;" type="button" name="actionButton" value="Actions" class="btn btn-toolbar no-pointer-events">Actions</button>
-                </th>
+                    <th>
+                        <button type="button" class="btn btn-toolbar d-inline" style="cursor: default;" name="actionButton" value="Actions">Actions</button>
+                    </th>
                 </tr>
             </thead>
 
@@ -364,7 +357,7 @@
                             @Html.DisplayFor(modelItem => item.Email)
                         </td>
                         <td style="padding-left: 10px;">
-                            @(item.VolLocation?.City ?? "N/A")
+                            @Html.Raw(FormatPhoneNumber(item.Phone))
                         </td>
                         <td>
                             <!-- Desktop View (Buttons) -->
@@ -384,9 +377,6 @@
                                     </div>
                                 }
 
-                                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info" title="View details of this volunteer">
-                                    <img src="~/Images/icons8-document-48.png" alt="details-icon" style="height: 24px; width: auto; margin-right: 10px" />Details
-                                </a> |
                                 <div class="btn-group">
                                     @if (!item.IsArchived)
                                     {
@@ -421,11 +411,6 @@
                                         <li>
                                             <a class="dropdown-item text-black" asp-action="Edit" asp-route-id="@item.ID">
                                                 <img src="~/Images/edit-value.png" alt="edit-icon" style="height: 18px; width: auto; margin-right: 5px" /> Edit
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item text-black" asp-action="Details" asp-route-id="@item.ID">
-                                                <img src="~/Images/details.png" alt="details-icon" style="height: 18px; width: auto; margin-right: 5px" /> Details
                                             </a>
                                         </li>
                                         <li>
