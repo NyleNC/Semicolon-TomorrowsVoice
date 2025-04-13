@@ -28,308 +28,328 @@
     </div>
 </div>
 
-<h2>My Events - @ViewData["VolunteerName"]</h2>
+<div class="row">
+    <!-- Left Column: Event Tabs and Cards -->
+    <div class="col-md-8">
+        <h2>My Events - @ViewData["VolunteerName"]</h2>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["SuccessMessage"]
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">
+                <p>You haven't signed up for any events yet.</p>
+                <a class="btn btn-primary" href="@Url.Action("AvailableEvents")">Browse Available Events</a>
+            </div>
+        }
+        else
+        {
+            <ul class="nav nav-tabs mb-4" id="myEventsTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="upcoming-tab" data-toggle="tab" href="#upcoming" role="tab">
+                        Upcoming
+                        @if (upcomingEvents.Count > 0)
+                        {
+                            <span class="badge badge-primary text-dark">@upcomingEvents.Count</span>
+                        }
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="current-tab" data-toggle="tab" href="#current" role="tab">
+                        Today
+                        @if (currentEvents.Count > 0)
+                        {
+                            <span class="badge badge-primary text-dark">@currentEvents.Count</span>
+                        }
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="past-tab" data-toggle="tab" href="#past" role="tab">
+                        Past
+                        @if (pastEvents.Count > 0)
+                        {
+                            <span class="badge badge-primary text-dark">@pastEvents.Count</span>
+                        }
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="myEventsTabContent">
+                <!-- Event Tabs Content (Upcoming, Current, Past) -->
+                <!-- Existing code for event cards goes here -->
+            </div>
+        }
     </div>
-}
 
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        @TempData["ErrorMessage"]
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+    <!-- Right Column: Message -->
+    <div class="col-md-4">
+        <div class="alert alert-info">
+            <strong>Note:</strong> If the check-out action button is not visible, you can visit the
+            <a href="@Url.Action("ScanQRCode", "VolunteerPortal")" class="alert-link">Scan QR Code</a> page to check in or out for short shifts.
+        </div>
     </div>
-}
+</div>
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info">
-        <p>You haven't signed up for any events yet.</p>
-        <a class="btn btn-primary" href="@Url.Action("AvailableEvents")">Browse Available Events</a>
-    </div>
-}
-else
-{
-    <ul class="nav nav-tabs mb-4" id="myEventsTab" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="upcoming-tab" data-toggle="tab" href="#upcoming" role="tab">
-                Upcoming
-                @if (upcomingEvents.Count > 0)
-                {
-                    <span class="badge badge-primary text-dark">@upcomingEvents.Count</span>
-                }
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="current-tab" data-toggle="tab" href="#current" role="tab">
-                Today
-                @if (currentEvents.Count > 0)
-                {
-                    <span class="badge badge-primary text-dark">@currentEvents.Count</span>
-                }
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="past-tab" data-toggle="tab" href="#past" role="tab">
-                Past
-                @if (pastEvents.Count > 0)
-                {
-                    <span class="badge badge-primary text-dark">@pastEvents.Count</span>
-                }
-            </a>
-        </li>
-    </ul>
 
-    <div class="tab-content" id="myEventsTabContent">
-        <!-- Upcoming Events -->
-        <div class="tab-pane fade show active" id="upcoming" role="tabpanel">
-            @if (!upcomingEvents.Any())
-            {
-                <div class="alert alert-info">
-                    <p>You don't have any upcoming events scheduled.</p>
-                    <a class="btn btn-primary" href="@Url.Action("AvailableEvents")">Browse Available Events</a>
-                </div>
-            }
-            else
-            {
-                <div class="my-events-list">
-                    @foreach (var eventItem in upcomingEvents)
-                    {
-                        <div class="card my-event-card mb-4">
-                            <div class="card-header">
-                                <h5 class="card-title">@eventItem.Title</h5>
-                                <span class="badge badge-primary text-dark">Upcoming</span>
+<div class="tab-content" id="myEventsTabContent">
+    <!-- Upcoming Events -->
+    <div class="tab-pane fade show active" id="upcoming" role="tabpanel">
+        @if (!upcomingEvents.Any())
+        {
+            <div class="alert alert-info">
+                <p>You don't have any upcoming events scheduled.</p>
+                <a class="btn btn-primary" href="@Url.Action("AvailableEvents")">Browse Available Events</a>
+            </div>
+        }
+        else
+        {
+            <div class="my-events-list">
+                @foreach (var eventItem in upcomingEvents)
+                {
+                    <div class="card my-event-card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title">@eventItem.Title</h5>
+                            <span class="badge badge-primary text-dark">Upcoming</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="event-info">
+                                <p><i class="fas fa-map-marker-alt"></i> @eventItem.Address, @eventItem.City</p>
+                                <p><i class="fas fa-calendar-alt"></i> @eventItem.EventDate</p>
+                                <p><i class="fas fa-clock"></i> @eventItem.EventTime</p>
                             </div>
-                            <div class="card-body">
-                                <div class="event-info">
-                                    <p><i class="fas fa-map-marker-alt"></i> @eventItem.Address, @eventItem.City</p>
-                                    <p><i class="fas fa-calendar-alt"></i> @eventItem.EventDate</p>
-                                    <p><i class="fas fa-clock"></i> @eventItem.EventTime</p>
-                                </div>
 
-                                <div class="my-shifts mt-3">
-                                    <h6>My Shifts:</h6>
-                                    <table class="table table-sm shift-table">
-                                        <thead>
+                            <div class="my-shifts mt-3">
+                                <h6>My Shifts:</h6>
+                                <table class="table table-sm shift-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Duration</th>
+                                            <th>Starts In</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var shift in eventItem.MyShifts.OrderBy(s => s.ShiftStart))
+                                        {
                                             <tr>
-                                                <th>Time</th>
-                                                <th>Duration</th>
-                                                <th>Starts In</th>
-                                                <th>Actions</th>
+                                                <td>@shift.ShiftTime</td>
+                                                <td>@shift.Duration</td>
+                                                <td>
+                                                    <span class="countdown">@shift.TimeUntilShiftDisplay</span>
+                                                </td>
+                                                <td>
+                                                    @if (shift.CanCheckIn)
+                                                    {
+                                                        <a href="@Url.Action("CheckIn", new { id = shift.AttendanceId })"
+                                                            class="btn btn-sm btn-success">
+                                                            <i class="fas fa-sign-in-alt"></i> Check In
+                                                        </a>
+                                                    }
+                                                    else if (shift.ShiftStart > DateTime.Now.AddHours(1))
+                                                    {
+                                                        <form asp-action="CancelShift" method="post" onsubmit="return confirm('Are you sure you want to cancel this shift?');">
+                                                            <input type="hidden" name="attendanceId" value="@shift.AttendanceId" />
+                                                            <button type="submit" class="btn btn-sm btn-warning">Cancel</button>
+                                                        </form>
+                                                    }
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var shift in eventItem.MyShifts.OrderBy(s => s.ShiftStart))
-                                            {
-                                                <tr>
-                                                    <td>@shift.ShiftTime</td>
-                                                    <td>@shift.Duration</td>
-                                                    <td>
-                                                        <span class="countdown">@shift.TimeUntilShiftDisplay</span>
-                                                    </td>
-                                                    <td>
-                                                        @if (shift.CanCheckIn)
-                                                        {
-                                                            <a href="@Url.Action("CheckIn", new { id = shift.AttendanceId })"
-                                                               class="btn btn-sm btn-success">
-                                                                <i class="fas fa-sign-in-alt"></i> Check In
-                                                            </a>
-                                                        }
-                                                        else if (shift.ShiftStart > DateTime.Now.AddHours(1))
-                                                        {
-                                                            <form asp-action="CancelShift" method="post" onsubmit="return confirm('Are you sure you want to cancel this shift?');">
-                                                                <input type="hidden" name="attendanceId" value="@shift.AttendanceId" />
-                                                                <button type="submit" class="btn btn-sm btn-warning">Cancel</button>
-                                                            </form>
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                    }
-                </div>
-            }
-        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
 
-        <!-- Current Events -->
-        <div class="tab-pane fade" id="current" role="tabpanel">
-            @if (!currentEvents.Any())
-            {
-                <div class="alert alert-info">
-                    <p>You don't have any events scheduled for today.</p>
-                </div>
-            }
-            else
-            {
-                <div class="my-events-list">
-                    @foreach (var eventItem in currentEvents)
-                    {
-                        <div class="card my-event-card mb-4">
-                            <div class="card-header">
-                                <h5 class="card-title">@eventItem.Title</h5>
-                                <span class="badge badge-primary text-dark">Today</span>
+    <!-- Current Events -->
+    <div class="tab-pane fade" id="current" role="tabpanel">
+        @if (!currentEvents.Any())
+        {
+            <div class="alert alert-info">
+                <p>You don't have any events scheduled for today.</p>
+            </div>
+        }
+        else
+        {
+            <div class="my-events-list">
+                @foreach (var eventItem in currentEvents)
+                {
+                    <div class="card my-event-card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title">@eventItem.Title</h5>
+                            <span class="badge badge-primary text-dark">Today</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="event-info">
+                                <p><i class="fas fa-map-marker-alt"></i> @eventItem.Address, @eventItem.City</p>
+                                <p><i class="fas fa-calendar-alt"></i> @eventItem.EventDate</p>
+                                <p><i class="fas fa-clock"></i> @eventItem.EventTime</p>
                             </div>
-                            <div class="card-body">
-                                <div class="event-info">
-                                    <p><i class="fas fa-map-marker-alt"></i> @eventItem.Address, @eventItem.City</p>
-                                    <p><i class="fas fa-calendar-alt"></i> @eventItem.EventDate</p>
-                                    <p><i class="fas fa-clock"></i> @eventItem.EventTime</p>
-                                </div>
 
-                                <div class="my-shifts mt-3">
-                                    <h6>My Shifts:</h6>
-                                    <table class="table table-sm shift-table">
-                                        <thead>
+                            <div class="my-shifts mt-3">
+                                <h6>My Shifts:</h6>
+                                <table class="table table-sm shift-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var shift in eventItem.MyShifts.OrderBy(s => s.ShiftStart))
+                                        {
                                             <tr>
-                                                <th>Time</th>
-                                                <th>Status</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var shift in eventItem.MyShifts.OrderBy(s => s.ShiftStart))
-                                            {
-                                                <tr>
-                                                    <td>@shift.ShiftTime</td>
-                                                    <td>
-                                                        <span class="badge @(shift.Status == "Checked In" ? "badge-success" :
-                                                                         shift.Status == "In Progress" ? "badge-warning" :
-                                                                         shift.Status == "Completed" ? "badge-info" :
-                                                                         "badge-secondary")">
-                                                            @shift.Status
+                                                <td>@shift.ShiftTime</td>
+                                                <td>
+                                                    <span class="badge text-black @(shift.Status == "Checked In" ? "badge-success" :
+                                                                        shift.Status == "In Progress" ? "badge-warning" :
+                                                                        shift.Status == "Completed" ? "badge-info" :
+                                                                        "badge-secondary")">
+                                                        @shift.Status
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    @if (shift.CanCheckIn)
+                                                    {
+                                                        <a href="@Url.Action("CheckIn", new { id = shift.AttendanceId })"
+                                                            class="btn btn-sm btn-success">
+                                                            <i class="fas fa-sign-in-alt"></i> Check In
+                                                        </a>
+                                                    }
+                                                    else if (shift.CanCheckOut)
+                                                    {
+                                                        <a href="@Url.Action("CheckIn", new { id = shift.AttendanceId })"
+                                                            class="btn btn-sm btn-info">
+                                                            <i class="fas fa-sign-out-alt"></i> Check Out
+                                                        </a>
+                                                    }
+                                                    else if (shift.ActualStart.HasValue && shift.ActualEnd.HasValue)
+                                                    {
+                                                        <span class="badge bg-success">
+                                                            <i class="fas fa-check"></i> Completed
                                                         </span>
-                                                    </td>
-                                                    <td>
-                                                        @if (shift.CanCheckIn)
-                                                        {
-                                                            <a href="@Url.Action("CheckIn", new { id = shift.AttendanceId })"
-                                                               class="btn btn-sm btn-success">
-                                                                <i class="fas fa-sign-in-alt"></i> Check In
-                                                            </a>
-                                                        }
-                                                        else if (shift.CanCheckOut)
-                                                        {
-                                                            <a href="@Url.Action("CheckIn", new { id = shift.AttendanceId })"
-                                                               class="btn btn-sm btn-info">
-                                                                <i class="fas fa-sign-out-alt"></i> Check Out
-                                                            </a>
-                                                        }
-                                                        else if (shift.ActualStart.HasValue && shift.ActualEnd.HasValue)
-                                                        {
-                                                            <span class="badge bg-success">
-                                                                <i class="fas fa-check"></i> Completed
-                                                            </span>
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            }
-        </div>
-
-        <!-- Past Events -->
-        <div class="tab-pane fade" id="past" role="tabpanel">
-            @if (!pastEvents.Any())
-            {
-                <div class="alert alert-info">
-                    <p>You don't have any past events.</p>
-                </div>
-            }
-            else
-            {
-                <div class="my-events-list">
-                    @foreach (var eventItem in pastEvents.OrderByDescending(e => e.EventStart).Take(10))
-                    {
-                        <div class="card my-event-card mb-4">
-                            <div class="card-header">
-                                <h5 class="card-title">@eventItem.Title</h5>
-                                <span class="badge badge-primary text-dark">Past</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="event-info">
-                                    <p><i class="fas fa-map-marker-alt"></i> @eventItem.Address, @eventItem.City</p>
-                                    <p><i class="fas fa-calendar-alt"></i> @eventItem.EventDate</p>
-                                    <p><i class="fas fa-clock"></i> @eventItem.EventTime</p>
-                                </div>
-
-                                <div class="my-shifts mt-3">
-                                    <h6>My Shifts:</h6>
-                                    <table class="table table-sm shift-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Scheduled Time</th>
-                                                <th>Actual Time</th>
-                                                <th>Duration</th>
-                                                <th>Status</th>
+                                                    }
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var shift in eventItem.MyShifts.OrderBy(s => s.ShiftStart))
-                                            {
-                                                <tr>
-                                                    <td>@shift.ShiftTime</td>
-                                                    <td>
-                                                        @if (shift.ActualStart.HasValue)
-                                                        {
-                                                            @shift.ActualStart.Value.ToString("h:mm tt")
-                                                            @if (shift.ActualEnd.HasValue)
-                                                            {
-                                                                <span> - @shift.ActualEnd.Value.ToString("h:mm tt")</span>
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="text-muted">Not recorded</span>
-                                                        }
-                                                    </td>
-                                                    <td>
-                                                        @if (shift.ActualStart.HasValue && shift.ActualEnd.HasValue)
-                                                        {
-                                                            @((shift.ActualEnd.Value - shift.ActualStart.Value).TotalHours.ToString("0.0")) <span>hrs</span>
-                                                        }
-                                                        else
-                                                        {
-                                                            @shift.Duration
-                                                        }
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge text-dark @(shift.Status == "Completed" ? "badge-success" :
-                                                                         shift.Status == "Checked In" ? "badge-warning" :
-                                                                         "badge-danger")">
-                                                            @shift.Status
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                    }
-                </div>
-            }
-        </div>
+                    </div>
+                }
+            </div>
+        }
     </div>
+
+    <!-- Past Events -->
+    <div class="tab-pane fade" id="past" role="tabpanel">
+        @if (!pastEvents.Any())
+        {
+            <div class="alert alert-info">
+                <p>You don't have any past events.</p>
+            </div>
+        }
+        else
+        {
+            <div class="my-events-list">
+                @foreach (var eventItem in pastEvents.OrderByDescending(e => e.EventStart).Take(10))
+                {
+                    <div class="card my-event-card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title">@eventItem.Title</h5>
+                            <span class="badge badge-primary text-dark">Past</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="event-info">
+                                <p><i class="fas fa-map-marker-alt"></i> @eventItem.Address, @eventItem.City</p>
+                                <p><i class="fas fa-calendar-alt"></i> @eventItem.EventDate</p>
+                                <p><i class="fas fa-clock"></i> @eventItem.EventTime</p>
+                            </div>
+
+                            <div class="my-shifts mt-3">
+                                <h6>My Shifts:</h6>
+                                <table class="table table-sm shift-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Scheduled Time</th>
+                                            <th>Actual Time</th>
+                                            <th>Duration</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var shift in eventItem.MyShifts.OrderBy(s => s.ShiftStart))
+                                        {
+                                            <tr>
+                                                <td>@shift.ShiftTime</td>
+                                                <td>
+                                                    @if (shift.ActualStart.HasValue)
+                                                    {
+                                                        @shift.ActualStart.Value.ToString("h:mm tt")
+                                                        @if (shift.ActualEnd.HasValue)
+                                                        {
+                                                            <span> - @shift.ActualEnd.Value.ToString("h:mm tt")</span>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">Not recorded</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (shift.ActualStart.HasValue && shift.ActualEnd.HasValue)
+                                                    {
+                                                        @((shift.ActualEnd.Value - shift.ActualStart.Value).TotalHours.ToString("0.0")) <span>hrs</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @shift.Duration
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <span class="badge text-dark @(shift.Status == "Completed" ? "badge-success" :
+                                                                        shift.Status == "Checked In" ? "badge-warning" :
+                                                                        "badge-danger")">
+                                                        @shift.Status
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
 }
 
 @section Scripts {

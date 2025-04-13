@@ -3,8 +3,7 @@
 @inject UserManager<IdentityUser> UserManager
 
 <ul class="navbar-nav">
-    <!-- User Menu Dropdown -->
-    <div class="dropdown user-menu">
+    <li class="nav-item dropdown" style="z-index: 1100;">
         @if (SignInManager.IsSignedIn(User))
         {
             <!-- Display user info and dropdown when signed in -->
@@ -13,8 +12,7 @@
                 <span class="d-none d-sm-inline mx-1">Hello @User.Identity?.Name!</span>
             </a>
         
-            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1" style="z-index: 1100;">
                 <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout">Logout</a></li>
@@ -32,11 +30,11 @@
                 <i class="bi bi-person-circle"></i>
                 <span class="d-none d-sm-inline mx-1">Account</span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1" style="z-index: 1100;">
                 <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register"><span class="ms-1">Register</span></a></li>
                 <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Login"><span class="ms-1">Login</span></a></li>
             </ul>
         }
-    </div>
+    </li>
     
 </ul>
