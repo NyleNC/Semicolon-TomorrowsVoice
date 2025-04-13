@@ -2,22 +2,73 @@
     ViewData["Title"] = "Scan QR Code";
 }
 
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-header">
-            <h2>Scan QR Code</h2>
+<style>
+    body {
+        background-color: #ffffff;
+        color: #333333;
+        font-family: Arial, sans-serif;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        margin-top: 0;
+    }
+    .content-box {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 700px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .alert {
+        margin-bottom: 20px;
+        padding: 15px;
+        transition: all 0.3s ease;
+        width: 100%;
+        text-align: center;
+    }
+    .alert-info {
+        background-color: rgba(0, 123, 255, 0.1);
+        color: #007bff;
+    }
+    .alert-success {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    .alert-danger {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+    #reader {
+        width: 100%;
+        max-width: 400px;
+        margin: 20px 0;
+        padding: 10px;
+    }
+    #result, #status {
+        width: 100%;
+        max-width: 400px;
+    }
+</style>
+
+<div class="container">
+    <div class="content-box">
+        <h2 class="animated fadeIn">Scan QR Code</h2>
+        <div class="alert alert-info fade show" role="alert">
+            <strong>Note for Volunteers:</strong> Please ask for the QR code through the event manager or representative.
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div id="reader" style="width: 100%;"></div>
-                </div>
-                <div class="col-md-6">
-                    <div id="result" class="alert" style="display: none;"></div>
-                    <div id="status" class="alert alert-info" style="display: none;"></div>
-                </div>
-            </div>
-        </div>
+        <div id="reader" style="border: none"></div>
+        <div id="result" class="alert" style="display: none;"></div>
+        <div id="status" class="alert alert-info" style="display: none;"></div>
     </div>
 </div>
 
@@ -53,11 +104,7 @@
                 data: { qrCode: decodedText },
                 success: function(response) {
                     if (response.success) {
-                        $('#result')
-                            .removeClass('alert-danger')
-                            .addClass('alert-success')
-                            .html(response.message || `Successfully ${response.action} at ${new Date(response.time).toLocaleTimeString()}`)
-                            .show();
+                        showAlert('#result', response.message || `Successfully ${response.action} at ${new Date(response.time).toLocaleTimeString()}`, true);
                         
                         $('#status').hide();
                         
@@ -83,20 +130,12 @@
                             }, 60000); // Update every minute
                         }
                     } else {
-                        $('#result')
-                            .removeClass('alert-success')
-                            .addClass('alert-danger')
-                            .html(response)
-                            .show();
+                        showAlert('#result', response, false);
                         $('#status').hide();
                     }
                 },
                 error: function(xhr) {
-                    $('#result')
-                        .removeClass('alert-success')
-                        .addClass('alert-danger')
-                        .html(xhr.responseText)
-                        .show();
+                    showAlert('#result', xhr.responseText, false);
                     $('#status').hide();
                 },
                 complete: function() {
@@ -114,5 +153,16 @@
             { fps: 10, qrbox: { width: 250, height: 250 } },
             /* verbose= */ false);
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+        // Add animations to alerts
+        function showAlert(element, message, isSuccess) {
+            $(element)
+                .removeClass('alert-danger alert-success')
+                .addClass(isSuccess ? 'alert-success' : 'alert-danger')
+                .html(message)
+                .fadeIn(300)
+                .delay(3000)
+                .fadeOut(300);
+        }
     </script>
 }
