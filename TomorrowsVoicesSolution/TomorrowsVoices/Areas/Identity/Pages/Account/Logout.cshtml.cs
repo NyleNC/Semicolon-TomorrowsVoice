@@ -1,33 +1,24 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-#nullable disable
-
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
 
-namespace TomorrowsVoices.Areas.Identity.Pages.Account
+public class LogoutModel : PageModel
 {
-    public class LogoutModel : PageModel
+    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly ILogger<LogoutModel> _logger;
+
+    public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger)
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly ILogger<LogoutModel> _logger;
+        _signInManager = signInManager;
+        _logger = logger;
+    }
 
-        public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger)
-        {
-            _signInManager = signInManager;
-            _logger = logger;
-        }
+    public async Task<IActionResult> OnPost()
+    {
+        await _signInManager.SignOutAsync();
+        _logger.LogInformation("User logged out.");
 
-        public async Task<IActionResult> OnPost()
-        {
-            await _signInManager.SignOutAsync();
-            TempData["LogoutSuccess"] = true;
-            return RedirectToPage(); // Refreshes the logout page
-        }
+        // ✅ Redirect to home or a confirmation page
+        return RedirectToPage("/Account/LogoutConfirmation");
     }
 }

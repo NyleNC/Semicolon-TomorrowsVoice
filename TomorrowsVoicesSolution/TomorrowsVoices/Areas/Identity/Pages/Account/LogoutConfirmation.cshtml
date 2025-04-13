@@ -1,11 +1,10 @@
 ﻿@page
-@model LogoutModel
 @{
-    ViewData["Title"] = "Log out";
+    ViewData["Title"] = "Logged Out";
 }
 
 <style>
-    /* Previous styles remain the same */
+    /* Reuse all your existing login page styles */
     .background-animation {
         position: fixed;
         top: 0;
@@ -62,75 +61,68 @@
     }
 
     .card {
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         border-radius: 15px;
     }
 
-    .card-header {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        color: #212529;
+    .card-body {
+        padding: 2rem;
     }
 
-  
     .btn-primary {
-        background: rgba(109, 40, 227, 0.9);
-        border-color: #5B1FC7;
+        background: rgba(109, 40, 227, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
         color: white;
     }
 
         .btn-primary:hover {
-            background: #5a32a3;
-        }
-
-    .btn-outline-secondary {
-        border: 1px solid #6c757d;
-        border-color: #6c757d;
-        color: #6c757d;
-    }
-
-        .btn-outline-secondary:hover {
-            background: #a4a4ae;
+            background: rgba(109, 40, 227, 0.9);
+            color: white;
         }
 </style>
 
 <div class="background-animation">
-    <!-- Background elements same as login page -->
+    <!-- Choir elements -->
     <div class="floating-element choir" style="width: 80px; height: 80px; left: 20%; top: 30%; animation-delay: 0s;"></div>
     <div class="floating-element choir" style="width: 60px; height: 60px; left: 70%; top: 50%; animation-delay: -10s;"></div>
+
+    <!-- Event elements -->
     <div class="floating-element event" style="width: 120px; height: 60px; left: 10%; top: 60%; animation-delay: -2s;"></div>
     <div class="floating-element event" style="width: 90px; height: 45px; left: 60%; top: 20%; animation-delay: -7s;"></div>
+    <div class="floating-element event" style="width: 100px; height: 50px; left: 40%; top: 70%; animation-delay: -12s;"></div>
+
+    <!-- Volunteer elements -->
+    <div class="floating-element volunteer" style="width: 70px; height: 35px; left: 30%; top: 10%; animation-delay: -3s;"></div>
+    <div class="floating-element volunteer" style="width: 50px; height: 25px; left: 80%; top: 40%; animation-delay: -8s;"></div>
+    <div class="floating-element volunteer" style="width: 60px; height: 30px; left: 50%; top: 80%; animation-delay: -15s;"></div>
 </div>
 
-<div class="container mt-5">
+<div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
-            @if (User.Identity?.IsAuthenticated ?? false)
-            {
-                <div class="card">
-                    <div class="card-header border-0 bg-white">
-                        <h5 class="mb-0 text-center">Confirm Logout</h5>
+            <div class="card shadow-sm mt-5">
+                <div class="card-body text-center">
+                    <h1 class="card-title mb-4">Logged Out</h1>
+
+                    <div class="mb-4">
+                        <i class="fas fa-sign-out-alt text-primary" style="font-size: 3.5rem;"></i>
                     </div>
-                    <div class="card-body text-center">
-                        <i class="fas fa-sign-out-alt text-muted mb-3" style="font-size: 2.5rem;"></i>
-                        <p class="card-text mb-4">Are you sure you want to logout from your account?</p>
-                        <div class="d-flex justify-content-between">
-                            <form method="post" class="w-100 me-2">
-                                <button type="submit" class="btn btn-primary w-100 py-2">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Yes, Logout
-                                </button>
-                            </form>
-                            <a href="/" class="btn btn-outline-secondary w-100 ms-2 py-2">
-                                <i class="fas fa-times me-2"></i>Cancel
-                            </a>
-                        </div>
+
+                    <p class="mb-4">You have been successfully logged out.</p>
+
+                    <div class="d-flex justify-content-center mb-3">
+                        <a asp-area="Identity" asp-page="/Account/Login" class="w-75 btn btn-primary">Log In Again</a>
                     </div>
+
+                   
                 </div>
-            }
+            </div>
         </div>
     </div>
 </div>

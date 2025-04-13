@@ -110,7 +110,7 @@ else
                                                 }
                                                 else if (shift.Start > DateTime.Now)
                                                 {
-                                                    <form asp-action="SignUpForShift" method="post">
+                                                    <form asp-action="SignUpForShift" method="post" onsubmit="return confirm('Are you sure you want to sign up for this shift?');">
                                                         <input type="hidden" name="scheduleId" value="@shift.ScheduleId" />
                                                         <button type="submit" class="btn btn-sm btn-primary">Sign Up</button>
                                                     </form>
