@@ -1,0 +1,168 @@
+@{
+    ViewData["Title"] = "Scan QR Code";
+}
+
+<style>
+    body {
+        background-color: #ffffff;
+        color: #333333;
+        font-family: Arial, sans-serif;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        margin-top: 0;
+    }
+    .content-box {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 700px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .alert {
+        margin-bottom: 20px;
+        padding: 15px;
+        transition: all 0.3s ease;
+        width: 100%;
+        text-align: center;
+    }
+    .alert-info {
+        background-color: rgba(0, 123, 255, 0.1);
+        color: #007bff;
+    }
+    .alert-success {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    .alert-danger {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+    #reader {
+        width: 100%;
+        max-width: 400px;
+        margin: 20px 0;
+        padding: 10px;
+    }
+    #result, #status {
+        width: 100%;
+        max-width: 400px;
+    }
+</style>
+
+<div class="container">
+    <div class="content-box">
+        <h2 class="animated fadeIn">Scan QR Code</h2>
+        <div class="alert alert-info fade show" role="alert">
+            <strong>Note for Volunteers:</strong> Please ask for the QR code through the event manager or representative.
+        </div>
+        <div id="reader" style="border: none"></div>
+        <div id="result" class="alert" style="display: none;"></div>
+        <div id="status" class="alert alert-info" style="display: none;"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script>
+        let isProcessing = false;
+        let lastScanTime = 0;
+        const MIN_SCAN_INTERVAL = 5000; // 5 seconds between scans
+
+        function onScanSuccess(decodedText, decodedResult) {
+            const now = Date.now();
+            
+            // Prevent multiple scans within the minimum interval
+            if (isProcessing || (now - lastScanTime) < MIN_SCAN_INTERVAL) {
+                return;
+            }
+
+            isProcessing = true;
+            lastScanTime = now;
+
+            // Show scanning status
+            $('#status')
+                .removeClass('alert-danger alert-success')
+                .addClass('alert-info')
+                .html('Processing QR code...')
+                .show();
+
+            // Send the QR code to the server
+            $.ajax({
+                url: '@Url.Action("ProcessQRCode")',
+                type: 'POST',
+                data: { qrCode: decodedText },
+                success: function(response) {
+                    if (response.success) {
+                        showAlert('#result', response.message || `Successfully ${response.action} at ${new Date(response.time).toLocaleTimeString()}`, true);
+                        
+                        $('#status').hide();
+                        
+                        // If checked in, show a countdown for check-out
+                        if (response.action === 'checkin') {
+                            let countdown = 5; // 5 minutes
+                            const countdownInterval = setInterval(() => {
+                                $('#status')
+                                    .removeClass('alert-danger alert-success')
+                                    .addClass('alert-info')
+                                    .html(`You can check out in ${countdown} minutes`)
+                                    .show();
+                                
+                                if (countdown <= 0) {
+                                    clearInterval(countdownInterval);
+                                    $('#status')
+                                        .removeClass('alert-info')
+                                        .addClass('alert-success')
+                                        .html('You can now check out')
+                                        .show();
+                                }
+                                countdown--;
+                            }, 60000); // Update every minute
+                        }
+                    } else {
+                        showAlert('#result', response, false);
+                        $('#status').hide();
+                    }
+                },
+                error: function(xhr) {
+                    showAlert('#result', xhr.responseText, false);
+                    $('#status').hide();
+                },
+                complete: function() {
+                    isProcessing = false;
+                }
+            });
+        }
+
+        function onScanFailure(error) {
+            console.warn(`Code scan error = ${error}`);
+        }
+
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader",
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            /* verbose= */ false);
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+        // Add animations to alerts
+        function showAlert(element, message, isSuccess) {
+            $(element)
+                .removeClass('alert-danger alert-success')
+                .addClass(isSuccess ? 'alert-success' : 'alert-danger')
+                .html(message)
+                .fadeIn(300)
+                .delay(3000)
+                .fadeOut(300);
+        }
+    </script>
+}

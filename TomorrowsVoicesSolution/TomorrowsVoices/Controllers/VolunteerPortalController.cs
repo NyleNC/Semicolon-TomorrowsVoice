@@ -11,6 +11,8 @@ using TomorrowsVoices.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using OfficeOpenXml;
+using System.Text;
+using QRCoder;
 
 namespace TomorrowsVoices.Controllers
 {
@@ -580,7 +582,8 @@ namespace TomorrowsVoices.Controllers
                                 Phone = a.Volunteer.Phone,
                                 City = a.Volunteer.VolLocation?.City,
                                 ActualStart = a.ActualStart,
-                                ActualEnd = a.ActualEnd
+                                ActualEnd = a.ActualEnd,
+                                AttendanceId = a.ID
                             })
                             .ToList()
                     })
@@ -649,5 +652,232 @@ namespace TomorrowsVoices.Controllers
 
             return View("~/Views/VolPortal/VolunteerDetails.cshtml", viewModel);
         }
+
+
+        #region QR Code Check IN and OUT
+        // GET: VolunteerPortal/GenerateQRCode/{scheduleId}
+        [Authorize(Roles = "Admin,Director")]
+        public async Task<IActionResult> GenerateQRCode(int scheduleId)
+        {
+            var schedule = await _context.VolSchedules
+                .Include(s => s.Event)
+                .Include(s => s.VolAttendances)
+                .ThenInclude(a => a.Volunteer)
+                .FirstOrDefaultAsync(s => s.ID == scheduleId);
+
+            if (schedule == null)
+            {
+                return NotFound();
+            }
+
+            // Generate a unique QR code
+            var qrCode = Guid.NewGuid().ToString();
+            var validFrom = schedule.ScheduledStart.AddMinutes(-15);
+            var validUntil = schedule.ScheduledEnd.AddMinutes(30);
+
+            var qrCheckIn = new QRCheckIn
+            {
+                EventID = schedule.EventID,
+                ScheduleID = scheduleId,
+                QRCode = qrCode,
+                ValidFrom = validFrom,
+                ValidUntil = validUntil,
+                IsActive = true
+            };
+
+            _context.QRCheckIns.Add(qrCheckIn);
+            await _context.SaveChangesAsync();
+
+            // Generate QR code image using a QR code library
+            var qrCodeImage = GenerateQRCodeImage(qrCode);
+
+            var volunteers = schedule.VolAttendances
+                .Where(a => a.Status)
+                .Select(a => new VolunteerStatus
+                {
+                    FullName = a.Volunteer.FullName,
+                    CheckInTime = a.ActualStart,
+                    CheckOutTime = a.ActualEnd
+                })
+                .OrderBy(v => v.FullName)
+                .ToList();
+
+            return View("~/Views/VolPortal/QRCodeDisplay.cshtml", new QRCodeViewModel
+            {
+                EventID = schedule.EventID,
+                QRCode = qrCode,
+                QRCodeImage = qrCodeImage,
+                EventName = schedule.Event.Name,
+                ScheduleStart = schedule.ScheduledStart,
+                ScheduleEnd = schedule.ScheduledEnd,
+                ValidFrom = validFrom,
+                ValidUntil = validUntil,
+                TotalVolunteers = volunteers.Count,
+                CheckedInCount = volunteers.Count(v => v.CheckInTime.HasValue),
+                CheckedOutCount = volunteers.Count(v => v.CheckOutTime.HasValue),
+                Volunteers = volunteers
+            });
+        }
+
+        // GET: VolunteerPortal/ScanQRCode
+        [Authorize(Roles = "Admin,Volunteer")]
+        public IActionResult ScanQRCode()
+        {
+            return View("~/Views/VolPortal/ScanQRCode.cshtml");
+        }
+
+        // POST: VolunteerPortal/ProcessQRCode
+        [HttpPost]
+        [Authorize(Roles = "Admin,Volunteer")]
+        public async Task<IActionResult> ProcessQRCode(string qrCode)
+        {
+            if (string.IsNullOrEmpty(qrCode))
+            {
+                return BadRequest("QR code is required");
+            }
+
+            var currentVolunteer = await GetCurrentVolunteerAsync();
+            if (currentVolunteer == null && !User.IsInRole("Admin"))
+            {
+                return BadRequest("Volunteer not found");
+            }
+
+            var qrCheckIn = await _context.QRCheckIns
+                .Include(q => q.Schedule)
+                    .ThenInclude(s => s.Event)
+                .FirstOrDefaultAsync(q => q.QRCode == qrCode && 
+                                       q.IsActive && 
+                                       q.ValidFrom <= DateTime.Now && 
+                                       q.ValidUntil >= DateTime.Now);
+
+            if (qrCheckIn == null)
+            {
+                return BadRequest("Invalid or expired QR code");
+            }
+
+            if (qrCheckIn.Schedule == null)
+            {
+                return BadRequest("Invalid schedule associated with QR code");
+            }
+
+            var attendance = await _context.VolAttendances
+                .FirstOrDefaultAsync(a => a.VolScheduleID == qrCheckIn.ScheduleID && 
+                                        a.VolunteerID == (currentVolunteer != null ? currentVolunteer.ID : 0));
+
+            if (attendance == null)
+            {
+                return BadRequest("You are not registered for this event");
+            }
+
+            // Check if there's a minimum time between check-in and check-out (5 minutes)
+            var minCheckInDuration = TimeSpan.FromMinutes(5);
+
+            if (!attendance.ActualStart.HasValue)
+            {
+                // Check in
+                attendance.ActualStart = DateTime.Now;
+                _context.Update(attendance);
+                await _context.SaveChangesAsync();
+                return Json(new { 
+                    success = true, 
+                    action = "checkin", 
+                    time = DateTime.Now,
+                    message = "Successfully checked in! You can check out after 5 minutes."
+                });
+            }
+            else if (!attendance.ActualEnd.HasValue)
+            {
+                // Check if enough time has passed since check-in
+                if (DateTime.Now - attendance.ActualStart.Value < minCheckInDuration)
+                {
+                    var remainingTime = minCheckInDuration - (DateTime.Now - attendance.ActualStart.Value);
+                    return BadRequest($"Please wait {Math.Ceiling(remainingTime.TotalMinutes)} more minutes before checking out.");
+                }
+
+                // Check out
+                attendance.ActualEnd = DateTime.Now;
+                _context.Update(attendance);
+                await _context.SaveChangesAsync();
+                return Json(new { 
+                    success = true, 
+                    action = "checkout", 
+                    time = DateTime.Now,
+                    message = "Successfully checked out! Thank you for volunteering."
+                });
+            }
+            else
+            {
+                return BadRequest("You have already completed this shift");
+            }
+        }
+
+        // GET: VolunteerPortal/ManualCheckIn/{attendanceId}
+        [Authorize(Roles = "Admin,Director")]
+        public async Task<IActionResult> ManualCheckIn(int attendanceId)
+        {
+            var attendance = await _context.VolAttendances
+                .Include(a => a.Volunteer)
+                .Include(a => a.VolSchedule)
+                    .ThenInclude(s => s.Event)
+                .FirstOrDefaultAsync(a => a.ID == attendanceId);
+
+            if (attendance == null)
+            {
+                return NotFound();
+            }
+
+            return View("~/Views/VolPortal/ManualCheckIn.cshtml", new ManualCheckInViewModel
+            {
+                AttendanceId = attendance.ID,
+                VolunteerName = attendance.Volunteer?.FullName,
+                EventName = attendance.VolSchedule?.Event?.Name,
+                ScheduleStart = attendance.VolSchedule?.ScheduledStart ?? DateTime.Now,
+                ScheduleEnd = attendance.VolSchedule?.ScheduledEnd ?? DateTime.Now,
+                EventID = attendance.VolSchedule?.EventID ?? 0,
+                CurrentStatus = attendance.ActualStart.HasValue ? 
+                    (attendance.ActualEnd.HasValue ? "Completed" : "Checked In") : 
+                    "Not Checked In"
+            });
+        }
+
+        // POST: VolunteerPortal/PerformManualCheckIn
+        [HttpPost]
+        [Authorize(Roles = "Admin,Director")]
+        public async Task<IActionResult> PerformManualCheckIn(int attendanceId, string action)
+        {
+            var attendance = await _context.VolAttendances.FindAsync(attendanceId);
+            if (attendance == null)
+            {
+                return NotFound();
+            }
+
+            if (action == "checkin" && !attendance.ActualStart.HasValue)
+            {
+                attendance.ActualStart = DateTime.Now;
+            }
+            else if (action == "checkout" && attendance.ActualStart.HasValue && !attendance.ActualEnd.HasValue)
+            {
+                attendance.ActualEnd = DateTime.Now;
+            }
+            else
+            {
+                return BadRequest("Invalid action or attendance status");
+            }
+
+            _context.Update(attendance);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(ManualCheckIn), new { attendanceId });
+        }
+
+        private string GenerateQRCodeImage(string qrCode)
+        {
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCode, QRCodeGenerator.ECCLevel.Q);
+            PngByteQRCode qrCodeImage = new PngByteQRCode(qrCodeData);
+            byte[] qrCodeBytes = qrCodeImage.GetGraphic(20);
+            return $"data:image/png;base64,{Convert.ToBase64String(qrCodeBytes)}";
+        }
+        #endregion
     }
 }

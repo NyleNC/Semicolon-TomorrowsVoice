@@ -4,25 +4,140 @@
     ViewData["Title"] = "Manage Volunteers";
 }
 
-
 @if (TempData["Rejected"] != null)
 {
     <div class="alert alert-success">
-        This  User has been rejected
+        This User has been rejected
     </div>
 }
 @if (TempData["RejectedBulk"] != null)
 {
     <div class="alert alert-success">
-        These users has been rejected
+        The User(s) has been rejected
     </div>
 }
 @if (TempData["ApprovedBulk"] != null)
 {
     <div class="alert alert-success">
-        These Users has been rejected
+        The User(s) has been approved
     </div>
 }
+
+<style>
+    /* Modern table styling */
+    .volunteer-table {
+        --bs-table-bg: transparent;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+
+    .volunteer-table {
+        --bs-table-bg: transparent;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+        .volunteer-table thead th {
+            border: none;
+            background: #100527;
+            font-weight: 600;
+            color: white;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+       
+            letter-spacing: 0.5px;
+        }
+
+        .volunteer-table tbody tr {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+            .volunteer-table tbody tr:hover {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+
+        .volunteer-table tbody td {
+            padding: 16px;
+            border: none;
+            vertical-align: middle;
+        }
+
+            .volunteer-table tbody td:first-child {
+                border-radius: 8px 0 0 8px;
+            }
+
+            .volunteer-table tbody td:last-child {
+                border-radius: 0 8px 8px 0;
+            }
+
+    /* Status indicators */
+    .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+        .status-indicator.pending {
+            background-color: #6c757d;
+        }
+
+        .status-indicator.approved {
+            background-color: #198754;
+        }
+
+        .status-indicator.rejected {
+            background-color: #dc3545;
+        }
+
+    /* Badge styling */
+    .badge-pill {
+        border-radius: 12px;
+        padding: 4px 10px;
+        font-weight: 500;
+    }
+
+    .badge-pending {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+    }
+
+    .badge-approved {
+        background-color: rgba(25, 135, 84, 0.1);
+        color: #198754;
+    }
+
+    .badge-rejected {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+
+    /* Checkbox styling */
+    .form-check-input {
+        width: 18px;
+        height: 18px;
+        margin-top: 0;
+        border: 2px solid #495057;
+    }
+        /* Optional: Change the border color when checked */
+        .form-check-input:checked {
+            border-color: #0d6efd; /* Bootstrap primary blue when checked */
+            background-color: #0d6efd;
+        }
+
+        /* Optional: Style for focus state */
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            border-color: #0d6efd;
+        }
+</style>
+
 <div class="d-flex align-items-center justify-content-between mb-2 g-2 mt-2">
     <div class="d-flex mt-0">
         <h1 class="mb-0">Manage Volunteers</h1>
@@ -30,111 +145,104 @@
 </div>
 <p>Review and manage volunteer applications.</p>
 
-<ul class="nav nav-tabs" id="volunteerTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
-            Pending <span class="badge bg-secondary">@Model.PendingVolunteers.Count</span>
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab">
-            Approved <span class="badge bg-success">@Model.ApprovedVolunteers.Count</span>
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab">
-            Rejected <span class="badge bg-danger">@Model.RejectedVolunteers.Count</span>
-        </button>
-    </li>
-</ul>
+@* Tab Navigation *@
+<div class="d-flex border-bottom mb-3">
+    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "pending" ? "active" : "")"
+       asp-page="ApproveVolunteers" asp-route-tab="pending">
+        Pending <span class="badge bg-secondary ms-1">@Model.PendingVolunteers.Count</span>
+    </a>
+    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "approved" ? "active" : "")"
+       asp-page="ApproveVolunteers" asp-route-tab="approved">
+        Approved <span class="badge bg-success ms-1">@Model.ApprovedVolunteers.Count</span>
+    </a>
+    <a class="nav-tab @(ViewData["ActiveTab"]?.ToString() == "rejected" ? "active" : "")"
+       asp-page="ApproveVolunteers" asp-route-tab="rejected">
+        Rejected <span class="badge bg-danger ms-1">@Model.RejectedVolunteers.Count</span>
+    </a>
+</div>
 
-<div class="tab-content" id="volunteerTabsContent">
-    <!-- Pending Volunteers Tab -->
-    <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
-        <form method="post" id="bulkActionForm">
-            <div class="card mt-3">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="selectAll">
-                        <label class="form-check-label" for="selectAll">
-                            Select All
-                        </label>
-                    </div>
-                    <div>
-                        <button type="submit" asp-page-handler="ApproveSelected" class="btn btn-success btn-sm me-2">
-                            <i class="bi bi-check-circle"></i> Approve Selected
-                        </button>
-                        <button type="submit" asp-page-handler="RejectSelected" class="btn btn-danger btn-sm">
-                            <i class="bi bi-x-circle"></i> Reject Selected
-                        </button>
-                    </div>
+<!-- Pending Volunteers Section -->
+@if (ViewData["ActiveTab"]?.ToString() == "pending")
+{
+    <form method="post" id="bulkActionForm">
+        <div class="card mt-3 border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center bg-white border-0">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="selectAll">
+                    <label class="form-check-label" for="selectAll">
+                        Select All
+                    </label>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th style="width: 40px;"></th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Actions</th>
-                       
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @for (var i = 0; i < Model.PendingVolunteers.Count; i++)
-                                {
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" class="form-check-input volunteer-checkbox"
-                                                   name="SelectedVolunteers" value="@Model.PendingVolunteers[i].ID" />
-                                        </td>
-                                        <td>@Model.PendingVolunteers[i].FullName</td>
-                                        <td>@Model.PendingVolunteers[i].Email</td>
-                                 
-                                        <td>
-                                            <button type="submit" asp-page-handler="Approve"
-                                                    asp-route-volunteerId="@Model.PendingVolunteers[i].ID"
-                                                    class="btn btn-success btn-sm me-1">
-                                                <i class="bi bi-check-circle"></i> Approve
-                                            </button>
-                                            <button type="submit" asp-page-handler="Reject"
-                                                    asp-route-volunteerId="@Model.PendingVolunteers[i].ID"
-                                                    class="btn btn-danger btn-sm">
-                                                <i class="bi bi-x-circle"></i> Reject
-                                            </button>
-                                        </td>
-                                    </tr>
-                                }
-                                @if (Model.PendingVolunteers.Count == 0)
-                                {
-                                    <tr>
-                                        <td colspan="5" class="text-center">No pending volunteers</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                <div>
+                    <button type="submit" asp-page-handler="ApproveSelected" class="btn btn-success btn-sm me-2">
+                        <i class="bi bi-check-circle"></i> Approve Selected
+                    </button>
+                    <button type="submit" asp-page-handler="RejectSelected" class="btn btn-danger btn-sm">
+                        <i class="bi bi-x-circle"></i> Reject Selected
+                    </button>
                 </div>
             </div>
-        </form>
-    </div>
-
-    <!-- Approved Volunteers Tab -->
-    <div class="tab-pane fade" id="approved" role="tabpanel" aria-labelledby="approved-tab">
-        <form method="post">
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5 class="mb-0">Approved Volunteers</h5>
-            </div>
-            <div class="card-body">
+            <div class="card-body px-0">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table volunteer-table">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                             
+                                <th style="width: 40px;"></th>
+                                <th>Volunteer</th>
+                                <th>Status</th>
+                                <th>Contact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < Model.PendingVolunteers.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="form-check-input volunteer-checkbox"
+                                               name="SelectedVolunteers" value="@Model.PendingVolunteers[i].ID" />
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="status-indicator pending"></span>
+                                            @Model.PendingVolunteers[i].FullName
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-pill badge-pending">Pending Review</span>
+                                    </td>
+                                    <td>@Model.PendingVolunteers[i].Email</td>
+                                </tr>
+                            }
+                            @if (Model.PendingVolunteers.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">No pending volunteers</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+
+<!-- Approved Volunteers Section -->
+@if (ViewData["ActiveTab"]?.ToString() == "approved")
+{
+    <form method="post">
+        <div class="card mt-3 border-0 shadow-sm">
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0">Approved Volunteers</h5>
+            </div>
+            <div class="card-body px-0">
+                <div class="table-responsive">
+                    <table class="table volunteer-table">
+                        <thead>
+                            <tr>
+                                <th>Volunteer</th>
+                                <th>Status</th>
+                                <th>Contact</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -142,13 +250,20 @@
                             @foreach (var volunteer in Model.ApprovedVolunteers)
                             {
                                 <tr>
-                                    <td>@volunteer.FullName</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="status-indicator approved"></span>
+                                            @volunteer.FullName
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-pill badge-approved">Approved</span>
+                                    </td>
                                     <td>@volunteer.Email</td>
-                              
                                     <td>
                                         <button type="submit" asp-page-handler="RevokeApproval"
                                                 asp-route-volunteerId="@volunteer.ID"
-                                                class="btn btn-warning btn-sm">
+                                                class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-arrow-counterclockwise"></i> Revoke
                                         </button>
                                     </td>
@@ -157,7 +272,7 @@
                             @if (Model.ApprovedVolunteers.Count == 0)
                             {
                                 <tr>
-                                    <td colspan="4" class="text-center">No approved volunteers</td>
+                                    <td colspan="4" class="text-center py-4">No approved volunteers</td>
                                 </tr>
                             }
                         </tbody>
@@ -165,84 +280,63 @@
                 </div>
             </div>
         </div>
-        </form>
-    </div>
+    </form>
+}
 
-    <!-- Rejected Volunteers Tab -->
-    <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
-        <form method="post">
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h5 class="mb-0">Rejected Volunteers</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+<!-- Rejected Volunteers Section -->
+@if (ViewData["ActiveTab"]?.ToString() == "rejected")
+{
+    <form method="post">
+        <div class="card mt-3 border-0 shadow-sm">
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0">Rejected Volunteers</h5>
+            </div>
+            <div class="card-body px-0">
+                <div class="table-responsive">
+                    <table class="table volunteer-table">
+                        <thead>
+                            <tr>
+                                <th>Volunteer</th>
+                                <th>Status</th>
+                                <th>Contact</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var volunteer in Model.RejectedVolunteers)
+                            {
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Actions</th>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="status-indicator rejected"></span>
+                                            @volunteer.FullName
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-pill badge-rejected">Rejected</span>
+                                    </td>
+                                    <td>@volunteer.Email</td>
+                                    <td>
+                                        <button type="submit" asp-page-handler="Reconsider"
+                                                asp-route-volunteerId="@volunteer.ID"
+                                                class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-arrow-repeat"></i> Reconsider
+                                        </button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var volunteer in Model.RejectedVolunteers)
-                                {
-                                    <tr>
-                                        <td>@volunteer.FullName</td>
-                                        <td>@volunteer.Email</td>
-                                        <td>
-                                            <button type="submit" asp-page-handler="Reconsider"
-                                                    asp-route-volunteerId="@volunteer.ID"
-                                                    class="btn btn-primary btn-sm">
-                                                <i class="bi bi-arrow-repeat"></i> Reconsider
-                                            </button>
-                                        </td>
-                                    </tr>
-                                }
-                                @if (Model.RejectedVolunteers.Count == 0)
-                                {
-                                    <tr>
-                                        <td colspan="3" class="text-center">No rejected volunteers</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                            }
+                            @if (Model.RejectedVolunteers.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-4">No rejected volunteers</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </form>
-    </div>
-</div>
-
-@section Scripts {
-    <script>
-        // Select all checkbox functionality
-        document.getElementById('selectAll').addEventListener('change', function(e) {
-            const checkboxes = document.querySelectorAll('.volunteer-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = e.target.checked;
-            });
-        });
-
-        // Ensure at least one volunteer is selected for bulk actions
-        document.getElementById('bulkActionForm').addEventListener('submit', function(e) {
-            const checkedBoxes = document.querySelectorAll('.volunteer-checkbox:checked');
-            if (checkedBoxes.length === 0) {
-                e.preventDefault();
-                alert('Please select at least one volunteer to perform this action.');
-            }
-        });
-
-        // Initialize Bootstrap tabs
-        var tabEl = document.querySelector('button[data-bs-toggle="tab"]');
-        if (tabEl) {
-            tabEl.addEventListener('shown.bs.tab', function (event) {
-                event.target // newly activated tab
-                event.relatedTarget // previous active tab
-            });
-        }
-    </script>
+        </div>
+    </form>
 }
 
 @if (TempData["ApprovedSuccess"] != null)
@@ -252,3 +346,23 @@
     </div>
 }
 
+@section Scripts {
+    <script>
+        // Select all checkbox functionality
+        document.getElementById('selectAll')?.addEventListener('change', function(e) {
+            const checkboxes = document.querySelectorAll('.volunteer-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = e.target.checked;
+            });
+        });
+
+        // Ensure at least one volunteer is selected for bulk actions
+        document.getElementById('bulkActionForm')?.addEventListener('submit', function(e) {
+            const checkedBoxes = document.querySelectorAll('.volunteer-checkbox:checked');
+            if (checkedBoxes.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one volunteer to perform this action.');
+            }
+        });
+    </script>
+}

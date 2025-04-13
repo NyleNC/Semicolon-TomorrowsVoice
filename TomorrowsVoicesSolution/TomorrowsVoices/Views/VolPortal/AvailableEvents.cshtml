@@ -12,7 +12,6 @@
 
 <div class="volunteer-portal-header">
     <h1 class="mt-4">Available Events</h1>
-    <h2>Welcome, @ViewData["VolunteerName"]!</h2>
     <p class="welcome-message">Welcome, @ViewData["VolunteerName"]</p>
     <div class="portal-tabs">
         <a class="portal-tab active" href="@Url.Action("AvailableEvents")">Available Events</a>
@@ -111,7 +110,7 @@ else
                                                 }
                                                 else if (shift.Start > DateTime.Now)
                                                 {
-                                                    <form asp-action="SignUpForShift" method="post">
+                                                    <form asp-action="SignUpForShift" method="post" onsubmit="return confirm('Are you sure you want to sign up for this shift?');">
                                                         <input type="hidden" name="scheduleId" value="@shift.ScheduleId" />
                                                         <button type="submit" class="btn btn-sm btn-primary">Sign Up</button>
                                                     </form>

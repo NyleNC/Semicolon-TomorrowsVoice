@@ -54,6 +54,202 @@
     <!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script> -->
     <!-- Your custom scripts -->
     <script src="~/js/volunteer-portal.js" asp-append-version="true"></script>
+    <style>
+        .sidebar {
+            background: #f8fafc;
+            position: relative;
+            overflow: hidden;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.2;
+            animation: float 20s infinite linear;
+            filter: blur(1px);
+            z-index: 0;
+        }
+
+        .floating-element.choir {
+            background-color: #6D28E3;
+            border-radius: 50%;
+        }
+
+        .floating-element.event {
+            background-color: #1D4ED8;
+            border-radius: 10px;
+        }
+
+        .floating-element.volunteer {
+            background-color: #B45309;
+            border-radius: 5px;
+        }
+
+        @@keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(50px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, 100px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-50px, 50px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        .nav-link {
+            position: relative;
+            z-index: 1;
+            transition: all 0.2s ease;
+            color: #64748b;
+            padding: 0.75rem 1rem;
+            margin: 0.1rem 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .nav-link:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: #1e293b;
+        }
+
+        .nav-link.active {
+            background-color: rgba(0, 0, 0, 0.08);
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .nav-link i {
+            color: #64748b;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link.active i {
+            color: #1e293b;
+        }
+
+        .nav-link span {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .nav-link.active span {
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 8px;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            padding: 0.75rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toggle-btn:hover {
+            color: #1e293b;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .toggle-btn i {
+            font-size: 1.2rem;
+        }
+
+        .sidebar.collapsed {
+            width: 69px;
+        }
+
+            .sidebar.collapsed .nav-link {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding-left: 4px;
+            }
+
+
+   
+
+        .sidebar.collapsed .nav-item {
+            width: 100%;
+            padding: 0;
+        }
+
+        .sidebar.collapsed .submenu {
+            padding-left: 0;
+            border-left: none;
+            margin-left: 0;
+        }
+
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .menu-section-title,
+        .sidebar.collapsed .bi-chevron-down {
+            display: none;
+        }
+
+        .menu-section {
+                   margin-bottom: 1.5rem;
+                   position: relative;
+                   background-color: rgba(255, 255, 255, 0.2); /* Added transparency */
+                   backdrop-filter: blur(20px); /* Added minor blur effect */
+                   border: 1px solid rgba(0, 0, 0, 0.1); /* Slight border for better visibility */;
+                   border-radius: 8px;
+            min-width: 100%;
+               }
+
+     
+
+        .menu-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #94a3b8;
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .menu-section-title i {
+            transition: transform 0.2s ease;
+        }
+
+        .menu-section-title[aria-expanded="true"] i {
+            transform: rotate(180deg);
+        }
+
+        .submenu {
+            padding-left: 1rem;
+            border-left: 2px solid rgba(0, 0, 0, 0.05);
+            margin-left: 1rem;
+        }
+
+        .submenu .nav-link {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
 
     @functions {
         string IsActive(string controller, string action)
@@ -106,10 +302,13 @@
                 </a>
 
                 <!-- Mobile Menu Button (Floated to the Right) -->
-                <button class="toggle-btn" id="btnMobile" data-bs-toggle="modal" data-bs-target="#menuModal"
-                        style="filter: invert(1) brightness(2); margin-top: 12px;">
-                    <i class="bi bi-grid"></i>
-                </button>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <button class="toggle-btn" id="btnMobile" data-bs-toggle="modal" data-bs-target="#menuModal"
+                            style="filter: invert(1) brightness(2); margin-top: 12px;">
+                        <i class="bi bi-grid"></i>
+                    </button>
+                }
                 <partial name="_LoginPartial" />
             </div>
 
@@ -152,6 +351,9 @@
                         {
                             <a class="nav-link" asp-controller="VolunteerPortal" asp-action="AvailableEvents">Available Events</a>
                             <a class="nav-link" asp-controller="VolunteerPortal" asp-action="MyEvents">My Events</a>
+                            <a class="nav-link" asp-controller="VolunteerPortal" asp-action="ScanQRCode">
+                                <i class="bi bi-qr-code-scan"></i> <span>Scan QR Code</span>
+                            </a>
                         }
                     </div>
                 </div>
@@ -163,108 +365,133 @@
                 <!-- Sidebar -->
                 <div id="desktopSidebar" class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar">
                     <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
+                        <!-- Floating Elements -->
+                        <div class="floating-element choir" style="width: 60px; height: 60px; left: 10%; top: 10%; animation-delay: 0s;"></div>
+                        <div class="floating-element choir" style="width: 40px; height: 40px; left: 70%; top: 30%; animation-delay: -5s;"></div>
+                        <div class="floating-element event" style="width: 80px; height: 40px; left: 20%; top: 50%; animation-delay: -2s;"></div>
+                        <div class="floating-element event" style="width: 60px; height: 30px; left: 60%; top: 70%; animation-delay: -7s;"></div>
+                        <div class="floating-element volunteer" style="width: 50px; height: 25px; left: 30%; top: 80%; animation-delay: -3s;"></div>
+                        <div class="floating-element volunteer" style="width: 40px; height: 20px; left: 80%; top: 90%; animation-delay: -8s;"></div>
+
                         <!-- Menu Toggle -->
                         <button class="toggle-btn" id="btn">
-                            <i class="bi bi-grid"></i>
+                            <i class="bi bi-list"></i>
+                            <span>Menu</span>
                         </button>
 
                         <!-- Main Menu -->
                         <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                             @if (User.IsInRole("Admin") || User.IsInRole("Director"))
                             {
-                                <li class="nav-item w-100">
-                                    <a class="nav-link" data-bs-toggle="collapse" href="#submenu1">
-                                        <i class="bi bi-people-fill"></i> <span>Choir Administration</span>
-                                        <i class="bi bi-chevron-down ms-auto"></i>
-                                    </a>
-                                    <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("Director", "Singer", "Session"))" id="submenu1">
+                                <div class="menu-section">
+                                    <div class="menu-section-title" data-bs-toggle="collapse" href="#submenu1" role="button" aria-expanded="true">
+                                        <span>Choir Administration</span>
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                    <div class="collapse show" id="submenu1">
                                         @if (User.IsInRole("Admin"))
                                         {
                                             <li class="nav-item w-100">
                                                 <a class="nav-link @(IsActive("Director","Index"))" asp-controller="Director" asp-action="Index">
-                                                    <i class="bi bi-person-badge"></i> <span>Director</span>
+                                                    <i class="bi bi-person-badge"></i>
+                                                    <span>Director</span>
                                                 </a>
                                             </li>
                                         }
-                                   
                                         <li class="nav-item w-100">
                                             <a class="nav-link @(IsActive("Singer","Index"))" asp-controller="Singer" asp-action="Index">
-                                                <i class="bi bi-music-note-beamed"></i> <span>Singer</span>
+                                                <i class="bi bi-music-note-beamed"></i>
+                                                <span>Singer</span>
                                             </a>
                                         </li>
                                         <li class="nav-item w-100">
                                             <a class="nav-link @(IsActive("Session","Index"))" asp-controller="Session" asp-action="Index">
-                                                <i class="bi bi-calendar-check"></i> <span>Session</span>
+                                                <i class="bi bi-calendar-check"></i>
+                                                <span>Session</span>
                                             </a>
                                         </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item w-100">
-                                    <a class="nav-link" data-bs-toggle="collapse" href="#submenu2">
-                                        <i class="bi bi-gear"></i> <span>Event Management</span>
-                                        <i class="bi bi-chevron-down ms-auto"></i>
-                                    </a>
-                                    <ul class="collapse nav flex-column ms-1 @(IsSubMenuActive("VolLocation", "Volunteer", "Event","Schedule"))" id="submenu2">
+                                    </div>
+                                </div>
+
+                                <div class="menu-section">
+                                    <div class="menu-section-title" data-bs-toggle="collapse" href="#submenu2" role="button" aria-expanded="true">
+                                        <span>Event Management</span>
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                    <div class="collapse show" id="submenu2">
                                         <li class="nav-item w-100">
                                             <a class="nav-link @(IsActive("VolLocation","Index"))" asp-controller="VolLocation" asp-action="Index">
-                                                <i class="bi bi-geo-alt"></i> <span>Location</span>
+                                                <i class="bi bi-geo-alt"></i>
+                                                <span>Location</span>
                                             </a>
                                         </li>
                                         <li class="nav-item w-100">
                                             <a class="nav-link @(IsActive("Event","Index"))" asp-controller="Event" asp-action="Index">
-                                                <i class="bi bi-calendar-event"></i> <span>Event</span>
+                                                <i class="bi bi-calendar-event"></i>
+                                                <span>Event</span>
                                             </a>
                                         </li>
                                         <li class="nav-item w-100">
                                             <a class="nav-link @(IsActive("Volunteer","Index"))" asp-controller="Volunteer" asp-action="Index">
-                                                <i class="bi bi-people"></i> <span>Volunteer</span>
+                                                <i class="bi bi-people"></i>
+                                                <span>Volunteer</span>
                                             </a>
                                         </li>
-                                        <li class="nav-item w-100">
-                                            @if (User.IsInRole("Admin"))
-                                            {
-                                                  <a class="nav-link @(IsActive("VolunteerPortal","AdminPortal"))" asp-controller="VolunteerPortal" asp-action="AdminPortal">
-                                                    <i class="bi bi-speedometer2"></i> <span>Admin Portal</span>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <li class="nav-item w-100">
+                                                <a class="nav-link @(IsActive("VolunteerPortal","AdminPortal"))" asp-controller="VolunteerPortal" asp-action="AdminPortal">
+                                                    <i class="bi bi-speedometer2"></i>
+                                                    <span>Admin Portal</span>
                                                 </a>
-                                            }
-                                          
-                                        </li>
-                                    </ul>
-                                </li>
+                                            </li>
+                                        }
+                                    </div>
+                                </div>
                             }
                             @if (User.IsInRole("Admin"))
                             {
-                                <li class="nav-item w-100">
-                                    <a class="nav-link" data-bs-toggle="collapse" href="#submenu3">
-                                        <i class="bi bi-shield-check"></i> <span>User Administration</span>
-                                        <i class="bi bi-chevron-down ms-auto"></i>
-                                    </a>
-                                    <ul class="collapse nav flex-column ms-1" id="submenu3">
+                                <div class="menu-section">
+                                    <div class="menu-section-title" data-bs-toggle="collapse" href="#submenu3" role="button" aria-expanded="true">
+                                        <span>User Administration</span>
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                    <div class="collapse show" id="submenu3">
                                         <li class="nav-item w-100">
                                             <a class="nav-link @(IsActive("UserRole","Index"))" asp-controller="UserRole" asp-action="Index">
-                                                <i class="bi bi-people"></i> <span>User Management</span>
+                                                <i class="bi bi-people"></i>
+                                                <span>User Management</span>
                                             </a>
                                         </li>
                                         <li class="nav-item w-100">
                                             <a class="nav-link" asp-area="Identity" asp-page="/Account/ApproveVolunteers">
-                                                <i class="bi bi-check-circle"></i> <span>Approve Volunteers</span>
+                                                <i class="bi bi-check-circle"></i>
+                                                <span>Approve Volunteers</span>
                                             </a>
                                         </li>
-                                    </ul>
-                                </li>
+                                    </div>
+                                </div>
                             }
                             @if (User.IsInRole("Volunteer"))
                             {
-                                <li class="nav-item w-100">
-                                    <a class="nav-link" asp-controller="VolunteerPortal" asp-action="AvailableEvents">
-                                        <i class="bi bi-calendar-plus"></i> <span>Available Events</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item w-100">
-                                    <a class="nav-link" asp-controller="VolunteerPortal" asp-action="MyEvents">
-                                        <i class="bi bi-calendar-check"></i> <span>My Events</span>
-                                    </a>
-                                </li>
+                                <div class="menu-section">
+                                            <li class="nav-item w-100">
+                                            <a class="nav-link" asp-controller="VolunteerPortal" asp-action="AvailableEvents">
+                                                <i class="bi bi-calendar-plus"></i> <span>Available Events</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item w-100">
+                                            <a class="nav-link" asp-controller="VolunteerPortal" asp-action="MyEvents">
+                                                <i class="bi bi-calendar-check"></i> <span>My Events</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item w-100">
+                                            <a class="nav-link" asp-controller="VolunteerPortal" asp-action="ScanQRCode">
+                                                <i class="bi bi-qr-code-scan"></i> <span>Scan QR Code</span>
+                                            </a>
+                                        </li>
+                                </div>
+                                
                             }
                         </ul>
                     </div>
@@ -322,6 +549,20 @@
                 const dropdownIcons = sidebar.querySelectorAll('.bi-chevron-down');
                 dropdownIcons.forEach(icon => {
                     icon.style.display = sidebar.classList.contains('collapsed') ? 'none' : 'inline';
+                });
+
+                // Toggle section titles visibility
+                const sectionTitles = sidebar.querySelectorAll('.menu-section-title');
+                sectionTitles.forEach(title => {
+                    title.style.display = sidebar.classList.contains('collapsed') ? 'none' : 'flex';
+                });
+
+                // Show all submenus when collapsed
+                const submenus = sidebar.querySelectorAll('.collapse');
+                submenus.forEach(submenu => {
+                    if (sidebar.classList.contains('collapsed')) {
+                        submenu.classList.add('show');
+                    }
                 });
             });
 

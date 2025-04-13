@@ -1,6 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Numerics;
 using TomorrowsVoices.Models;
+using QRCoder;
+using System.Drawing;
+using System.IO;
+using System.Drawing.Imaging;
+using System.Text;
 
 namespace TomorrowsVoices.Data
 {
@@ -29,6 +34,7 @@ namespace TomorrowsVoices.Data
 
         public DbSet<VolSchedule> VolSchedules { get; set; }
 
+        public DbSet<QRCheckIn> QRCheckIns { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -104,22 +110,39 @@ namespace TomorrowsVoices.Data
 
             // is unique for email
             modelBuilder.Entity<Director>()
-
                 .HasIndex(d => d.Email)
                 .IsUnique();
-            modelBuilder.Entity<Director>()
 
+            modelBuilder.Entity<Director>()
               .HasIndex(d => d.dirPhoneNumber)
               .IsUnique();
-            modelBuilder.Entity<Volunteer>()
 
-       .HasIndex(d => d.Phone)
-       .IsUnique();
             modelBuilder.Entity<Volunteer>()
+               .HasIndex(d => d.Phone)
+               .IsUnique();
 
-           .HasIndex(d => d.Email)
-           .IsUnique();
+            modelBuilder.Entity<Volunteer>()
+               .HasIndex(d => d.Email)
+               .IsUnique(); 
 
         }
+
+        // Ensure the correct namespace and class are being referenced
+        private string GenerateQRCodeImage(string qrCodeValue)
+        {
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCodeValue, QRCodeGenerator.ECCLevel.Q);
+
+            // Use QRCodeGenerator to create the QR code
+            using (var qrCode = new BitmapByteQRCode(qrCodeData))
+            {
+                var bitmap = qrCode.GetGraphic(20);
+                using (var ms = new MemoryStream(bitmap))
+                {
+                    return $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
+                }
+            }
+        }
+
     }
 }

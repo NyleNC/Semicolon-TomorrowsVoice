@@ -69,6 +69,7 @@ namespace TomorrowsVoices.ViewModels
         public double TotalHours { get; set; }
         public DateTime? ActualStart { get; set; }
         public DateTime? ActualEnd { get; set; }
+        public int AttendanceId { get; set; }
         public List<VolunteerEventHistory> EventHistory { get; set; }
     }
 

@@ -3,81 +3,440 @@
 @{
     ViewData["Title"] = "Register";
 }
+
+<style>
+    .background-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .floating-element {
+        position: absolute;
+        opacity: 0.15;
+        animation: float 20s infinite linear;
+        filter: blur(1px);
+    }
+
+    .floating-element.choir {
+        background-color: #6D28E3;
+        border-radius: 50%;
+    }
+
+    .floating-element.event {
+        background-color: #1D4ED8;
+        border-radius: 10px;
+    }
+
+    .floating-element.volunteer {
+        background-color: #B45309;
+        border-radius: 5px;
+    }
+
+    @@keyframes float {
+        0% {
+            transform: translate(0, 0) rotate(0deg);
+        }
+        25% {
+            transform: translate(50px, 50px) rotate(90deg);
+        }
+        50% {
+            transform: translate(0, 100px) rotate(180deg);
+        }
+        75% {
+            transform: translate(-50px, 50px) rotate(270deg);
+        }
+        100% {
+            transform: translate(0, 0) rotate(360deg);
+        }
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        border-radius: 15px;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-primary {
+        background: rgba(109, 40, 227, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: rgba(109, 40, 227, 0.9);
+        color: white;
+    }
+
+    .btn-primary:focus {
+        background: rgba(109, 40, 227, 0.9);
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 0 0 0.25rem rgba(109, 40, 227, 0.25);
+        color: white;
+    }
+
+    .registration-steps {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+        gap: 1rem;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(109, 40, 227, 0.2);
+        color: #6D28E3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .step.active .step-number {
+        background: #6D28E3;
+        color: white;
+    }
+
+    .step.completed .step-number {
+        background: #6D28E3;
+        color: white;
+    }
+
+    .step-label {
+        color: #6D28E3;
+        font-weight: 500;
+    }
+
+    .step.active .step-label {
+        color: #6D28E3;
+        font-weight: bold;
+    }
+
+    .registration-form {
+        display: none;
+    }
+
+    .registration-form.active {
+        display: block;
+    }
+
+    .form-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+    }
+
+    .btn-outline-primary {
+        color: #6D28E3;
+        border-color: #6D28E3;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #6D28E3;
+        color: white;
+    }
+
+    .btn-link {
+        color: #6D28E3;
+        text-decoration: none;
+    }
+
+    .btn-link:hover {
+        color: #5B21B6;
+    }
+
+    .password-toggle-icon {
+        color: #6D28E3;
+    }
+
+    .password-toggle-icon.hidden {
+        color: #4B5563;
+    }
+</style>
+
+<div class="background-animation">
+    <!-- Choir elements -->
+    <div class="floating-element choir" style="width: 80px; height: 80px; left: 20%; top: 30%; animation-delay: 0s;"></div>
+    <div class="floating-element choir" style="width: 60px; height: 60px; left: 70%; top: 50%; animation-delay: -10s;"></div>
+    
+    <!-- Event elements -->
+    <div class="floating-element event" style="width: 120px; height: 60px; left: 10%; top: 60%; animation-delay: -2s;"></div>
+    <div class="floating-element event" style="width: 90px; height: 45px; left: 60%; top: 20%; animation-delay: -7s;"></div>
+    <div class="floating-element event" style="width: 100px; height: 50px; left: 40%; top: 70%; animation-delay: -12s;"></div>
+    
+    <!-- Volunteer elements -->
+    <div class="floating-element volunteer" style="width: 70px; height: 35px; left: 30%; top: 10%; animation-delay: -3s;"></div>
+    <div class="floating-element volunteer" style="width: 50px; height: 25px; left: 80%; top: 40%; animation-delay: -8s;"></div>
+    <div class="floating-element volunteer" style="width: 60px; height: 30px; left: 50%; top: 80%; animation-delay: -15s;"></div>
+</div>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
             <div class="card shadow-sm mt-5">
                 <div class="card-body">
                     <h1 class="card-title text-center mb-4">@ViewData["Title"]</h1>
-                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                        <fieldset>
-                            <legend class="text-center mb-4">Create Account Information</legend>
-                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                            <div class="mb-3">
-                                <label asp-for="Input.FirstName">First Name</label>
-                                <input asp-for="Input.FirstName" class="form-control" aria-required="true" placeholder="John" />
-                       
-                                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label asp-for="Input.LastName">Last Name</label>
-                                <input asp-for="Input.LastName" class="form-control" aria-required="true" placeholder="Doe" />
-                            
-                                <span asp-validation-for="Input.LastName" class="text-danger"></span>
-                            </div>
+                    
+                    <div class="registration-steps">
+                        <div class="step active" data-step="1">
+                            <div class="step-number">1</div>
+                            <div class="step-label">Personal Info</div>
+                        </div>
+                        <div class="step" data-step="2">
+                            <div class="step-number">2</div>
+                            <div class="step-label">Password Setup</div>
+                        </div>
+                    </div>
 
-                            <div class="mb-3">
-                                <label asp-for="Input.Email">Email</label>
-                                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                             
-                                <span asp-validation-for="Input.Email" class="text-danger"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label asp-for="Input.Phone">Phone</label>
-                                <input asp-for="Input.Phone" class="form-control" aria-required="true" placeholder="9054797171 " />
-                                <div class="form-text">
-                                    Phone Format:
-                                    <ul class="small">
-                                        <li>9054797171 no dashes or spaces</li>
-                                    </ul>
-                                </div>
-                                <span asp-validation-for="Input.Phone" class="text-danger"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label asp-for="Input.Password">Password</label>
-                                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="pAssword.1" />
-                             
-                                <span asp-validation-for="Input.Password" class="text-danger"></span>
-                                <div class="form-text">
-                                    Password requirements:
-                                    <ul class="small">
-                                        <li>At least 6 characters</li>
-                                        <li>At least 1 uppercase letter</li>
-                                        <li>At least 1 lowercase letter</li>
-                                        <li>At least 1 digit</li>
-                                        <li>At least 1 special character(any non-alphanumeric character , !,#,&,. and etc)</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                         
-                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        <!-- Step 1: Personal Information -->
+                        <div class="registration-form active" id="step1">
+                            <fieldset>
+                                <legend class="text-center mb-4">Personal Information</legend>
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.FirstName" class="form-control" aria-required="true" placeholder="John" />
+                                    <label asp-for="Input.FirstName">First Name</label>
+                                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.LastName" class="form-control" aria-required="true" placeholder="Doe" />
+                                    <label asp-for="Input.LastName">Last Name</label>
+                                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                                    <label asp-for="Input.Email">Email</label>
+                                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.Phone" class="form-control" aria-required="true" placeholder="9054797171" />
+                                    <label asp-for="Input.Phone">Phone Number</label>
+                                    <div class="form-text small text-muted">
+                                        Format: 9054797171 (no dashes or spaces)
+                                    </div>
+                                    <span asp-validation-for="Input.Phone" class="text-danger"></span>
+                                </div>
+                            </fieldset>
+                            <div class="form-navigation">
+                                <button type="button" class="btn btn-outline-primary" onclick="nextStep()">Next</button>
                             </div>
-                            <div class="d-flex justify-content-center mb-3">
-                                <button id="registerSubmit" type="submit" class="w-75 btn btn-lg btn-primary">Register</button>
+                        </div>
+
+                        <!-- Step 2: Password Setup -->
+                        <div class="registration-form" id="step2">
+                            <fieldset>
+                                <legend class="text-center mb-4">
+                                    Password Setup
+                                    <button type="button" class="btn btn-link p-0 ms-2" onclick="togglePasswordVisibility()">
+                                        <i class="bi bi-eye-fill password-toggle-icon" id="passwordToggleIcon"></i>
+                                    </button>
+                                </legend>
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="pAssword.1" onkeyup="validatePassword(this.value)" type="password" id="passwordInput" />
+                                    <label asp-for="Input.Password">Password</label>
+                                    <div class="form-text">
+                                        Password requirements:
+                                        <ul class="small password-requirements">
+                                            <li id="length-req">
+                                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                                At least 6 characters
+                                            </li>
+                                            <li id="uppercase-req">
+                                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                                At least 1 uppercase letter
+                                            </li>
+                                            <li id="lowercase-req">
+                                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                                At least 1 lowercase letter
+                                            </li>
+                                            <li id="digit-req">
+                                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                                At least 1 digit
+                                            </li>
+                                            <li id="special-req">
+                                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                                At least 1 special character
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" type="password" id="confirmPasswordInput" />
+                                    <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                                </div>
+                            </fieldset>
+                            <div class="form-navigation">
+                                <button type="button" class="btn btn-outline-primary" onclick="prevStep()">Back</button>
+                                <button id="registerSubmit" type="submit" class="btn btn-primary">Register</button>
                             </div>
-                        </fieldset>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function nextStep() {
+            const currentStep = document.querySelector('.registration-form.active');
+            const nextStep = currentStep.nextElementSibling;
+            
+            // Get all required input fields in the current step
+            const requiredInputs = currentStep.querySelectorAll('input[aria-required="true"]');
+            let isValid = true;
+            
+            // Check each required field
+            requiredInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    // Add error styling
+                    input.classList.add('is-invalid');
+                    // Show error message if not already present
+                    if (!input.nextElementSibling.classList.contains('text-danger')) {
+                        const errorSpan = document.createElement('span');
+                        errorSpan.className = 'text-danger';
+                        errorSpan.textContent = 'This field is required.';
+                        input.parentNode.insertBefore(errorSpan, input.nextSibling);
+                    }
+                } else {
+                    // Remove error styling if field is valid
+                    input.classList.remove('is-invalid');
+                    // Remove error message if present
+                    const errorSpan = input.nextElementSibling;
+                    if (errorSpan && errorSpan.classList.contains('text-danger')) {
+                        errorSpan.remove();
+                    }
+                }
+            });
+
+            // Only proceed if all required fields are filled
+            if (isValid && nextStep) {
+                currentStep.classList.remove('active');
+                nextStep.classList.add('active');
+                
+                // Update step indicators
+                document.querySelector('.step.active').classList.remove('active');
+                document.querySelector(`.step[data-step="2"]`).classList.add('active');
+            }
+        }
+
+        function prevStep() {
+            const currentStep = document.querySelector('.registration-form.active');
+            const prevStep = currentStep.previousElementSibling;
+            
+            if (prevStep) {
+                currentStep.classList.remove('active');
+                prevStep.classList.add('active');
+                
+                // Update step indicators
+                document.querySelector('.step.active').classList.remove('active');
+                document.querySelector(`.step[data-step="1"]`).classList.add('active');
+            }
+        }
+
+        function validatePassword(password) {
+            // Length requirement
+            const lengthReq = document.getElementById('length-req');
+            const lengthIcon = lengthReq.querySelector('i');
+            if (password.length >= 6) {
+                lengthIcon.className = 'bi bi-check-circle-fill text-success';
+            } else {
+                lengthIcon.className = 'bi bi-x-circle-fill text-danger';
+            }
+
+            // Uppercase requirement
+            const uppercaseReq = document.getElementById('uppercase-req');
+            const uppercaseIcon = uppercaseReq.querySelector('i');
+            if (/[A-Z]/.test(password)) {
+                uppercaseIcon.className = 'bi bi-check-circle-fill text-success';
+            } else {
+                uppercaseIcon.className = 'bi bi-x-circle-fill text-danger';
+            }
+
+            // Lowercase requirement
+            const lowercaseReq = document.getElementById('lowercase-req');
+            const lowercaseIcon = lowercaseReq.querySelector('i');
+            if (/[a-z]/.test(password)) {
+                lowercaseIcon.className = 'bi bi-check-circle-fill text-success';
+            } else {
+                lowercaseIcon.className = 'bi bi-x-circle-fill text-danger';
+            }
+
+            // Digit requirement
+            const digitReq = document.getElementById('digit-req');
+            const digitIcon = digitReq.querySelector('i');
+            if (/[0-9]/.test(password)) {
+                digitIcon.className = 'bi bi-check-circle-fill text-success';
+            } else {
+                digitIcon.className = 'bi bi-x-circle-fill text-danger';
+            }
+
+            // Special character requirement
+            const specialReq = document.getElementById('special-req');
+            const specialIcon = specialReq.querySelector('i');
+            if (/[^A-Za-z0-9]/.test(password)) {
+                specialIcon.className = 'bi bi-check-circle-fill text-success';
+            } else {
+                specialIcon.className = 'bi bi-x-circle-fill text-danger';
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('passwordInput');
+            const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+            const toggleIcon = document.getElementById('passwordToggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                confirmPasswordInput.type = 'text';
+                toggleIcon.className = 'bi bi-eye-slash-fill password-toggle-icon';
+            } else {
+                passwordInput.type = 'password';
+                confirmPasswordInput.type = 'password';
+                toggleIcon.className = 'bi bi-eye-fill password-toggle-icon hidden';
+            }
+        }
+    </script>
 }
