@@ -58,9 +58,64 @@ namespace TomorrowsVoices.Controllers
             //If first time loading the page, set the date range filter based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
-                StartDate = _context.Sessions.Min(o => o.Date).Value;
-                EndDate = _context.Sessions.Max(o => o.Date).Value;
+                if (!User.IsInRole("Admin"))
+                {
+                    var currentDirector = await GetCurrentDirectorAsync();
+                    if (currentDirector != null)
+                    {
+                        // For Directors, only get date range from their assigned cities
+                        var assignedLocationIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
+                        var directorSessions = _context.Sessions
+                            .Where(s => assignedLocationIds.Contains(s.LocationID.Value) && s.IsArchived == archived);
+
+                        if (directorSessions.Any())
+                        {
+                            StartDate = directorSessions.Min(o => o.Date).Value;
+                            EndDate = directorSessions.Max(o => o.Date).Value;
+                        }
+                        else
+                        {
+                            // If no sessions exist for the director, set default dates
+                            StartDate = DateTime.Today.AddMonths(-1);
+                            EndDate = DateTime.Today;
+                        }
+                    }
+                    else
+                    {
+                        // If no director record exists, set default dates
+                        StartDate = DateTime.Today.AddMonths(-1);
+                        EndDate = DateTime.Today;
+                    }
+                }
+                else
+                {
+                    // For Admins, get date range from all sessions
+                    var adminSessions = _context.Sessions.Where(s => s.IsArchived == archived);
+                    if (adminSessions.Any())
+                    {
+                        StartDate = adminSessions.Min(o => o.Date).Value;
+                        EndDate = adminSessions.Max(o => o.Date).Value;
+                    }
+                    else
+                    {
+                        StartDate = DateTime.Today.AddMonths(-1);
+                        EndDate = DateTime.Today;
+                    }
+                }
             }
+            else
+            {
+                // If dates are provided in the request, increment the filter count
+                if (StartDate != DateTime.MinValue)
+                {
+                    numberFilters++;
+                }
+                if (EndDate != DateTime.MinValue)
+                {
+                    numberFilters++;
+                }
+            }
+
             //Check the order of the dates and swap them if required
             if (EndDate < StartDate)
             {
@@ -68,19 +123,21 @@ namespace TomorrowsVoices.Controllers
                 EndDate = StartDate;
                 StartDate = temp;
             }
+
             //Save to View Data
             ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
             ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
 
+            // First apply the Director's city filter if needed
             var sessions = _context.Sessions
-                .Include(s => s.Location) // Include Location
-                .ThenInclude(l => l.DirectorLocations) // Include DirectorLocations
-                .ThenInclude(dl => dl.Director) // Include Director
-                .Include(s => s.Attendance) // Include Attendance
-                .ThenInclude(a => a.Singer) // Include Singer
-                .Where(a => a.Date >= StartDate && a.Date <= EndDate.AddDays(1))
+                .Include(s => s.Location)
+                .ThenInclude(l => l.DirectorLocations)
+                .ThenInclude(dl => dl.Director)
+                .Include(s => s.Attendance)
+                .ThenInclude(a => a.Singer)
                 .Where(s => s.IsArchived == archived)
                 .AsNoTracking();
+
             if (!User.IsInRole("Admin"))
             {
                 var currentDirector = await GetCurrentDirectorAsync();
@@ -91,10 +148,12 @@ namespace TomorrowsVoices.Controllers
                 }
                 else
                 {
-                    // If no volunteer record exists, show nothing to non-admins
                     sessions = sessions.Where(v => false);
                 }
             }
+
+            // Then apply the date range filter
+            sessions = sessions.Where(a => a.Date >= StartDate && a.Date <= EndDate.AddDays(1));
 
             ViewData["IsArchived"] = archived;
             ViewData["ActiveTab"] = archived ? "archived" : "active";
@@ -102,20 +161,59 @@ namespace TomorrowsVoices.Controllers
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                sessions = sessions.Where(p => p.Location.DirectorLocations.FirstOrDefault().Director.LastName != null && p.Location.DirectorLocations.FirstOrDefault().Director.LastName.ToLower().Contains(SearchString.ToLower())
-                                                || p.Location.DirectorLocations.FirstOrDefault().Director.FirstName != null && p.Location.DirectorLocations.FirstOrDefault().Director.FirstName.ToLower().Contains(SearchString.ToLower())
-                                                 || ((p.Location.DirectorLocations.FirstOrDefault().Director.FirstName + " " + p.Location.DirectorLocations.FirstOrDefault().Director.LastName).ToLower().Contains(SearchString.ToLower())));
-
+                if (!User.IsInRole("Admin"))
+                {
+                    var currentDirector = await GetCurrentDirectorAsync();
+                    if (currentDirector != null)
+                    {
+                        // For Directors, only search within their assigned cities
+                        sessions = sessions.Where(p => 
+                            p.Location.DirectorLocations.Any(dl => dl.DirectorID == currentDirector.ID) &&
+                            (p.Location.DirectorLocations.FirstOrDefault().Director.LastName != null && 
+                             p.Location.DirectorLocations.FirstOrDefault().Director.LastName.ToLower().Contains(SearchString.ToLower()) ||
+                             p.Location.DirectorLocations.FirstOrDefault().Director.FirstName != null && 
+                             p.Location.DirectorLocations.FirstOrDefault().Director.FirstName.ToLower().Contains(SearchString.ToLower()) ||
+                             ((p.Location.DirectorLocations.FirstOrDefault().Director.FirstName + " " + 
+                               p.Location.DirectorLocations.FirstOrDefault().Director.LastName).ToLower().Contains(SearchString.ToLower()))));
+                    }
+                }
+                else
+                {
+                    // For Admins, search across all directors
+                    sessions = sessions.Where(p => 
+                        p.Location.DirectorLocations.FirstOrDefault().Director.LastName != null && 
+                        p.Location.DirectorLocations.FirstOrDefault().Director.LastName.ToLower().Contains(SearchString.ToLower()) ||
+                        p.Location.DirectorLocations.FirstOrDefault().Director.FirstName != null && 
+                        p.Location.DirectorLocations.FirstOrDefault().Director.FirstName.ToLower().Contains(SearchString.ToLower()) ||
+                        ((p.Location.DirectorLocations.FirstOrDefault().Director.FirstName + " " + 
+                          p.Location.DirectorLocations.FirstOrDefault().Director.LastName).ToLower().Contains(SearchString.ToLower())));
+                }
                 numberFilters++;
             }
 
             if (minPresentSinger.HasValue || maxPresentSinger.HasValue)
             {
-                sessions = sessions.Where(p =>
-                    (!minPresentSinger.HasValue || p.Attendance.Count(a => a.Status) >= minPresentSinger.Value) &&
-                    (!maxPresentSinger.HasValue || p.Attendance.Count(a => a.Status) <= maxPresentSinger.Value)
-                );
-
+                if (!User.IsInRole("Admin"))
+                {
+                    var currentDirector = await GetCurrentDirectorAsync();
+                    if (currentDirector != null)
+                    {
+                        // For Directors, only filter attendance within their assigned cities
+                        sessions = sessions.Where(p =>
+                            p.Location.DirectorLocations.Any(dl => dl.DirectorID == currentDirector.ID) &&
+                            (!minPresentSinger.HasValue || p.Attendance.Count(a => a.Status) >= minPresentSinger.Value) &&
+                            (!maxPresentSinger.HasValue || p.Attendance.Count(a => a.Status) <= maxPresentSinger.Value)
+                        );
+                    }
+                }
+                else
+                {
+                    // For Admins, filter attendance across all sessions
+                    sessions = sessions.Where(p =>
+                        (!minPresentSinger.HasValue || p.Attendance.Count(a => a.Status) >= minPresentSinger.Value) &&
+                        (!maxPresentSinger.HasValue || p.Attendance.Count(a => a.Status) <= maxPresentSinger.Value)
+                    );
+                }
                 numberFilters++;
             }
 
@@ -214,6 +312,21 @@ namespace TomorrowsVoices.Controllers
 
             cityList.Insert(0, new SelectListItem { Value = "", Text = "All Cities" });
 
+            // If user is a Director, filter cities to only show their assigned cities
+            if (!User.IsInRole("Admin"))
+            {
+                var currentDirector = await GetCurrentDirectorAsync();
+                if (currentDirector != null)
+                {
+                    var assignedCities = currentDirector.DirectorLocations
+                        .Select(dl => dl.Location.City)
+                        .Distinct()
+                        .ToList();
+                    
+                    cityList = cityList.Where(c => string.IsNullOrEmpty(c.Value) || assignedCities.Contains(c.Value))
+                        .ToList();
+                }
+            }
 
             ViewData["Cities"] = cityList;
 

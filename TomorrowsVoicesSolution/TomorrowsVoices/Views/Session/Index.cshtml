@@ -258,12 +258,16 @@
                     <div class="col-lg-2 col-6">
                         <label class="control-label">From Date:</label>
                         <input class="form-control" type="date" id="StartDate" name="StartDate"
-                               value="@ViewData["StartDate"]" aria-describedby="EndDate" aria-invalid="false">
+                               value="@ViewData["StartDate"]" aria-describedby="StartDate" aria-invalid="false"
+                               min="@DateTime.Today.AddYears(-10).ToString("yyyy-MM-dd")"
+                               max="@DateTime.Today.AddYears(1).ToString("yyyy-MM-dd")">
                     </div>
                     <div class="col-lg-2 col-6">
                         <label class="control-label">To Date:</label>
-                        <input class="form-control" type="date" id="StartDate" name="EndDate"
-                               value="@ViewData["EndDate"]" aria-describedby="EndDate" aria-invalid="false">
+                        <input class="form-control" type="date" id="EndDate" name="EndDate"
+                               value="@ViewData["EndDate"]" aria-describedby="EndDate" aria-invalid="false"
+                               min="@DateTime.Today.AddYears(-10).ToString("yyyy-MM-dd")"
+                               max="@DateTime.Today.AddYears(1).ToString("yyyy-MM-dd")">
                     </div>
                     <div class="col-lg-3 col-12">
                         <label class="control-label">Present Singers</label>
