@@ -21,22 +21,62 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="LocationDropDown" class="control-label" style="font-weight: 700">Location</label><span style="color: red">*</span>
-                        <select asp-for="LocationID" class="form-control city-dropdown"
-                                asp-items="ViewBag.CityList"
-                                onchange="updateDirectorAndSingers(this.value)"
-                                id="LocationDropDown">
-                            <option value="">Select a city</option>
-                        </select>
+                        @if (ViewData["IsDirector"] as bool? == true)
+                        {
+                            <!-- Readonly dropdown for directors -->
+                            <select asp-for="LocationID"
+                                    class="form-control"
+                                    id="LocationDropDown"
+                                    disabled>
+                                @foreach (var location in (SelectList)ViewData["LocationID"])
+                                {
+                                    <option value="@location.Value" selected="@location.Selected">@location.Text</option>
+                                }
+                            </select>
+                            <input type="hidden" asp-for="LocationID" value="@Model.LocationID" />
+                        }
+                        else
+                        {
+                            <!-- Editable dropdown for admins -->
+                            <select asp-for="LocationID"
+                                    class="form-control city-dropdown"
+                                    asp-items="@ViewData["LocationID"] as SelectList"
+                                    onchange="updateDirectorAndSingers(this.value)"
+                                    id="LocationDropDown">
+                                <option value="">Select a city</option>
+                            </select>
+                        }
                         <span asp-validation-for="LocationID" class="text-danger"></span>
                     </div>
+
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="DirectorDropDown" style="font-weight: 700">Director in Charge</label>
-                        <select asp-for="Location.DirectorLocations.FirstOrDefault().DirectorID" class="form-control" id="DirectorDropDown">
-                            <option value="">Select a director</option>
-                        </select>
-                        <span asp-validation-for="Location.DirectorLocations.FirstOrDefault().DirectorID" class="text-danger"></span>
+                        @if (ViewBag.IsDirectorReadonly == true)
+                        {
+                            <!-- Readonly dropdown showing only the current director -->
+                            <select asp-for="Location.DirectorLocations.FirstOrDefault().DirectorID"
+                                    class="form-control"
+                                    id="DirectorDropDown"
+                                    disabled>
+                                <option value="@ViewBag.DirectorId" selected>@ViewBag.DirectorName</option>
+                            </select>
+                            <!-- Hidden field to preserve the value on submit -->
+                            <input type="hidden" asp-for="Location.DirectorLocations.FirstOrDefault().DirectorID"
+                                   value="@ViewBag.DirectorId" />
+                        }
+                        else
+                        {
+                            <!-- Normal dropdown for admins -->
+                            <select asp-for="Location.DirectorLocations.FirstOrDefault().DirectorID"
+                                    class="form-control"
+                                    id="DirectorDropDown">
+                                <option value="">Select a director</option>
+                            </select>
+                        }
+                        <span asp-validation-for="Location.DirectorLocations.FirstOrDefault().DirectorID"
+                              class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -130,13 +170,16 @@
                 notesField.value = defaultValues.Notes;
             }
         });
-
         $(document).ready(function () {
-            // Initialize Select2 for the LocationID dropdown
-            $('.city-dropdown').select2({
-                placeholder: "Select a city",
-                allowClear: true
-            });
+            let locationDropdown = $('#LocationDropDown');
+
+            // Only apply Select2 if it's not disabled
+            if (!locationDropdown.prop('disabled')) {
+                locationDropdown.select2({
+                    placeholder: "Select a city",
+                    allowClear: true
+                });
+            }
 
             // Set initial state of the "Choose Singers" list
             let availableSingers = $("#availOptions");
@@ -144,16 +187,18 @@
             availableSingers.append(`<option disabled style="white-space: normal; word-wrap: break-word;">Select a City to see the corresponding list of Singers.</option>`);
 
             // Call updateDirectorAndSingers on page load if there's a value
-            let initialLocationId = $("#LocationDropDown").val();
+            let initialLocationId = locationDropdown.val();
             if (initialLocationId) {
                 updateDirectorAndSingers(initialLocationId);
             }
 
             // Ensure form submission handles selected options
-            $('form').submit(function() {
+            $('form').submit(function () {
                 $('#selectedOptions option').prop('selected', true);
             });
         });
+
+
 
         function updateDirectorAndSingers(locationId) {
             let directorDropdown = $("#DirectorDropDown");

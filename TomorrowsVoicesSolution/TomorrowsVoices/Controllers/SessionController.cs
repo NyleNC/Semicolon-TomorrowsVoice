@@ -283,22 +283,60 @@ namespace TomorrowsVoices.Controllers
         }
 
         // GET: Session/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            // Do not set a default LocationID
-            Session session = new Session();
+            var session = new Session();
+            var currentDirector = await GetCurrentDirectorAsync();
 
+            // Default to director's first assigned city (if not admin)
+            if (currentDirector != null && !User.IsInRole("Admin"))
+            {
+                // Get director's first location (assuming they have at least one)
+                var directorLocation = currentDirector.DirectorLocations.FirstOrDefault();
+                if (directorLocation != null)
+                {
+                    session.LocationID = directorLocation.LocationID;
+
+                    // Pre-set the director (hidden in view)
+                    session.Location = new Location
+                    {
+                        DirectorLocations = new List<DirectorLocation> {
+                    new DirectorLocation { DirectorID = currentDirector.ID }
+                }
+                    };
+                }
+
+                ViewBag.DirectorName = currentDirector.DirectorFullName;
+                ViewBag.DirectorId = currentDirector.ID;
+                ViewBag.IsDirectorReadonly = true;
+                ViewBag.IsLocationReadonly = true;
+                ViewData["IsDirector"] = true;
+            }
+            else
+            {
+                ViewBag.IsDirectorReadonly = false;
+                ViewBag.IsLocationReadonly = false;
+            }
+
+            // Filter locations (same as before)
+            List<Location> locations;
+            if (currentDirector != null && !User.IsInRole("Admin"))
+            {
+                var assignedLocationIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
+                locations = _context.Locations
+                    .Where(l => assignedLocationIds.Contains(l.ID))
+                    .OrderBy(l => l.City)
+                    .ToList();
+            }
+            else
+            {
+                locations = _context.Locations.OrderBy(l => l.City).ToList();
+            }
+
+            ViewData["LocationID"] = new SelectList(locations, "ID", "City", session.LocationID);
             PopulateAssignedSingerData(session);
-
-            // Create a SelectList with a placeholder option
-            var locations = _context.Locations.OrderBy(l => l.City).ToList();
-            var locationSelectList = new SelectList(locations, "ID", "City");
-            ViewData["LocationID"] = locationSelectList;
-            ViewBag.CityList = new SelectList(_context.Locations, "ID", "City");
-
             return View(session);
         }
-
 
 
         // POST: Session/Create
@@ -347,47 +385,71 @@ namespace TomorrowsVoices.Controllers
 
         // GET: Session/Edit/5
         public async Task<IActionResult> Edit(int? id)
-{
-    if (id == null)
-    {
-        return NotFound();
-    }
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-    var session = await _context.Sessions
-        .Include(s => s.Location)
-            .ThenInclude(l => l.DirectorLocations)
-                .ThenInclude(dl => dl.Director)
-        .Include(s => s.Attendance)
-            .ThenInclude(a => a.Singer)
-        .FirstOrDefaultAsync(m => m.ID == id);
+            // Load the session with related data
+            var session = await _context.Sessions
+                .Include(s => s.Location)
+                    .ThenInclude(l => l.DirectorLocations)
+                        .ThenInclude(dl => dl.Director)
+                .Include(s => s.Attendance)
+                    .ThenInclude(a => a.Singer)
+                .FirstOrDefaultAsync(m => m.ID == id);
 
-    if (session == null)
-    {
-        return NotFound();
-    }
+            if (session == null)
+            {
+                return NotFound();
+            }
 
-    // Add the current director ID to ViewData
-    ViewData["CurrentDirectorId"] = session.Location?.DirectorLocations?.FirstOrDefault()?.DirectorID;
-    
-    ViewData["LocationID"] = new SelectList(
-        _context.Locations
-            .GroupBy(l => l.City)
-            .OrderBy(g => g.Key)
-            .Select(g => g.FirstOrDefault()),
-        "ID",
-        "City",
-        session.LocationID);
+            // Get the current director
+            var currentDirector = await GetCurrentDirectorAsync();
 
-    PopulateAssignedSingerData(session);
-    return View(session);
-}
+            // Set view flags
+            ViewBag.IsDirectorReadonly = currentDirector != null && !User.IsInRole("Admin");
+            if (ViewBag.IsDirectorReadonly)
+            {
+                ViewBag.DirectorName = currentDirector.DirectorFullName;
+                ViewBag.DirectorId = currentDirector.ID;
+                ViewBag.AutoSelectedCityId = session.LocationID;
+            }
+
+            // Filter locations
+            List<Location> locations;
+            if (currentDirector != null && !User.IsInRole("Admin"))
+            {
+                // Only show assigned locations
+                var assignedLocationIds = currentDirector.DirectorLocations.Select(dl => dl.LocationID).ToList();
+                locations = _context.Locations
+                    .Where(l => assignedLocationIds.Contains(l.ID))
+                    .OrderBy(l => l.City)
+                    .ToList();
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                // Admins see all locations
+                locations = _context.Locations.OrderBy(l => l.City).ToList();
+            }
+            else
+            {
+                locations = new List<Location>();
+            }
+
+            ViewData["LocationID"] = new SelectList(locations, "ID", "City", session.LocationID);
+            PopulateAssignedSingerData(session);
+
+            return View(session);
+        }
 
         // POST: Session/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string[] selectedOptions, string[] removedOptions)
+        public async Task<IActionResult> Edit( [Bind("Date,Notes,LocationID")] Session session, int id, string[] selectedOptions, string[] removedOptions)
         {
             try
             {
@@ -470,7 +532,8 @@ namespace TomorrowsVoices.Controllers
                         });
                     }
                 }
-
+                sessionToUpdate.Date = session.Date;
+                sessionToUpdate.Notes = session.Notes; 
                 if (ModelState.IsValid)
                 {
                     try
